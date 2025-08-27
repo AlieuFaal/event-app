@@ -3,23 +3,28 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle"; // your drizzle instance
 import { reactStartCookies } from "better-auth/react-start";
 import { sendEmail } from "./emailSender"; // your email sending function
-import { Schema } from "../../drizzle/db/schema";
+import { schema } from "../../drizzle/db/schema";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
-    schema: { ...Schema, user: Schema.userTable },
+    schema: {
+      user: schema.user,
+      session: schema.session,
+      account: schema.account,
+      verification: schema.verification,
+    },
   }),
   emailAndPassword: {
     enabled: true, // Enable email and password authentication
     autoSignIn: false, // Automatically sign in the user after sign up
     async sendResetPassword(data, request) {
-            // Send an email to the user with a link to reset their password
-        },
-    
+      // Send an email to the user with a link to reset their password
+    },
+
     onPasswordReset: async ({ user }, request) => {
-        // logic here
-        console.log(`Password reset for user: ${user.email}`);
+      // logic here
+      console.log(`Password reset for user: ${user.email}`);
     },
   },
   socialProviders: {

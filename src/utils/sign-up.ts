@@ -1,5 +1,4 @@
 import { authClient } from "../lib/auth-client";
-import { auth } from "./auth";
 
 const { data } = await authClient.signUp.email(
   {
