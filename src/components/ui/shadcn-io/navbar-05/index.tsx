@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+// import { Session } from '@/lib/auth-client';
 import { useEffect, useState, useRef } from 'react';
 import { BellIcon, HelpCircleIcon, UserIcon, ChevronDownIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,10 @@ import { Badge } from '@/components/ui/badge';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, Route, Router, RouterEvent } from '@tanstack/react-router';
+import { authClient } from '@/lib/auth-client';
+import { s } from 'node_modules/better-auth/dist/shared/better-auth.DnUZno9_';
+import { check } from 'better-auth';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -91,20 +95,28 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/', label: 'Home' },
   { href: '/events', label: 'Events' },
   { href: '/map', label: 'Map' },
-  { href: '/signup', label: 'Sign Up' },
-  { href: '/signin', label: 'Sign In' },
+  { href: '/about', label: 'About Us' },
 ];
 
-function onClickHandler(route: string)
-{
+function onClickHandler(route: string) {
   window.location.href = route;
+}
+
+async function onLogout() {
+  await authClient.signOut({
+    fetchOptions: {
+      onSuccess: () => {
+        window.location.href = '/';
+      }
+    }
+  });
 }
 
 // Info Menu Component
 const InfoMenu = ({ onItemClick }: { onItemClick?: (item: string) => void }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className="h-9 w-9">
+      <Button variant="outline" size="icon" className="h-9 w-9">
         <HelpCircleIcon className="h-4 w-4" />
         <span className="sr-only">Help and Information</span>
       </Button>
@@ -128,72 +140,73 @@ const InfoMenu = ({ onItemClick }: { onItemClick?: (item: string) => void }) => 
   </DropdownMenu>
 );
 
-// Notification Menu Component
-const NotificationMenu = ({ 
-  notificationCount = 3, 
-  onItemClick 
-}: { 
-  notificationCount?: number;
-  onItemClick?: (item: string) => void;
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-        <BellIcon className="h-4 w-4" />
-        {notificationCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-            {notificationCount > 9 ? '9+' : notificationCount}
-          </Badge>
-        )}
-        <span className="sr-only">Notifications</span>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-80">
-      <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.('notification1')}>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">New message received</p>
-          <p className="text-xs text-muted-foreground">2 minutes ago</p>
-        </div>
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.('notification2')}>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">System update available</p>
-          <p className="text-xs text-muted-foreground">1 hour ago</p>
-        </div>
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.('notification3')}>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">Weekly report ready</p>
-          <p className="text-xs text-muted-foreground">3 hours ago</p>
-        </div>
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.('view-all')}>
-        View all notifications
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+// // Notification Menu Component
+// const NotificationMenu = ({
+//   notificationCount = 3,
+//   onItemClick
+// }: {
+//   notificationCount?: number;
+//   onItemClick?: (item: string) => void;
+// }) => (
+//   <DropdownMenu>
+//     <DropdownMenuTrigger asChild>
+//       <Button variant="ghost" size="icon" className="h-9 w-9 relative">
+//         <BellIcon className="h-4 w-4" />
+//         {notificationCount > 0 && (
+//           <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+//             {notificationCount > 9 ? '9+' : notificationCount}
+//           </Badge>
+//         )}
+//         <span className="sr-only">Notifications</span>
+//       </Button>
+//     </DropdownMenuTrigger>
+//     <DropdownMenuContent align="end" className="w-80">
+//       <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+//       <DropdownMenuSeparator />
+//       <DropdownMenuItem onClick={() => onItemClick?.('notification1')}>
+//         <div className="flex flex-col gap-1">
+//           <p className="text-sm font-medium">New message received</p>
+//           <p className="text-xs text-muted-foreground">2 minutes ago</p>
+//         </div>
+//       </DropdownMenuItem>
+//       <DropdownMenuItem onClick={() => onItemClick?.('notification2')}>
+//         <div className="flex flex-col gap-1">
+//           <p className="text-sm font-medium">System update available</p>
+//           <p className="text-xs text-muted-foreground">1 hour ago</p>
+//         </div>
+//       </DropdownMenuItem>
+//       <DropdownMenuItem onClick={() => onItemClick?.('notification3')}>
+//         <div className="flex flex-col gap-1">
+//           <p className="text-sm font-medium">Weekly report ready</p>
+//           <p className="text-xs text-muted-foreground">3 hours ago</p>
+//         </div>
+//       </DropdownMenuItem>
+//       <DropdownMenuSeparator />
+//       <DropdownMenuItem onClick={() => onItemClick?.('view-all')}>
+//         View all notifications
+//       </DropdownMenuItem>
+//     </DropdownMenuContent>
+//   </DropdownMenu>
+// );
 
 // User Menu Component
+
 const UserMenu = ({
   userName = 'John Doe',
   userEmail = 'john@example.com',
   userAvatar,
-  onItemClick
+  onItemClick,
 }: {
   userName?: string;
   userEmail?: string;
-  userAvatar?: string;
+  userAvatar?: string | null | undefined;
   onItemClick?: (item: string) => void;
 }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button variant="ghost" className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground">
         <Avatar className="h-7 w-7">
-          <AvatarImage src={userAvatar} alt={userName} />
+          <AvatarImage src={userAvatar ?? undefined} alt={userName} />
           <AvatarFallback className="text-xs">
             {userName.split(' ').map(n => n[0]).join('')}
           </AvatarFallback>
@@ -217,7 +230,7 @@ const UserMenu = ({
         Settings
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onClickHandler('/logout')}>
+      <DropdownMenuItem onClick={() => onLogout()}>
         Log out
       </DropdownMenuItem>
     </DropdownMenuContent>
@@ -265,6 +278,11 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
   ) => {
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
+    const { data } = authClient.useSession();
+
+
+
+
 
     useEffect(() => {
       const checkWidth = () => {
@@ -346,7 +364,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               <button
                 onClick={() => onClickHandler(logoHref)}
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
-                
+
               >
                 <div className="text-2xl">
                   {logo}
@@ -359,7 +377,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                   <NavigationMenuList className="gap-1">
                     {navigationLinks.map((link, index) => (
                       <NavigationMenuItem key={index}>
-                        <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary py-1.5 font-medium transition-colors cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                        <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                           <Link to={link.href}>{link.label}</Link>
                         </NavigationMenuLink>
                       </NavigationMenuItem>
@@ -377,18 +395,23 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               {/* Info menu */}
               <InfoMenu onItemClick={onInfoItemClick} />
               {/* Notification */}
-              <NotificationMenu 
+              {/* <NotificationMenu
                 notificationCount={notificationCount}
                 onItemClick={onNotificationItemClick}
-              />
+              /> */}
             </div>
             {/* User menu */}
-            <UserMenu 
-              userName={userName}
-              userEmail={userEmail}
-              userAvatar={userAvatar}
-              onItemClick={onUserItemClick}
-            />
+            {data && (
+              <UserMenu
+                userName={data?.user.name}
+                userEmail={data?.user.email}
+                userAvatar={data?.user.image}
+                onItemClick={onUserItemClick}
+              />
+            )}
+            {!data && (
+              <Button variant={'outline'} onClick={() => onClickHandler('/signin')}>Sign In</Button>
+            )}
           </div>
         </div>
       </header>
@@ -398,4 +421,5 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
 
 Navbar05.displayName = 'Navbar05';
 
-export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };
+export { Logo, HamburgerIcon, InfoMenu, UserMenu };
+// export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };

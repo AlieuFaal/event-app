@@ -1,6 +1,11 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, check } from "drizzle-orm/pg-core";
 
-const user = pgTable("user", {
+const roles = ["user", "artist", "admin"] as const;
+export type Role = (typeof roles)[number];
+
+// Export each table individually
+export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -14,9 +19,16 @@ const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-});
+  role: text("role").$type<Role>().notNull().default("user")
+},
+(table) => [
+  check (
+    "role_check", 
+    sql `${table.role} in (${sql.raw(roles.map((r) => `'${r}'`).join(","))})`,
+),
+]);
 
-const session = pgTable("session", {
+export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
@@ -29,7 +41,7 @@ const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-const account = pgTable("account", {
+export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -47,7 +59,7 @@ const account = pgTable("account", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-const verification = pgTable("verification", {
+export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
@@ -60,9 +72,36 @@ const verification = pgTable("verification", {
   ),
 });
 
+export const event = pgTable("event", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  location: text("location").notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const venue = pgTable("venue", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  zipCode: text("zip_code").notNull(),
+  country: text("country").notNull(),
+  longitude: text("longitude").notNull(),
+  latitude: text("latitude").notNull(),
+});
+
+// Keep the schema object for convenience
 export const schema = {
   user,
   session,
   account,
   verification,
+  event,
+  venue
 };

@@ -163,9 +163,9 @@ export default function SignUp() {
                                         Error(ctx.error.message);
                                     },
                                     onSuccess: async () => {
-                                        <Link to="/"></Link>;
-                                    },
+                                        await router.navigate({to: '/signin'});
                                 },
+                            }
                             });
                         }}
                     >
