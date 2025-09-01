@@ -15,5 +15,4 @@ export default createStartHandler({
 //   asResponse: true
 // })
 
-
 global['localStorage'] = localStorage;

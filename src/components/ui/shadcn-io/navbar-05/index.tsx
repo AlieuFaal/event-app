@@ -93,6 +93,7 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
 // Default navigation links
 const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/', label: 'Home' },
+  { href: '/create-event', label: 'Add Your Event' },
   { href: '/events', label: 'Events' },
   { href: '/map', label: 'Map' },
   { href: '/about', label: 'About Us' },

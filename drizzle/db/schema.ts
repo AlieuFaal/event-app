@@ -1,51 +1,61 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, check } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  check,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 const roles = ["user", "artist", "admin"] as const;
 export type Role = (typeof roles)[number];
 
 // Export each table individually
-export const user = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified")
-    .$defaultFn(() => false)
-    .notNull(),
-  image: text("image"),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  role: text("role").$type<Role>().notNull().default("user")
-},
-(table) => [
-  check (
-    "role_check", 
-    sql `${table.role} in (${sql.raw(roles.map((r) => `'${r}'`).join(","))})`,
-),
-]);
+export const user = pgTable(
+  "user",
+  {
+    id: uuid("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    emailVerified: boolean("email_verified")
+      .$defaultFn(() => false)
+      .notNull(),
+    image: text("image"),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    role: text("role").$type<Role>().notNull().default("user"),
+  },
+  (table) => [
+    check(
+      "role_check",
+      sql`${table.role} in (${sql.raw(roles.map((r) => `'${r}'`).join(","))})`
+    ),
+  ]
+);
 
 export const session = pgTable("session", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: text("user_id")
+  userId: uuid("user_id") // Changed from text to uuid
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const account = pgTable("account", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: text("user_id")
+  userId: uuid("user_id") // Changed from text to uuid
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
@@ -60,32 +70,33 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
+    () => /* @__PURE__ */ new Date()
   ),
   updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
+    () => /* @__PURE__ */ new Date()
   ),
 });
 
 export const event = pgTable("event", {
-  id: text("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  location: text("location").notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  userId: text("user_id")
-    .notNull()
+  location: text("location"),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  userId: uuid("user_id")
+    // .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const venue = pgTable("venue", {
-  id: text("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   address: text("address").notNull(),
   city: text("city").notNull(),
@@ -103,5 +114,5 @@ export const schema = {
   account,
   verification,
   event,
-  venue
+  venue,
 };

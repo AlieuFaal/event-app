@@ -1,6 +1,6 @@
 {
-  "id": "28e50112-7c85-48fb-9477-b24370cde15f",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "fe5e39ce-55b5-41a7-8d17-6071cc0d8c2e",
+  "prevId": "28e50112-7c85-48fb-9477-b24370cde15f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -142,19 +142,26 @@
           "name": "start_date",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "end_date": {
           "name": "end_date",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
