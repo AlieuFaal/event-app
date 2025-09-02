@@ -18,10 +18,11 @@ CREATE TABLE "event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text NOT NULL,
 	"description" text NOT NULL,
-	"location" text,
+	"location" text NOT NULL,
 	"start_date" timestamp NOT NULL,
 	"end_date" timestamp NOT NULL,
-	"user_id" uuid
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "session" (

@@ -1,6 +1,6 @@
 {
-  "id": "2e7fc850-cf20-484e-ad8b-9aedc935af3c",
-  "prevId": "4c129a0e-8989-4676-95a1-11b3548ea72f",
+  "id": "6d11c1de-ecd5-4cc2-aef3-989a49942710",
+  "prevId": "2e7fc850-cf20-484e-ad8b-9aedc935af3c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -154,7 +154,7 @@
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

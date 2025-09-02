@@ -12,7 +12,7 @@ export const zodEventSchema = z.object({
     eventLocation: z.string().min(2, {
         message: "Location name must be atleast 2 characters."
     }),
-    eventStartDate: z.date().optional(),
-    eventEndDate: z.date().optional(),
+    eventStartDate: z.date(),
+    eventEndDate: z.date(),
     userId: z.uuid().optional()
 });

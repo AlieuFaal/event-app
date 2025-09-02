@@ -33,6 +33,7 @@ export const postEventData = createServerFn({ method: "POST" })
       startDate: data.eventStartDate,
       endDate: data.eventEndDate,
       userId: data.userId,
+      createdAt: new Date(),
     });
 
     return event;

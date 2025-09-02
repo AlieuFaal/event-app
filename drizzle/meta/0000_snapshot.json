@@ -1,5 +1,5 @@
 {
-  "id": "28e50112-7c85-48fb-9477-b24370cde15f",
+  "id": "4c129a0e-8989-4676-95a1-11b3548ea72f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -136,7 +136,7 @@
           "name": "location",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "start_date": {
           "name": "start_date",
@@ -154,7 +154,13 @@
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},

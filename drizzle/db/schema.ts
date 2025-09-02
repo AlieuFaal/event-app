@@ -85,14 +85,14 @@ export const verification = pgTable("verification", {
 export const event = pgTable("event", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
-  location: text("location"),
-  startDate: timestamp("start_date"),
-  endDate: timestamp("end_date"),
+  description: text("description"),
+  location: text("location").notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id")
     // .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull(),
 });
 
 export const venue = pgTable("venue", {
