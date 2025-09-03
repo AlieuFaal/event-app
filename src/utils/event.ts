@@ -12,15 +12,14 @@ export type Event = z.infer<typeof zodEventSchema>;
 
 // export const session = authClient.getSession();
 
-// export const getEventData = createServerFn({
-//   method: "GET",
-//   response: "data",
-// })
-//   .validator((zodEventSchema)
-//   .handler(async () => {
-//     const events = await db.select().from(event);
-//     return event;
-//   });
+export const getEventData = createServerFn({method: "GET",response: "data"})
+  .handler(async () => {
+
+    const events = await db.select().from(schema.event).orderBy(schema.event.startDate);
+
+    return events;
+  }
+);
 
 export const postEventData = createServerFn({ method: "POST" })
   .validator(zodEventSchema)

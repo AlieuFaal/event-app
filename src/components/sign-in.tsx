@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/shadcn/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/shadcn/ui/card";
+import { Input } from "@/components/shadcn/ui/input";
+import { Label } from "@/components/shadcn/ui/label";
+import { Checkbox } from "src/components/shadcn/ui/checkbox.tsx";
 import { useState } from "react";
 import { Loader2, Key } from "lucide-react";
 import { authClient } from "@/lib/auth-client";

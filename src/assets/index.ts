@@ -1,0 +1,1 @@
+export { default as randomImage } from "src/assets/images/nereid-ndreu-TkW0iUTa2Qg-unsplash.jpg"

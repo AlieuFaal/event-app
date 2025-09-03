@@ -15,6 +15,8 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as EventCalendarRouteImport } from './routes/event-calendar'
 import { Route as CreateEventRouteImport } from './routes/create-event'
 import { Route as IndexRouteImport } from './routes/index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
@@ -41,6 +43,16 @@ const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
   path: '/forgotpassword',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventCalendarRoute = EventCalendarRouteImport.update({
+  id: '/event-calendar',
+  path: '/event-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreateEventRoute = CreateEventRouteImport.update({
   id: '/create-event',
   path: '/create-event',
@@ -60,6 +72,8 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-event': typeof CreateEventRoute
+  '/event-calendar': typeof EventCalendarRoute
+  '/events': typeof EventsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
@@ -68,6 +82,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-event': typeof CreateEventRoute
+  '/event-calendar': typeof EventCalendarRoute
+  '/events': typeof EventsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
@@ -77,6 +93,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create-event': typeof CreateEventRoute
+  '/event-calendar': typeof EventCalendarRoute
+  '/events': typeof EventsRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
@@ -87,6 +105,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/create-event'
+    | '/event-calendar'
+    | '/events'
     | '/forgotpassword'
     | '/profile'
     | '/signin'
@@ -95,6 +115,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/create-event'
+    | '/event-calendar'
+    | '/events'
     | '/forgotpassword'
     | '/profile'
     | '/signin'
@@ -103,6 +125,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/create-event'
+    | '/event-calendar'
+    | '/events'
     | '/forgotpassword'
     | '/profile'
     | '/signin'
@@ -112,6 +136,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateEventRoute: typeof CreateEventRoute
+  EventCalendarRoute: typeof EventCalendarRoute
+  EventsRoute: typeof EventsRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   ProfileRoute: typeof ProfileRoute
   SigninRoute: typeof SigninRoute
@@ -169,6 +195,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotpasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/event-calendar': {
+      id: '/event-calendar'
+      path: '/event-calendar'
+      fullPath: '/event-calendar'
+      preLoaderRoute: typeof EventCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/create-event': {
       id: '/create-event'
       path: '/create-event'
@@ -200,6 +240,8 @@ declare module '@tanstack/react-start/server' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateEventRoute: CreateEventRoute,
+  EventCalendarRoute: EventCalendarRoute,
+  EventsRoute: EventsRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   ProfileRoute: ProfileRoute,
   SigninRoute: SigninRoute,

@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../shadcn/ui/card";
+import { Button } from "../shadcn/ui/button";
 import {
     Form,
     FormControl,
@@ -8,15 +8,17 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "../shadcn/ui/form"
+import { Input } from "../shadcn/ui/input"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { postEventData } from "@/utils/event";
-import { zodEventSchema } from "../lib/zodEventSchema";
-import { Calendar24 } from "./ui/date-time-picker";
+import { zodEventSchema } from "../../lib/zodEventSchema";
+import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { authClient } from "@/lib/auth-client";
+import { router } from "@/router";
+import { Link } from "@tanstack/react-router";
 
 
 export default function EventCard() {
@@ -27,13 +29,28 @@ export default function EventCard() {
 
     const { data: session } = authClient.useSession()
 
-    const onSubmit = (values: z.infer<typeof zodEventSchema>) => {
-        postEventData({ data: {...values, userId: session?.user.id} })
+    let onSubmitSuccess: boolean;
+
+    const onSubmit = async (values: z.infer<typeof zodEventSchema>) => {
+        await postEventData({ data: { ...values, userId: session?.user.id } })
+        router.navigate({ to: "/events" })
+
+        if (postEventData === null || undefined) {
+            onSubmitSuccess = false;
+        } else {
+            onSubmitSuccess = true;
+        }
+
+        if (onSubmitSuccess) {
+            // form.reset();
+            router.navigate({ to: "/events" })
+        }
     }
+
     return (
         <>
             <div className="mt-5 flex flex-col">
-                <Card className="p-20 shadow-lg border rounded-lg">
+                <Card className="p-20 shadow-lg border rounded-lg mx-30 mb-30 mt-20">
                     <CardHeader className="flex flex-col justify-center items-center">
                         <CardTitle className="text-4xl mb-4 ">
                             Create Event
@@ -49,7 +66,7 @@ export default function EventCard() {
                                             Title:
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Way Out West" {...field} />
+                                            <Input placeholder="Way Out West" {...field} value={field.value} />
                                         </FormControl>
                                         <FormDescription>
                                             What's the name of your event?
@@ -64,7 +81,7 @@ export default function EventCard() {
                                             Description:
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="A cool and soulful evening with a sweet mix of Jazz and Blues music..." {...field} />
+                                            <Input placeholder="A cool and soulful evening with a sweet mix of Jazz and Blues music..." {...field} value={field.value} />
                                         </FormControl>
                                         <FormDescription>
                                             Describe the Vibe of your event.
@@ -78,7 +95,7 @@ export default function EventCard() {
                                             Location:
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Kaserntorget 6, 411 18, Göteborg" {...field} />
+                                            <Input placeholder="Kaserntorget 6, 411 18, Göteborg" {...field} value={field.value} />
                                         </FormControl>
                                         <FormDescription>
                                             Where's the Vibe?

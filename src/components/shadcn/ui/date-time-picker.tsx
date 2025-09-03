@@ -3,15 +3,15 @@
 import * as React from "react"
 import { ChevronDownIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/shadcn/ui/button"
+import { Calendar } from "@/components/shadcn/ui/calendar"
+import { Input } from "@/components/shadcn/ui/input"
+import { Label } from "@/components/shadcn/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "src/components/shadcn/ui/popover.tsx"
 
 interface Calendar24Props {
   value?: Date

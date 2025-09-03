@@ -1,5 +1,5 @@
 import { ThemeProvider } from './Themeprovider'
-import { Navbar05 } from './ui/shadcn-io/navbar-05'
+import { Navbar05 } from './shadcn/ui/shadcn-io/navbar-05'
 
 
 export default function Header() {
