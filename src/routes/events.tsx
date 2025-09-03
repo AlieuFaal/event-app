@@ -2,8 +2,6 @@ import EventList from '@/components/event components/event-list'
 import { getEventData } from '@/utils/event';
 import { getUserData } from '@/utils/user';
 import { createFileRoute } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start';
-import { Users } from 'lucide-react';
 
 export const Route = createFileRoute('/events')({
     component: RouteComponent,

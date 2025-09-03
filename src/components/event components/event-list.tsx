@@ -1,13 +1,4 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/shadcn/ui/dialog"
 import EventCards from "./event-cards";
-import { Label } from "../shadcn/ui/label";
 
 export type Event = {
     title: string;
@@ -41,30 +32,7 @@ export default function EventList({ events, users }: { events: Event[], users: U
                     </h1>
                 </div>
             </div>
-            <Dialog>
-                <DialogTrigger>
-                    <EventCards events={events} users={users} />
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card">
-                    <DialogHeader className="items-center">
-                        <DialogTitle className="text-6xl">Event.Title</DialogTitle>
-                        <DialogDescription className="text-xl">
-                            Event.description
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-10 mb-5">
-                        <div className="grid gap-3">
-                            <Label htmlFor="username-1" className="text-xl">Location:</Label>
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="username-1" className="text-xl">Date:</Label>
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="username-1" className="text-xl">Created by:</Label>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
+            <EventCards events={events} users={users} />
         </div>
     )
 }

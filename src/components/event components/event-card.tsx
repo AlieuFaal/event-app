@@ -1,6 +1,16 @@
-import { randomImage } from "../../assets";
+import { DiscJockeyImage } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
 import { User, Event } from "./event-list";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/shadcn/ui/dialog"
+import EventCards from "./event-cards";
+import { Label } from "../shadcn/ui/label";
 
 export default function EventCard({ event, users }: { event: Event, users: User[] }) {
 
@@ -14,27 +24,50 @@ export default function EventCard({ event, users }: { event: Event, users: User[
     function getEventCreatorImage(event: Event) {
 
         const creator = users.find((user) => user.id === event.userId);
-        return creator ? creator.image : randomImage;
+        return creator ? creator.image : DiscJockeyImage;
     }
     return (
-        <Card className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
-            <CardContent className="flex flex-row space-x-4">
-                <img className="w-36 border-5 rounded-xl" src={randomImage} alt="" />
-                <div className="flex flex-col justify-center">
-                    <CardTitle className="text-5xl">{event.title}</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{event.description}</CardDescription>
-                    <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{event.location}</CardDescription>
-                </div>
-            </CardContent>
-            <div className="justify-items-end-safe mx-5 " >
-                <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
-                <div className="">
-                    {<p className="text-gray-600 dark:text-amber-50">Created by: {getEventCreatorName(event)}</p>}
-                    {/* <Avatar className="h-7 w-7">
+        <Dialog>
+            <DialogTrigger className="w-full">
+                <Card className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
+                    <CardContent className="flex flex-row space-x-16">
+                        <img className="w-48 border-5 rounded-xl" src={DiscJockeyImage} alt="" />
+                        <div className="flex flex-col justify-center">
+                            <CardTitle className="text-5xl">{event.title}</CardTitle>
+                            <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{event.description}</CardDescription>
+                            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{event.location}</CardDescription>
+                        </div>
+                    </CardContent>
+                    <div className="justify-items-end-safe mx-5 " >
+                        <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
+                        <div className="">
+                            {<p className="text-gray-600 dark:text-amber-50">Created by: {getEventCreatorName(event)}</p>}
+                            {/* <Avatar className="h-7 w-7">
                             <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />
                     </Avatar> */}
+                        </div>
+                    </div>
+                </Card>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card">
+                <DialogHeader className="items-center space-y-2 mb-5">
+                    <DialogTitle className="text-6xl">{event.title}</DialogTitle>
+                    <DialogDescription className="text-xl">
+                        {event.description}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-10 mb-5">
+                    <div className="grid gap-3">
+                        <Label htmlFor="username-1" className="text-xl">Location: {event.location}</Label>
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="username-1" className="text-xl">Date: {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(event)}</Label>
+                    </div>
                 </div>
-            </div>
-        </Card>
+            </DialogContent>
+        </Dialog>
     )
 }
