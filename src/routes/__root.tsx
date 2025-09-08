@@ -28,7 +28,16 @@ export const Route = createRootRoute({
       },
     ],
   }),
-
+  errorComponent: ({ error }) => (
+    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+      <h2 className="text-lg font-semibold text-red-800">Something went wrong!</h2>
+      <p className="text-red-600">{error.message}</p>
+      <details className="mt-2">
+        <summary className="cursor-pointer text-sm text-red-700">Stack trace</summary>
+        <pre className="mt-2 text-xs text-red-600 whitespace-pre-wrap">{error.stack}</pre>
+      </details>
+    </div>
+  ),
   shellComponent: RootDocument,
 })
 

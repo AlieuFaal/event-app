@@ -4,7 +4,7 @@ import * as React from 'react';
 // import { Session } from '@/lib/auth-client';
 import { useEffect, useState, useRef } from 'react';
 import { BellIcon, HelpCircleIcon, UserIcon, ChevronDownIcon } from 'lucide-react';
-import { Button } from "src/components/shadcn/ui/button.tsx"
+import { Button } from "@/components/shadcn/ui/button"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from 'src/components/shadcn/ui/popover.tsx';
+} from '@/components/shadcn/ui/popover';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +23,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from 'src/components/shadcn/ui/dropdown-menu.tsx';
-import { Avatar, AvatarFallback, AvatarImage } from 'src/components/shadcn/ui/avatar.tsx';
-import { Badge } from 'src/components/shadcn/ui/badge.tsx';
+} from '@/components/shadcn/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/ui/avatar';
+import { Badge } from '@/components/shadcn/ui/badge';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
@@ -95,7 +95,7 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/', label: 'Home' },
   { href: '/create-event', label: 'Add Your Event' },
   { href: '/events', label: 'Events' },
-  { href: '/calendar', label: 'Calendar' },
+  { href: '/event-calendar', label: 'Calendar' },
   { href: '/map', label: 'Map' },
   { href: '/about', label: 'About Us' },
 ];

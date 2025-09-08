@@ -1,4 +1,4 @@
-import EventList from '@/components/event components/event-list'
+import EventList from '@/components/event-components/event-list'
 import { getEventData } from '@/utils/event';
 import { getUserData } from '@/utils/user';
 import { createFileRoute } from '@tanstack/react-router'

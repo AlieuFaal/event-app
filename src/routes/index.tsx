@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-background'
-import { Button } from 'src/components/shadcn/ui/button.tsx'
+import { Button } from '@/components/shadcn/ui/button'
 import Footer from '@/components/Footer'
 
 export const Route = createFileRoute('/')({

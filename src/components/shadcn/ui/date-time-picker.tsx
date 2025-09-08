@@ -21,11 +21,10 @@ interface Calendar24Props {
 
 export function Calendar24({ value, onChange, placeholder = "Select date" }: Calendar24Props) {
   const [open, setOpen] = React.useState(false)
-  const [time, setTime] = React.useState("10:30:00")
+  const [time, setTime] = React.useState("")
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate && time) {
-      // Combine date with time
       const [hours, minutes, seconds] = time.split(':').map(Number)
       const combinedDateTime = new Date(selectedDate)
       combinedDateTime.setHours(hours, minutes, seconds || 0)
@@ -39,7 +38,6 @@ export function Calendar24({ value, onChange, placeholder = "Select date" }: Cal
   const handleTimeChange = (newTime: string) => {
     setTime(newTime)
     if (value && newTime) {
-      // Update the existing date with new time
       const [hours, minutes, seconds] = newTime.split(':').map(Number)
       const updatedDateTime = new Date(value)
       updatedDateTime.setHours(hours, minutes, seconds || 0)
@@ -47,10 +45,9 @@ export function Calendar24({ value, onChange, placeholder = "Select date" }: Cal
     }
   }
 
-  // Extract time from value if it exists
   React.useEffect(() => {
     if (value) {
-      const timeString = value.toTimeString().slice(0, 8) // HH:MM:SS format
+      const timeString = value.toTimeString().slice(0, 8)
       setTime(timeString)
     }
   }, [value])

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/shadcn/ui/button";
 import {
     Card,
     CardContent,
@@ -9,12 +8,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/shadcn/ui/card";
-import { Input } from "@/components/shadcn/ui/input";
-import { Label } from "@/components/shadcn/ui/label";
 import { useState } from "react";
 import { Link, Loader2, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from '@tanstack/react-router';
+import { Label } from "../shadcn/ui/label";
+import { Input } from "../shadcn/ui/input";
+import { Button } from "../shadcn/ui/button";
 
 export default function SignUp() {
     const [firstName, setFirstName] = useState("");

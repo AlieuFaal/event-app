@@ -14,14 +14,21 @@ CREATE TABLE "account" (
 	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "calendar_event" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"start" timestamp NOT NULL,
+	"end" timestamp NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text NOT NULL,
-	"description" text NOT NULL,
+	"description" text,
 	"location" text NOT NULL,
 	"start_date" timestamp NOT NULL,
 	"end_date" timestamp NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" uuid,
 	"created_at" timestamp NOT NULL
 );
 --> statement-breakpoint
@@ -72,5 +79,6 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "calendar_event" ADD CONSTRAINT "calendar_event_id_event_id_fk" FOREIGN KEY ("id") REFERENCES "public"."event"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "event" ADD CONSTRAINT "event_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

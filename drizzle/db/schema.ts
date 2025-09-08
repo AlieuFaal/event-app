@@ -8,6 +8,9 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+const eventColors = ["blue", "green", "red", "yellow", "purple", "orange"] as const;
+export type EventColor = (typeof eventColors)[number];
+
 const roles = ["user", "artist", "admin"] as const;
 export type Role = (typeof roles)[number];
 
@@ -85,14 +88,22 @@ export const verification = pgTable("verification", {
 export const event = pgTable("event", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
   location: text("location").notNull(),
+  color: text("color").$type<EventColor>().notNull().default("blue"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id")
-    // .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
+});
+
+export const calendar_event = pgTable("calendar_event", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  start: timestamp("start").notNull(),
+  end: timestamp("end").notNull(),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
 export const venue = pgTable("venue", {
@@ -115,4 +126,5 @@ export const schema = {
   verification,
   event,
   venue,
+  calendar_event
 };
