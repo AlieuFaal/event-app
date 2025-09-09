@@ -1,6 +1,5 @@
 import { aw } from "node_modules/better-auth/dist/shared/better-auth.jwa4Tx7v";
 import { authClient } from "../lib/auth-client";
-import { auth } from "./auth";
 
 const { data } = await authClient.signIn.email({
   email: "john.doe@example.com", // required

@@ -14,7 +14,6 @@ export type EventColor = (typeof eventColors)[number];
 const roles = ["user", "artist", "admin"] as const;
 export type Role = (typeof roles)[number];
 
-// Export each table individually
 export const user = pgTable(
   "user",
   {
@@ -52,7 +51,7 @@ export const session = pgTable("session", {
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id") // Changed from text to uuid
+  userId: uuid("user_id") 
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -61,7 +60,7 @@ export const account = pgTable("account", {
   id: uuid("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id") // Changed from text to uuid
+  userId: uuid("user_id") 
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
@@ -121,7 +120,6 @@ export const venue = pgTable("venue", {
   latitude: text("latitude").notNull(),
 });
 
-// Keep the schema object for convenience
 export const schema = {
   user,
   session,

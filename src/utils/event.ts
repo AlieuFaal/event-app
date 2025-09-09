@@ -1,11 +1,8 @@
 import { zodEventSchema } from "@/lib/zodEventSchema";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { db } from "drizzle";
-import { schema } from "drizzle/db";
 import { _encode } from "better-auth";
 import { zodCalendarEventSchema } from "@/lib/zodCalendarEventSchema";
-import { eq } from "drizzle-orm";
 
 export type Event = z.infer<typeof zodEventSchema>;
 export type CalendarEvent = z.infer<typeof zodCalendarEventSchema>;
@@ -23,12 +20,15 @@ export const getEventData = createServerFn({
   method: "GET",
   response: "data",
 }).handler(async () => {
+  const { db } = await import("../../drizzle");
+  const { schema } = await import("../../drizzle/db");
+  
   const events = await db
     .select()
     .from(schema.event)
     .orderBy(schema.event.startDate);
 
-  const eventsWithStringDates = events.map((event) => ({
+  const eventsWithStringDates = events.map((event: any) => ({
     ...event,
     startDate: event.startDate,
     endDate: event.endDate,
@@ -42,6 +42,9 @@ export const postEventData = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       console.log("Received data:", data);
+
+      const { db } = await import("../../drizzle");
+      const { schema } = await import("../../drizzle/db");
 
       const event = await db
         .insert(schema.event)
@@ -68,6 +71,10 @@ export const postEventData = createServerFn({ method: "POST" })
 export const putEventData = createServerFn({ method: "POST" })
   .validator(zodCalendarEventSchema)
   .handler(async ({ data }) => {
+    const { db } = await import("../../drizzle");
+    const { schema } = await import("../../drizzle/db");
+    const { eq } = await import("drizzle-orm");
+    
     const updatedEvent = await db
       .update(schema.event)
       .set({
@@ -87,6 +94,10 @@ export const putEventData = createServerFn({ method: "POST" })
 export const deleteEventData = createServerFn({ method: "POST" })
   .validator(zodCalendarEventSchema.pick({ id: true }))
   .handler(async ({ data }) => {
+    const { db } = await import("../../drizzle");
+    const { schema } = await import("../../drizzle/db");
+    const { eq } = await import("drizzle-orm");
+    
     const deletedCount = await db
       .delete(schema.event)
       .where(eq(schema.event.id, data.id));
@@ -99,6 +110,9 @@ export const postCalendarEventData = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       console.log("Received data:", data);
+
+      const { db } = await import("../../drizzle");
+      const { schema } = await import("../../drizzle/db");
 
       const event = await db
         .insert(schema.event)

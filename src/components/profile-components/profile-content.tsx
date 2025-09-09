@@ -21,19 +21,46 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, userSchema } from "@/lib/zodUserSchema";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 export default function ProfileContent() {
+  const { data: session } = authClient.useSession();
+  const currentUser = session?.user as any; 
 
   const form = useForm<User>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "Ludwig Skoeld",
-      email: "",
-      phone: "",
-      location: "Varberg, Halland",
-      bio: "",
+      id: currentUser?.id ?? "",
+      name: currentUser?.name ?? "",
+      email: currentUser?.email ?? "", 
+      emailVerified: currentUser?.emailVerified ?? false,
+      phone: currentUser?.phone ?? "",
+      location: currentUser?.location ?? "",
+      bio: currentUser?.bio ?? "",
+      image: currentUser?.image ?? "",
+      role: currentUser?.role ?? "user",
+      createdAt: currentUser?.createdAt ?? new Date(),
+      updatedAt: currentUser?.updatedAt ?? new Date(),
     },
   })
+
+  useEffect(() => {
+    if (currentUser) {
+      form.reset({
+        id: currentUser.id,
+        name: currentUser.name,
+        email: currentUser.email, 
+        emailVerified: currentUser.emailVerified,
+        phone: currentUser.phone ?? "",
+        location: currentUser.location ?? "",
+        bio: currentUser.bio ?? "",
+        image: currentUser.image ?? "",
+        role: currentUser.role ?? "user",
+        createdAt: currentUser.createdAt,
+        updatedAt: currentUser.updatedAt,
+      });
+    }
+  }, [currentUser, form]);
 
 
   return (
@@ -61,7 +88,7 @@ export default function ProfileContent() {
                   <FormField
                     control={form.control}
                     name="name"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="name">
                           Name
@@ -80,7 +107,7 @@ export default function ProfileContent() {
                   <FormField
                     control={form.control}
                     name="email"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="email">
                           Email
@@ -99,7 +126,7 @@ export default function ProfileContent() {
                   <FormField
                     control={form.control}
                     name="phone"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="phone" >
                           Phone
@@ -109,6 +136,7 @@ export default function ProfileContent() {
                             id="phone"
                             placeholder="+46 (070) 123-4567"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -118,7 +146,7 @@ export default function ProfileContent() {
                   <FormField
                     control={form.control}
                     name="location"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="location" >
                           Location
@@ -128,6 +156,7 @@ export default function ProfileContent() {
                             id="location"
                             placeholder="Varberg, Halland"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -137,7 +166,7 @@ export default function ProfileContent() {
                   <FormField
                     control={form.control}
                     name="bio"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="bio" >
                           Bio
@@ -148,6 +177,7 @@ export default function ProfileContent() {
                             placeholder="Tell us about yourself..."
                             rows={4}
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />

@@ -37,7 +37,7 @@ export default function ProfileHeader() {
 
   const { data: session } = authClient.useSession();
 
-  const currentUser = session?.user;
+  const currentUser = session?.user as any; 
 
   return (
     <Card>
@@ -46,7 +46,7 @@ export default function ProfileHeader() {
           <div className="relative">
             <Avatar className="h-24 w-24">
               <AvatarImage src={currentUser?.image} alt="Profile" />
-              <AvatarFallback className="text-2xl">{currentUser?.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              <AvatarFallback className="text-2xl">{currentUser?.name?.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
             </Avatar>
             <Button
               size="icon"
@@ -64,7 +64,7 @@ export default function ProfileHeader() {
           <div className="flex-1 space-y-2">
             <div className="flex flex-col gap-2 md:flex-row md:items-center">
               <h1 className="text-2xl font-bold">{currentUser?.name}</h1>
-              <Badge variant="secondary">{ }</Badge>
+              <Badge variant="secondary">{currentUser?.role || "user"}</Badge>
             </div>
             {/* <p className="text-muted-foreground">Senior Product Designer</p> */}
             <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">

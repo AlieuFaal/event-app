@@ -5,7 +5,7 @@ import { reactStartCookies } from "better-auth/react-start";
 import { sendEmail } from "./emailSender"; // your email sending function
 import { schema, session } from "../../drizzle/db/schema";
 import { customSession } from "better-auth/plugins";
-import { getUserDataById } from "./user";
+import { findUserRoles, getUserDataById } from "./user";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -67,28 +67,19 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    // customSession(async ({ user, session }) => {
-    //   const roles = findUserRoles(session.userId);
-    //   return {
-    //     user: {
-    //       ...user,
-    //       role: roles.includes("artist") ? "artist" : "user",
-    //     },
-    //     session,
-    //   };
-    // }),
+    customSession(async ({ user, session }) => {
+      const roles = await findUserRoles(session.userId);
+      return {
+        user: {
+          ...user,
+          role: roles.includes("artist") ? "artist" : "user",
+        },
+        session,
+      };
+    }),
     reactStartCookies(),
   ], // make sure this is the last plugin in the array
 });
 
-// async function findUserRoles(userId: string) {
 
-//   await getUserDataById(userId).then((user) => {
-//     if (user.role === "artist") {
-//       return ["artist"];
-//     }
-//     return ["user"];
-//   });
-//   return ["user"];
-// }
 
