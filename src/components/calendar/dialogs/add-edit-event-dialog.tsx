@@ -40,14 +40,15 @@ import {
 	eventSchema,
 	type TEventFormData,
 } from "@/components/calendar/schemas";
-import { Event, postEventData } from "@/utils/event";
+import { Event, postCalendarEventData, postEventData } from "@/utils/event";
 import { authClient } from "@/lib/auth-client";
+import { zodCalendarEventSchema } from "@/lib/zodCalendarEventSchema";
 
 interface IProps {
 	children: ReactNode;
 	startDate?: Date;
 	startTime?: { hour: number; minute: number };
-	event?: Event;
+	event?: TEventFormData;
 }
 
 export function AddEditEventDialog({
@@ -84,19 +85,17 @@ export function AddEditEventDialog({
 	}, [startDate, startTime, event, isEditing]);
 
 	const form = useForm<TEventFormData>({
-		resolver: zodResolver(eventSchema),
+		resolver: zodResolver(zodCalendarEventSchema),
 		defaultValues: {
-			title: event?.title ?? "",
-			description: event?.description ?? "",
-			location: event?.location ?? "",
+			id: event?.id || crypto.randomUUID(),
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
-			color: event?.color ?? "blue",
 		},
 	});
 
 	useEffect(() => {
 		form.reset({
+			id: event?.id || crypto.randomUUID(),
 			title: event?.title ?? "",
 			description: event?.description ?? "",
 			location: event?.location ?? "",
@@ -109,32 +108,27 @@ export function AddEditEventDialog({
 	const { data: session } = authClient.useSession()
 
 	const onSubmit = async (values: TEventFormData) => {
+		console.log("Form submitted with values:", values);
+		
 		try {
 			const formattedEvent: TEventFormData = {
 				...values,
-				id: values.id || crypto.randomUUID(),
-				title: values.title,
-				description: values.description,
-				location: values.location,
-				color: values.color,
-				startDate: values.startDate,
-				endDate: values.endDate,
 				userId: session?.user.id,
 			};
 
 			if (isEditing) {
-				updateEvent(formattedEvent);
+				await updateEvent(formattedEvent);
 				toast.success("Event updated successfully");
 			} else {
-				addEvent(formattedEvent);
+				await addEvent(formattedEvent);
 				toast.success("Event created successfully");
 			}
 
 			onClose();
 			form.reset();
 		} catch (error) {
-			console.error(`Error ${isEditing ? "editing" : "adding"} event:`, error);
-			toast.error(`Failed to ${isEditing ? "edit" : "add"} event`);
+			console.error("Error submitting form:", error);
+			toast.error("Failed to save event. Please try again.");
 		}
 	};
 
@@ -216,7 +210,7 @@ export function AddEditEventDialog({
 							name="color"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">Variant</FormLabel>
+									<FormLabel className="required">Color</FormLabel>
 									<FormControl>
 										<Select value={field.value} onValueChange={field.onChange}>
 											<SelectTrigger
@@ -232,7 +226,7 @@ export function AddEditEventDialog({
 															<div
 																className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
 															/>
-															{color}
+															{color.charAt(0).toUpperCase() + color.slice(1)}
 														</div>
 													</SelectItem>
 												))}
@@ -262,13 +256,18 @@ export function AddEditEventDialog({
 						/>
 					</form>
 				</Form>
+				
 				<ModalFooter className="flex justify-end gap-2">
 					<ModalClose asChild>
 						<Button type="button" variant="outline">
 							Cancel
 						</Button>
 					</ModalClose>
-					<Button form="event-form" type="submit">
+					<Button 
+						form="event-form" 
+						type="submit"
+						onClick={form.handleSubmit(onSubmit)}
+					>
 						{isEditing ? "Save Changes" : "Create Event"}
 					</Button>
 				</ModalFooter>

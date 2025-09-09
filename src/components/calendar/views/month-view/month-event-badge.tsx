@@ -8,6 +8,8 @@ import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { formatTime } from "@/components/calendar/helpers";
 import { Event as CalendarEvent } from "@/utils/event";
 import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
+import { TEventFormData } from "../../schemas";
+import { User } from "better-auth";
 
 const eventBadgeVariants = cva(
 	"mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",
@@ -54,7 +56,8 @@ interface IProps
 		VariantProps<typeof eventBadgeVariants>,
 		"color" | "multiDayPosition"
 	> {
-	event: CalendarEvent;
+	event: TEventFormData;
+	user: User;
 	cellDate: Date;
 	eventCurrentDay?: number;
 	eventTotalDays?: number;
@@ -64,6 +67,7 @@ interface IProps
 
 export function MonthEventBadge({
 	event,
+	user,
 	cellDate,
 	eventCurrentDay,
 	eventTotalDays,
@@ -106,7 +110,7 @@ export function MonthEventBadge({
 
 	return (
 		<DraggableEvent event={event}>
-			<EventDetailsDialog event={event}>
+			<EventDetailsDialog event={event} user={user}>
 				<div role="button" tabIndex={0} className={eventBadgeClasses}>
 					<div className="flex items-center gap-1.5 truncate">
 						{!["middle", "last"].includes(position) &&

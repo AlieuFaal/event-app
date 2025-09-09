@@ -36,6 +36,20 @@
       "when": 1757094106071,
       "tag": "0004_blue_patch",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1757419107254,
+      "tag": "0005_fast_invisible_woman",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1757422177601,
+      "tag": "0006_vengeful_famine",
+      "breakpoints": true
     }
   ]
 }

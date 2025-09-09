@@ -1,4 +1,4 @@
-import SignIn from '@/components/profile-components/sign-in'
+import SignIn from '@/components/auth-components/sign-in'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/signin')({

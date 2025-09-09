@@ -1,11 +1,20 @@
 import z from "zod";
 
 export const zodCalendarEventSchema = z.object({
+    id: z.uuid(),
     title: z.string().min(2, {
         message: "Event title must have at least 2 characters.",
     }).max(100, {
         message: "Event name must have at most 100 characters.",
     }),
-    start: z.date(),
-    end: z.date(),
+    description: z.string().min(2, {
+        message: "Description must contain atleast 2 characters.",
+    }),
+    location: z.string().min(2, {
+        message: "Location name must be atleast 2 characters."
+    }),
+    color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+    startDate: z.date(),
+    endDate: z.date(),
+    userId: z.uuid().or(z.null()).optional(),
 });

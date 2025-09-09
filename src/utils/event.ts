@@ -28,7 +28,7 @@ export const getEventData = createServerFn({
     .from(schema.event)
     .orderBy(schema.event.startDate);
 
-  const eventsWithStringDates = events.map(event => ({
+  const eventsWithStringDates = events.map((event) => ({
     ...event,
     startDate: event.startDate,
     endDate: event.endDate,
@@ -41,34 +41,12 @@ export const postEventData = createServerFn({ method: "POST" })
   .validator(zodEventSchema)
   .handler(async ({ data }) => {
     try {
-    console.log("Received data:", data);
-    
-    const event = await db.insert(schema.event).values({
-      id: data.id || crypto.randomUUID(),
-      title: data.title,
-      description: data.description,
-      location: data.location,
-      color: data.color,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      userId: data.userId,
-      createdAt: new Date(),
-    }).returning();
+      console.log("Received data:", data);
 
-    return event;
-  } catch (error) {
-    console.error("Error inserting event:", error);
-    throw error;
-  }
-  });
-
-  export const putEventData = createServerFn({ method: "POST" })
-    .validator(zodEventSchema)
-    .handler(async ({ data }) => {
-
-      const updatedEvent = await db
-        .update(schema.event)
-        .set({
+      const event = await db
+        .insert(schema.event)
+        .values({
+          id: data.id || crypto.randomUUID(),
           title: data.title,
           description: data.description,
           location: data.location,
@@ -76,21 +54,73 @@ export const postEventData = createServerFn({ method: "POST" })
           startDate: data.startDate,
           endDate: data.endDate,
           userId: data.userId,
+          createdAt: new Date(),
         })
-        .where(eq(schema.event.id, data.id))
-        console.log("Updated event:", updatedEvent);
-        return updatedEvent;
+        .returning();
+
+      return event;
+    } catch (error) {
+      console.error("Error inserting event:", error);
+      throw error;
+    }
+  });
+
+export const putEventData = createServerFn({ method: "POST" })
+  .validator(zodCalendarEventSchema)
+  .handler(async ({ data }) => {
+    const updatedEvent = await db
+      .update(schema.event)
+      .set({
+        title: data.title,
+        description: data.description,
+        location: data.location,
+        color: data.color,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        userId: data.userId,
       })
-      
-  export const deleteEventData = createServerFn({ method: "POST" })
-    .validator(zodEventSchema.pick({ id: true }))
-    .handler(async ({ data }) => {
-      const deletedCount = await db
-        .delete(schema.event)
-        .where(eq(schema.event.id, data.id))
-  
-      return { deletedCount };
-    });
+      .where(eq(schema.event.id, data.id));
+    console.log("Updated event:", updatedEvent);
+    return updatedEvent;
+  });
+
+export const deleteEventData = createServerFn({ method: "POST" })
+  .validator(zodCalendarEventSchema.pick({ id: true }))
+  .handler(async ({ data }) => {
+    const deletedCount = await db
+      .delete(schema.event)
+      .where(eq(schema.event.id, data.id));
+
+    return { deletedCount };
+  });
+
+export const postCalendarEventData = createServerFn({ method: "POST" })
+  .validator(zodCalendarEventSchema)
+  .handler(async ({ data }) => {
+    try {
+      console.log("Received data:", data);
+
+      const event = await db
+        .insert(schema.event)
+        .values({
+          id: data.id || crypto.randomUUID(),
+          title: data.title,
+          description: data.description,
+          location: data.location,
+          color: data.color,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          userId: data.userId,
+          createdAt: new Date(),
+        })
+        .returning();
+
+      return event;
+    } catch (error) {
+      console.error("Error inserting event:", error);
+      throw error;
+    }
+  });
 
 // export const postCalendarEventData = createServerFn({ method: "POST" })
 //   .validator(zodCalendarEventSchema)

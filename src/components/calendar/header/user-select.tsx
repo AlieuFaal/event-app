@@ -23,7 +23,7 @@ export function UserSelect() {
 						{users.map((user) => (
 							<Avatar key={user.id} className="size-6 text-xxs">
 								<AvatarImage
-									src={user.picturePath ?? undefined}
+									src={user.image ?? undefined}
 									alt={user.name}
 								/>
 								<AvatarFallback className="text-xxs">
@@ -44,7 +44,7 @@ export function UserSelect() {
 						<div className="flex items-center gap-2">
 							<Avatar key={user.id} className="size-6">
 								<AvatarImage
-									src={user.picturePath ?? undefined}
+									src={user.image ?? undefined}
 									alt={user.name}
 								/>
 								<AvatarFallback className="text-xxs">

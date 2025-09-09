@@ -1,9 +1,11 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, Session } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle"; // your drizzle instance
 import { reactStartCookies } from "better-auth/react-start";
 import { sendEmail } from "./emailSender"; // your email sending function
-import { schema } from "../../drizzle/db/schema";
+import { schema, session } from "../../drizzle/db/schema";
+import { customSession } from "better-auth/plugins";
+import { getUserDataById } from "./user";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -21,7 +23,7 @@ export const auth = betterAuth({
     async sendResetPassword(data, request) {
       // Send an email to the user with a link to reset their password
     },
-
+    
     onPasswordReset: async ({ user }, request) => {
       // logic here
       console.log(`Password reset for user: ${user.email}`);
@@ -60,9 +62,33 @@ export const auth = betterAuth({
     session: {
       cookieCache: {
         enabled: true,
-        maxAge: 10*60
-      }
-    }
+        maxAge: 10 * 60,
+      },
+    },
   },
-  plugins: [reactStartCookies()], // make sure this is the last plugin in the array
+  plugins: [
+    // customSession(async ({ user, session }) => {
+    //   const roles = findUserRoles(session.userId);
+    //   return {
+    //     user: {
+    //       ...user,
+    //       role: roles.includes("artist") ? "artist" : "user",
+    //     },
+    //     session,
+    //   };
+    // }),
+    reactStartCookies(),
+  ], // make sure this is the last plugin in the array
 });
+
+// async function findUserRoles(userId: string) {
+
+//   await getUserDataById(userId).then((user) => {
+//     if (user.role === "artist") {
+//       return ["artist"];
+//     }
+//     return ["user"];
+//   });
+//   return ["user"];
+// }
+

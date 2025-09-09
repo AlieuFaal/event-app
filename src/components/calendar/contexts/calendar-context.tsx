@@ -3,13 +3,14 @@
 import type React from "react";
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
-import { deleteEventData, Event, postEventData, putEventData } from "@/utils/event";
+import { CalendarEvent, deleteEventData, Event, postCalendarEventData, postEventData, putEventData } from "@/utils/event";
 import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
 import { User } from "better-auth";
 import { authClient } from "@/lib/auth-client";
+import { TEventFormData } from "../schemas";
 
 interface ICalendarContext {
 	selectedDate: Date;
@@ -29,8 +30,8 @@ interface ICalendarContext {
 	filterEventsBySelectedUser: (userId: User["id"] | "all") => void;
 	users: User[];
 	events: Event[];
-	addEvent: (event: Event) => void;
-	updateEvent: (event: Event) => void;
+	addEvent: (event: TEventFormData) => void;
+	updateEvent: (event: TEventFormData) => void;
 	removeEvent: (eventId: string) => void;
 	clearFilter: () => void;
 }
@@ -159,41 +160,51 @@ export function CalendarProvider2({
 
 	const { data: session } = authClient.useSession()
 
-	const addEvent = async (event: Event) => {
+	const addEvent = async (event: TEventFormData) => {
+		console.log("Adding event:", event);
+		
 		setAllEvents((prev) => [...prev, event]);
 		setFilteredEvents((prev) => [...prev, event]);
 		
-		const result = await postEventData({ data: 
-			{
-				...event,
-				id: event.id || crypto.randomUUID(),
-				userId: session?.user.id,
-			}
-		});
-		
-		console.log("Event created:", result);
+		try {
+			await postCalendarEventData({ data: event });
+			console.log("Event saved to database successfully");
+		} catch (error) {
+			console.error("Failed to save event to database:", error);
+		}
 	};
 
-	const updateEvent = (event: Event) => {
-		const updated = {
+	const updateEvent = async (event: TEventFormData) => {
+		const updatedEvent = {
 			...event,
 			startDate: new Date(event.startDate),
 			endDate: new Date(event.endDate)
 		};
 
-		setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
+		setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updatedEvent : e)));
 		setFilteredEvents((prev) =>
-			prev.map((e) => (e.id === event.id ? updated : e)),
+			prev.map((e) => (e.id === event.id ? updatedEvent : e)),
 		);
-		console.log("Updating event:", updated);
+		console.log("Updating event:", updatedEvent);
 		
-		putEventData({ data: updated })
+		try {
+			await putEventData({ data: updatedEvent });
+			console.log("Event updated in database successfully");
+		} catch (error) {
+			console.error("Failed to update event in database:", error);
+		}
 	};
 
-	const removeEvent = (eventId: string) => {
+	const removeEvent = async (eventId: string) => {
 		setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
 		setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
-		deleteEventData({ data: { id: eventId } })
+		
+		try {
+			await deleteEventData({ data: { id: eventId } });
+			console.log("Event deleted from database successfully");
+		} catch (error) {
+			console.error("Failed to delete event from database:", error);
+		}
 	};
 
 	const clearFilter = () => {

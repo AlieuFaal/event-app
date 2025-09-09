@@ -1,7 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import { Calendar, Clock, Text, User } from "lucide-react";
+import { Calendar, Clock, Text, User as UserLucide } from "lucide-react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
@@ -12,13 +12,16 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTr
 import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
 import { Event } from "@/utils/event";
+import { User} from "better-auth";
+import { TEventFormData } from "../schemas";
 
 interface IProps {
-	event: Event;
+	event: TEventFormData;
 	children: ReactNode;
+	user: User;
 }
 
-export function EventDetailsDialog({ event, children }: IProps) {
+export function EventDetailsDialog({ event, children, user }: IProps) {
 	const startDate = event.startDate;
 	const endDate = event.endDate;
 	const { use24HourFormat, removeEvent } = useCalendar();
@@ -43,11 +46,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
 				<ScrollArea className="max-h-[80vh]">
 					<div className="space-y-4 p-4">
 						<div className="flex items-start gap-2">
-							<User className="mt-1 size-4 shrink-0 text-muted-foreground" />
+							<UserLucide className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
 								<p className="text-sm font-medium">Responsible</p>
 								<p className="text-sm text-muted-foreground">
-									{"event.user.name"}
+									({"user.name"})
 								</p>
 							</div>
 						</div>

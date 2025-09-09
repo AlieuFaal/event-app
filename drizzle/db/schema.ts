@@ -24,7 +24,10 @@ export const user = pgTable(
     emailVerified: boolean("email_verified")
       .$defaultFn(() => false)
       .notNull(),
+    phone: text("phone"),
     image: text("image"),
+    location: text("location"),
+    bio: text("bio"),
     createdAt: timestamp("created_at")
       .$defaultFn(() => /* @__PURE__ */ new Date())
       .notNull(),

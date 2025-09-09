@@ -1,4 +1,4 @@
-import { zodEventSchema } from "@/lib/zodEventSchema";
+import { zodCalendarEventSchema } from "@/lib/zodCalendarEventSchema";
 import { z } from "zod";
 
 export const eventSchema = z.object({
@@ -20,4 +20,4 @@ export const eventSchema = z.object({
     userId: z.uuid().or(z.null()).optional(),
 	});
 
-export type TEventFormData = z.infer<typeof zodEventSchema>;
+export type TEventFormData = z.infer<typeof zodCalendarEventSchema>;

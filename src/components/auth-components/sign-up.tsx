@@ -80,7 +80,7 @@ export default function SignUp() {
                         <Input
                             id="email"
                             type="email"
-                            placeholder="m@example.com"
+                            placeholder="vibe.spot@example.com"
                             required
                             onChange={(e) => {
                                 setEmail(e.target.value);
@@ -110,7 +110,7 @@ export default function SignUp() {
                             placeholder="Confirm Password"
                         />
                     </div>
-                    <div className="grid gap-2">
+                    {/* <div className="grid gap-2">
                         <Label htmlFor="image">Profile Image (optional)</Label>
                         <div className="flex items-end gap-4">
                             {imagePreview && (
@@ -140,7 +140,7 @@ export default function SignUp() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <Button
                         type="submit"
                         className="w-full"

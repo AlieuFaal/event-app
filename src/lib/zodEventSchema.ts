@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const zodEventSchema = z.object({
-    id: z.uuid(),
+    id: z.uuid().optional(),
     title: z.string().min(2, {
         message: "Event title must have at least 2 characters.",
     }).max(100, {
