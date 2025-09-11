@@ -177,13 +177,13 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 				</ScrollArea>
 			</div>
 
-			<div className="hidden w-72 divide-y border-l md:block">
+			<div className="hidden w-fit divide-y border-l md:block">
 				<DayPicker
 					className="mx-auto w-fit"
 					mode="single"
 					selected={selectedDate}
 					onSelect={(date) => date && setSelectedDate(date)}
-					initialFocus
+					autoFocus
 				/>
 
 				<div className="flex-1 space-y-3">
@@ -208,7 +208,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 						<ScrollArea className="h-[422px] px-4" type="always">
 							<div className="space-y-6 pb-4">
 								{currentEvents.map((event) => {
-									const user = users.find((user) => user.id === event.user.id);
+									const user = users.find((user) => user.id === event.userId);
 
 									return (
 										<div key={event.id} className="space-y-1.5">
@@ -236,12 +236,12 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 												<Clock className="size-4 text-t-quinary" />
 												<span className="text-sm text-t-tertiary">
 													{format(
-														parseISO(event.startDate),
+														(event.startDate),
 														use24HourFormat ? "HH:mm" : "hh:mm a",
 													)}{" "}
 													-
 													{format(
-														parseISO(event.endDate),
+														(event.endDate),
 														use24HourFormat ? "HH:mm" : "hh:mm a",
 													)}
 												</span>

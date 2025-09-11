@@ -1,3 +1,4 @@
+import { ACTIONS_TYPE, Comment } from "@/types/comment";
 import { sql } from "drizzle-orm";
 import {
   pgTable,
@@ -8,7 +9,15 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-const eventColors = ["blue", "green", "red", "yellow", "purple", "orange"] as const;
+const eventColors = [
+  "blue",
+  "green",
+  "red",
+  "yellow",
+  "purple",
+  "orange",
+] as const;
+
 export type EventColor = (typeof eventColors)[number];
 
 const roles = ["user", "artist", "admin"] as const;
@@ -51,7 +60,7 @@ export const session = pgTable("session", {
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id") 
+  userId: uuid("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -60,7 +69,7 @@ export const account = pgTable("account", {
   id: uuid("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id") 
+  userId: uuid("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
@@ -95,18 +104,40 @@ export const event = pgTable("event", {
   color: text("color").$type<EventColor>().notNull().default("blue"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
-  userId: uuid("user_id")
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
 });
 
-export const calendar_event = pgTable("calendar_event", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  title: text("title").notNull(),
-  start: timestamp("start").notNull(),
-  end: timestamp("end").notNull(),
-  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+export const comment = pgTable("comment", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  eventId: uuid("event_id")
+    .notNull()
+    .references(() => event.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  replies: text("replies").$type<Comment[]>(),
+  actions: text("actions").$type<{ [key in ACTIONS_TYPE]: number }>(),
+  selectedActions: text("selected_actions").$type<ACTIONS_TYPE[]>(),
+  allowUpvote: boolean("allow_upvote").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull()
 });
+
+// export const calendar_event = pgTable("calendar_event", {
+//   id: uuid("id").primaryKey().defaultRandom(),
+//   title: text("title").notNull(),
+//   start: timestamp("start").notNull(),
+//   end: timestamp("end").notNull(),
+//   createdAt: timestamp("created_at")
+//     .notNull()
+//     .default(sql`now()`),
+// });
 
 export const venue = pgTable("venue", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -126,6 +157,7 @@ export const schema = {
   account,
   verification,
   event,
+  comment,
   venue,
-  calendar_event
+  // calendar_event,
 };

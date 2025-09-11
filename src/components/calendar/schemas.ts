@@ -1,4 +1,4 @@
-import { zodCalendarEventSchema } from "@/lib/zodCalendarEventSchema";
+import { zodCalendarEventSchema } from "@/lib/zodSchemas/zodCalendarEventSchema";
 import { z } from "zod";
 
 export const eventSchema = z.object({

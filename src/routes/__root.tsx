@@ -6,6 +6,7 @@ import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
+import { Toaster } from 'sonner'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -50,6 +51,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Header />
         {children}
+        <Toaster position="top-center" richColors={true} />
         <TanstackDevtools
           config={{
             position: 'bottom-left',

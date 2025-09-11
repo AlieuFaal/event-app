@@ -1,33 +1,32 @@
 "use client";
 
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { Calendar, Clock, Text, User as UserLucide } from "lucide-react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event-dialog";
 import { formatTime } from "@/components/calendar/helpers";
-import type { IEvent } from "@/components/calendar/interfaces";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/ui/dialog";
 import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
-import { Event } from "@/utils/event";
 import { User} from "better-auth";
 import { TEventFormData } from "../schemas";
+import { Event } from "@/utils/event";
 
 interface IProps {
-	event: TEventFormData;
+	event: Event;
 	children: ReactNode;
-	user: User;
 }
 
-export function EventDetailsDialog({ event, children, user }: IProps) {
+export function EventDetailsDialog({ event, children}: IProps) {
 	const startDate = event.startDate;
 	const endDate = event.endDate;
 	const { use24HourFormat, removeEvent } = useCalendar();
 
-	const deleteEvent = (eventId: string) => {
+	const deleteEvent = (eventId?: string) => {
 		try {
+			if (!eventId) return;
 			removeEvent(eventId);
 			toast.success("Event deleted successfully.");
 		} catch {

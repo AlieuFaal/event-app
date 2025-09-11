@@ -29,7 +29,7 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import type {
 	ICalendarCell,
 } from "@/components/calendar/interfaces";
-import { Event as CalendarEvent } from "@/utils/event";
+import { CalendarEvent } from "@/utils/event";
 import type {
 	TCalendarView,
 	TEventColor,

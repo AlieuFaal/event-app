@@ -14,11 +14,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { postEventData } from "@/utils/event";
-import { zodEventSchema } from "../../lib/zodEventSchema";
+import { zodEventSchema } from "../../lib/zodSchemas/zodEventSchema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
 import { Link } from "@tanstack/react-router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
+import { toast } from "sonner";
 
 
 export default function EventCard() {
@@ -63,9 +64,11 @@ export default function EventCard() {
             });
 
             console.log("Event created:", result);
+            toast.success("Event created successfully!");
             router.navigate({ to: "/events" });
         } catch (error) {
             console.error("Error submitting event:", error);
+            toast.error("Failed to create event. Please try again.");
         }
     }
 

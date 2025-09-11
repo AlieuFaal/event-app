@@ -8,6 +8,7 @@ import {
 import type { IEvent } from "@/components/calendar/interfaces";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
 import { Event } from "@/utils/event";
+import { TEventFormData } from "../../schemas";
 
 interface IProps {
 	selectedDate: Date;

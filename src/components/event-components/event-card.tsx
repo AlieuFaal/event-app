@@ -1,6 +1,9 @@
 import { DiscJockeyImage } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
-import { User, Event } from "./event-list";
+import { Event } from "../../types/event";
+import { User } from "../../types/user";
+import { Comment } from "../../types/comment";
+
 import {
     Dialog,
     DialogContent,
@@ -11,6 +14,8 @@ import {
 } from "@/components/shadcn/ui/dialog"
 import EventCards from "./event-cards";
 import { Label } from "../shadcn/ui/label";
+import { Button } from "../shadcn/ui/button";
+import { Textarea } from "../shadcn/ui/textarea";
 
 export default function EventCard({ event, users }: { event: Event, users: User[] }) {
 
@@ -49,25 +54,41 @@ export default function EventCard({ event, users }: { event: Event, users: User[
                     </div>
                 </Card>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card">
-                <DialogHeader className="items-center space-y-2 mb-5">
-                    <DialogTitle className="text-6xl">{event.title}</DialogTitle>
-                    <DialogDescription className="text-xl">
-                        {event.description}
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-10 mb-5">
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Location: {event.location}</Label>
+            <form action="post">
+                <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card">
+                    <DialogHeader className="items-center space-y-2 mb-5">
+                        <DialogTitle className="text-6xl">{event.title}</DialogTitle>
+                        <DialogDescription className="text-xl">
+                            {event.description}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-10 mb-5">
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">Location: {event.location}</Label>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">Date: {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(event)}</Label>
+                        </div>
                     </div>
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Date: {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>
+                    <div className="flex justify-center">
+                        <Label className="text-4xl">Comments</Label>
                     </div>
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(event)}</Label>
-                    </div>
-                </div>
-            </DialogContent>
+                    <Textarea id="commentTextArea" rows={4} className="w-full mt-5 bg-background text-card-foreground border border-input rounded-md px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 min-h-24 max-h-48"
+                        placeholder="Write a comment..."
+                    />
+                    <Button>Submit</Button>
+                    {/* {!event.comments || event.comments.length === 0 ? (
+                    <p className="text-center text-muted-foreground mt-5">No comments yet.</p>
+                    ) : (
+                        <div className="mt-5 space-y-5">
+                        <textarea comments={event.comments} users={users} />
+                        </div>
+                        )} */}
+                </DialogContent>
+            </form>
         </Dialog>
     )
 }

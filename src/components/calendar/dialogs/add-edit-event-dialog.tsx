@@ -42,13 +42,13 @@ import {
 } from "@/components/calendar/schemas";
 import { Event, postCalendarEventData, postEventData } from "@/utils/event";
 import { authClient } from "@/lib/auth-client";
-import { zodCalendarEventSchema } from "@/lib/zodCalendarEventSchema";
+import { zodCalendarEventSchema } from "@/lib/zodSchemas/zodCalendarEventSchema";
 
 interface IProps {
 	children: ReactNode;
 	startDate?: Date;
 	startTime?: { hour: number; minute: number };
-	event?: TEventFormData;
+	event?: Event;
 }
 
 export function AddEditEventDialog({

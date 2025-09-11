@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/ui/avat
 import { Camera, Calendar, Mail, MapPin } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
+import { toast } from "sonner";
 
 
 export default function ProfileHeader() {
@@ -20,9 +21,16 @@ export default function ProfileHeader() {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      await authClient.updateUser({
-        image: await convertImageToBase64(file),
-      });
+      try {
+        await authClient.updateUser({
+          image: await convertImageToBase64(file),
+        });
+        toast.success("Image uploaded successfully!");
+      }
+      catch (error) {
+        console.error("Failed to upload image:", error);
+        toast.error("Failed to upload image!");
+      }
     };
   };
 
@@ -33,6 +41,11 @@ export default function ProfileHeader() {
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+  }
+
+  function formattedDate(dateString: string) {
+    const date = new Date(dateString);
+    return date.toUTCString().split(' ').slice(1, 4).join(' ');
   }
 
   const { data: session } = authClient.useSession();
@@ -78,8 +91,8 @@ export default function ProfileHeader() {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="size-4" />
-                Joined {currentUser?.createdAt.toLocaleDateString()}
-              </div>
+                Joined {currentUser?.createdAt.toUTCString().split(' ').slice(1, 4).join(' ')} {/* error i browsern klagar på detta  */}
+              </div> 
             </div>
           </div>
           {/* <Button variant="default">Edit Profile</Button> */}

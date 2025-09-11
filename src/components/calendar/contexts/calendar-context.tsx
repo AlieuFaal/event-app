@@ -29,7 +29,7 @@ interface ICalendarContext {
 	filterEventsBySelectedColors: (colors: TEventColor) => void;
 	filterEventsBySelectedUser: (userId: User["id"] | "all") => void;
 	users: User[];
-	events: Event[];
+	events: TEventFormData[];
 	addEvent: (event: TEventFormData) => void;
 	updateEvent: (event: TEventFormData) => void;
 	removeEvent: (eventId: string) => void;
@@ -61,7 +61,7 @@ export function CalendarProvider2({
 }: {
 	children: React.ReactNode;
 	users: User[];
-	events: Event[];
+	events: TEventFormData[];
 	view?: TCalendarView;
 	badge?: "dot" | "colored";
 }) {
@@ -93,8 +93,8 @@ export function CalendarProvider2({
 	);
 	const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
-	const [allEvents, setAllEvents] = useState<Event[]>(events || []);
-	const [filteredEvents, setFilteredEvents] = useState<Event[]>(events || []);
+	const [allEvents, setAllEvents] = useState<CalendarEvent[]>(events || []);
+	const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>(events || []);
 
 	const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
 		setSettings({

@@ -1,26 +1,6 @@
 import EventCards from "./event-cards";
-
-export type Event = {
-    title: string;
-    description: string | null;
-    location: string;
-    startDate: Date;
-    endDate: Date;
-    createdAt: Date;
-    userId: string | null;
-}
-
-export type User = {
-    id: string;
-    name: string;
-    email: string;
-    emailVerified: boolean;
-    image: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-    role: "user" | "artist" | "admin";
-}
-
+import { Event } from "../../types/event";
+import { User } from "../../types/user";
 
 export default function EventList({ events, users }: { events: Event[], users: User[] }) {
     return (

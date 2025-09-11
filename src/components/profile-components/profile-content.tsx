@@ -1,4 +1,4 @@
-import { Shield, Key, Trash2 } from "lucide-react";
+import { Key, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/shadcn/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
@@ -19,49 +19,97 @@ import {
   FormMessage,
 } from "@/components/shadcn/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, userSchema } from "@/lib/zodUserSchema";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { User, userFormSchema } from "@/lib/zodSchemas/zodUserFormSchema";
+import { updateUserData } from "@/utils/user";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
+import { PasswordChangeForm, passwordChangeSchema } from "@/lib/zodSchemas/zodPasswordChange";
+import React from "react";
 
 export default function ProfileContent() {
   const { data: session } = authClient.useSession();
-  const currentUser = session?.user as any; 
+  const currentUser = session?.user as User;
+  const navigate = useNavigate();
+  
+  // Initialize switch state based on current user role
+  const [switchState, setSwitchState] = React.useState(currentUser?.role === "artist");
+  // const downloadedUserData = currentUser ? [currentUser] : [];
 
   const form = useForm<User>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(userFormSchema),
     defaultValues: {
       id: currentUser?.id ?? "",
       name: currentUser?.name ?? "",
-      email: currentUser?.email ?? "", 
-      emailVerified: currentUser?.emailVerified ?? false,
       phone: currentUser?.phone ?? "",
       location: currentUser?.location ?? "",
       bio: currentUser?.bio ?? "",
-      image: currentUser?.image ?? "",
       role: currentUser?.role ?? "user",
-      createdAt: currentUser?.createdAt ?? new Date(),
-      updatedAt: currentUser?.updatedAt ?? new Date(),
     },
-  })
+  });
 
-  useEffect(() => {
-    if (currentUser) {
-      form.reset({
-        id: currentUser.id,
-        name: currentUser.name,
-        email: currentUser.email, 
-        emailVerified: currentUser.emailVerified,
-        phone: currentUser.phone ?? "",
-        location: currentUser.location ?? "",
-        bio: currentUser.bio ?? "",
-        image: currentUser.image ?? "",
-        role: currentUser.role ?? "user",
-        createdAt: currentUser.createdAt,
-        updatedAt: currentUser.updatedAt,
-      });
+  const onSubmit = async (data: User) => {
+    console.log("Submitting data:", data);
+    try {
+      await updateUserData({ data });
+      toast.success("User updated successfully!");
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      toast.error("Failed to update user!");
     }
-  }, [currentUser, form]);
+  };
 
+  const passwordForm = useForm<PasswordChangeForm>({
+    resolver: zodResolver(passwordChangeSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onPasswordchange = async (data: PasswordChangeForm) => {
+    try {
+      const { error } = await authClient.changePassword({
+        newPassword: data.newPassword,
+        currentPassword: data.currentPassword,
+        revokeOtherSessions: true,
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Password changed successfully!");
+      passwordForm.reset();
+    } catch (error) {
+      console.error("Failed to change password:", error);
+      toast.error("Failed to change password!");
+    }
+  };
+
+  const handleRoleToggle = async (checked: boolean): Promise<void> => {
+    setSwitchState(checked);
+
+    const newRole: "artist" | "user" = checked ? "artist" : "user";
+    
+    try {
+      // Create updated user data with the new role
+      const updatedUserData: User = {
+        ...currentUser,
+        role: newRole
+      };
+
+      await updateUserData({ data: updatedUserData });
+      toast.success(`User role updated to ${newRole}!`);
+    } catch (error) {
+      console.error(`Failed to update user role to ${newRole}:`, error);
+      toast.error(`Failed to update user role to ${newRole}!`);
+      // Revert the switch state if the update failed
+      setSwitchState(!checked);
+    }
+  };
 
   return (
     <Tabs defaultValue="personal" className="space-y-6 mt-8">
@@ -80,9 +128,7 @@ export default function ProfileContent() {
             <CardDescription>Update your personal details and profile information.</CardDescription>
           </CardHeader>
           <Form {...form}>
-            <form method="post" onSubmit={form.handleSubmit(async (data) => {
-              await authClient.updateUser(data);
-            })}>
+            <form id="user-form" method="post" onSubmit={form.handleSubmit(onSubmit)}>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
                   <FormField
@@ -104,7 +150,7 @@ export default function ProfileContent() {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
@@ -122,7 +168,7 @@ export default function ProfileContent() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="phone"
@@ -134,7 +180,7 @@ export default function ProfileContent() {
                         <FormControl>
                           <Input
                             id="phone"
-                            placeholder="+46 (070) 123-4567"
+                            placeholder="+46 (070) 123-456"
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -184,7 +230,7 @@ export default function ProfileContent() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={!form.formState.isDirty || !form.formState.isValid}>Save Changes</Button>
+                  <Button form="user-form" type="submit" disabled={!form.formState.isDirty || !form.formState.isValid} onClick={form.handleSubmit(onSubmit)}>Save Changes</Button>
                 </div>
               </CardContent>
             </form>
@@ -222,10 +268,10 @@ export default function ProfileContent() {
               <div className="space-y-1">
                 <Label className="text-base">Switch role</Label>
                 <p className="text-muted-foreground text-sm">
-                  Switch betweeen being an Artist or a regular User. Only Artists are able to create events.
+                  Switch betweeen being an Artist or a regular User. Only Artists are able to create events. Default is User.
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch onCheckedChange={handleRoleToggle} checked={switchState} />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -251,10 +297,33 @@ export default function ProfileContent() {
                   Permanently delete your account and all data
                 </p>
               </div>
-              <Button variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Account
-              </Button>
+              <Dialog>
+                <DialogTrigger>
+                  <Button variant="destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Account
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you Sure?</DialogTitle>
+                    <DialogDescription>Your account will be permanently deleted, this action cannot be undone.</DialogDescription>
+                    <Button variant="destructive" onClick={async () => {
+                      try {
+                        await authClient.deleteUser({ callbackURL: "/" });
+                        toast.success("Account deleted successfully!");
+                        navigate({ to: "/" });
+                      } catch (error) {
+                        console.error("Failed to delete account:", error);
+                        toast.error("Failed to delete account!");
+                      }
+                    }}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Account
+                    </Button>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -272,12 +341,100 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Password</Label>
-                  <p className="text-muted-foreground text-sm">Last changed 3 months ago</p>
+                  <p className="text-muted-foreground text-sm">Change your account credentials.</p>
                 </div>
-                <Button variant="outline">
-                  <Key className="mr-2 h-4 w-4" />
-                  Change Password
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <div className="flex items-center justify-end">
+                      <Button variant="outline">
+                        <Key className="mr-2 h-4 w-4" />
+                        Change Password
+                      </Button>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Change Password</DialogTitle>
+                      <DialogDescription>
+                        Enter your current password and a new password to change your password.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...passwordForm}>
+                      <form id="password-form" method="post" className="grid gap-4 py-4" onSubmit={passwordForm.handleSubmit(onPasswordchange)}>
+                        <div className="grid gap-2">
+                          <FormField
+                            control={passwordForm.control}
+                            name="currentPassword"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel htmlFor="currentPassword">
+                                  Current Password
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    id="currentPassword"
+                                    type="password"
+                                    placeholder="Current Password"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={passwordForm.control}
+                            name="newPassword"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel htmlFor="newPassword">
+                                  New Password
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    id="newPassword"
+                                    type="password"
+                                    placeholder="New Password"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={passwordForm.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel htmlFor="confirmPassword">
+                                  Confirm New Password
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <Button
+                          form="password-form"
+                          type="submit"
+                          className="mt-4"
+                          disabled={!passwordForm.formState.isValid || passwordForm.formState.isSubmitting}
+                        >
+                          {passwordForm.formState.isSubmitting ? "Updating..." : "Update Password"}
+                        </Button>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
