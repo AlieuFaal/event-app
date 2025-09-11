@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addMinutes, format, set } from "date-fns";
+import { addMinutes, set } from "date-fns";
 import { type ReactNode, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -35,14 +35,9 @@ import { Textarea } from "@/components/shadcn/ui/textarea";
 import { COLORS } from "@/components/calendar/constants";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
-import type { IEvent } from "@/components/calendar/interfaces";
-import {
-	eventSchema,
-	type TEventFormData,
-} from "@/components/calendar/schemas";
-import { Event, postCalendarEventData, postEventData } from "@/utils/event";
+import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
+import { Event } from "@/utils/event";
 import { authClient } from "@/lib/auth-client";
-import { zodCalendarEventSchema } from "@/lib/zodSchemas/zodCalendarEventSchema";
 
 interface IProps {
 	children: ReactNode;
@@ -85,9 +80,8 @@ export function AddEditEventDialog({
 	}, [startDate, startTime, event, isEditing]);
 
 	const form = useForm<TEventFormData>({
-		resolver: zodResolver(zodCalendarEventSchema),
+		resolver: zodResolver(calendarFormSchema),
 		defaultValues: {
-			id: event?.id || crypto.randomUUID(),
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 		},
@@ -95,7 +89,6 @@ export function AddEditEventDialog({
 
 	useEffect(() => {
 		form.reset({
-			id: event?.id || crypto.randomUUID(),
 			title: event?.title ?? "",
 			description: event?.description ?? "",
 			location: event?.location ?? "",
@@ -108,12 +101,12 @@ export function AddEditEventDialog({
 	const { data: session } = authClient.useSession()
 
 	const onSubmit = async (values: TEventFormData) => {
-		console.log("Form submitted with values:", values);
-		
 		try {
-			const formattedEvent: TEventFormData = {
+			const formattedEvent = {
 				...values,
+				id: event?.id || crypto.randomUUID(),
 				userId: session?.user.id,
+				createdAt: event?.createdAt || new Date(),
 			};
 
 			if (isEditing) {

@@ -1,4 +1,4 @@
-import { ACTIONS_TYPE, Comment } from "@/types/comment";
+import { ACTIONS_TYPE} from "@/types/comment";
 import { sql } from "drizzle-orm";
 import {
   pgTable,
@@ -8,6 +8,8 @@ import {
   check,
   uuid,
 } from "drizzle-orm/pg-core";
+import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
 
 const eventColors = [
   "blue",
@@ -52,6 +54,37 @@ export const user = pgTable(
   ]
 );
 
+export const userSchema = createSelectSchema(user, {
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format"),
+});
+
+export const userInsertSchema = createInsertSchema(user, {
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format"),
+});
+
+export const userUpdateSchema = createUpdateSchema(user, {
+  name: z.string().min(1, "Name is required").optional(),
+  email: z.string().email("Invalid email format").optional(),
+});
+
+export const userFormSchema = userUpdateSchema.extend({
+  id: z.string(),
+  role: z.enum(["user", "artist"]).default("user").optional(),
+}).omit({
+  email: true,
+  emailVerified: true,
+  image: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type User = z.infer<typeof userSchema>;
+export type NewUser = z.infer<typeof userInsertSchema>;
+export type UpdateUser = z.infer<typeof userUpdateSchema>;
+export type UserForm = z.infer<typeof userFormSchema>;
+
 export const session = pgTable("session", {
   id: uuid("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -64,6 +97,9 @@ export const session = pgTable("session", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const sessionSchema = createSelectSchema(session)
+export type Session = z.infer<typeof sessionSchema>;
 
 export const account = pgTable("account", {
   id: uuid("id").primaryKey(),
@@ -108,6 +144,56 @@ export const event = pgTable("event", {
   createdAt: timestamp("created_at").notNull(),
 });
 
+export const eventSchema = createSelectSchema(event, {
+  title: z.string().min(2, "Event title must have at least 2 characters.").max(100, "Event name must have at most 100 characters."),
+  description: z.string().min(2, "Description must contain atleast 2 characters."),
+  location: z.string().min(2, "Location name must be atleast 2 characters."),
+  color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+});
+
+export const eventInsertSchema = createInsertSchema(event, {
+  title: z.string().min(2, "Event title must have at least 2 characters.").max(100, "Event name must have at most 100 characters."),
+  description: z.string().min(2, "Description must contain atleast 2 characters."),
+  location: z.string().min(2, "Location name must be atleast 2 characters."),
+  color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+  id: z.string().uuid().optional(),
+  userId: z.string().uuid().nullable().optional(),
+  createdAt: z.date().optional(),
+}).superRefine((data, ctx) => {
+  if (data.startDate && data.endDate && data.startDate > data.endDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Start date must be before end date",
+      path: ["startDate"],
+    });
+  }
+});
+
+export const eventUpdateSchema = createUpdateSchema(event, {
+  title: z.string().min(2, "Event title must have at least 2 characters.").max(100, "Event name must have at most 100 characters.").optional(),
+  description: z.string().min(2, "Description must contain atleast 2 characters.").optional(),
+  location: z.string().min(2, "Location name must be atleast 2 characters.").optional(),
+  color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]).optional(),
+}).superRefine((data, ctx) => {
+  if (data.startDate && data.endDate && data.startDate > data.endDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Start date must be before end date",
+      path: ["startDate"],
+    });
+  }
+});
+
+export const calendarEventSchema = eventSchema.extend({
+  id: z.string().uuid(),
+  userId: z.string().uuid().nullable().optional(),
+});
+
+export type Event = z.infer<typeof eventSchema>;
+export type NewEvent = z.infer<typeof eventInsertSchema>;
+export type UpdateEvent = z.infer<typeof eventUpdateSchema>;
+export type CalendarEvent = z.infer<typeof calendarEventSchema>;
+
 export const comment = pgTable("comment", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id")
@@ -117,7 +203,6 @@ export const comment = pgTable("comment", {
     .notNull()
     .references(() => event.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  replies: text("replies").$type<Comment[]>(),
   actions: text("actions").$type<{ [key in ACTIONS_TYPE]: number }>(),
   selectedActions: text("selected_actions").$type<ACTIONS_TYPE[]>(),
   allowUpvote: boolean("allow_upvote").notNull(),
@@ -129,15 +214,21 @@ export const comment = pgTable("comment", {
     .notNull()
 });
 
-// export const calendar_event = pgTable("calendar_event", {
-//   id: uuid("id").primaryKey().defaultRandom(),
-//   title: text("title").notNull(),
-//   start: timestamp("start").notNull(),
-//   end: timestamp("end").notNull(),
-//   createdAt: timestamp("created_at")
-//     .notNull()
-//     .default(sql`now()`),
-// });
+export const commentSchema = createSelectSchema(comment, {
+  content: z.string().min(1, "Comment content cannot be empty"),
+});
+
+export const commentInsertSchema = createInsertSchema(comment, {
+  content: z.string().min(1, "Comment content cannot be empty"),
+});
+
+export const commentUpdateSchema = createUpdateSchema(comment, {
+  content: z.string().min(1, "Comment content cannot be empty").optional(),
+});
+
+export type Comment = z.infer<typeof commentSchema>;
+export type NewComment = z.infer<typeof commentInsertSchema>;
+export type UpdateComment = z.infer<typeof commentUpdateSchema>;
 
 export const venue = pgTable("venue", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -151,6 +242,20 @@ export const venue = pgTable("venue", {
   latitude: text("latitude").notNull(),
 });
 
+export const venueSchema = createSelectSchema(venue)
+export type Venue = z.infer<typeof venueSchema>;
+
+export const passwordChangeSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "New password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your new password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
+
 export const schema = {
   user,
   session,
@@ -159,5 +264,4 @@ export const schema = {
   event,
   comment,
   venue,
-  // calendar_event,
 };

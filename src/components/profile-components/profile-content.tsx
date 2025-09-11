@@ -21,11 +21,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
-import { User, userFormSchema } from "@/lib/zodSchemas/zodUserFormSchema";
+import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
 import { updateUserData } from "@/utils/user";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
-import { PasswordChangeForm, passwordChangeSchema } from "@/lib/zodSchemas/zodPasswordChange";
 import React from "react";
 
 export default function ProfileContent() {
@@ -33,11 +32,9 @@ export default function ProfileContent() {
   const currentUser = session?.user as User;
   const navigate = useNavigate();
   
-  // Initialize switch state based on current user role
   const [switchState, setSwitchState] = React.useState(currentUser?.role === "artist");
-  // const downloadedUserData = currentUser ? [currentUser] : [];
 
-  const form = useForm<User>({
+  const form = useForm<UserForm>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       id: currentUser?.id ?? "",
@@ -45,11 +42,11 @@ export default function ProfileContent() {
       phone: currentUser?.phone ?? "",
       location: currentUser?.location ?? "",
       bio: currentUser?.bio ?? "",
-      role: currentUser?.role ?? "user",
+      role: currentUser?.role === "artist" ? "artist" : "user",
     },
   });
 
-  const onSubmit = async (data: User) => {
+  const onSubmit = async (data: UserForm) => {
     console.log("Submitting data:", data);
     try {
       await updateUserData({ data });
@@ -95,9 +92,12 @@ export default function ProfileContent() {
     const newRole: "artist" | "user" = checked ? "artist" : "user";
     
     try {
-      // Create updated user data with the new role
-      const updatedUserData: User = {
-        ...currentUser,
+      const updatedUserData: UserForm = {
+        id: currentUser?.id ?? "",
+        name: currentUser?.name ?? "",
+        phone: currentUser?.phone ?? "",
+        location: currentUser?.location ?? "",
+        bio: currentUser?.bio ?? "",
         role: newRole
       };
 
@@ -106,7 +106,6 @@ export default function ProfileContent() {
     } catch (error) {
       console.error(`Failed to update user role to ${newRole}:`, error);
       toast.error(`Failed to update user role to ${newRole}!`);
-      // Revert the switch state if the update failed
       setSwitchState(!checked);
     }
   };

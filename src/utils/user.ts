@@ -1,9 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "drizzle";
-import { schema } from "drizzle/db";
+import { schema, userFormSchema } from "drizzle/db";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { userFormSchema } from "@/lib/zodSchemas/zodUserFormSchema";
 import { authClient } from "@/lib/auth-client";
 
 export const getUserData = createServerFn({

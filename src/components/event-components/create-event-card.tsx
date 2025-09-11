@@ -14,10 +14,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { postEventData } from "@/utils/event";
-import { zodEventSchema } from "../../lib/zodSchemas/zodEventSchema";
+import { eventInsertSchema } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
-import { Link } from "@tanstack/react-router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
 
@@ -38,9 +37,9 @@ export default function EventCard() {
         return tomorrow;
     }
 
-    const form = useForm<z.infer<typeof zodEventSchema>>({
+    const form = useForm<z.infer<typeof eventInsertSchema>>({
         mode: "onBlur",
-        resolver: zodResolver(zodEventSchema),
+        resolver: zodResolver(eventInsertSchema),
         defaultValues: {
             color: "blue",
             startDate: getDefaultStartDate(),
@@ -51,19 +50,18 @@ export default function EventCard() {
 
     const { data: session } = authClient.useSession()
 
-    const onSubmit = async (values: z.infer<typeof zodEventSchema>) => {
+    const onSubmit = async (values: z.infer<typeof eventInsertSchema>) => {
         try {
-            console.log("Submitting values:", values);
+            const dataToSend = {
+                ...values,
+                userId: session?.user.id,
+                id: crypto.randomUUID()
+            };
 
-            const result = await postEventData({
-                data: {
-                    ...values,
-                    userId: session?.user.id,
-                    id: crypto.randomUUID()
-                }
+            await postEventData({
+                data: dataToSend
             });
 
-            console.log("Event created:", result);
             toast.success("Event created successfully!");
             router.navigate({ to: "/events" });
         } catch (error) {
@@ -183,7 +181,9 @@ export default function EventCard() {
                             )} >
                             </FormField>
 
-                            <Button type="submit">Submit your event!</Button>
+                            <Button type="submit">
+                                Submit your event!
+                            </Button>
                         </form>
                     </Form>
                 </CardContent>
