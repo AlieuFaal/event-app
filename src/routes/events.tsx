@@ -1,6 +1,6 @@
 import EventList from '@/components/event-components/event-list'
-import { getEventData, getEventsWithComments } from '@/utils/event';
-import { getUserData } from '@/utils/user';
+import { getEventData, getEventsWithComments } from '@/utils/eventService';
+import { getUserData } from '@/utils/user-service';
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/events')({

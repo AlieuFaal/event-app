@@ -2,7 +2,7 @@ import { betterAuth, Session } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle"; // your drizzle instance
 import { reactStartCookies } from "better-auth/react-start";
-import { sendEmail } from "./emailSender"; // your email sending function
+import { sendEmail } from "./emailSenderService"; // your email sending function
 import { schema, session } from "../../drizzle/db/schema";
 import { customSession } from "better-auth/plugins";
 import { eq } from "drizzle-orm";

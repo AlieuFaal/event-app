@@ -6,7 +6,7 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { formatTime } from "@/components/calendar/helpers";
-import { Event as CalendarEvent, Event } from "@/utils/event";
+import { Event as CalendarEvent, Event } from "@/utils/eventService";
 import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
 import { TEventFormData } from "../../schemas";
 import { User } from "better-auth";

@@ -3,8 +3,8 @@ import Calendar from '@/components/calendar-components/calendar';
 import { CalendarHeader } from '@/components/calendar-components/calendar-header';
 import { Calendar2 } from '@/components/calendar/calendar';
 import { Card } from '@/components/shadcn/ui/card';
-import { getEventData } from '@/utils/event';
-import { getUserData } from '@/utils/user';
+import { getEventData } from '@/utils/eventService';
+import { getUserData } from '@/utils/user-service';
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 

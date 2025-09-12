@@ -23,7 +23,7 @@ import { MonthEventBadge } from "@/components/calendar/views/month-view/month-ev
 import { AddEditEventDialog } from "../../dialogs/add-edit-event-dialog";
 import { Button } from "@/components/shadcn/ui/button";
 import { Plus } from "lucide-react";
-import { Event } from "@/utils/event";
+import { Event } from "@/utils/eventService";
 
 interface IProps {
   cell: ICalendarCell;

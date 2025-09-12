@@ -12,7 +12,7 @@ import {
 } from "@/components/calendar/helpers";
 
 import { DayCell } from "@/components/calendar/views/month-view/day-cell";
-import { Event as CalendarEvent } from "@/utils/event";
+import { Event as CalendarEvent } from "@/utils/eventService";
 
 interface IProps {
 	singleDayEvents: CalendarEvent[];

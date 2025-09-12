@@ -12,7 +12,7 @@ import React, {
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { DndConfirmationDialog } from "@/components/calendar/dialogs/dnd-confirmation-dialog";
-import { Event } from "@/utils/event";
+import { Event } from "@/utils/eventService";
 
 interface PendingDropData {
 	event: Event;

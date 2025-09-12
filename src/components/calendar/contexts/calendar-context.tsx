@@ -3,7 +3,7 @@
 import type React from "react";
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
-import { CalendarEvent, deleteEventData, Event, postCalendarEventData, postEventData, putEventData } from "@/utils/event";
+import { CalendarEvent, deleteEventData, Event, postCalendarEventData, postEventData, putEventData } from "@/utils/eventService";
 import type {
 	TCalendarView,
 	TEventColor,

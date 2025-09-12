@@ -13,7 +13,7 @@ import { Input } from "../shadcn/ui/input"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postEventData } from "@/utils/event";
+import { postEventData } from "@/utils/eventService";
 import { eventInsertSchema } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";

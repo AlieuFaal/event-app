@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
-import { updateUserData } from "@/utils/user";
+import { updateUserData } from "@/utils/user-service";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
 import React from "react";

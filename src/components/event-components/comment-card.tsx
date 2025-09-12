@@ -25,12 +25,12 @@ export default function CommentCard({ comment, users, onChange, onDelete }: Comm
     function getCommentCreatorImage(comment: Comment) {
 
         const creator = users.find((user) => user.id === comment.userId);
-        return creator ? creator.image : DiscJockeyImage;
+        return creator ? creator.image! : DiscJockeyImage;
     }
 
     return (
         <div className="mt-3">
-            <Card className="bg-card text-card-foreground flex flex-col shadow-lg transition-all border-1">
+            <Card className="bg-card text-card-foreground flex flex-col transition-all border-1 hover:shadow-lg hover:scale-105 hover:border-purple-600 mb-3">
                 <div className="flex justify-end mx-2">
                     <p className="text-sm text-muted-foreground ">{comment.createdAt.toUTCString()}</p>
                 </div>

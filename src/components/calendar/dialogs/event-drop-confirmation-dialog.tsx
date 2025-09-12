@@ -16,7 +16,7 @@ import type {IEvent} from "@/components/calendar/interfaces";
 import {formatTime, getColorClass} from "@/components/calendar/helpers";
 import {cn} from "@/lib/utils";
 import {useCalendar} from "@/components/calendar/contexts/calendar-context";
-import { Event } from "@/utils/event";
+import { Event } from "@/utils/eventService";
 
 interface EventDropConfirmationDialogProps {
     open: boolean;

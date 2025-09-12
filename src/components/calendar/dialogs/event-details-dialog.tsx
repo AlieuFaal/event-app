@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
 import { User} from "better-auth";
 import { TEventFormData } from "../schemas";
-import { Event } from "@/utils/event";
+import { Event } from "@/utils/eventService";
 
 interface IProps {
 	event: Event;

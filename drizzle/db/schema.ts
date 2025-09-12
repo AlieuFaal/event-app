@@ -29,11 +29,12 @@ export type Event = z.infer<typeof eventSchema>;
 export type NewEvent = z.infer<typeof eventInsertSchema>;
 export type UpdateEvent = z.infer<typeof eventUpdateSchema>;
 export type CalendarEvent = z.infer<typeof calendarEventSchema>;
-export type EventWithComments = z.infer<typeof EventWithCommentsSchema>;
 export type EventColor = (typeof eventColors)[number];
+
 export type Comment = z.infer<typeof commentSchema>;
 export type NewComment = z.infer<typeof commentInsertSchema>;
 export type UpdateComment = z.infer<typeof commentUpdateSchema>;
+export type EventWithComments = z.infer<typeof EventWithCommentsSchema>;
 
 // Venue Types -----------------------------------------------------------------------------------------------------------------
 export type Venue = z.infer<typeof venueSchema>;

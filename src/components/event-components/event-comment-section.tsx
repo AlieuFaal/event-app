@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { FormField, FormItem, FormControl, Form } from "../shadcn/ui/form";
 import { toast } from "sonner";
-import { postCommentForEvent } from "@/utils/event";
+import { postCommentForEvent } from "@/utils/eventService";
 import { useForm } from "react-hook-form";
 import { EventWithComments} from "drizzle/db";
 
@@ -66,7 +66,6 @@ export default function CommentSection({ event, users }: { event: EventWithComme
                                         placeholder="Write a comment..." {...field}
                                     />
                                 </FormControl>
-                                {/* <FormMessage /> */}
                             </FormItem>
                         )}
                     />
@@ -77,7 +76,7 @@ export default function CommentSection({ event, users }: { event: EventWithComme
             </Form>
             {!event.comments || event.comments.length === 0 ? (<p className="text-center text-muted-foreground mt-5">No comments yet.</p>)
                 : (
-                    <div className="mt-5 space-y-5">
+                    <div className="mt-5 space-y-5 max-h-80 overflow-y-scroll pr-5 pl-5 mb-2 rounded-xl ">
                         {event.comments.map((comment) => (
                             <CommentCard
                                 key={comment.id}
