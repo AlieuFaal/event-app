@@ -1,6 +1,3 @@
-import { CalendarProvider } from '../components/calendar-components/contexts/calendar-context';
-import Calendar from '@/components/calendar-components/calendar';
-import { CalendarHeader } from '@/components/calendar-components/calendar-header';
 import { Calendar2 } from '@/components/calendar/calendar';
 import { Card } from '@/components/shadcn/ui/card';
 import { getEventData } from '@/utils/eventService';

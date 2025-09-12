@@ -51,7 +51,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Header />
         {children}
-        <Toaster position="top-center" richColors={true} />
+        <Toaster position="top-center" richColors={true} duration={1500}/>
         <TanstackDevtools
           config={{
             position: 'bottom-left',
