@@ -1,9 +1,5 @@
 import { DiscJockeyImage } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
-import { Event } from "../../types/event";
-import { User } from "../../types/user";
-import { Comment } from "../../types/comment";
-
 import {
     Dialog,
     DialogContent,
@@ -12,13 +8,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/shadcn/ui/dialog"
-import EventCards from "./event-cards";
 import { Label } from "../shadcn/ui/label";
-import { Button } from "../shadcn/ui/button";
-import { Textarea } from "../shadcn/ui/textarea";
+import CommentSection from "./event-comment-section";
+import { Event, EventWithComments, User } from "drizzle/db";
 
-export default function EventCard({ event, users }: { event: Event, users: User[] }) {
-
+export default function EventCard({ event, users }: { event: EventWithComments, users: User[] }) {
+    
     function getEventCreatorName(event: Event) {
 
         const creator = users.find((user) => user.id === event.userId);
@@ -54,7 +49,6 @@ export default function EventCard({ event, users }: { event: Event, users: User[
                     </div>
                 </Card>
             </DialogTrigger>
-            <form action="post">
                 <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card">
                     <DialogHeader className="items-center space-y-2 mb-5">
                         <DialogTitle className="text-6xl">{event.title}</DialogTitle>
@@ -73,22 +67,16 @@ export default function EventCard({ event, users }: { event: Event, users: User[
                             <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(event)}</Label>
                         </div>
                     </div>
-                    <div className="flex justify-center">
-                        <Label className="text-4xl">Comments</Label>
-                    </div>
-                    <Textarea id="commentTextArea" rows={4} className="w-full mt-5 bg-background text-card-foreground border border-input rounded-md px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 min-h-24 max-h-48"
-                        placeholder="Write a comment..."
-                    />
-                    <Button>Submit</Button>
-                    {/* {!event.comments || event.comments.length === 0 ? (
-                    <p className="text-center text-muted-foreground mt-5">No comments yet.</p>
-                    ) : (
-                        <div className="mt-5 space-y-5">
-                        <textarea comments={event.comments} users={users} />
-                        </div>
-                        )} */}
+                    <CommentSection users={users} event={event}/>
+                    {/* <CommentCard comment={comments ? comments[0] : {
+                        id: "1",
+                        eventId: event.id,
+                        userId: users[0].id,
+                        content: "This is a comment",
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    }} currentUser={users[0]} users={users} onChange={(change) => { console.log(change) }} onDelete={() => { console.log("delete") }} /> */}
                 </DialogContent>
-            </form>
         </Dialog>
     )
 }

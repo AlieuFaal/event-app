@@ -1,4 +1,3 @@
-import { User } from "@/lib/zodSchemas/zodUserSchema";
 
 // export const exportToCsv = (
 //   filename: string,

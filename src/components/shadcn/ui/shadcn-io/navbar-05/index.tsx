@@ -3,7 +3,7 @@
 import * as React from 'react';
 // import { Session } from '@/lib/auth-client';
 import { useEffect, useState, useRef } from 'react';
-import { BellIcon, HelpCircleIcon, UserIcon, ChevronDownIcon } from 'lucide-react';
+import { HelpCircleIcon, ChevronDownIcon } from 'lucide-react';
 import { Button } from "@/components/shadcn/ui/button"
 import {
   NavigationMenu,
@@ -25,14 +25,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/ui/avatar';
-import { Badge } from '@/components/shadcn/ui/badge';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
-import type { ComponentProps } from 'react';
-import { Link, Route, Router, RouterEvent } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
-import { s } from 'node_modules/better-auth/dist/shared/better-auth.DnUZno9_';
-import { check } from 'better-auth';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -228,8 +224,8 @@ const UserMenu = ({
       <DropdownMenuItem onClick={() => onClickHandler('/profile')}>
         Profile
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onClickHandler('/settings')}>
-        Settings
+      <DropdownMenuItem onClick={() => onClickHandler('/favorites')}>
+        Favorites
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={() => onLogout()}>

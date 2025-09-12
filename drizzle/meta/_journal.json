@@ -64,6 +64,13 @@
       "when": 1757583223722,
       "tag": "0008_tiny_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1757675775491,
+      "tag": "0009_loving_goblin_queen",
+      "breakpoints": true
     }
   ]
 }
