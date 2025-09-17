@@ -13,7 +13,7 @@ import { Input } from "../shadcn/ui/input"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postEventData } from "@/utils/eventService";
+import { postEventDataFn } from "@/utils/eventService";
 import { eventInsertSchema } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
@@ -58,7 +58,7 @@ export default function EventCard() {
                 id: crypto.randomUUID()
             };
 
-            await postEventData({
+            await postEventDataFn({
                 data: dataToSend
             });
 
@@ -66,6 +66,10 @@ export default function EventCard() {
             router.navigate({ to: "/events" });
         } catch (error) {
             console.error("Error submitting event:", error);
+            if (!session) {
+                toast.error("You must be logged in to create an event.");
+                return;
+            }
             toast.error("Failed to create event. Please try again.");
         }
     }

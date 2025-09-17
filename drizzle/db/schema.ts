@@ -1,5 +1,3 @@
-import { role } from "better-auth/plugins";
-import { ta } from "date-fns/locale";
 import { sql } from "drizzle-orm";
 import {
   pgTable,
@@ -8,6 +6,7 @@ import {
   boolean,
   check,
   uuid,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import {
   createSelectSchema,
@@ -22,6 +21,7 @@ export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
 export type Session = z.infer<typeof sessionSchema>;
+export type OnboardingUpdate = z.infer<typeof onbFormUpdateSchema>;
 export type Role = (typeof roles)[number];
 
 // Event and Comment Types -----------------------------------------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ export type EventColor = (typeof eventColors)[number];
 export type Comment = z.infer<typeof commentSchema>;
 export type NewComment = z.infer<typeof commentInsertSchema>;
 export type UpdateComment = z.infer<typeof commentUpdateSchema>;
-export type EventWithComments = z.infer<typeof EventWithCommentsSchema>;
+export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
 // Venue Types -----------------------------------------------------------------------------------------------------------------
 export type Venue = z.infer<typeof venueSchema>;
@@ -64,7 +64,7 @@ export const user = pgTable(
     updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-    role: text("role").$type<Role>().notNull().default("user"),
+    role: text("role").$type<Role>().notNull().default("New User"),
   },
   (table) => [
     check(
@@ -74,7 +74,7 @@ export const user = pgTable(
   ]
 );
 
-const roles = ["user", "artist", "admin"] as const;
+const roles = ["user", "artist", "admin", "New User"] as const;
 
 export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Name is required"),
@@ -105,6 +105,18 @@ export const userFormSchema = userUpdateSchema
   image: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const onbFormUpdateSchema = userFormSchema.omit({
+  id: true,
+  name: true,
+  bio: true,
+  role: true,
+});
+
+export const onboardingSchema = userFormSchema.pick({
+  id: true,
+  role: true,
 });
 
 export const session = pgTable("session", {
@@ -164,6 +176,7 @@ export const event = pgTable("event", {
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
+  
 });
 
 const eventColors = [
@@ -285,8 +298,9 @@ export const commentUpdateSchema = createUpdateSchema(comment, {
   updatedAt: z.date().optional(),
 });
 
-export const EventWithCommentsSchema = eventSchema.extend({
+export const eventWithCommentsSchema = eventSchema.extend({
   comments: z.array(commentSchema),
+  isStarred: z.boolean().optional(),
 });
 
 // Venue Table -------------------------------------------------------------------------------------------------------------
@@ -304,8 +318,22 @@ export const venue = pgTable("venue", {
 
 export const venueSchema = createSelectSchema(venue);
 
-// Additional Schemas without db tables -------------------------------------------------------------------------------------------------------------
+// Favorite events table -------------------------------------------------------------------------------------------------------------
+export const favoriteEvent = pgTable("favorite_event", {
+  userId: uuid("user_id")
+  .notNull()
+  .references(() => user.id, { onDelete: "cascade" }),
+  eventId: uuid("event_id")
+  .notNull()
+  .references(() => event.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at")
+  .$defaultFn(() => /* @__PURE__ */ new Date())
+  .notNull(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.userId, table.eventId] }),
+}));
 
+// Additional Schemas without db tables -------------------------------------------------------------------------------------------------------------
 export const passwordChangeSchema = z
 .object({
   currentPassword: z.string().min(1, "Current password is required"),
@@ -338,4 +366,5 @@ export const schema = {
   event,
   comment,
   venue,
+  favoriteEvent,
 };

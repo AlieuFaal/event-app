@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
-import { updateUserData } from "@/utils/user-service";
+import { updateUserDataFn } from "@/utils/user-service";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
 import React from "react";
@@ -49,7 +49,7 @@ export default function ProfileContent() {
   const onSubmit = async (data: UserForm) => {
     console.log("Submitting data:", data);
     try {
-      await updateUserData({ data });
+      await updateUserDataFn({ data });
       toast.success("User updated successfully!");
     } catch (error) {
       console.error("Failed to update user:", error);
@@ -101,7 +101,7 @@ export default function ProfileContent() {
         role: newRole
       };
 
-      await updateUserData({ data: updatedUserData });
+      await updateUserDataFn({ data: updatedUserData });
       toast.success(`User role updated to ${newRole}!`);
     } catch (error) {
       console.error(`Failed to update user role to ${newRole}:`, error);

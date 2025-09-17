@@ -71,6 +71,34 @@
       "when": 1757675775491,
       "tag": "0009_loving_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1757940540152,
+      "tag": "0010_groovy_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1758112599901,
+      "tag": "0011_amusing_electro",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1758113313558,
+      "tag": "0012_friendly_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1758113882777,
+      "tag": "0013_superb_wallow",
+      "breakpoints": true
     }
   ]
 }

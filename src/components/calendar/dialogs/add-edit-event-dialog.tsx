@@ -110,9 +110,17 @@ export function AddEditEventDialog({
 			};
 
 			if (isEditing) {
+				if (!session) {
+					toast.error("You must be logged in to edit an event.");
+					return;
+				}
 				await updateEvent(formattedEvent);
 				toast.success("Event updated successfully");
 			} else {
+				if (!session) {
+					toast.error("You must be logged in to create an event.");
+					return;
+				}
 				await addEvent(formattedEvent);
 				toast.success("Event created successfully");
 			}

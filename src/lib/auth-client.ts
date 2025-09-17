@@ -1,6 +1,8 @@
 import { createAuthClient } from "better-auth/react";
+import { customSessionClient } from "better-auth/client/plugins";
+import { auth } from "@/utils/auth";
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:3000",
-  // userFields: ["id", "name", "email", "image", "role", "bio", "location", "phone"],
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  plugins: [customSessionClient<typeof auth>()],
 });

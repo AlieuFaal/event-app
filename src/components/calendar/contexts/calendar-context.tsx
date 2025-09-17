@@ -3,7 +3,7 @@
 import type React from "react";
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
-import { CalendarEvent, deleteEventData, Event, postCalendarEventData, postEventData, putEventData } from "@/utils/eventService";
+import { CalendarEvent, deleteEventDataFn, Event, postCalendarEventDataFn, postEventDataFn, putEventDataFn } from "@/utils/eventService";
 import type {
 	TCalendarView,
 	TEventColor,
@@ -167,7 +167,7 @@ export function CalendarProvider2({
 		setFilteredEvents((prev) => [...prev, event]);
 		
 		try {
-			await postCalendarEventData({ data: event });
+			await postCalendarEventDataFn({ data: event });
 			console.log("Event saved to database successfully");
 		} catch (error) {
 			console.error("Failed to save event to database:", error);
@@ -188,7 +188,7 @@ export function CalendarProvider2({
 		console.log("Updating event:", updatedEvent);
 		
 		try {
-			await putEventData({ data: updatedEvent });
+			await putEventDataFn({ data: updatedEvent });
 			console.log("Event updated in database successfully");
 		} catch (error) {
 			console.error("Failed to update event in database:", error);
@@ -200,7 +200,7 @@ export function CalendarProvider2({
 		setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
 		
 		try {
-			await deleteEventData({ data: { id: eventId } });
+			await deleteEventDataFn({ data: { id: eventId } });
 			console.log("Event deleted from database successfully");
 		} catch (error) {
 			console.error("Failed to delete event from database:", error);

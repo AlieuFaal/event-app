@@ -1,16 +1,16 @@
 import { Calendar2 } from '@/components/calendar/calendar';
 import { Card } from '@/components/shadcn/ui/card';
-import { getEventData } from '@/utils/eventService';
-import { getUserData } from '@/utils/user-service';
+import { getEventDataFn } from '@/utils/eventService';
+import { getUserDataFn } from '@/utils/user-service';
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 
 export const Route = createFileRoute('/event-calendar')({
-  component: RouteComponent,
+  component: EventCalendarComponent,
   loader: async () => {
     // const eventsforcalendar1 = await getCalendarEventData();
-    const events = await getEventData();
-    const users = await getUserData();
+    const events = await getEventDataFn();
+    const users = await getUserDataFn();
     return {
       events,
       // eventsforcalendar1,
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/event-calendar')({
   }
 })
 
-function RouteComponent() {
+function EventCalendarComponent() {
   const { events, users } = Route.useLoaderData();
 
   return (

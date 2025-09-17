@@ -351,7 +351,7 @@ export const getEventsForWeek = (events: CalendarEvent[], date: Date): CalendarE
 	});
 };
 
-export const getEventsForMonth = (events: CalendarEvent[], date: Date): CalendarEvent[] => {
+export const getEventsForMonth = (events: Event[], date: Date): Event[] => {
 	const startOfMonthDate = startOfMonth(date);
 	const endOfMonthDate = endOfMonth(date);
 

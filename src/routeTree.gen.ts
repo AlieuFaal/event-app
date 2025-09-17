@@ -14,7 +14,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as EventCalendarRouteImport } from './routes/event-calendar'
 import { Route as CreateEventRouteImport } from './routes/create-event'
@@ -38,9 +40,19 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
   id: '/forgotpassword',
   path: '/forgotpassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -74,7 +86,9 @@ export interface FileRoutesByFullPath {
   '/create-event': typeof CreateEventRoute
   '/event-calendar': typeof EventCalendarRoute
   '/events': typeof EventsRoute
+  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -84,7 +98,9 @@ export interface FileRoutesByTo {
   '/create-event': typeof CreateEventRoute
   '/event-calendar': typeof EventCalendarRoute
   '/events': typeof EventsRoute
+  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -95,7 +111,9 @@ export interface FileRoutesById {
   '/create-event': typeof CreateEventRoute
   '/event-calendar': typeof EventCalendarRoute
   '/events': typeof EventsRoute
+  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -107,7 +125,9 @@ export interface FileRouteTypes {
     | '/create-event'
     | '/event-calendar'
     | '/events'
+    | '/favorites'
     | '/forgotpassword'
+    | '/onboarding'
     | '/profile'
     | '/signin'
     | '/signup'
@@ -117,7 +137,9 @@ export interface FileRouteTypes {
     | '/create-event'
     | '/event-calendar'
     | '/events'
+    | '/favorites'
     | '/forgotpassword'
+    | '/onboarding'
     | '/profile'
     | '/signin'
     | '/signup'
@@ -127,7 +149,9 @@ export interface FileRouteTypes {
     | '/create-event'
     | '/event-calendar'
     | '/events'
+    | '/favorites'
     | '/forgotpassword'
+    | '/onboarding'
     | '/profile'
     | '/signin'
     | '/signup'
@@ -138,7 +162,9 @@ export interface RootRouteChildren {
   CreateEventRoute: typeof CreateEventRoute
   EventCalendarRoute: typeof EventCalendarRoute
   EventsRoute: typeof EventsRoute
+  FavoritesRoute: typeof FavoritesRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
+  OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
@@ -188,11 +214,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgotpassword': {
       id: '/forgotpassword'
       path: '/forgotpassword'
       fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -242,7 +282,9 @@ const rootRouteChildren: RootRouteChildren = {
   CreateEventRoute: CreateEventRoute,
   EventCalendarRoute: EventCalendarRoute,
   EventsRoute: EventsRoute,
+  FavoritesRoute: FavoritesRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
+  OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,

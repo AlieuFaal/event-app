@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "drizzle";
-import { schema, userFormSchema } from "drizzle/db";
+import { schema, userFormSchema, onboardingSchema } from "drizzle/db";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { authClient } from "@/lib/auth-client";
 
-export const getUserData = createServerFn({
+export const getUserDataFn = createServerFn({
   method: "GET",
   response: "data",
 }).handler(async () => {
@@ -14,7 +14,7 @@ export const getUserData = createServerFn({
   return result;
 });
 
-export const getUserDataById = createServerFn({
+export const getUserDataByIdFn = createServerFn({
   method: "GET",
   response: "data",
 })
@@ -29,7 +29,7 @@ export const getUserDataById = createServerFn({
     return result[0];
   });
 
-export const updateUserData = createServerFn({
+export const updateUserDataFn = createServerFn({
   method: "POST",
   response: "data",
 })
@@ -43,6 +43,42 @@ export const updateUserData = createServerFn({
         location: data.location,
         bio: data.bio,
         role: data.role,
+      })
+      .where(eq(schema.user.id, data.id))
+      .returning();
+
+    return result[0];
+  });
+
+export const updateRoleFn = createServerFn({
+  method: "POST",
+  response: "data",
+})
+  .validator(onboardingSchema)
+  .handler(async ({ data }) => {
+    const result = await db
+      .update(schema.user)
+      .set({
+        role: data.role,
+      })
+      .where(eq(schema.user.id, data.id))
+      .returning();
+
+    return result[0];
+  });
+
+
+  export const onbUpdateUserDataFn = createServerFn({
+  method: "POST",
+  response: "data",
+})
+  .validator(userFormSchema)
+  .handler(async ({ data }) => {
+    const result = await db
+      .update(schema.user)
+      .set({
+        phone: data.phone,
+        location: data.location,
       })
       .where(eq(schema.user.id, data.id))
       .returning();

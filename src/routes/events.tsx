@@ -1,13 +1,13 @@
 import EventList from '@/components/event-components/event-list'
-import { getEventData, getEventsWithComments } from '@/utils/eventService';
-import { getUserData } from '@/utils/user-service';
+import { getEventDataFn, getEventsWithCommentsFn } from '@/utils/eventService';
+import { getUserDataFn } from '@/utils/user-service';
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/events')({
-    component: RouteComponent,
+    component: EventsComponent,
     loader: async () => {
-        const events = await getEventsWithComments();
-        const users = await getUserData();
+        const events = await getEventsWithCommentsFn();
+        const users = await getUserDataFn();
         return {
             events,
             users,
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/events')({
     }
 })
 
-function RouteComponent() {
+function EventsComponent() {
     const { events, users } = Route.useLoaderData();
     console.log("Events with comments:", events);
     return (

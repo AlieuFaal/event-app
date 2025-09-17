@@ -20,10 +20,21 @@ export const auth = betterAuth({
   user: {
     model: schema.user,
     sessionModel: schema.session,
+    changeEmail: {
+      enabled: false,
+      // async sendVerification(data, request) {
+      //   // Send an email to the user with a link to verify their new email address
+      //   await sendEmail({
+      //     to: data.newEmail,
+      //     subject: "Verify your new email address",
+      //     text: `Click the link to verify your new email address: ${data.url}`,
+      //     html: `<p>Click the link to verify your new email address: <a href="${data.url}">${data.url}</a></p>`,
+      //   });
+    },
     deleteUser: {
       enabled: true,
-      cascade: true, // when a user is deleted, delete their sessions and accounts too
-      callbackURL: "/", // redirect here after account deletion
+      cascade: true,
+      callbackURL: "/",
     },
     additionalFields: {
       bio: {
@@ -47,7 +58,7 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: true,
-        defaultValue: "user",
+        defaultValue: "New User",
         input: false,
       },
     },
@@ -104,23 +115,25 @@ export const auth = betterAuth({
   },
   plugins: [
     customSession(async ({ user, session }) => {
-      const roles = await findUserRoles(session.userId);
+      const userWithRole = await db
+        .select()
+        .from(schema.user)
+        .where(eq(schema.user.id, session.userId))
+        .limit(1);
+
+      if (!userWithRole || userWithRole.length === 0) {
+        return { user, session };
+      }
+
+      const userData = userWithRole[0];
+
       return {
         user: {
           ...user,
-          role: roles.includes("artist") ? "artist" : "user",
-        },
-        session,
-      };
-    }),
-    customSession(async ({ user, session }) => {
-      const props = await findUserProps(session.userId);
-      return {
-        user: {
-          ...user,
-          location: props.location,
-          bio: props.bio,
-          phone: props.phone,
+          role: userData.role,
+          location: userData.location || "",
+          bio: userData.bio || "",
+          phone: userData.phone || "",
         },
         session,
       };
@@ -128,55 +141,3 @@ export const auth = betterAuth({
     reactStartCookies(),
   ], // make sure this is the last plugin in the array
 });
-
-export async function findUserRoles(userId: string): Promise<string[]> {
-  try {
-    const user = await db
-      .select()
-      .from(schema.user)
-      .where(eq(schema.user.id, userId))
-      .limit(1);
-
-    if (!user || user.length === 0) {
-      return ["user"];
-    }
-
-    const userRole = user[0].role;
-
-    if (userRole === "artist") {
-      return ["artist", "user"];
-    } else if (userRole === "admin") {
-      return ["admin", "artist", "user"];
-    }
-
-    return ["user"];
-  } catch (error) {
-    console.error("Error finding user roles:", error);
-    return ["user"];
-  }
-}
-
-export async function findUserProps(
-  userId: string
-): Promise<{ location: string; bio: string; phone: string }> {
-  try {
-    const user = await db
-      .select()
-      .from(schema.user)
-      .where(eq(schema.user.id, userId))
-      .limit(1);
-
-    if (!user || user.length === 0) {
-      return { location: "", bio: "", phone: "" };
-    }
-
-    return {
-      location: user[0].location || "",
-      bio: user[0].bio || "",
-      phone: user[0].phone || "",
-    };
-  } catch (error) {
-    console.error("Error finding user properties:", error);
-    return { location: "", bio: "", phone: "" };
-  }
-}

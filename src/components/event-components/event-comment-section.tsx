@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { FormField, FormItem, FormControl, Form } from "../shadcn/ui/form";
 import { toast } from "sonner";
-import { postCommentForEvent } from "@/utils/eventService";
+import { postCommentForEventFn } from "@/utils/eventService";
 import { useForm } from "react-hook-form";
 import { EventWithComments} from "drizzle/db";
 
@@ -36,7 +36,7 @@ export default function CommentSection({ event, users }: { event: EventWithComme
             updatedAt: new Date(),
         };
         try {
-            const response = await postCommentForEvent({ data: newComment });
+            const response = await postCommentForEventFn({ data: newComment });
             if (response) {
                 toast.success("Comment posted successfully!");
                 form.reset();
