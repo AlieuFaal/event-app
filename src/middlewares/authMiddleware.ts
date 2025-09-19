@@ -1,5 +1,5 @@
 import { authClient } from "@/lib/auth-client";
-import { auth } from "@/utils/auth";
+import { auth } from "@/lib/auth";
 import { createMiddleware } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
 import { c } from "node_modules/framer-motion/dist/types.d-Cjd591yU";

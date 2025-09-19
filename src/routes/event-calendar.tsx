@@ -1,7 +1,7 @@
 import { Calendar2 } from '@/components/calendar/calendar';
 import { Card } from '@/components/shadcn/ui/card';
-import { getEventDataFn } from '@/utils/eventService';
-import { getUserDataFn } from '@/utils/user-service';
+import { getEventDataFn } from '@/services/eventService';
+import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 

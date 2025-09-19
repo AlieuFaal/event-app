@@ -12,7 +12,7 @@ import type { IEvent } from "@/components/calendar/interfaces";
 import { CalendarTimeline } from "@/components/calendar/views/week-and-day-view/calendar-time-line";
 import { DayViewMultiDayEventsRow } from "@/components/calendar/views/week-and-day-view/day-view-multi-day-events-row";
 import { RenderGroupedEvents } from "@/components/calendar/views/week-and-day-view/render-grouped-events";
-import { Event } from "@/utils/eventService";
+import { Event } from "@/services/eventService";
 
 interface IProps {
 	singleDayEvents: Event[];

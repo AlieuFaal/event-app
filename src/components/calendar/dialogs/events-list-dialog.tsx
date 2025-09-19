@@ -14,7 +14,7 @@ import type {IEvent} from "@/components/calendar/interfaces";
 import {dayCellVariants} from "@/components/calendar/views/month-view/day-cell";
 import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
 import {EventDetailsDialog} from "@/components/calendar/dialogs/event-details-dialog";
-import { Event } from "@/utils/eventService";
+import { Event } from "@/services/eventService";
 
 interface EventListDialogProps {
     date: Date;

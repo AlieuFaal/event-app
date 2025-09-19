@@ -29,12 +29,12 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import type {
 	ICalendarCell,
 } from "@/components/calendar/interfaces";
-import { CalendarEvent } from "@/utils/eventService";
+import { CalendarEvent } from "@/services/eventService";
 import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import { Event } from "@/utils/eventService";
+import { Event } from "@/services/eventService";
 
 const FORMAT_STRING = "MMM d, yyyy";
 

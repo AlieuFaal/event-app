@@ -1,7 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-background'
 import { Button } from '@/components/shadcn/ui/button'
 import Footer from '@/components/Footer'
+import { authClient } from '@/lib/auth-client'
+import { User } from 'drizzle/db'
+import { router } from '@/router'
 
 export const Route = createFileRoute('/')({
   component: App,

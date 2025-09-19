@@ -10,7 +10,7 @@ import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialo
 import { getCalendarCells } from "@/components/calendar/helpers";
 import type { IEvent } from "@/components/calendar/interfaces";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
-import { Event } from "@/utils/eventService";
+import { Event } from "@/services/eventService";
 
 interface IProps {
 	singleDayEvents: Event[];

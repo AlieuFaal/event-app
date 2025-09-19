@@ -14,7 +14,7 @@ import { Event, EventWithComments, User } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
 import { Star } from "lucide-react";
 import { useState } from "react";
-import { addFavoriteEventFn, removeFavoriteEventFn } from "@/utils/eventService";
+import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 

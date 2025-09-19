@@ -18,7 +18,7 @@ import {
 
 import type { IEvent } from "@/components/calendar/interfaces";
 import type { TCalendarView } from "@/components/calendar/types";
-import { Event } from "@/utils/eventService";
+import { Event } from "@/services/eventService";
 
 interface IProps {
 	view: TCalendarView;

@@ -1,6 +1,6 @@
 import FavoritesList from '@/components/favorites-components/favorites-list'
-import { getFavoriteEventsFn } from '@/utils/eventService';
-import { getUserDataFn } from '@/utils/user-service';
+import { getFavoriteEventsFn } from '@/services/eventService';
+import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/favorites')({

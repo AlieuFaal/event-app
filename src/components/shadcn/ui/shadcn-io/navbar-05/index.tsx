@@ -92,9 +92,8 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/create-event', label: 'Add Your Event' },
   { href: '/events', label: 'Events' },
   { href: '/event-calendar', label: 'Calendar' },
-  { href: '/map', label: 'Map' },
-  { href: '/about', label: 'About Us' },
-  { href: '/onboarding', label: 'Onboarding' },
+  // { href: '/map', label: 'Map' },
+  // { href: '/about', label: 'About Us' },
 ];
 
 function onClickHandler(route: string) {

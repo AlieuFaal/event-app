@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { FormField, FormItem, FormControl, Form } from "../shadcn/ui/form";
 import { toast } from "sonner";
-import { postCommentForEventFn } from "@/utils/eventService";
+import { postCommentForEventFn } from "@/services/eventService";
 import { useForm } from "react-hook-form";
 import { EventWithComments} from "drizzle/db";
 

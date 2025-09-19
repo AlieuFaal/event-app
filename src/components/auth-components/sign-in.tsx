@@ -1,28 +1,51 @@
 "use client"
 
 import { Button } from "@/components/shadcn/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/shadcn/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shadcn/ui/card";
 import { Input } from "@/components/shadcn/ui/input";
 import { Label } from "@/components/shadcn/ui/label";
 import { Checkbox } from "src/components/shadcn/ui/checkbox.tsx";
 import { useState } from "react";
-import { Loader2, Key } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Link } from '@tanstack/react-router'
 import { cn } from "@/lib/utils";
 import { router } from "@/router";
-import { createAuthClient } from "better-auth/react";
-import { customSessionClient } from "better-auth/client/plugins";
-import { auth } from "@/utils/auth";
 import { authClient } from "@/lib/auth-client";
-
-
+import { User } from "drizzle/db";
+import { useServerFn } from "@tanstack/react-start";
+import { onUserLoginFn } from "@/services/user-service";
 
 export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const onNewUserLogin = useServerFn(onUserLoginFn)
 
+    const handleSignIn = async () => {
+
+        await authClient.signIn.email(
+            {
+                email,
+                password,
+                rememberMe,
+            },
+            {
+                onRequest: (ctx) => {
+                    setLoading(true);
+                },
+                onResponse: (ctx) => {
+                    setLoading(false);
+                },
+                onSuccess: async (ctx) => {
+                    const loginResult = await onNewUserLogin();
+
+                    if (loginResult?.redirectTo) {
+                        router.navigate({ to: loginResult.redirectTo });
+                    }
+                }
+            });
+    }
 
     return (
         <Card className="max-w-3xl w-full h-auto">
@@ -97,29 +120,7 @@ export default function SignIn() {
                         className="w-full"
                         disabled={loading}
                         onClick={async () => {
-                            await authClient.signIn.email(
-                                {
-                                    email,
-                                    password,
-                                },
-                                {
-                                    onRequest: (ctx) => {
-                                        setLoading(true);
-                                    },
-                                    onResponse: (ctx) => {
-                                        setLoading(false);
-                                    },
-                                    onSuccess: async (ctx) => {
-                                        const session = await authClient.getSession();
-                                        console.log(session);
-                                        if (session.data?.user.role === "New User") {
-                                            router.navigate({ to: '/onboarding' });
-                                        } else {
-                                            router.navigate({ to: '/' });
-                                        }
-                                    }
-                                },
-                            );
+                            await handleSignIn();
                         }}
                     >
                         {loading ? (

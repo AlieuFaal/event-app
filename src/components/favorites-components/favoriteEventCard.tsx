@@ -15,7 +15,7 @@ import { Star } from "lucide-react";
 import { useState } from "react";
 import CommentSection from "../event-components/event-comment-section";
 import { toast } from "sonner";
-import { addFavoriteEventFn, removeFavoriteEventFn } from "@/utils/eventService";
+import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { useRouter } from "@tanstack/react-router";
 
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {

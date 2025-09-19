@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
 import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
-import { updateUserDataFn } from "@/utils/user-service";
+import { updateUserDataFn } from "@/services/user-service";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
 import React from "react";
@@ -31,7 +31,7 @@ export default function ProfileContent() {
   const { data: session } = authClient.useSession();
   const currentUser = session?.user as User;
   const navigate = useNavigate();
-  
+
   const [switchState, setSwitchState] = React.useState(currentUser?.role === "artist");
 
   const form = useForm<UserForm>({
@@ -90,7 +90,7 @@ export default function ProfileContent() {
     setSwitchState(checked);
 
     const newRole: "artist" | "user" = checked ? "artist" : "user";
-    
+
     try {
       const updatedUserData: UserForm = {
         id: currentUser?.id ?? "",
