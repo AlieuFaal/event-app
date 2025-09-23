@@ -69,6 +69,44 @@ export const getEventsWithCommentsFn = createServerFn({
   });
 });
 
+export const getUserEventsWithCommentsFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+  .validator(z.object({ userId: z.uuid() }))
+  .handler(async (data) => {
+    const events = await db
+      .select({
+        id: schema.event.id,
+        title: schema.event.title,
+        description: schema.event.description,
+        location: schema.event.location,
+        color: schema.event.color,
+        startDate: schema.event.startDate,
+        endDate: schema.event.endDate,
+        userId: schema.event.userId,
+        createdAt: schema.event.createdAt,
+      })
+      .from(schema.event)
+      .where(eq(schema.event.userId, data.data.userId))
+      .orderBy(schema.event.startDate);
+
+    const comments = await db
+      .select()
+      .from(schema.comment)
+      .orderBy(schema.comment.createdAt);
+
+    return events.map((events) => {
+      const commentsForEvent = comments.filter(
+        (comment) => comment.eventId === events.id
+      );
+      return {
+        ...events,
+        comments: commentsForEvent,
+      };
+    });
+  });
+
 export const postEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(eventInsertSchema)
@@ -210,9 +248,6 @@ export const postCommentForEventFn = createServerFn({ method: "POST" })
           userId: userId,
           eventId: data.eventId,
           content: data.content,
-          // actions: data.actions,
-          // selectedActions: data.selectedActions || [],
-          // allowUpvote: data.allowUpvote || true,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
@@ -300,6 +335,57 @@ export const getFavoriteEventsFn = createServerFn({
         eq(schema.event.id, schema.favoriteEvent.eventId)
       )
       .where(and(eq(schema.favoriteEvent.userId, userId)))
+      .orderBy(schema.event.startDate); // sorterar på startDatum
+
+    const comments = await db // hämtar alla kommentarer
+      .select()
+      .from(schema.comment)
+      .orderBy(schema.comment.createdAt);
+
+    return events.map((events) => {
+      // mappar över events och lägger till kommentarer för varje event
+      const commentsForEvent = comments.filter(
+        (comment) => comment.eventId === events.id
+      );
+      return {
+        // returnar eventet med dess kommentarer
+        ...events,
+        isStarred: true,
+        comments: commentsForEvent,
+      };
+    });
+  });
+
+export const getUserFavoriteEventsFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+  .middleware([authMiddleware])
+  .validator(z.object({ userId: z.string().uuid() }))
+  .handler(async ({ context, data }) => {
+    const userId = context.session?.user.id; // aktiv användar ID
+    if (!userId) {
+      throw new Error("User not authenticated"); // hantera icke-autentiserad användare
+    }
+    const events = await db // hämtar alla fält från event tabellen
+      .select({
+        id: schema.event.id,
+        title: schema.event.title,
+        description: schema.event.description,
+        location: schema.event.location,
+        color: schema.event.color,
+        startDate: schema.event.startDate,
+        endDate: schema.event.endDate,
+        userId: schema.event.userId,
+        createdAt: schema.event.createdAt,
+      })
+      .from(schema.event)
+      .innerJoin(
+        // gör en inner join med favoriteEvent tabellen för att bara få de events som är favoriter för den aktuella användaren
+        schema.favoriteEvent,
+        eq(schema.event.id, schema.favoriteEvent.eventId)
+      )
+      .where(and(eq(schema.favoriteEvent.userId, data.userId)))
       .orderBy(schema.event.startDate); // sorterar på startDatum
 
     const comments = await db // hämtar alla kommentarer

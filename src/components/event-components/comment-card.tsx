@@ -2,18 +2,18 @@ import { DiscJockeyImage } from "@/assets";
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { Card } from "../shadcn/ui/card";
 import { parseISO } from "date-fns";
-import { Comment, CurrentUser, User } from "drizzle/db";
+import { Comment, CurrentUser, EventWithComments, User } from "drizzle/db";
+import { toast } from "sonner";
+import { router } from "@/router";
+import { Button } from "../shadcn/ui/button";
 
 interface CommentCardProps {
+    users: User[];
     comment: Comment;
     currentUser: CurrentUser;
-    users: User[];
-    allowUpvote?: boolean;
-    onChange: (change: any) => void;
-    onDelete: () => void;
 }
 
-export default function CommentCard({ comment, users, onChange, onDelete }: CommentCardProps) {
+export default function CommentCard({ comment, users, currentUser }: CommentCardProps) {
 
     function getCommentCreatorName(comment: Comment) {
 
@@ -28,6 +28,18 @@ export default function CommentCard({ comment, users, onChange, onDelete }: Comm
         return creator ? creator.image! : DiscJockeyImage;
     }
 
+    function visitUserProfile(comment: Comment) {
+        const user = users.find((user) => user.id === comment.userId);
+
+        console.log("Visiting profile of user:", user?.name);
+
+        if (!user) {
+            return toast.error("User not found. Please try again.");
+        }
+
+        return router.navigate({ to: `/user/${user.id}` })
+    }
+
     return (
         <div className="mt-3">
             <Card className="bg-card text-card-foreground flex flex-col transition-all border-1 hover:shadow-lg hover:scale-105 hover:border-purple-600 mb-3">
@@ -36,10 +48,10 @@ export default function CommentCard({ comment, users, onChange, onDelete }: Comm
                 </div>
                 <div className="flex flex-row items-center space-x-2 px-3 -mt-10">
                     <Avatar className="h-12 w-12">
-                        <AvatarImage src={getCommentCreatorImage(comment)} alt="Profile" />
+                        <AvatarImage src={getCommentCreatorImage(comment)} alt="Profile"/>
                         <AvatarFallback className="text-2xl">{"user?.name?.split(' ').map((n: string) => n[0]).join('')"}</AvatarFallback>
                     </Avatar>
-                    <p className="font-light text-md">{getCommentCreatorName(comment)}</p>
+                    <Button className="font-light text-md -mx-4" variant={"link"} onClick={() => visitUserProfile(comment)}>{getCommentCreatorName(comment)}</Button>
                 </div>
                 <div className="px-17 font-normal text-md -my-8 mb-1 flex flex-row justify-between">
                     <p>{comment.content}</p>
@@ -47,4 +59,4 @@ export default function CommentCard({ comment, users, onChange, onDelete }: Comm
             </Card>
         </div>
     )
-}       
+}

@@ -4,16 +4,10 @@ import {
   schema,
   userFormSchema,
   onboardingSchema,
-  User,
-  userInsertSchema,
   userSchema,
 } from "drizzle/db";
-import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { authClient } from "@/lib/auth-client";
+import { count, eq, and } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
-import { Navigate, redirect } from "@tanstack/react-router";
-import { router } from "@/router";
 
 export const getUserDataFn = createServerFn({
   method: "GET",
@@ -128,4 +122,144 @@ export const onUserLoginFn = createServerFn()
       console.log(`Navigating to home for ${dbUser.role} ${dbUser.name}.`);
       return { redirectTo: "/" };
     }
+  });
+
+export const followUserFn = createServerFn({
+  method: "POST",
+  response: "data",
+})
+  .middleware([authMiddleware])
+  .validator(userSchema.pick({ id: true }))
+  .handler(async ({ data, context }) => {
+    const userId = context.session?.user.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+    try {
+      // Insert into followers table (user being followed gets a follower)
+      const followersResult = await db
+        .insert(schema.followersTable)
+        .values({
+          userId: data.id, // User being followed
+          followerId: userId, // Current user doing the following
+        })
+        .returning();
+
+      // Insert into following table (current user is now following someone)
+      const followingResult = await db
+        .insert(schema.followingTable)
+        .values({
+          userId: userId, // Current user doing the following
+          followingId: data.id, // User being followed
+        })
+        .returning();
+
+      console.log("Followed user:", followersResult, followingResult);
+      return { followers: followersResult, following: followingResult };
+    } catch (error) {
+      console.error("Error following user:", error);
+      throw new Error("Failed to follow user");
+    }
+  });
+
+export const unfollowUserFn = createServerFn({
+  method: "POST",
+  response: "data",
+})
+  .middleware([authMiddleware])
+  .validator(userSchema.pick({ id: true }))
+  .handler(async ({ data, context }) => {
+    const userId = context.session?.user.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+    try {
+      // Remove from followers table
+      const followersResult = await db
+        .delete(schema.followersTable)
+        .where(
+          and(
+            eq(schema.followersTable.userId, data.id),
+            eq(schema.followersTable.followerId, userId)
+          )
+        )
+        .returning();
+
+      // Remove from following table
+      const followingResult = await db
+        .delete(schema.followingTable)
+        .where(
+          and(
+            eq(schema.followingTable.userId, userId),
+            eq(schema.followingTable.followingId, data.id)
+          )
+        )
+        .returning();
+
+      console.log("Unfollowed user:", followersResult, followingResult);
+      return { followers: followersResult, following: followingResult };
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw new Error("Failed to unfollow user");
+    }
+  });
+
+export const getFollowersFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+  .validator(userSchema.pick({ id: true }))
+  .handler(async ({ data }) => {
+    const result = await db
+      .select({count: count()})
+      .from(schema.followersTable)
+      .where(eq(schema.followersTable.userId, data.id));
+      
+    console.log("Followers count for user", data.id, ":", result[0]?.count || 0);
+    return result[0]?.count || 0;
+  });
+
+export const getFollowingFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+  .validator(userSchema.pick({ id: true }))
+  .handler(async ({ data }) => {
+    const result = await db
+      .select({count: count()})
+      .from(schema.followingTable)
+      .where(eq(schema.followingTable.userId, data.id));
+
+    console.log("Following count for user", data.id, ":", result[0]?.count || 0);
+    return result[0]?.count || 0;
+  });
+
+
+  export const getContextFollowersFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+.middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const result = await db
+      .select({count: count()})
+      .from(schema.followersTable)
+      .where(eq(schema.followersTable.userId, context.session.user.id));
+      
+    console.log("Followers count for user", context.session.user.id, ":", result[0]?.count || 0);
+    return result[0]?.count || 0;
+  });
+
+export const getContextFollowingFn = createServerFn({
+  method: "GET",
+  response: "data",
+}).middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const result = await db
+      .select({count: count()})
+      .from(schema.followingTable)
+      .where(eq(schema.followingTable.userId, context.session.user.id));
+
+    console.log("Following count for user", context.session.user.id, ":", result[0]?.count || 0);
+    return result[0]?.count || 0;
   });

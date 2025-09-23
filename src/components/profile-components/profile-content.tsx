@@ -223,6 +223,7 @@ export default function ProfileContent() {
                             rows={4}
                             {...field}
                             value={field.value ?? ""}
+                            className="max-h-40"
                           />
                         </FormControl>
                         <FormMessage />

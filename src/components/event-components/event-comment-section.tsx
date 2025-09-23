@@ -6,11 +6,12 @@ import { authClient } from "@/lib/auth-client";
 import { Comment, commentInsertSchema, User } from "drizzle/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { FormField, FormItem, FormControl, Form } from "../shadcn/ui/form";
+import { FormField, FormItem, Form } from "../shadcn/ui/form";
 import { toast } from "sonner";
 import { postCommentForEventFn } from "@/services/eventService";
 import { useForm } from "react-hook-form";
-import { EventWithComments} from "drizzle/db";
+import { EventWithComments } from "drizzle/db";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
 
 export default function CommentSection({ event, users }: { event: EventWithComments, users: User[] }) {
 
@@ -18,7 +19,6 @@ export default function CommentSection({ event, users }: { event: EventWithComme
         mode: "onBlur",
         resolver: zodResolver(commentInsertSchema),
     })
-
 
     const currentUser = authClient.useSession();
 
@@ -54,18 +54,15 @@ export default function CommentSection({ event, users }: { event: EventWithComme
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField
-                        control={form.control}
                         name="content"
                         render={({ field }) => (
                             <FormItem>
                                 <div className="flex justify-center">
                                     <Label className="text-4xl">Comments</Label>
                                 </div>
-                                <FormControl>
-                                    <Textarea id="commentTextArea" rows={4} className="w-full mt-5 bg-background text-card-foreground border border-input rounded-md px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 min-h-24 max-h-48"
-                                        placeholder="Write a comment..." {...field}
-                                    />
-                                </FormControl>
+                                <Textarea id="commentTextArea" rows={4} className="w-full mt-5 bg-background text-card-foreground border border-input rounded-md px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 min-h-24 max-h-48"
+                                    placeholder="Write a comment..." {...field}
+                                />
                             </FormItem>
                         )}
                     />
@@ -82,13 +79,11 @@ export default function CommentSection({ event, users }: { event: EventWithComme
                                 key={comment.id}
                                 comment={comment}
                                 users={users}
-                                currentUser={currentUser.data!.user}
-                                onChange={(change) => { console.log(change) }}
-                                onDelete={() => { console.log("delete") }} />
+                                currentUser={currentUser.data!.user} />
                         )
                         )}
                     </div>
                 )}
-        </div>
+        </div >
     );
 }

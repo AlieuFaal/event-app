@@ -1,31 +1,109 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Card, CardContent } from "../shadcn/ui/card";
-import { authClient } from "@/lib/auth-client";
-import { Calendar, Mail, MapPin } from "lucide-react";
+import { Calendar, Mail, MapPin, Users, UserPlus } from "lucide-react";
 import { Badge } from "../shadcn/ui/badge";
+import { followersTable, User } from "drizzle/db";
+import { Button } from "../shadcn/ui/button";
+import React from "react";
+import { followUserFn, getFollowersFn, getFollowingFn, unfollowUserFn } from "@/services/user-service";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
+interface AccountHeaderProps {
+    user: User;
+    isOwnProfile?: boolean;
+    followersCount: number;
+    followingCount: number;
+}
 
-export default function AccountsHeader() {
-    const { data: session } = authClient.useSession();
+export default function AccountHeader({ user, isOwnProfile, followersCount, followingCount }: AccountHeaderProps) {
+    const [isFollowing, setIsFollowing] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [isOwnProfileState, setIsOwnProfileState] = React.useState(false);
 
-    const user = session?.user as any;
+    const currentUser = authClient.useSession()
+
+    if (currentUser?.data?.user?.id === user.id && !isOwnProfileState){
+        setIsOwnProfileState(true)
+        console.log("isOwnProfileState set to true")
+    }
+    else if (currentUser?.data?.user?.id !== user.id && isOwnProfileState){
+        setIsOwnProfileState(false)
+        console.log("isOwnProfileState set to false")
+    }
+
+    const handleToggleFollow = async () => {
+        setIsLoading(true);
+
+        try {
+            if (isFollowing) {
+                unfollowUserFn({ data: { id: user.id } });
+                setIsFollowing(false);
+                console.log('Unfollowed user:', user.name);
+            } else if (user.id !== currentUser?.data?.user?.id) {
+                followUserFn({ data: { id: user.id } });
+                setIsFollowing(true);
+                console.log('Followed user:', user.name);
+            } else {
+                toast.error('You cannot follow yourself.');
+            }
+        } catch (error) {
+            toast.error('An error occurred while trying to follow/unfollow the user.');
+            console.error('Error toggling follow:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const formatJoinDate = (date: Date) => {
+        try {
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long'
+            }).format(new Date(date));
+        } catch {
+            return "Unknown";
+        }
+    };
 
     return (
         <Card>
             <CardContent className="p-6">
                 <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                    <div className="relative">
-                        <Avatar className="relative h-34 w-48">
-                            <AvatarImage src={user?.image} alt="Profile" />
-                            <AvatarFallback className="text-2xl">{user?.name?.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                    </div>
-                    <div className="flex-1 space-y-2">
-                        <div className="flex flex-col gap-2 md:flex-row md:items-center">
-                            <h1 className="text-2xl font-bold">{user?.name}</h1>
-                            <Badge variant="secondary">{user?.role || "user"}</Badge>
+                    <Avatar className="relative h-34 w-48 rounded-full">
+                        <AvatarImage src={user.image!} alt="Profile" className="border rounded-full" />
+                        <AvatarFallback className="text-2xl">{user?.name?.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-4">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                                <h1 className="text-2xl font-bold">{user?.name}</h1>
+                                <Badge variant="secondary">{user?.role || "user"}</Badge>
+                            </div>
+                            {!isOwnProfile && (
+                                <Button
+                                    variant={isFollowing ? "secondary" : "default"}
+                                    onClick={handleToggleFollow}
+                                    disabled={isLoading}
+                                    className="flex items-center gap-2 min-w-[100px]"
+                                >
+                                    <UserPlus className="size-4" />
+                                    {isLoading ? "..." : (isFollowing ? "Following"  : "Follow")}
+                                </Button>
+                            )}
                         </div>
-                        {/* <p className="text-muted-foreground">Senior Product Designer</p> */}
+                        <div className="flex items-center gap-6 text-sm">
+                            <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                                <Users className="size-4" />
+                                <span className="font-semibold text-foreground">{followersCount}</span>
+                                <span>Followers</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                                <Users className="size-4" />
+                                <span className="font-semibold text-foreground">{followingCount}</span>
+                                <span>Following</span>
+                            </div>
+                        </div>
                         <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
                             <div className="flex items-center gap-1">
                                 <Mail className="size-4" />
@@ -37,13 +115,12 @@ export default function AccountsHeader() {
                             </div>
                             <div className="flex items-center gap-1">
                                 <Calendar className="size-4" />
-                                Joined {user?.createdAt.toUTCString().split(' ').slice(1, 4).join(' ')} {/* error i browsern klagar på detta  */}
+                                Joined {formatJoinDate(user?.createdAt)}
                             </div>
                         </div>
                     </div>
-                    {/* <Button variant="default">Edit Profile</Button> */}
                 </div>
             </CardContent>
         </Card>
     )
-}   
+}

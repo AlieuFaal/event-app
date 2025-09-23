@@ -9,7 +9,7 @@ import {
     CardTitle,
 } from "@/components/shadcn/ui/card";
 import { useState } from "react";
-import { Link, Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from '@tanstack/react-router';
 import { Label } from "../shadcn/ui/label";

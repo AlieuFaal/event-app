@@ -2,15 +2,22 @@ import { Button } from "@/components/shadcn/ui/button";
 import { Card, CardContent } from "@/components/shadcn/ui/card";
 import { Badge } from "@/components/shadcn/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/ui/avatar";
-import { Camera, Calendar, Mail, MapPin } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
 
+interface ProfileHeaderProps {
+  followersCount: number;
+  followingCount: number;
+}
 
-export default function ProfileHeader() {
+export default function ProfileHeader({ followersCount, followingCount }: ProfileHeaderProps) {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const { data: session } = authClient.useSession();
+  const currentUser = session?.user as any;
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,14 +50,16 @@ export default function ProfileHeader() {
     });
   }
 
-  function formattedDate(dateString: string) {
-    const date = new Date(dateString);
-    return date.toUTCString().split(' ').slice(1, 4).join(' ');
-  }
-
-  const { data: session } = authClient.useSession();
-
-  const currentUser = session?.user as any; 
+  const formatJoinDate = (date: Date) => {
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long'
+      }).format(new Date(date));
+    } catch {
+      return "Unknown";
+    }
+  };
 
   return (
     <Card>
@@ -58,7 +67,7 @@ export default function ProfileHeader() {
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           <div className="relative">
             <Avatar className="relative h-34 w-48">
-              <AvatarImage src={currentUser?.image} alt="Profile" />
+              <AvatarImage src={currentUser?.image!} alt="Profile" />
               <AvatarFallback className="text-2xl">{currentUser?.name?.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
             </Avatar>
             <Button
@@ -74,12 +83,25 @@ export default function ProfileHeader() {
               onChange={handleImageChange}
             />
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="flex flex-col gap-2 md:flex-row md:items-center">
-              <h1 className="text-2xl font-bold">{currentUser?.name}</h1>
-              <Badge variant="secondary">{currentUser?.role || "user"}</Badge>
+          <div className="flex-1 space-y-4">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                <h1 className="text-2xl font-bold">{currentUser?.name}</h1>
+                <Badge variant="secondary">{currentUser?.role || "user"}</Badge>
+              </div>
             </div>
-            {/* <p className="text-muted-foreground">Senior Product Designer</p> */}
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                <Users className="size-4" />
+                <span className="font-semibold text-foreground">{followersCount}</span>
+                <span>Followers</span>
+              </div>
+              <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                <Users className="size-4" />
+                <span className="font-semibold text-foreground">{followingCount}</span>
+                <span>Following</span>
+              </div>
+            </div>
             <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
               <div className="flex items-center gap-1">
                 <Mail className="size-4" />
@@ -91,8 +113,8 @@ export default function ProfileHeader() {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="size-4" />
-                Joined {currentUser?.createdAt.toUTCString().split(' ').slice(1, 4).join(' ')} {/* error i browsern klagar på detta  */}
-              </div> 
+                Joined {formatJoinDate(currentUser?.createdAt)}
+              </div>
             </div>
           </div>
           {/* <Button variant="default">Edit Profile</Button> */}

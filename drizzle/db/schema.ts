@@ -17,6 +17,7 @@ import z from "zod";
 
 // User Types -----------------------------------------------------------------------------------------------------------------
 export type User = z.infer<typeof userSchema>;
+export type UserSession = z.infer<typeof userSessionSchema>;
 export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
@@ -80,7 +81,7 @@ export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Name is required"),
   email: z.email("Invalid email format"),
   image: z.url("Invalid image URL").optional().nullable(),
-});
+})  ;
 
 export const userInsertSchema = createInsertSchema(user, {
   name: z.string().min(1, "Name is required"),
@@ -102,7 +103,6 @@ export const userFormSchema = userUpdateSchema
 .omit({
   email: true,
   emailVerified: true,
-  image: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -117,6 +117,16 @@ export const onbFormUpdateSchema = userFormSchema.omit({
 export const onboardingSchema = userFormSchema.pick({
   id: true,
   role: true,
+});
+
+export const userSessionSchema = userSchema.pick({
+  id: true,
+  name: true,
+  email: true,
+  emailVerified: true,
+  image: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const session = pgTable("session", {
@@ -265,9 +275,6 @@ export const comment = pgTable("comment", {
   .notNull()
   .references(() => event.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  // actions: text("actions").$type<{ [key in ACTIONS_TYPE]: number }>(),
-  //  selectedActions: text("selected_actions").$type<ACTIONS_TYPE[]>(),
-  //   allowUpvote: boolean("allow_upvote").notNull(), 
   createdAt: timestamp("created_at")
   .$defaultFn(() => /* @__PURE__ */ new Date())
   .notNull(),
@@ -333,6 +340,27 @@ export const favoriteEvent = pgTable("favorite_event", {
   pk: primaryKey({ columns: [table.userId, table.eventId] }),
 }));
 
+// Followers and Following Tables -------------------------------------------------------------------------------------------------------------
+export const followersTable = pgTable("followers",
+  {
+    userId: uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
+    followerId: uuid("follower_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.followerId] }),
+  })
+);
+
+export const followingTable = pgTable("following",
+  {
+    userId: uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    followingId: uuid("following_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.followingId] }),
+  })
+);
+
 // Additional Schemas without db tables -------------------------------------------------------------------------------------------------------------
 export const passwordChangeSchema = z
 .object({
@@ -356,6 +384,8 @@ export const CurrentUserSchema = userSchema
   bio: true,
   location: true,
   phone: true,
+  followers: true,
+  following: true,
 });
 
 export const schema = {
@@ -367,4 +397,6 @@ export const schema = {
   comment,
   venue,
   favoriteEvent,
+  followersTable,
+  followingTable,
 };
