@@ -1,16 +1,19 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-background'
 import { Button } from '@/components/shadcn/ui/button'
-import Footer from '@/components/Footer'
-import { authClient } from '@/lib/auth-client'
-import { User } from 'drizzle/db'
-import { router } from '@/router'
+import { router } from '@/router';
 
 export const Route = createFileRoute('/')({
+  loader: async ({ context }) => {
+    const ctx = context
+
+    return { ctx }
+  },
   component: App,
 })
 
 function App() {
+  const { ctx } = Route.useLoaderData()
   return (
     <div className="relative h-screen w-full overflow">
       <WavyBackground
@@ -31,11 +34,17 @@ function App() {
             Where music meets the moment
           </p>
           <div className='mt-12 flex justify-center'>
-            <Button className="text-xl px-14 py-6 rounded-full font-extrabold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
-              <a href="/map">
-                Find Your Vibe!
+            {ctx.IsAuthenticated ? (
+              <Button className="text-xl px-14 py-6 rounded-full font-extrabold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+                <a href="/events">
+                  Explore Events
+                </a>
+              </Button>
+            ) : <Button className="text-xl px-14 py-6 rounded-full font-extrabold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+              <a href="/signin">
+                Sign In & Find Your Vibe!
               </a>
-            </Button>
+            </Button>}
           </div>
         </div>
       </WavyBackground>

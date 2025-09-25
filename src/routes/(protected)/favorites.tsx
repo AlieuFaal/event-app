@@ -3,7 +3,7 @@ import { getFavoriteEventsFn } from '@/services/eventService';
 import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/favorites')({
+export const Route = createFileRoute('/(protected)/favorites')({
     component: FavoritesComponent,
     loader: async () => {
         const favoriteEvents = await getFavoriteEventsFn();

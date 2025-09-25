@@ -2,32 +2,33 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Card, CardContent } from "../shadcn/ui/card";
 import { Calendar, Mail, MapPin, Users, UserPlus } from "lucide-react";
 import { Badge } from "../shadcn/ui/badge";
-import { followersTable, User } from "drizzle/db";
+import { UserSocial } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
 import React from "react";
-import { followUserFn, getFollowersFn, getFollowingFn, unfollowUserFn } from "@/services/user-service";
+import { followUserFn, unfollowUserFn } from "@/services/user-service";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
 
 interface AccountHeaderProps {
-    user: User;
-    isOwnProfile?: boolean;
+    user: UserSocial;
     followersCount: number;
     followingCount: number;
+    isFollowing?: boolean;
 }
 
-export default function AccountHeader({ user, isOwnProfile, followersCount, followingCount }: AccountHeaderProps) {
-    const [isFollowing, setIsFollowing] = React.useState(false);
+export default function AccountHeader({ user, followersCount, followingCount, isFollowing }: AccountHeaderProps) {
+    const router = useRouter()
     const [isLoading, setIsLoading] = React.useState(false);
     const [isOwnProfileState, setIsOwnProfileState] = React.useState(false);
 
     const currentUser = authClient.useSession()
 
-    if (currentUser?.data?.user?.id === user.id && !isOwnProfileState){
+    if (currentUser?.data?.user?.id === user.id && !isOwnProfileState) {
         setIsOwnProfileState(true)
         console.log("isOwnProfileState set to true")
     }
-    else if (currentUser?.data?.user?.id !== user.id && isOwnProfileState){
+    else if (currentUser?.data?.user?.id !== user.id && isOwnProfileState) {
         setIsOwnProfileState(false)
         console.log("isOwnProfileState set to false")
     }
@@ -36,14 +37,12 @@ export default function AccountHeader({ user, isOwnProfile, followersCount, foll
         setIsLoading(true);
 
         try {
-            if (isFollowing) {
+            if (!isOwnProfileState && isFollowing) {
                 unfollowUserFn({ data: { id: user.id } });
-                setIsFollowing(false);
-                console.log('Unfollowed user:', user.name);
-            } else if (user.id !== currentUser?.data?.user?.id) {
+                router.invalidate()
+            } else if (!isOwnProfileState && !isFollowing) {
                 followUserFn({ data: { id: user.id } });
-                setIsFollowing(true);
-                console.log('Followed user:', user.name);
+                router.invalidate()
             } else {
                 toast.error('You cannot follow yourself.');
             }
@@ -53,6 +52,7 @@ export default function AccountHeader({ user, isOwnProfile, followersCount, foll
         } finally {
             setIsLoading(false);
         }
+        await router.invalidate();
     };
 
     const formatJoinDate = (date: Date) => {
@@ -80,7 +80,7 @@ export default function AccountHeader({ user, isOwnProfile, followersCount, foll
                                 <h1 className="text-2xl font-bold">{user?.name}</h1>
                                 <Badge variant="secondary">{user?.role || "user"}</Badge>
                             </div>
-                            {!isOwnProfile && (
+                            {!isOwnProfileState && (
                                 <Button
                                     variant={isFollowing ? "secondary" : "default"}
                                     onClick={handleToggleFollow}
@@ -88,7 +88,7 @@ export default function AccountHeader({ user, isOwnProfile, followersCount, foll
                                     className="flex items-center gap-2 min-w-[100px]"
                                 >
                                     <UserPlus className="size-4" />
-                                    {isLoading ? "..." : (isFollowing ? "Following"  : "Follow")}
+                                    {isLoading ? "..." : (isFollowing ? "Following" : "Follow")}
                                 </Button>
                             )}
                         </div>

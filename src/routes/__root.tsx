@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute, createRootRouteWithContext, redirect } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 
@@ -7,8 +7,30 @@ import Header from '../components/Header'
 import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
+import { getCurrentUserFn, isAuthenticatedFn } from '@/services/user-service'
+import { router } from '@/router'
+import { User } from 'drizzle/db'
 
-export const Route = createRootRoute({
+interface RouterContext {
+  currentUser: User | null | undefined
+  IsAuthenticated: boolean
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async () => {
+    const user = await getCurrentUserFn()
+    const isAuthenticated = user ? true : false
+
+    console.log("Current User in Root Route:", user?.name);
+    console.log("Is Authenticated in Root Route:", isAuthenticated);
+
+    return { currentUser: user, IsAuthenticated: isAuthenticated }
+  },
+  loader: async ({ context }) => {
+    const ctx = context
+
+    return { ctx }
+  },
   head: () => ({
     meta: [
       {
@@ -19,7 +41,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'VibeSpot - Discover and Share Events Near You',
       },
     ],
     links: [
@@ -43,15 +65,18 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { ctx } = Route.useLoaderData()
   return (
     <html lang="en" className="scroll-smooth">
       <head>
         <HeadContent />
       </head>
       <body>
-        <Header />
+        {ctx.IsAuthenticated && (
+          <Header />
+        )}
         {children}
-        <Toaster position="top-center" richColors={true} duration={1500}/>
+        <Toaster position="top-center" richColors={true} duration={1500} />
         <TanstackDevtools
           config={{
             position: 'bottom-left',

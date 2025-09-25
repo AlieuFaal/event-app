@@ -20,6 +20,7 @@ import { useRouter } from "@tanstack/react-router";
 
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
+
     function getEventCreatorName(favoriteEvent: EventWithComments) {
 
         const creator = users.find((user) => user.id === favoriteEvent.userId);
@@ -48,14 +49,14 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                     }
                 });
                 // setIsStarred(true);
-                favoriteEvent.isStarred = true; // Uppdatera favoriteEvent objektet direkt
+                favoriteEvent.isStarred = true; // Uppdatera favoriteEvent
                 toast.success("favoriteEvent added to favorites!");
 
             } catch (error) {
                 console.error("Failed to add favoriteEvent to favorites:", error);
                 toast.error("Failed to add favoriteEvent to favorites. Please try again.");
             }
-        } else // annars om setIsStarred är True och favoriteEvent.id inte saknas, ta bort favoriteEventet från favoriter.
+        } else // annars om IsStarred är True och favoriteEvent.id inte saknas, ta bort favoriteEventet från favoriter.
             if (favoriteEvent.isStarred && favoriteEvent.id) {
                 try {
                     await removeFavoriteEventFn({
@@ -64,7 +65,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                         }
                     });
                     // setIsStarred(false);
-                    favoriteEvent.isStarred = false; // Uppdatera favoriteEvent objektet direkt
+                    favoriteEvent.isStarred = false; // Uppdatera favoriteEvent
                     toast.success("favoriteEvent removed from favorites.");
                 } catch (error) {
                     console.error("Failed to remove favoriteEvent from favorites:", error);

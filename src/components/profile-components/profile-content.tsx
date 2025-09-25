@@ -32,7 +32,7 @@ export default function ProfileContent() {
   const currentUser = session?.user as User;
   const navigate = useNavigate();
 
-  const [switchState, setSwitchState] = React.useState(currentUser?.role === "artist");
+  const [switchState, setSwitchState] = React.useState(localStorage.getItem('userRole') === 'artist');
 
   const form = useForm<UserForm>({
     resolver: zodResolver(userFormSchema),
@@ -42,7 +42,7 @@ export default function ProfileContent() {
       phone: currentUser?.phone ?? "",
       location: currentUser?.location ?? "",
       bio: currentUser?.bio ?? "",
-      role: currentUser?.role === "artist" ? "artist" : "user",
+      role: currentUser?.role === "user" ? "user" : "artist",
     },
   });
 
@@ -85,10 +85,11 @@ export default function ProfileContent() {
       toast.error("Failed to change password!");
     }
   };
-
+  
   const handleRoleToggle = async (checked: boolean): Promise<void> => {
     setSwitchState(checked);
-
+    localStorage.setItem('userRole', checked ? 'artist' : 'user');
+    console.log('User role set to:', checked ? 'artist' : 'user');
     const newRole: "artist" | "user" = checked ? "artist" : "user";
 
     try {
@@ -268,7 +269,7 @@ export default function ProfileContent() {
               <div className="space-y-1">
                 <Label className="text-base">Switch role</Label>
                 <p className="text-muted-foreground text-sm">
-                  Switch betweeen being an Artist or a regular User. Only Artists are able to create events. Default is User.
+                  Switch betweeen the Artist role or Enthusiast role. Only Artists are able to create events. Default is Enthusiast.
                 </p>
               </div>
               <Switch onCheckedChange={handleRoleToggle} checked={switchState} />

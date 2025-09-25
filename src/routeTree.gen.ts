@@ -13,15 +13,15 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
-import { Route as FavoritesRouteImport } from './routes/favorites'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as EventCalendarRouteImport } from './routes/event-calendar'
-import { Route as CreateEventRouteImport } from './routes/create-event'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserIdRouteImport } from './routes/user/$id'
+import { Route as protectedProfileRouteImport } from './routes/(protected)/profile'
+import { Route as protectedOnboardingRouteImport } from './routes/(protected)/onboarding'
+import { Route as protectedFavoritesRouteImport } from './routes/(protected)/favorites'
+import { Route as protectedEventsRouteImport } from './routes/(protected)/events'
+import { Route as protectedEventCalendarRouteImport } from './routes/(protected)/event-calendar'
+import { Route as protectedCreateEventRouteImport } from './routes/(protected)/create-event'
+import { Route as protectedUserIdRouteImport } from './routes/(protected)/user/$id'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -36,39 +36,9 @@ const SigninRoute = SigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
   id: '/forgotpassword',
   path: '/forgotpassword',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FavoritesRoute = FavoritesRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventCalendarRoute = EventCalendarRouteImport.update({
-  id: '/event-calendar',
-  path: '/event-calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CreateEventRoute = CreateEventRouteImport.update({
-  id: '/create-event',
-  path: '/create-event',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -76,8 +46,38 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserIdRoute = UserIdRouteImport.update({
-  id: '/user/$id',
+const protectedProfileRoute = protectedProfileRouteImport.update({
+  id: '/(protected)/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedOnboardingRoute = protectedOnboardingRouteImport.update({
+  id: '/(protected)/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedFavoritesRoute = protectedFavoritesRouteImport.update({
+  id: '/(protected)/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedEventsRoute = protectedEventsRouteImport.update({
+  id: '/(protected)/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedEventCalendarRoute = protectedEventCalendarRouteImport.update({
+  id: '/(protected)/event-calendar',
+  path: '/event-calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedCreateEventRoute = protectedCreateEventRouteImport.update({
+  id: '/(protected)/create-event',
+  path: '/create-event',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedUserIdRoute = protectedUserIdRouteImport.update({
+  id: '/(protected)/user/$id',
   path: '/user/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -89,98 +89,98 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/create-event': typeof CreateEventRoute
-  '/event-calendar': typeof EventCalendarRoute
-  '/events': typeof EventsRoute
-  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/user/$id': typeof UserIdRoute
+  '/create-event': typeof protectedCreateEventRoute
+  '/event-calendar': typeof protectedEventCalendarRoute
+  '/events': typeof protectedEventsRoute
+  '/favorites': typeof protectedFavoritesRoute
+  '/onboarding': typeof protectedOnboardingRoute
+  '/profile': typeof protectedProfileRoute
+  '/user/$id': typeof protectedUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/create-event': typeof CreateEventRoute
-  '/event-calendar': typeof EventCalendarRoute
-  '/events': typeof EventsRoute
-  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/user/$id': typeof UserIdRoute
+  '/create-event': typeof protectedCreateEventRoute
+  '/event-calendar': typeof protectedEventCalendarRoute
+  '/events': typeof protectedEventsRoute
+  '/favorites': typeof protectedFavoritesRoute
+  '/onboarding': typeof protectedOnboardingRoute
+  '/profile': typeof protectedProfileRoute
+  '/user/$id': typeof protectedUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/create-event': typeof CreateEventRoute
-  '/event-calendar': typeof EventCalendarRoute
-  '/events': typeof EventsRoute
-  '/favorites': typeof FavoritesRoute
   '/forgotpassword': typeof ForgotpasswordRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/user/$id': typeof UserIdRoute
+  '/(protected)/create-event': typeof protectedCreateEventRoute
+  '/(protected)/event-calendar': typeof protectedEventCalendarRoute
+  '/(protected)/events': typeof protectedEventsRoute
+  '/(protected)/favorites': typeof protectedFavoritesRoute
+  '/(protected)/onboarding': typeof protectedOnboardingRoute
+  '/(protected)/profile': typeof protectedProfileRoute
+  '/(protected)/user/$id': typeof protectedUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgotpassword'
+    | '/signin'
+    | '/signup'
     | '/create-event'
     | '/event-calendar'
     | '/events'
     | '/favorites'
-    | '/forgotpassword'
     | '/onboarding'
     | '/profile'
-    | '/signin'
-    | '/signup'
     | '/user/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forgotpassword'
+    | '/signin'
+    | '/signup'
     | '/create-event'
     | '/event-calendar'
     | '/events'
     | '/favorites'
-    | '/forgotpassword'
     | '/onboarding'
     | '/profile'
-    | '/signin'
-    | '/signup'
     | '/user/$id'
   id:
     | '__root__'
     | '/'
-    | '/create-event'
-    | '/event-calendar'
-    | '/events'
-    | '/favorites'
     | '/forgotpassword'
-    | '/onboarding'
-    | '/profile'
     | '/signin'
     | '/signup'
-    | '/user/$id'
+    | '/(protected)/create-event'
+    | '/(protected)/event-calendar'
+    | '/(protected)/events'
+    | '/(protected)/favorites'
+    | '/(protected)/onboarding'
+    | '/(protected)/profile'
+    | '/(protected)/user/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CreateEventRoute: typeof CreateEventRoute
-  EventCalendarRoute: typeof EventCalendarRoute
-  EventsRoute: typeof EventsRoute
-  FavoritesRoute: typeof FavoritesRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
-  OnboardingRoute: typeof OnboardingRoute
-  ProfileRoute: typeof ProfileRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  UserIdRoute: typeof UserIdRoute
+  protectedCreateEventRoute: typeof protectedCreateEventRoute
+  protectedEventCalendarRoute: typeof protectedEventCalendarRoute
+  protectedEventsRoute: typeof protectedEventsRoute
+  protectedFavoritesRoute: typeof protectedFavoritesRoute
+  protectedOnboardingRoute: typeof protectedOnboardingRoute
+  protectedProfileRoute: typeof protectedProfileRoute
+  protectedUserIdRoute: typeof protectedUserIdRoute
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
@@ -220,53 +220,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/forgotpassword': {
       id: '/forgotpassword'
       path: '/forgotpassword'
       fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favorites': {
-      id: '/favorites'
-      path: '/favorites'
-      fullPath: '/favorites'
-      preLoaderRoute: typeof FavoritesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/event-calendar': {
-      id: '/event-calendar'
-      path: '/event-calendar'
-      fullPath: '/event-calendar'
-      preLoaderRoute: typeof EventCalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/create-event': {
-      id: '/create-event'
-      path: '/create-event'
-      fullPath: '/create-event'
-      preLoaderRoute: typeof CreateEventRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -276,11 +234,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/$id': {
-      id: '/user/$id'
+    '/(protected)/profile': {
+      id: '/(protected)/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof protectedProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/onboarding': {
+      id: '/(protected)/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof protectedOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/favorites': {
+      id: '/(protected)/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof protectedFavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/events': {
+      id: '/(protected)/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof protectedEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/event-calendar': {
+      id: '/(protected)/event-calendar'
+      path: '/event-calendar'
+      fullPath: '/event-calendar'
+      preLoaderRoute: typeof protectedEventCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/create-event': {
+      id: '/(protected)/create-event'
+      path: '/create-event'
+      fullPath: '/create-event'
+      preLoaderRoute: typeof protectedCreateEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/user/$id': {
+      id: '/(protected)/user/$id'
       path: '/user/$id'
       fullPath: '/user/$id'
-      preLoaderRoute: typeof UserIdRouteImport
+      preLoaderRoute: typeof protectedUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -299,16 +299,16 @@ declare module '@tanstack/react-start/server' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CreateEventRoute: CreateEventRoute,
-  EventCalendarRoute: EventCalendarRoute,
-  EventsRoute: EventsRoute,
-  FavoritesRoute: FavoritesRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
-  OnboardingRoute: OnboardingRoute,
-  ProfileRoute: ProfileRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  UserIdRoute: UserIdRoute,
+  protectedCreateEventRoute: protectedCreateEventRoute,
+  protectedEventCalendarRoute: protectedEventCalendarRoute,
+  protectedEventsRoute: protectedEventsRoute,
+  protectedFavoritesRoute: protectedFavoritesRoute,
+  protectedOnboardingRoute: protectedOnboardingRoute,
+  protectedProfileRoute: protectedProfileRoute,
+  protectedUserIdRoute: protectedUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

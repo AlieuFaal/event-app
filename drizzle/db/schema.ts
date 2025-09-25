@@ -18,6 +18,7 @@ import z from "zod";
 // User Types -----------------------------------------------------------------------------------------------------------------
 export type User = z.infer<typeof userSchema>;
 export type UserSession = z.infer<typeof userSessionSchema>;
+export type UserSocial = z.infer<typeof userSocialSchema>;
 export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
@@ -81,7 +82,11 @@ export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Name is required"),
   email: z.email("Invalid email format"),
   image: z.url("Invalid image URL").optional().nullable(),
-})  ;
+});
+
+export const userSocialSchema = userSchema.extend({
+  isFollowing: z.boolean().optional(),
+});
 
 export const userInsertSchema = createInsertSchema(user, {
   name: z.string().min(1, "Name is required"),
