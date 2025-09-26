@@ -92,16 +92,14 @@ export const onbUpdateUserDataFn = createServerFn({
 export const onUserLoginFn = createServerFn()
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
+
     console.log("User ID from session:", userId);
 
     const dbUser = await db
       .select()
       .from(schema.user)
-      .where(eq(schema.user.id, userId))
+      .where(eq(schema.user.id, userId!))
       .limit(1)
       .then((res) => res[0]);
 
@@ -127,23 +125,21 @@ export const followUserFn = createServerFn({
   .middleware([authMiddleware])
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
+
     try {
       const followersResult = await db
         .insert(schema.followersTable)
         .values({
           userId: data.id, // User being followed
-          followerId: userId, // Current user doing the following
+          followerId: userId!, // Current user doing the following
         })
         .returning();
 
       const followingResult = await db
         .insert(schema.followingTable)
         .values({
-          userId: userId, // Current user doing the following
+          userId: userId!, // Current user doing the following
           followingId: data.id, // User being followed
         })
         .returning();
@@ -163,17 +159,15 @@ export const unfollowUserFn = createServerFn({
   .middleware([authMiddleware])
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
+
     try {
       const followersResult = await db
         .delete(schema.followersTable)
         .where(
           and(
             eq(schema.followersTable.userId, data.id),
-            eq(schema.followersTable.followerId, userId)
+            eq(schema.followersTable.followerId, userId!)
           )
         )
         .returning();
@@ -182,7 +176,7 @@ export const unfollowUserFn = createServerFn({
         .delete(schema.followingTable)
         .where(
           and(
-            eq(schema.followingTable.userId, userId),
+            eq(schema.followingTable.userId, userId!),
             eq(schema.followingTable.followingId, data.id)
           )
         )
@@ -236,14 +230,12 @@ export const getContextFollowersFn = createServerFn({
 })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
+
     const result = await db
       .select({ count: count() })
       .from(schema.followersTable)
-      .where(eq(schema.followersTable.userId, userId));
+      .where(eq(schema.followersTable.userId, userId!));
 
     return result[0]?.count || 0;
   });
@@ -254,15 +246,12 @@ export const getContextFollowingFn = createServerFn({
 })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
     const result = await db
       .select({ count: count() })
       .from(schema.followingTable)
-      .where(eq(schema.followingTable.userId, userId));
+      .where(eq(schema.followingTable.userId, userId!));
 
     return result[0]?.count || 0;
   });
@@ -274,11 +263,7 @@ export const isUserFollowingFn = createServerFn({
   .middleware([authMiddleware])
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
     const result = await db
       .select()
@@ -286,7 +271,7 @@ export const isUserFollowingFn = createServerFn({
       .where(
         and(
           eq(schema.followersTable.userId, data.id),
-          eq(schema.followersTable.followerId, userId)
+          eq(schema.followersTable.followerId, userId!)
         )
       );
 
@@ -305,7 +290,7 @@ export const getCurrentUserFn = createServerFn({
 })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.session?.user.id;
+    const userId = context.currentUser?.id;
     if (!userId) {
       return null;
     }
@@ -316,21 +301,5 @@ export const getCurrentUserFn = createServerFn({
       .where(eq(schema.user.id, userId))
       .limit(1);
 
-    return result[0];
+    return result[0] || null;
   });
-
-export const isAuthenticatedFn = createServerFn({
-  method: "GET",
-  response: "data",
-})
-  .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    const session = context.session;
-
-    if (session) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-  

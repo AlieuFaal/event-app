@@ -8,6 +8,7 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
@@ -15,17 +16,23 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as protectedProfileRouteImport } from './routes/(protected)/profile'
-import { Route as protectedOnboardingRouteImport } from './routes/(protected)/onboarding'
-import { Route as protectedFavoritesRouteImport } from './routes/(protected)/favorites'
-import { Route as protectedEventsRouteImport } from './routes/(protected)/events'
-import { Route as protectedEventCalendarRouteImport } from './routes/(protected)/event-calendar'
-import { Route as protectedCreateEventRouteImport } from './routes/(protected)/create-event'
-import { Route as protectedUserIdRouteImport } from './routes/(protected)/user/$id'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
+import { Route as protectedPathlessLayoutRouteImport } from './routes/(protected)/_pathlessLayout'
+import { Route as protectedPathlessLayoutProfileRouteImport } from './routes/(protected)/_pathlessLayout/profile'
+import { Route as protectedPathlessLayoutOnboardingRouteImport } from './routes/(protected)/_pathlessLayout/onboarding'
+import { Route as protectedPathlessLayoutFavoritesRouteImport } from './routes/(protected)/_pathlessLayout/favorites'
+import { Route as protectedPathlessLayoutEventsRouteImport } from './routes/(protected)/_pathlessLayout/events'
+import { Route as protectedPathlessLayoutEventCalendarRouteImport } from './routes/(protected)/_pathlessLayout/event-calendar'
+import { Route as protectedPathlessLayoutCreateEventRouteImport } from './routes/(protected)/_pathlessLayout/create-event'
+import { Route as protectedPathlessLayoutUserIdRouteImport } from './routes/(protected)/_pathlessLayout/user.$id'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api.auth.$'
 
+const protectedRouteImport = createFileRoute('/(protected)')()
 const rootServerRouteImport = createServerRootRoute()
 
+const protectedRoute = protectedRouteImport.update({
+  id: '/(protected)',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -46,41 +53,52 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const protectedProfileRoute = protectedProfileRouteImport.update({
-  id: '/(protected)/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
+const protectedPathlessLayoutRoute = protectedPathlessLayoutRouteImport.update({
+  id: '/_pathlessLayout',
+  getParentRoute: () => protectedRoute,
 } as any)
-const protectedOnboardingRoute = protectedOnboardingRouteImport.update({
-  id: '/(protected)/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const protectedFavoritesRoute = protectedFavoritesRouteImport.update({
-  id: '/(protected)/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const protectedEventsRoute = protectedEventsRouteImport.update({
-  id: '/(protected)/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const protectedEventCalendarRoute = protectedEventCalendarRouteImport.update({
-  id: '/(protected)/event-calendar',
-  path: '/event-calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const protectedCreateEventRoute = protectedCreateEventRouteImport.update({
-  id: '/(protected)/create-event',
-  path: '/create-event',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const protectedUserIdRoute = protectedUserIdRouteImport.update({
-  id: '/(protected)/user/$id',
-  path: '/user/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const protectedPathlessLayoutProfileRoute =
+  protectedPathlessLayoutProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutOnboardingRoute =
+  protectedPathlessLayoutOnboardingRouteImport.update({
+    id: '/onboarding',
+    path: '/onboarding',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutFavoritesRoute =
+  protectedPathlessLayoutFavoritesRouteImport.update({
+    id: '/favorites',
+    path: '/favorites',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutEventsRoute =
+  protectedPathlessLayoutEventsRouteImport.update({
+    id: '/events',
+    path: '/events',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutEventCalendarRoute =
+  protectedPathlessLayoutEventCalendarRouteImport.update({
+    id: '/event-calendar',
+    path: '/event-calendar',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutCreateEventRoute =
+  protectedPathlessLayoutCreateEventRouteImport.update({
+    id: '/create-event',
+    path: '/create-event',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
+const protectedPathlessLayoutUserIdRoute =
+  protectedPathlessLayoutUserIdRouteImport.update({
+    id: '/user/$id',
+    path: '/user/$id',
+    getParentRoute: () => protectedPathlessLayoutRoute,
+  } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -88,30 +106,30 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof protectedPathlessLayoutRouteWithChildren
   '/forgotpassword': typeof ForgotpasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/create-event': typeof protectedCreateEventRoute
-  '/event-calendar': typeof protectedEventCalendarRoute
-  '/events': typeof protectedEventsRoute
-  '/favorites': typeof protectedFavoritesRoute
-  '/onboarding': typeof protectedOnboardingRoute
-  '/profile': typeof protectedProfileRoute
-  '/user/$id': typeof protectedUserIdRoute
+  '/create-event': typeof protectedPathlessLayoutCreateEventRoute
+  '/event-calendar': typeof protectedPathlessLayoutEventCalendarRoute
+  '/events': typeof protectedPathlessLayoutEventsRoute
+  '/favorites': typeof protectedPathlessLayoutFavoritesRoute
+  '/onboarding': typeof protectedPathlessLayoutOnboardingRoute
+  '/profile': typeof protectedPathlessLayoutProfileRoute
+  '/user/$id': typeof protectedPathlessLayoutUserIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof protectedPathlessLayoutRouteWithChildren
   '/forgotpassword': typeof ForgotpasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/create-event': typeof protectedCreateEventRoute
-  '/event-calendar': typeof protectedEventCalendarRoute
-  '/events': typeof protectedEventsRoute
-  '/favorites': typeof protectedFavoritesRoute
-  '/onboarding': typeof protectedOnboardingRoute
-  '/profile': typeof protectedProfileRoute
-  '/user/$id': typeof protectedUserIdRoute
+  '/create-event': typeof protectedPathlessLayoutCreateEventRoute
+  '/event-calendar': typeof protectedPathlessLayoutEventCalendarRoute
+  '/events': typeof protectedPathlessLayoutEventsRoute
+  '/favorites': typeof protectedPathlessLayoutFavoritesRoute
+  '/onboarding': typeof protectedPathlessLayoutOnboardingRoute
+  '/profile': typeof protectedPathlessLayoutProfileRoute
+  '/user/$id': typeof protectedPathlessLayoutUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,13 +137,15 @@ export interface FileRoutesById {
   '/forgotpassword': typeof ForgotpasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/(protected)/create-event': typeof protectedCreateEventRoute
-  '/(protected)/event-calendar': typeof protectedEventCalendarRoute
-  '/(protected)/events': typeof protectedEventsRoute
-  '/(protected)/favorites': typeof protectedFavoritesRoute
-  '/(protected)/onboarding': typeof protectedOnboardingRoute
-  '/(protected)/profile': typeof protectedProfileRoute
-  '/(protected)/user/$id': typeof protectedUserIdRoute
+  '/(protected)': typeof protectedRouteWithChildren
+  '/(protected)/_pathlessLayout': typeof protectedPathlessLayoutRouteWithChildren
+  '/(protected)/_pathlessLayout/create-event': typeof protectedPathlessLayoutCreateEventRoute
+  '/(protected)/_pathlessLayout/event-calendar': typeof protectedPathlessLayoutEventCalendarRoute
+  '/(protected)/_pathlessLayout/events': typeof protectedPathlessLayoutEventsRoute
+  '/(protected)/_pathlessLayout/favorites': typeof protectedPathlessLayoutFavoritesRoute
+  '/(protected)/_pathlessLayout/onboarding': typeof protectedPathlessLayoutOnboardingRoute
+  '/(protected)/_pathlessLayout/profile': typeof protectedPathlessLayoutProfileRoute
+  '/(protected)/_pathlessLayout/user/$id': typeof protectedPathlessLayoutUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,13 +180,15 @@ export interface FileRouteTypes {
     | '/forgotpassword'
     | '/signin'
     | '/signup'
-    | '/(protected)/create-event'
-    | '/(protected)/event-calendar'
-    | '/(protected)/events'
-    | '/(protected)/favorites'
-    | '/(protected)/onboarding'
-    | '/(protected)/profile'
-    | '/(protected)/user/$id'
+    | '/(protected)'
+    | '/(protected)/_pathlessLayout'
+    | '/(protected)/_pathlessLayout/create-event'
+    | '/(protected)/_pathlessLayout/event-calendar'
+    | '/(protected)/_pathlessLayout/events'
+    | '/(protected)/_pathlessLayout/favorites'
+    | '/(protected)/_pathlessLayout/onboarding'
+    | '/(protected)/_pathlessLayout/profile'
+    | '/(protected)/_pathlessLayout/user/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,13 +196,7 @@ export interface RootRouteChildren {
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  protectedCreateEventRoute: typeof protectedCreateEventRoute
-  protectedEventCalendarRoute: typeof protectedEventCalendarRoute
-  protectedEventsRoute: typeof protectedEventsRoute
-  protectedFavoritesRoute: typeof protectedFavoritesRoute
-  protectedOnboardingRoute: typeof protectedOnboardingRoute
-  protectedProfileRoute: typeof protectedProfileRoute
-  protectedUserIdRoute: typeof protectedUserIdRoute
+  protectedRoute: typeof protectedRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
@@ -206,6 +222,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/(protected)': {
+      id: '/(protected)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof protectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -234,54 +257,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(protected)/profile': {
-      id: '/(protected)/profile'
+    '/(protected)/_pathlessLayout': {
+      id: '/(protected)/_pathlessLayout'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof protectedPathlessLayoutRouteImport
+      parentRoute: typeof protectedRoute
+    }
+    '/(protected)/_pathlessLayout/profile': {
+      id: '/(protected)/_pathlessLayout/profile'
       path: '/profile'
       fullPath: '/profile'
-      preLoaderRoute: typeof protectedProfileRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutProfileRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/onboarding': {
-      id: '/(protected)/onboarding'
+    '/(protected)/_pathlessLayout/onboarding': {
+      id: '/(protected)/_pathlessLayout/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
-      preLoaderRoute: typeof protectedOnboardingRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutOnboardingRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/favorites': {
-      id: '/(protected)/favorites'
+    '/(protected)/_pathlessLayout/favorites': {
+      id: '/(protected)/_pathlessLayout/favorites'
       path: '/favorites'
       fullPath: '/favorites'
-      preLoaderRoute: typeof protectedFavoritesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutFavoritesRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/events': {
-      id: '/(protected)/events'
+    '/(protected)/_pathlessLayout/events': {
+      id: '/(protected)/_pathlessLayout/events'
       path: '/events'
       fullPath: '/events'
-      preLoaderRoute: typeof protectedEventsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutEventsRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/event-calendar': {
-      id: '/(protected)/event-calendar'
+    '/(protected)/_pathlessLayout/event-calendar': {
+      id: '/(protected)/_pathlessLayout/event-calendar'
       path: '/event-calendar'
       fullPath: '/event-calendar'
-      preLoaderRoute: typeof protectedEventCalendarRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutEventCalendarRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/create-event': {
-      id: '/(protected)/create-event'
+    '/(protected)/_pathlessLayout/create-event': {
+      id: '/(protected)/_pathlessLayout/create-event'
       path: '/create-event'
       fullPath: '/create-event'
-      preLoaderRoute: typeof protectedCreateEventRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutCreateEventRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
-    '/(protected)/user/$id': {
-      id: '/(protected)/user/$id'
+    '/(protected)/_pathlessLayout/user/$id': {
+      id: '/(protected)/_pathlessLayout/user/$id'
       path: '/user/$id'
       fullPath: '/user/$id'
-      preLoaderRoute: typeof protectedUserIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedPathlessLayoutUserIdRouteImport
+      parentRoute: typeof protectedPathlessLayoutRoute
     }
   }
 }
@@ -297,18 +327,54 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface protectedPathlessLayoutRouteChildren {
+  protectedPathlessLayoutCreateEventRoute: typeof protectedPathlessLayoutCreateEventRoute
+  protectedPathlessLayoutEventCalendarRoute: typeof protectedPathlessLayoutEventCalendarRoute
+  protectedPathlessLayoutEventsRoute: typeof protectedPathlessLayoutEventsRoute
+  protectedPathlessLayoutFavoritesRoute: typeof protectedPathlessLayoutFavoritesRoute
+  protectedPathlessLayoutOnboardingRoute: typeof protectedPathlessLayoutOnboardingRoute
+  protectedPathlessLayoutProfileRoute: typeof protectedPathlessLayoutProfileRoute
+  protectedPathlessLayoutUserIdRoute: typeof protectedPathlessLayoutUserIdRoute
+}
+
+const protectedPathlessLayoutRouteChildren: protectedPathlessLayoutRouteChildren =
+  {
+    protectedPathlessLayoutCreateEventRoute:
+      protectedPathlessLayoutCreateEventRoute,
+    protectedPathlessLayoutEventCalendarRoute:
+      protectedPathlessLayoutEventCalendarRoute,
+    protectedPathlessLayoutEventsRoute: protectedPathlessLayoutEventsRoute,
+    protectedPathlessLayoutFavoritesRoute:
+      protectedPathlessLayoutFavoritesRoute,
+    protectedPathlessLayoutOnboardingRoute:
+      protectedPathlessLayoutOnboardingRoute,
+    protectedPathlessLayoutProfileRoute: protectedPathlessLayoutProfileRoute,
+    protectedPathlessLayoutUserIdRoute: protectedPathlessLayoutUserIdRoute,
+  }
+
+const protectedPathlessLayoutRouteWithChildren =
+  protectedPathlessLayoutRoute._addFileChildren(
+    protectedPathlessLayoutRouteChildren,
+  )
+
+interface protectedRouteChildren {
+  protectedPathlessLayoutRoute: typeof protectedPathlessLayoutRouteWithChildren
+}
+
+const protectedRouteChildren: protectedRouteChildren = {
+  protectedPathlessLayoutRoute: protectedPathlessLayoutRouteWithChildren,
+}
+
+const protectedRouteWithChildren = protectedRoute._addFileChildren(
+  protectedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  protectedCreateEventRoute: protectedCreateEventRoute,
-  protectedEventCalendarRoute: protectedEventCalendarRoute,
-  protectedEventsRoute: protectedEventsRoute,
-  protectedFavoritesRoute: protectedFavoritesRoute,
-  protectedOnboardingRoute: protectedOnboardingRoute,
-  protectedProfileRoute: protectedProfileRoute,
-  protectedUserIdRoute: protectedUserIdRoute,
+  protectedRoute: protectedRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

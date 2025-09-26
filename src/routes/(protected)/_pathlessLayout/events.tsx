@@ -3,7 +3,7 @@ import { getEventDataFn, getEventsWithCommentsFn } from '@/services/eventService
 import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(protected)/events')({
+export const Route = createFileRoute('/(protected)/_pathlessLayout/events')({
     component: EventsComponent,
     loader: async () => {
         const events = await getEventsWithCommentsFn();

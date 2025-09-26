@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute, createRootRouteWithContext, redirect } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 
@@ -7,8 +7,7 @@ import Header from '../components/Header'
 import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
-import { getCurrentUserFn, isAuthenticatedFn } from '@/services/user-service'
-import { router } from '@/router'
+import { getCurrentUserFn } from '@/services/user-service'
 import { User } from 'drizzle/db'
 
 interface RouterContext {

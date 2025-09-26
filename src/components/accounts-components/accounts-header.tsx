@@ -18,11 +18,11 @@ interface AccountHeaderProps {
 }
 
 export default function AccountHeader({ user, followersCount, followingCount, isFollowing }: AccountHeaderProps) {
-    const router = useRouter()
+    const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
     const [isOwnProfileState, setIsOwnProfileState] = React.useState(false);
 
-    const currentUser = authClient.useSession()
+    const currentUser = authClient.useSession();
 
     if (currentUser?.data?.user?.id === user.id && !isOwnProfileState) {
         setIsOwnProfileState(true)

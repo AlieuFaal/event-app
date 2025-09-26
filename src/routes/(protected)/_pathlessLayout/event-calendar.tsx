@@ -5,7 +5,7 @@ import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 
-export const Route = createFileRoute('/(protected)/event-calendar')({
+export const Route = createFileRoute('/(protected)/_pathlessLayout/event-calendar')({
   component: EventCalendarComponent,
   loader: async () => {
     // const eventsforcalendar1 = await getCalendarEventData();

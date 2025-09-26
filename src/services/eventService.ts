@@ -114,10 +114,7 @@ export const postEventDataFn = createServerFn({ method: "POST" })
     try {
       console.log("Received data:", data);
 
-      const userId = context.session?.user.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
+      const userId = context.currentUser?.id;
 
       const event = await db
         .insert(schema.event)
@@ -144,10 +141,7 @@ export const putEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(calendarEventSchema)
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
     const updatedEvent = await db
       .update(schema.event)
@@ -169,14 +163,15 @@ export const deleteEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(calendarEventSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
+    // Only allow deleting events created by the current user
     const deletedCount = await db
       .delete(schema.event)
-      .where(eq(schema.event.id, data.id));
+      .where(and(
+        eq(schema.event.id, data.id),
+        eq(schema.event.userId, userId!)
+      ));
 
     return { deletedCount };
   });
@@ -188,10 +183,7 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
     try {
       console.log("Received data:", data);
 
-      const userId = context.session?.user.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
+      const userId = context.currentUser?.id;
 
       const event = await db
         .insert(schema.event)
@@ -237,15 +229,12 @@ export const postCommentForEventFn = createServerFn({ method: "POST" })
     try {
       console.log("Received comment data:", data);
 
-      const userId = context.session?.user.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
+      const userId = context.currentUser?.id;
 
       const newComment = await db
         .insert(schema.comment)
         .values({
-          userId: userId,
+          userId: userId!,
           eventId: data.eventId,
           content: data.content,
           createdAt: new Date(),
@@ -286,7 +275,7 @@ export const deleteCommentForEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(commentSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
+    const userId = context.currentUser?.id;
     if (!userId) {
       throw new Error("User not authenticated");
     }
@@ -312,10 +301,8 @@ export const getFavoriteEventsFn = createServerFn({
 })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.session?.user.id; // aktiv användar ID
-    if (!userId) {
-      throw new Error("User not authenticated"); // hantera icke-autentiserad användare
-    }
+    const userId = context.currentUser?.id; // aktiv användar ID
+
     const events = await db // hämtar alla fält från event tabellen
       .select({
         id: schema.event.id,
@@ -334,7 +321,7 @@ export const getFavoriteEventsFn = createServerFn({
         schema.favoriteEvent,
         eq(schema.event.id, schema.favoriteEvent.eventId)
       )
-      .where(and(eq(schema.favoriteEvent.userId, userId)))
+      .where(and(eq(schema.favoriteEvent.userId, userId!)))
       .orderBy(schema.event.startDate); // sorterar på startDatum
 
     const comments = await db // hämtar alla kommentarer
@@ -360,13 +347,9 @@ export const getUserFavoriteEventsFn = createServerFn({
   method: "GET",
   response: "data",
 })
-  .middleware([authMiddleware])
   .validator(z.object({ userId: z.string().uuid() }))
-  .handler(async ({ context, data }) => {
-    const userId = context.session?.user.id; // aktiv användar ID
-    if (!userId) {
-      throw new Error("User not authenticated"); // hantera icke-autentiserad användare
-    }
+  .handler(async ({ data }) => {
+
     const events = await db // hämtar alla fält från event tabellen
       .select({
         id: schema.event.id,
@@ -411,10 +394,7 @@ export const addFavoriteEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(z.object({ eventId: z.uuid() }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
     const [existingFavorite] = await db
       .select({
@@ -427,7 +407,7 @@ export const addFavoriteEventFn = createServerFn({ method: "POST" })
       .where(
         // where klausul som kollar att userId och eventId matchar
         and(
-          eq(schema.favoriteEvent.userId, userId),
+          eq(schema.favoriteEvent.userId, userId!),
           eq(schema.favoriteEvent.eventId, data.eventId)
         )
       ); // kollar om eventet redan är en favorit för användaren
@@ -440,7 +420,7 @@ export const addFavoriteEventFn = createServerFn({ method: "POST" })
     const newFavorite = await db // lägger till ett nytt event i favoriteEvent tabellen
       .insert(schema.favoriteEvent)
       .values({
-        userId: userId,
+        userId: userId!,
         eventId: data.eventId,
         createdAt: new Date(),
       })
@@ -454,16 +434,13 @@ export const removeFavoriteEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(z.object({ id: z.uuid() }))
   .handler(async ({ data, context }) => {
-    const userId = context.session?.user.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    const userId = context.currentUser?.id;
 
     const deletedEvent = await db // tar bort ett event från favoriteEvent tabellen baserat på userId och eventId
       .delete(schema.favoriteEvent)
       .where(
         and(
-          eq(schema.favoriteEvent.userId, userId),
+          eq(schema.favoriteEvent.userId, userId!),
           eq(schema.favoriteEvent.eventId, data.id)
         )
       );

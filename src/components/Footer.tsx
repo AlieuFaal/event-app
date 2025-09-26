@@ -4,13 +4,13 @@ export default function Footer() {
             <nav className='container flex flex-col items-center gap-4'>
                 <ul className='flex flex-wrap items-center justify-center gap-6'>
                     <li className=''>
-                        <a href="/events" className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            Explore Events
+                        <a href="/" className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
+                            Home
                         </a>
                     </li>
                     <li>
-                        <a href="/create-event" className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            Create Event
+                        <a href="/events" className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
+                            Explore Events
                         </a>
                     </li>
                     <li>

@@ -4,7 +4,7 @@ import { Card } from '@/components/shadcn/ui/card'
 import { getContextFollowersFn, getContextFollowingFn, getFollowersFn, getFollowingFn } from '@/services/user-service'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(protected)/profile')({
+export const Route = createFileRoute('/(protected)/_pathlessLayout/profile')({
     component: ProfileComponent,
     loader: async () => {
         const followersCount = await getContextFollowersFn();

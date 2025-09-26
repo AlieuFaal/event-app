@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, createRouter as createTanstackRouter } from '@tanstack/react-router'
+import { createRouter as createTanstackRouter } from '@tanstack/react-router'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -7,11 +7,11 @@ import { routeTree } from './routeTree.gen'
 export const createRouter = () => {
   return createTanstackRouter({
     routeTree,
+    scrollRestoration: true,    
     context: {
       currentUser: undefined,
       IsAuthenticated: false,
     },
-    scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   })
 }

@@ -1,20 +1,12 @@
 import AccountContent from '@/components/accounts-components/accounts-content'
 import AccountHeader from '@/components/accounts-components/accounts-header'
 import { Card } from '@/components/shadcn/ui/card'
-import { router } from '@/router'
 import { getUserEventsWithCommentsFn, getUserFavoriteEventsFn } from '@/services/eventService'
 import { getFollowersFn, getFollowingFn, getUserDataByIdFn, isUserFollowingFn } from '@/services/user-service'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(protected)/user/$id')({
-    beforeLoad: async ({context, location}) => {
-        if (!context.IsAuthenticated && location.pathname !== '/signin') {
-            console.log("No authenticated user. Redirecting to /signin");
-            router.navigate({ to: '/signin', search: { redirectTo: location.pathname } });
-            return;
-        }
-    },
-    loader: async ({ context, params }) => {
+export const Route = createFileRoute('/(protected)/_pathlessLayout/user/$id')({
+    loader: async ({ params }) => {
         const user = await getUserDataByIdFn({ data: { id: params.id } });
         const events = await getUserEventsWithCommentsFn({ data: { userId: params.id } });
         const favoriteEvents = await getUserFavoriteEventsFn({ data: { userId: params.id } });
