@@ -1,6 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
-import { differenceInMinutes, parseISO } from "date-fns";
+import { differenceInMinutes } from "date-fns";
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
@@ -8,8 +8,7 @@ import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { ResizableEvent } from "@/components/calendar/dnd/resizable-event";
 import { formatTime } from "@/components/calendar/helpers";
-import type { IEvent } from "@/components/calendar/interfaces";
-import { Event } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 const calendarWeekEventCardVariants = cva(
 	"flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2",
@@ -53,9 +52,10 @@ interface IProps
 	extends HTMLAttributes<HTMLDivElement>,
 		Omit<VariantProps<typeof calendarWeekEventCardVariants>, "color"> {
 	event: Event;
+	users: User[];
 }
 
-export function EventBlock({ event, className }: IProps) {
+export function EventBlock({ event, className, users }: IProps) {
 	const { badgeVariant, use24HourFormat } = useCalendar();
 
 	const start = (event.startDate);
@@ -75,7 +75,7 @@ export function EventBlock({ event, className }: IProps) {
 	return (
 		<ResizableEvent event={event}>
 			<DraggableEvent event={event}>
-				<EventDetailsDialog event={event}>
+				<EventDetailsDialog event={event} users={users}>
 					<div
 						role="button"
 						tabIndex={0}

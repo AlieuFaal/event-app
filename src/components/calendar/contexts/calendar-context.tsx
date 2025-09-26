@@ -3,14 +3,14 @@
 import type React from "react";
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
-import { CalendarEvent, deleteEventDataFn, Event, postCalendarEventDataFn, postEventDataFn, putEventDataFn } from "@/services/eventService";
+import { deleteEventDataFn, postCalendarEventDataFn, putEventDataFn } from "@/services/eventService";
 import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import { User } from "better-auth";
 import { authClient } from "@/lib/auth-client";
 import { TEventFormData } from "../schemas";
+import { Event, User } from "drizzle/db";
 
 interface ICalendarContext {
 	selectedDate: Date;
@@ -29,7 +29,7 @@ interface ICalendarContext {
 	filterEventsBySelectedColors: (colors: TEventColor) => void;
 	filterEventsBySelectedUser: (userId: User["id"] | "all") => void;
 	users: User[];
-	events: TEventFormData[];
+	events: Event[];
 	addEvent: (event: TEventFormData) => void;
 	updateEvent: (event: TEventFormData) => void;
 	removeEvent: (eventId: string) => void;
@@ -61,7 +61,7 @@ export function CalendarProvider2({
 }: {
 	children: React.ReactNode;
 	users: User[];
-	events: TEventFormData[];
+	events: Event[];
 	view?: TCalendarView;
 	badge?: "dot" | "colored";
 }) {
@@ -93,8 +93,8 @@ export function CalendarProvider2({
 	);
 	const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
-	const [allEvents, setAllEvents] = useState<CalendarEvent[]>(events || []);
-	const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>(events || []);
+	const [allEvents, setAllEvents] = useState<Event[]>(events || []);
+	const [filteredEvents, setFilteredEvents] = useState<Event[]>(events || []);
 
 	const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
 		setSettings({
@@ -160,7 +160,7 @@ export function CalendarProvider2({
 
 	const { data: session } = authClient.useSession()
 
-	const addEvent = async (event: TEventFormData) => {
+	const addEvent = async (event: Event) => {
 		console.log("Adding event:", event);
 		
 		setAllEvents((prev) => [...prev, event]);
@@ -174,7 +174,7 @@ export function CalendarProvider2({
 		}
 	};
 
-	const updateEvent = async (event: TEventFormData) => {
+	const updateEvent = async (event: Event) => {
 		const updatedEvent = {
 			...event,
 			startDate: new Date(event.startDate),

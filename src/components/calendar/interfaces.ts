@@ -1,5 +1,5 @@
 import type { TEventColor } from "@/components/calendar/types";
-import { User } from "better-auth";
+import { User } from "drizzle/db";
 
 export interface IUser {
 	id: string;

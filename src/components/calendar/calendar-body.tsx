@@ -1,8 +1,7 @@
 "use client";
 
-import { isSameDay, parseISO } from "date-fns";
+import { isSameDay } from "date-fns";
 import { motion } from "framer-motion";
-import React from "react";
 import { fadeIn, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { AgendaEvents } from "@/components/calendar/views/agenda-view/agenda-events";
@@ -12,7 +11,7 @@ import { CalendarWeekView } from "@/components/calendar/views/week-and-day-view/
 import { CalendarYearView } from "@/components/calendar/views/year-view/calendar-year-view";
 
 export function CalendarBody() {
-	const { view, events } = useCalendar();
+	const { view, events, users } = useCalendar();
 
 	const singleDayEvents = events.filter((event) => {
 		const startDate = event.startDate;
@@ -58,6 +57,7 @@ export function CalendarBody() {
 					<CalendarYearView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
+						users={users}
 					/>
 				)}
 				{view === "agenda" && (

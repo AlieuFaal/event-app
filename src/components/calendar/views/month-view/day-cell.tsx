@@ -7,7 +7,6 @@ import { useMemo, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
 import {
-  staggerContainer,
   transition,
 } from "@/components/calendar/animations";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
@@ -16,17 +15,17 @@ import { getMonthCellEvents } from "@/components/calendar/helpers";
 import { useMediaQuery } from "@/components/calendar/hooks";
 import type {
   ICalendarCell,
-  IEvent,
 } from "@/components/calendar/interfaces";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
 import { AddEditEventDialog } from "../../dialogs/add-edit-event-dialog";
 import { Button } from "@/components/shadcn/ui/button";
 import { Plus } from "lucide-react";
-import { Event } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
   cell: ICalendarCell;
+  users: User[];
   events: Event[];
   eventPositions: Record<string, number>;
 }
@@ -54,7 +53,7 @@ export const dayCellVariants = cva("text-white", {
 
 const MAX_VISIBLE_EVENTS = 3;
 
-export function DayCell({ cell, events, eventPositions }: IProps) {
+export function DayCell({ cell, events, eventPositions, users }: IProps) {
   const { day, currentMonth, date } = cell;
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -101,6 +100,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
             <MonthEventBadge
               className="hidden lg:flex"
               event={event}
+              users={users}
               cellDate={startOfDay(date)}
             />
           </>
@@ -179,7 +179,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, ...transition }}
             >
-              <EventListDialog date={date} events={cellEvents} />
+              <EventListDialog users={users} date={date} events={cellEvents} />
             </motion.div>
           )}
         </DroppableArea>
@@ -199,7 +199,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
 
   if (isMobile && currentMonth) {
     return (
-      <EventListDialog date={date} events={cellEvents}>
+      <EventListDialog users={users} date={date} events={cellEvents}>
         {cellContent}
       </EventListDialog>
     );

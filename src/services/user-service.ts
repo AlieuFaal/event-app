@@ -37,8 +37,14 @@ export const updateUserDataFn = createServerFn({
   method: "POST",
   response: "data",
 })
+  .middleware([authMiddleware])
   .validator(userFormSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
     const result = await db
       .update(schema.user)
       .set({
@@ -58,8 +64,14 @@ export const updateRoleFn = createServerFn({
   method: "POST",
   response: "data",
 })
+  .middleware([authMiddleware])
   .validator(onboardingSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
     const result = await db
       .update(schema.user)
       .set({
@@ -75,8 +87,14 @@ export const onbUpdateUserDataFn = createServerFn({
   method: "POST",
   response: "data",
 })
+  .middleware([authMiddleware])
   .validator(userFormSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
     const result = await db
       .update(schema.user)
       .set({
@@ -93,6 +111,10 @@ export const onUserLoginFn = createServerFn()
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      console.log("No user in session, cannot determine role.");
+      throw new Error("User not authenticated");
+    }
 
     console.log("User ID from session:", userId);
 
@@ -126,6 +148,9 @@ export const followUserFn = createServerFn({
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     try {
       const followersResult = await db
@@ -160,6 +185,9 @@ export const unfollowUserFn = createServerFn({
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     try {
       const followersResult = await db
@@ -231,6 +259,9 @@ export const getContextFollowersFn = createServerFn({
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const result = await db
       .select({ count: count() })
@@ -247,6 +278,9 @@ export const getContextFollowingFn = createServerFn({
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const result = await db
       .select({ count: count() })
@@ -264,6 +298,9 @@ export const isUserFollowingFn = createServerFn({
   .validator(userSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const result = await db
       .select()

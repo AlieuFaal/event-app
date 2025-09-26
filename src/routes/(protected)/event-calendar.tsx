@@ -5,7 +5,7 @@ import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 
-export const Route = createFileRoute('/(protected)/_pathlessLayout/event-calendar')({
+export const Route = createFileRoute('/(protected)/event-calendar')({
   component: EventCalendarComponent,
   loader: async () => {
     // const eventsforcalendar1 = await getCalendarEventData();
@@ -13,7 +13,6 @@ export const Route = createFileRoute('/(protected)/_pathlessLayout/event-calenda
     const users = await getUserDataFn();
     return {
       events,
-      // eventsforcalendar1,
       users
     };
   }
@@ -28,10 +27,6 @@ function EventCalendarComponent() {
         <CalendarProvider2 events={events} users={users} view='month'>
           <Calendar2 />
         </CalendarProvider2>
-        {/* <CalendarProvider events={eventsforcalendar1} users={users}>
-          <CalendarHeader />
-          <Calendar events={eventsforcalendar1} />
-        </CalendarProvider> */}
       </Card>
     </div>
   )

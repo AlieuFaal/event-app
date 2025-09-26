@@ -4,23 +4,23 @@ import {
 	endOfWeek,
 	isAfter,
 	isBefore,
-	parseISO,
 	startOfDay,
 	startOfWeek,
 } from "date-fns";
 import { useMemo } from "react";
-import type { IEvent } from "@/components/calendar/interfaces";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
-import { Event } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
 	selectedDate: Date;
 	multiDayEvents: Event[];
+	users: User[];
 }
 
 export function WeekViewMultiDayEventsRow({
 	selectedDate,
 	multiDayEvents,
+	users
 }: IProps) {
 	const weekStart = startOfWeek(selectedDate);
 	const weekEnd = endOfWeek(selectedDate);
@@ -131,6 +131,7 @@ export function WeekViewMultiDayEventsRow({
 								<MonthEventBadge
 									key={`${event.id}-${dayIndex}`}
 									event={event}
+									users={users}
 									cellDate={startOfDay(day)}
 									position={position}
 								/>

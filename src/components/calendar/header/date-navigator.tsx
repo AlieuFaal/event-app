@@ -16,9 +16,8 @@ import {
 	rangeText,
 } from "@/components/calendar/helpers";
 
-import type { IEvent } from "@/components/calendar/interfaces";
 import type { TCalendarView } from "@/components/calendar/types";
-import { Event } from "@/services/eventService";
+import { Event } from "drizzle/db";
 
 interface IProps {
 	view: TCalendarView;

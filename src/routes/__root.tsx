@@ -8,14 +8,8 @@ import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
 import { getCurrentUserFn } from '@/services/user-service'
-import { User } from 'drizzle/db'
 
-interface RouterContext {
-  currentUser: User | null | undefined
-  IsAuthenticated: boolean
-}
-
-export const Route = createRootRouteWithContext<RouterContext>()({
+export const Route = createRootRouteWithContext()({
   beforeLoad: async () => {
     const user = await getCurrentUserFn()
     const isAuthenticated = user ? true : false

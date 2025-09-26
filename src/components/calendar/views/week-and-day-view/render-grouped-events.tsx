@@ -2,16 +2,18 @@ import { areIntervalsOverlapping, parseISO } from "date-fns";
 import { getEventBlockStyle } from "@/components/calendar/helpers";
 import type { IEvent } from "@/components/calendar/interfaces";
 import { EventBlock } from "@/components/calendar/views/week-and-day-view/event-block";
-import { Event } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 interface RenderGroupedEventsProps {
 	groupedEvents: Event[][];
 	day: Date;
+	users: User[];
 }
 
 export function RenderGroupedEvents({
 	groupedEvents,
 	day,
+	users
 }: RenderGroupedEventsProps) {
 	return groupedEvents.map((group, groupIndex) =>
 		group.map((event) => {
@@ -42,7 +44,7 @@ export function RenderGroupedEvents({
 
 			return (
 				<div key={event.id} className="absolute p-1" style={style}>
-					<EventBlock event={event} />
+					<EventBlock event={event} users={users} />
 				</div>
 			);
 		}),

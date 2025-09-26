@@ -2,22 +2,21 @@ import {
 	differenceInDays,
 	endOfDay,
 	isWithinInterval,
-	parseISO,
 	startOfDay,
 } from "date-fns";
-import type { IEvent } from "@/components/calendar/interfaces";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
-import { Event } from "@/services/eventService";
-import { TEventFormData } from "../../schemas";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
 	selectedDate: Date;
 	multiDayEvents: Event[];
+	users: User[];
 }
 
 export function DayViewMultiDayEventsRow({
 	selectedDate,
 	multiDayEvents,
+	users
 }: IProps) {
 	const dayStart = startOfDay(selectedDate);
 	const dayEnd = endOfDay(selectedDate);
@@ -63,6 +62,7 @@ export function DayViewMultiDayEventsRow({
 						<MonthEventBadge
 							key={event.id}
 							event={event}
+							users={users}
 							cellDate={selectedDate}
 							eventCurrentDay={eventCurrentDay}
 							eventTotalDays={eventTotalDays}

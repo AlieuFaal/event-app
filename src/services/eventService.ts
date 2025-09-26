@@ -3,6 +3,8 @@ import {
   calendarEventSchema,
   commentSchema,
   commentUpdateSchema,
+  NewEvent,
+  Event,
 } from "drizzle/db/schema";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
@@ -13,8 +15,8 @@ import { eq, and } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
 
-export type Event = z.infer<typeof eventInsertSchema>;
-export type CalendarEvent = z.infer<typeof calendarEventSchema>;
+// export type Event = z.infer<typeof eventInsertSchema>;
+// export type CalendarEvent = z.infer<typeof calendarEventSchema>;
 
 export const getEventDataFn = createServerFn({
   method: "GET",
@@ -25,7 +27,7 @@ export const getEventDataFn = createServerFn({
     .from(schema.event)
     .orderBy(schema.event.startDate);
 
-  const eventsWithStringDates = events.map((event: any) => ({
+  const eventsWithStringDates = events.map((event: Event) => ({
     ...event,
     startDate: event.startDate,
     endDate: event.endDate,
@@ -115,6 +117,9 @@ export const postEventDataFn = createServerFn({ method: "POST" })
       console.log("Received data:", data);
 
       const userId = context.currentUser?.id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
 
       const event = await db
         .insert(schema.event)
@@ -142,6 +147,9 @@ export const putEventDataFn = createServerFn({ method: "POST" })
   .validator(calendarEventSchema)
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const updatedEvent = await db
       .update(schema.event)
@@ -164,14 +172,15 @@ export const deleteEventDataFn = createServerFn({ method: "POST" })
   .validator(calendarEventSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
-    // Only allow deleting events created by the current user
     const deletedCount = await db
       .delete(schema.event)
-      .where(and(
-        eq(schema.event.id, data.id),
-        eq(schema.event.userId, userId!)
-      ));
+      .where(eq(schema.event.id, data.id));
+
+      console.log("Deleted event count:", deletedCount);
 
     return { deletedCount };
   });
@@ -184,6 +193,9 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
       console.log("Received data:", data);
 
       const userId = context.currentUser?.id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
 
       const event = await db
         .insert(schema.event)
@@ -230,6 +242,9 @@ export const postCommentForEventFn = createServerFn({ method: "POST" })
       console.log("Received comment data:", data);
 
       const userId = context.currentUser?.id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
 
       const newComment = await db
         .insert(schema.comment)
@@ -250,10 +265,16 @@ export const postCommentForEventFn = createServerFn({ method: "POST" })
   });
 
 export const updateCommentForEventFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
   .validator(commentUpdateSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     try {
       console.log("Received comment update data:", data);
+
+      const userId = context.currentUser?.id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
 
       const updatedComment = await db
         .update(schema.comment)
@@ -349,7 +370,6 @@ export const getUserFavoriteEventsFn = createServerFn({
 })
   .validator(z.object({ userId: z.string().uuid() }))
   .handler(async ({ data }) => {
-
     const events = await db // hämtar alla fält från event tabellen
       .select({
         id: schema.event.id,
@@ -395,6 +415,9 @@ export const addFavoriteEventFn = createServerFn({ method: "POST" })
   .validator(z.object({ eventId: z.uuid() }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const [existingFavorite] = await db
       .select({
@@ -435,6 +458,9 @@ export const removeFavoriteEventFn = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.uuid() }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
     const deletedEvent = await db // tar bort ett event från favoriteEvent tabellen baserat på userId och eventId
       .delete(schema.favoriteEvent)

@@ -23,7 +23,6 @@ import {
 } from "@/components/shadcn/ui/dropdown-menu";
 import { Switch } from "@/components/shadcn/ui/switch";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import type { TCalendarView } from "@/components/calendar/types";
 import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
 
 export function Settings() {

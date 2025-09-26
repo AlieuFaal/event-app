@@ -1,6 +1,6 @@
 "use client";
 
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 import {
     AlertDialog,
@@ -12,11 +12,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/shadcn/ui/alert-dialog";
-import type {IEvent} from "@/components/calendar/interfaces";
-import {formatTime, getColorClass} from "@/components/calendar/helpers";
-import {cn} from "@/lib/utils";
-import {useCalendar} from "@/components/calendar/contexts/calendar-context";
-import { Event } from "@/services/eventService";
+import { formatTime, getColorClass } from "@/components/calendar/helpers";
+import { cn } from "@/lib/utils";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { Event } from "drizzle/db";
 
 interface EventDropConfirmationDialogProps {
     open: boolean;
@@ -29,16 +28,16 @@ interface EventDropConfirmationDialogProps {
 }
 
 export function EventDropConfirmationDialog({
-                                                open,
-                                                onOpenChange,
-                                                event,
-                                                newStartDate,
-                                                newEndDate,
-                                                onConfirm,
-                                                onCancel,
-                                            }: EventDropConfirmationDialogProps) {
+    open,
+    onOpenChange,
+    event,
+    newStartDate,
+    newEndDate,
+    onConfirm,
+    onCancel,
+}: EventDropConfirmationDialogProps) {
 
-    const {use24HourFormat} = useCalendar();
+    const { use24HourFormat } = useCalendar();
 
     if (!event || !newStartDate || !newEndDate) {
         return null;
@@ -68,8 +67,8 @@ export function EventDropConfirmationDialog({
                     <AlertDialogDescription>
                         Are you sure you want to move
                         <span className={cn(getColorClass(event.color), "mx-1 py-0.5 px-1 rounded-md")}>
-							{event.title}
-						</span>
+                            {event.title}
+                        </span>
                         event from
                         <strong className="mx-1">{formatDate(originalStart)}</strong> to
                         <strong className="mx-1">{formatDate(newStartDate)}</strong>?

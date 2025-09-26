@@ -6,7 +6,6 @@ import {
 	format,
 	isAfter,
 	isBefore,
-	parseISO,
 } from "date-fns";
 import { motion } from "framer-motion";
 import { Resizable, type ResizeCallback } from "re-resizable";
@@ -15,8 +14,7 @@ import { useCallback, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 
-import type { IEvent } from "@/components/calendar/interfaces";
-import { Event } from "@/services/eventService";
+import { Event } from "drizzle/db";
 
 interface ResizableEventBlockProps {
 	event: Event;

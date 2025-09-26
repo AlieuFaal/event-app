@@ -2,17 +2,10 @@
 
 import { motion } from "framer-motion";
 import {
-	CalendarRange,
-	Columns,
-	Grid2X2,
-	Grid3X3,
-	LayoutList,
-	List,
 	Plus,
 } from "lucide-react";
 
 import { Button } from "@/components/shadcn/ui/button";
-import { ButtonGroup } from "@/components/shadcn/ui/button-group";
 import {
 	slideFromLeft,
 	slideFromRight,
@@ -23,7 +16,6 @@ import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event
 import { DateNavigator } from "@/components/calendar/header/date-navigator";
 import FilterEvents from "@/components/calendar/header/filter";
 import { TodayButton } from "@/components/calendar/header/today-button";
-import { UserSelect } from "@/components/calendar/header/user-select";
 import { Settings } from "@/components/calendar/settings/settings";
 import Views from "./view-tabs";
 

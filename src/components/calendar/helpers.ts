@@ -29,12 +29,11 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import type {
 	ICalendarCell,
 } from "@/components/calendar/interfaces";
-import { CalendarEvent } from "@/services/eventService";
 import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import { Event } from "@/services/eventService";
+import { Event } from "drizzle/db";
 
 const FORMAT_STRING = "MMM d, yyyy";
 
@@ -130,7 +129,7 @@ export function groupEvents(dayEvents: Event[]): Event[][] {
 }
 
 export function getEventBlockStyle(
-	event: CalendarEvent,
+	event: Event,
 	day: Date,
 	groupIndex: number,
 	groupSize: number,
@@ -181,8 +180,8 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
 }
 
 export function calculateMonthEventPositions(
-	multiDayEvents: CalendarEvent[],
-	singleDayEvents: CalendarEvent[],
+	multiDayEvents: Event[],
+	singleDayEvents: Event[],
 	selectedDate: Date,
 ): Record<string, number> {
 	const monthStart = startOfMonth(selectedDate);
@@ -247,7 +246,7 @@ export function calculateMonthEventPositions(
 
 export function getMonthCellEvents(
 	date: Date,
-	events: CalendarEvent[],
+	events: Event[],
 	eventPositions: Record<string, number>,
 ) {
 	const dayStart = startOfDay(date);
@@ -291,10 +290,10 @@ export const getFirstLetters = (str: string): string => {
 };
 
 export const getEventsForDay = (
-	events: CalendarEvent[],
+	events: Event[],
 	date: Date,
 	isWeek = false,
-): CalendarEvent[] => {
+): Event[] => {
 	const targetDate = startOfDay(date);
 	return events
 		.filter((event) => {
@@ -334,7 +333,7 @@ export const getWeekDates = (date: Date): Date[] => {
 	return Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 };
 
-export const getEventsForWeek = (events: CalendarEvent[], date: Date): CalendarEvent[] => {
+export const getEventsForWeek = (events: Event[], date: Date): Event[] => {
 	const weekDates = getWeekDates(date);
 	const startOfWeekDate = weekDates[0];
 	const endOfWeekDate = weekDates[6];
@@ -367,7 +366,7 @@ export const getEventsForMonth = (events: Event[], date: Date): Event[] => {
 	});
 };
 
-export const getEventsForYear = (events: CalendarEvent[], date: Date): CalendarEvent[] => {
+export const getEventsForYear = (events: Event[], date: Date): Event[] => {
 	if (!events || !Array.isArray(events) || !isValid(date)) return [];
 
 	const startOfYearDate = startOfYear(date);
@@ -413,7 +412,7 @@ export const getBgColor = (color: string): string => {
 	return colorClasses[color as TEventColor] || "";
 };
 
-export const useGetEventsByMode = (events: CalendarEvent[]) => {
+export const useGetEventsByMode = (events: Event[]) => {
 	const { view, selectedDate } = useCalendar();
 
 	switch (view) {

@@ -36,8 +36,8 @@ import { COLORS } from "@/components/calendar/constants";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
-import { Event } from "@/services/eventService";
 import { authClient } from "@/lib/auth-client";
+import { Event } from "drizzle/db";
 
 interface IProps {
 	children: ReactNode;

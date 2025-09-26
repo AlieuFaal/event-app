@@ -8,13 +8,13 @@ import {
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { getCalendarCells } from "@/components/calendar/helpers";
-import type { IEvent } from "@/components/calendar/interfaces";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
-import { Event } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
 	singleDayEvents: Event[];
 	multiDayEvents: Event[];
+	users: User[];
 }
 
 const MONTHS = [
@@ -34,7 +34,7 @@ const MONTHS = [
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
+export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IProps) {
 	const { selectedDate, setSelectedDate } = useCalendar();
 	const currentYear = getYear(selectedDate);
 	const allEvents = [...multiDayEvents, ...singleDayEvents];
@@ -109,7 +109,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
 											)}
 										>
 											{isCurrentMonth && hasEvents ? (
-												<EventListDialog date={cell.date} events={dayEvents}>
+												<EventListDialog date={cell.date} events={dayEvents} users={users}>
 													<div className="w-full h-full flex flex-col items-center justify-start gap-0.5">
 														<span
 															className={cn(

@@ -6,10 +6,8 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { formatTime } from "@/components/calendar/helpers";
-import { Event as CalendarEvent, Event } from "@/services/eventService";
 import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
-import { TEventFormData } from "../../schemas";
-import { User } from "better-auth";
+import { Event, User } from "drizzle/db";
 
 const eventBadgeVariants = cva(
 	"mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",
@@ -57,6 +55,7 @@ interface IProps
 		"color" | "multiDayPosition"
 	> {
 	event: Event;
+	users: User[];
 	cellDate: Date;
 	eventCurrentDay?: number;
 	eventTotalDays?: number;
@@ -71,6 +70,7 @@ export function MonthEventBadge({
 	eventTotalDays,
 	className,
 	position: propPosition,
+	users
 }: IProps) {
 	const { badgeVariant, use24HourFormat } = useCalendar();
 
@@ -108,7 +108,7 @@ export function MonthEventBadge({
 
 	return (
 		<DraggableEvent event={event}>
-			<EventDetailsDialog event={event}>
+			<EventDetailsDialog event={event} users={users} >
 				<div role="button" tabIndex={0} className={eventBadgeClasses}>
 					<div className="flex items-center gap-1.5 truncate">
 						{!["middle", "last"].includes(position) &&

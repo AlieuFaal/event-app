@@ -5,7 +5,7 @@ import { getUserEventsWithCommentsFn, getUserFavoriteEventsFn } from '@/services
 import { getFollowersFn, getFollowingFn, getUserDataByIdFn, isUserFollowingFn } from '@/services/user-service'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(protected)/_pathlessLayout/user/$id')({
+export const Route = createFileRoute('/(protected)/user/$id')({
     loader: async ({ params }) => {
         const user = await getUserDataByIdFn({ data: { id: params.id } });
         const events = await getUserEventsWithCommentsFn({ data: { userId: params.id } });

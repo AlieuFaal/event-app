@@ -12,16 +12,17 @@ import {
 } from "@/components/calendar/helpers";
 
 import { DayCell } from "@/components/calendar/views/month-view/day-cell";
-import { Event as CalendarEvent } from "@/services/eventService";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
-	singleDayEvents: CalendarEvent[];
-	multiDayEvents: CalendarEvent[];
+	singleDayEvents: Event[];
+	multiDayEvents: Event[];
+	users: User[];
 }
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
+export function CalendarMonthView({ singleDayEvents, multiDayEvents, users }: IProps) {
 	const { selectedDate } = useCalendar();
 
 	const allEvents = [...multiDayEvents, ...singleDayEvents];
@@ -60,6 +61,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
 						key={index}
 						cell={cell}
 						events={allEvents}
+						users={users}
 						eventPositions={eventPositions}
 					/>
 				))}

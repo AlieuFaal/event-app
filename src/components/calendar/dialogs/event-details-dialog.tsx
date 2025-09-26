@@ -10,29 +10,45 @@ import { formatTime } from "@/components/calendar/helpers";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/ui/dialog";
 import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
-import { User} from "better-auth";
-import { TEventFormData } from "../schemas";
-import { Event } from "@/services/eventService";
+import { authClient } from "@/lib/auth-client";
+import { Event, User } from "drizzle/db";
 
 interface IProps {
 	event: Event;
+	users: User[];
 	children: ReactNode;
 }
 
-export function EventDetailsDialog({ event, children}: IProps) {
+export function EventDetailsDialog({ event, children, users }: IProps) {
 	const startDate = event.startDate;
 	const endDate = event.endDate;
 	const { use24HourFormat, removeEvent } = useCalendar();
+	const session = authClient.useSession();
 
 	const deleteEvent = (eventId?: string) => {
 		try {
 			if (!eventId) return;
+
+			if (!session?.data?.user) {
+				toast.error("You must be logged in to delete an event.");
+				return;
+			}
+
+			if (event.userId !== session.data.user.id) {
+				toast.error("You can only delete your own events.");
+				return;
+			}
 			removeEvent(eventId);
 			toast.success("Event deleted successfully.");
 		} catch {
 			toast.error("Error deleting event.");
 		}
 	};
+	
+	function findEventUserName(event: Event) {
+		const user = users.find((user) => user.id === event.userId) || { name: "Unknown User" };
+		return user.name;
+	}
 
 	return (
 		<Dialog>
@@ -89,19 +105,21 @@ export function EventDetailsDialog({ event, children}: IProps) {
 						</div>
 					</div>
 				</ScrollArea>
-				<div className="flex justify-end gap-2">
-					<AddEditEventDialog event={event}>
-						<Button variant="outline">Edit</Button>
-					</AddEditEventDialog>
-					<Button
-						variant="destructive"
-						onClick={() => {
-							deleteEvent(event.id);
-						}}
-					>
-						Delete
-					</Button>
-				</div>
+				{event.userId !== session?.data?.user.id ? null : (
+					<div className="flex justify-end gap-2">
+						<AddEditEventDialog event={event}>
+							<Button variant="outline">Edit</Button>
+						</AddEditEventDialog>
+						<Button
+							variant="destructive"
+							onClick={() => {
+								deleteEvent(event.id);
+							}}
+						>
+							Delete
+						</Button>
+					</div>
+				)}
 				<DialogClose />
 			</DialogContent>
 		</Dialog>
