@@ -11,6 +11,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/shadcn/ui/dropdown-menu"
 import { useTheme } from "../components/Themeprovider"
+import { m } from "@/paraglide/messages"
 
 export function ModeToggle() {
     const { setTheme } = useTheme()
@@ -25,9 +26,9 @@ export function ModeToggle() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("light")}>{m.nav_light_mode()}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>{m.nav_dark_mode()}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>{m.nav_system_mode()}</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

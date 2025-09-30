@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 
@@ -8,6 +8,7 @@ import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
 import { getCurrentUserFn } from '@/services/user-service'
+import { getLocale } from "../paraglide/runtime.js";
 
 export const Route = createRootRouteWithContext()({
   beforeLoad: async () => {
@@ -60,11 +61,22 @@ export const Route = createRootRouteWithContext()({
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { ctx } = Route.useLoaderData()
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang={getLocale()} className="scroll-smooth">
       <head>
         <HeadContent />
       </head>
       <body>
+        {/* <div className="p-2 flex gap-2 text-lg">
+          <Link
+            to="/{-$locale}"
+            activeProps={{
+              className: "font-bold",
+            }}
+            activeOptions={{ exact: true }}
+          >
+            Home
+          </Link>
+        </div> */}
         {ctx.IsAuthenticated && (
           <Header />
         )}

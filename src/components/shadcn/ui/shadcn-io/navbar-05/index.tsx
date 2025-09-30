@@ -29,6 +29,7 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
+import { m } from '@/paraglide/messages';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -88,10 +89,10 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
 
 // Default navigation links
 const defaultNavigationLinks: Navbar05NavItem[] = [
-  { href: '/', label: 'Home' },
-  { href: '/create-event', label: 'Add Your Event' },
-  { href: '/events', label: 'Events' },
-  { href: '/event-calendar', label: 'Calendar' },
+  { href: '/', label: m.nav_home() },
+  { href: '/create-event', label: m.nav_create_event() },
+  { href: '/events', label: m.nav_events() },
+  { href: '/event-calendar', label: m.nav_calendar() },
   // { href: '/map', label: 'Map' },
   // { href: '/about', label: 'About Us' },
 ];
@@ -120,19 +121,19 @@ const InfoMenu = ({ onItemClick }: { onItemClick?: (item: string) => void }) => 
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuLabel>Help & Support</DropdownMenuLabel>
+      <DropdownMenuLabel>{m.help_support()}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={() => onItemClick?.('help')}>
-        Help Center
+        {m.help_center()}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onItemClick?.('documentation')}>
-        Documentation
+        {m.help_documentation()}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onItemClick?.('contact')}>
-        Contact Support
+        {m.help_contact_support()}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onItemClick?.('feedback')}>
-        Send Feedback
+        {m.help_send_feedback()}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
@@ -222,14 +223,14 @@ const UserMenu = ({
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={() => onClickHandler('/profile')}>
-        Profile
+        {m.nav_profile()}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={() => onClickHandler('/favorites')}>
-        Favorites
+        {m.nav_favorites()}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={() => onLogout()}>
-        Log out
+        {m.nav_logout()}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
@@ -408,7 +409,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               />
             )}
             {!data && (
-              <Button variant={'outline'} onClick={() => onClickHandler('/signin')}>Sign In</Button>
+              <Button variant={'outline'} onClick={() => onClickHandler('/signin')}>{m.signin_card_title()}</Button>
             )}
           </div>
         </div>

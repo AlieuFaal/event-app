@@ -26,6 +26,7 @@ import { updateUserDataFn } from "@/services/user-service";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
 import React from "react";
+import { m } from "@/paraglide/messages";
 
 export default function ProfileContent() {
   const { data: session } = authClient.useSession();
@@ -50,10 +51,10 @@ export default function ProfileContent() {
     console.log("Submitting data:", data);
     try {
       await updateUserDataFn({ data });
-      toast.success("User updated successfully!");
+      toast.success(m.toast_update_user_success());
     } catch (error) {
       console.error("Failed to update user:", error);
-      toast.error("Failed to update user!");
+      toast.error(m.toast_update_user_error());
     }
   };
 
@@ -78,11 +79,11 @@ export default function ProfileContent() {
         toast.error(error.message);
         return;
       }
-      toast.success("Password changed successfully!");
+      toast.success(m.toast_passwordchange_success());
       passwordForm.reset();
     } catch (error) {
       console.error("Failed to change password:", error);
-      toast.error("Failed to change password!");
+      toast.error(m.toast_passwordchange_error());
     }
   };
   
@@ -103,10 +104,10 @@ export default function ProfileContent() {
       };
 
       await updateUserDataFn({ data: updatedUserData });
-      toast.success(`User role updated to ${newRole}!`);
+      toast.success(`${m.toast_update_userrole_success()} ${newRole}!`);
     } catch (error) {
       console.error(`Failed to update user role to ${newRole}:`, error);
-      toast.error(`Failed to update user role to ${newRole}!`);
+      toast.error(`${m.toast_update_userrole_error()} ${newRole}!`);
       setSwitchState(!checked);
     }
   };
@@ -114,18 +115,18 @@ export default function ProfileContent() {
   return (
     <Tabs defaultValue="personal" className="space-y-6 mt-8">
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="personal">Personal</TabsTrigger>
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="security">Security</TabsTrigger>
-        <TabsTrigger value="notifications">Notifications</TabsTrigger>
+        <TabsTrigger value="personal">{m.tabs_personal()}</TabsTrigger>
+        <TabsTrigger value="account">{m.tabs_account()}</TabsTrigger>
+        <TabsTrigger value="security">{m.tabs_security()}</TabsTrigger>
+        <TabsTrigger value="notifications">{m.tabs_notifications()}</TabsTrigger>
       </TabsList>
 
       {/* Personal Information */}
       <TabsContent value="personal" className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Update your personal details and profile information.</CardDescription>
+            <CardTitle>{m.personal_info_title()}</CardTitle>
+            <CardDescription>{m.personal_info_description()}</CardDescription>
           </CardHeader>
           <Form {...form}>
             <form id="user-form" method="post" onSubmit={form.handleSubmit(onSubmit)}>
@@ -137,7 +138,7 @@ export default function ProfileContent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="name">
-                          Name
+                          {m.personal_name_label()}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -175,7 +176,7 @@ export default function ProfileContent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="phone" >
-                          Phone
+                          {m.personal_phone_label()}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -195,7 +196,7 @@ export default function ProfileContent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="location" >
-                          Location
+                          {m.personal_location_label()}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -215,12 +216,12 @@ export default function ProfileContent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="bio" >
-                          Bio
+                          {m.personal_bio_label()}
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             id="bio"
-                            placeholder="Tell us about yourself..."
+                            placeholder={m.personal_bio_placeholder()}
                             rows={4}
                             {...field}
                             value={field.value ?? ""}
@@ -231,7 +232,7 @@ export default function ProfileContent() {
                       </FormItem>
                     )}
                   />
-                  <Button form="user-form" type="submit" disabled={!form.formState.isDirty || !form.formState.isValid} onClick={form.handleSubmit(onSubmit)}>Save Changes</Button>
+                  <Button form="user-form" type="submit" disabled={!form.formState.isDirty || !form.formState.isValid} onClick={form.handleSubmit(onSubmit)}>{m.button_save()}</Button>
                 </div>
               </CardContent>
             </form>
@@ -243,17 +244,17 @@ export default function ProfileContent() {
       <TabsContent value="account" className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Account Settings</CardTitle>
-            <CardDescription>Manage your account preferences and subscription.</CardDescription>
+            <CardTitle>{m.account_info_title()}</CardTitle>
+            <CardDescription>{m.account_info_description()}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label className="text-base">Account Status</Label>
-                <p className="text-muted-foreground text-sm">Your account is currently active</p>
+                <Label className="text-base">{m.account_status()}</Label>
+                <p className="text-muted-foreground text-sm">{m.account_status_active()}</p>
               </div>
               <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                Active
+                {m.account_status_badge()}
               </Badge>
             </div>
             {/* <Separator />
@@ -267,9 +268,9 @@ export default function ProfileContent() {
             <Separator /> */}
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label className="text-base">Switch role</Label>
+                <Label className="text-base">{m.account_switch_role()}</Label>
                 <p className="text-muted-foreground text-sm">
-                  Switch betweeen the Artist role or Enthusiast role. Only Artists are able to create events. Default is Enthusiast.
+                  {m.account_switch_role_description()}
                 </p>
               </div>
               <Switch onCheckedChange={handleRoleToggle} checked={switchState} />
@@ -277,50 +278,50 @@ export default function ProfileContent() {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label className="text-base">Data Export</Label>
-                <p className="text-muted-foreground text-sm">Download a copy of your data</p>
+                <Label className="text-base">{m.account_data_export()}</Label>
+                <p className="text-muted-foreground text-sm">{m.account_data_export_description()}</p>
               </div>
-              <Button variant="outline">Export Data</Button>
+              <Button variant="outline">{m.account_data_export()}</Button>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-destructive/50">
           <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            <CardDescription>Irreversible and destructive actions</CardDescription>
+            <CardTitle className="text-destructive">{m.account_danger_zone()}</CardTitle>
+            <CardDescription>{m.account_danger_zone_description()}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <Label className="text-base">Delete Account</Label>
+                <Label className="text-base">{m.account_delete()}</Label>
                 <p className="text-muted-foreground text-sm">
-                  Permanently delete your account and all data
+                  {m.account_delete_description()}
                 </p>
               </div>
               <Dialog>
                 <DialogTrigger>
                   <Button variant="destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Account
+                    {m.account_delete()}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you Sure?</DialogTitle>
-                    <DialogDescription>Your account will be permanently deleted, this action cannot be undone.</DialogDescription>
+                    <DialogTitle>{m.delete_modal_title()}</DialogTitle>
+                    <DialogDescription>{m.delete_modal_description()}</DialogDescription>
                     <Button variant="destructive" onClick={async () => {
                       try {
                         await authClient.deleteUser({ callbackURL: "/" });
-                        toast.success("Account deleted successfully!");
+                        toast.success(m.toast_delete_account_success());
                         navigate({ to: "/" });
                       } catch (error) {
                         console.error("Failed to delete account:", error);
-                        toast.error("Failed to delete account!");
+                        toast.error(m.toast_delete_account_error());
                       }
                     }}>
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Account
+                      {m.button_delete()}
                     </Button>
                   </DialogHeader>
                 </DialogContent>
@@ -334,22 +335,22 @@ export default function ProfileContent() {
       <TabsContent value="security" className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Security Settings</CardTitle>
-            <CardDescription>Manage your account security and authentication.</CardDescription>
+            <CardTitle>{m.security_info_title()}</CardTitle>
+            <CardDescription>{m.security_info_description()}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <Label className="text-base">Password</Label>
-                  <p className="text-muted-foreground text-sm">Change your account credentials.</p>
+                  <Label className="text-base">{m.label_password()}</Label>
+                  <p className="text-muted-foreground text-sm">{m.security_password_description()}</p>
                 </div>
                 <Dialog>
                   <DialogTrigger asChild>
                     <div className="flex items-center justify-end">
                       <Button variant="outline">
                         <Key className="mr-2 h-4 w-4" />
-                        Change Password
+                        {m.security_change_password_button()}
                       </Button>
                     </div>
                   </DialogTrigger>
@@ -440,17 +441,17 @@ export default function ProfileContent() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <Label className="text-base">Two-Factor Authentication</Label>
+                  <Label className="text-base">{m.security_2fa()}</Label>
                   <p className="text-muted-foreground text-sm">
-                    Add an extra layer of security to your account
+                    {m.security_2fa_description()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                    Enabled
+                    {m.security_enabled_badge()}
                   </Badge>
                   <Button variant="outline" size="sm">
-                    Configure
+                    {m.security_2fa()}
                   </Button>
                 </div>
               </div>
@@ -486,8 +487,8 @@ export default function ProfileContent() {
       <TabsContent value="notifications" className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Notification Preferences</CardTitle>
-            <CardDescription>Choose what notifications you want to receive.</CardDescription>
+            <CardTitle>{m.notifications_info_title()}</CardTitle>
+            <CardDescription>{m.notifications_info_description()}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">

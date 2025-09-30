@@ -11,7 +11,8 @@
     "create-migration": "drizzle-kit generate",
     "update-database": "drizzle-kit migrate",
     "drop-migration": "drizzle-kit drop",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.19",
@@ -91,7 +92,9 @@
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vitest": "^3.0.5",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "@inlang/paraglide-js": "2.4.0",
+    "@inlang/cli": "^3.0.0"
   },
   "trustedDependencies": [
     "@parcel/watcher",

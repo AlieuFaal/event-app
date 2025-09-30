@@ -6,6 +6,7 @@ import { Camera, Calendar, Mail, MapPin, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { m } from "@/paraglide/messages";
 
 interface ProfileHeaderProps {
   followersCount: number;
@@ -32,11 +33,11 @@ export default function ProfileHeader({ followersCount, followingCount }: Profil
         await authClient.updateUser({
           image: await convertImageToBase64(file),
         });
-        toast.success("Image uploaded successfully!");
+        toast.success(m.toast_image_upload_success());
       }
       catch (error) {
         console.error("Failed to upload image:", error);
-        toast.error("Failed to upload image!");
+        toast.error(m.toast_image_upload_error());
       }
     };
   };
@@ -87,19 +88,19 @@ export default function ProfileHeader({ followersCount, followingCount }: Profil
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-2 md:flex-row md:items-center">
                 <h1 className="text-2xl font-bold">{currentUser?.name}</h1>
-                <Badge variant="secondary">{currentUser?.role || "user"}</Badge>
+                <Badge variant="secondary">{currentUser?.role || m.role_user()}</Badge>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
                 <Users className="size-4" />
                 <span className="font-semibold text-foreground">{followersCount}</span>
-                <span>Followers</span>
+                <span>{m.followers()}</span>
               </div>
               <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
                 <Users className="size-4" />
                 <span className="font-semibold text-foreground">{followingCount}</span>
-                <span>Following</span>
+                <span>{m.following()}</span>
               </div>
             </div>
             <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
@@ -113,7 +114,7 @@ export default function ProfileHeader({ followersCount, followingCount }: Profil
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="size-4" />
-                Joined {formatJoinDate(currentUser?.createdAt)}
+                {m.joined()} {formatJoinDate(currentUser?.createdAt)}
               </div>
             </div>
           </div>

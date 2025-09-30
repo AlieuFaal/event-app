@@ -1,23 +1,20 @@
-import { ArrowLeft, ArrowRight, Music4, SquareUserRound, SquareUserRoundIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Music4, SquareUserRound } from "lucide-react";
 import { Button } from "../shadcn/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../shadcn/ui/card";
 import { Label } from "../shadcn/ui/label";
 import { Separator } from "../shadcn/ui/separator";
 import React from "react";
-import { is } from "drizzle-orm";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { createAuthClient } from "better-auth/react";
-import { customSessionClient } from "better-auth/client/plugins";
-import { auth } from "@/lib/auth";
 import { useServerFn } from "@tanstack/react-start";
-import { onbUpdateUserDataFn, updateRoleFn, updateUserDataFn } from "@/services/user-service";
+import { onbUpdateUserDataFn, updateRoleFn } from "@/services/user-service";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
-import { onbFormUpdateSchema, OnboardingUpdate, UpdateUser, UserForm, userFormSchema } from "drizzle/db";
+import { onbFormUpdateSchema, OnboardingUpdate } from "drizzle/db";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { m } from "@/paraglide/messages";
 
 export default function OnboardingCard() {
     const [isSelected, setIsSelected] = React.useState<string | null>(null);
@@ -72,26 +69,26 @@ function View1({ isSelected, setIsSelected, setView1, setView2, setView3 }: { is
         <div>
             <Card className="w-[1000px] mx-auto mt-25 bg-card border-1 shadow-lg mb-25">
                 <CardHeader className="flex flex-col items-center">
-                    <CardTitle className="text-5xl text-primary">Welcome to VibeSpot!</CardTitle>
-                    <CardDescription className="text-xl">Lets get you started with setting up your profile.</CardDescription>
+                    <CardTitle className="text-5xl text-primary">{m.onb_Welcome_to_VibeSpot()}</CardTitle>
+                    <CardDescription className="text-xl">{m.onb_description()}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="">
-                        <Label className="text-xl">Choose account type.</Label>
+                        <Label className="text-xl">{m.onb_Choose_Type_label()}</Label>
                     </div>
                     <div className="flex flex-row justify-around mt-5 gap-5">
                         <Card className={cn("hover:scale-105 transition-transform cursor-pointer min-w-[420px]", isSelected === "Enthusiast" && "bg-gray-200 border-3 border-primary dark:text-background")} onClick={() => setIsSelected("Enthusiast")}>
                             <CardHeader>
                                 <SquareUserRound />
-                                <CardTitle className="text-2xl">Enthusiast</CardTitle>
-                                <CardDescription className={cn("text-lg", isSelected === "Enthusiast" && "dark:text-background")}>The Concert enjoyer. Find events & artists of your liking, connect with others & enjoy the vibe!</CardDescription>
+                                <CardTitle className="text-2xl">{m.onb_enthusiast_Title()}</CardTitle>
+                                <CardDescription className={cn("text-lg", isSelected === "Enthusiast" && "dark:text-background")}>{m.onb_Enthusiast_Description()}</CardDescription>
                             </CardHeader>
                         </Card>
                         <Card className={cn("hover:scale-105 transition-transform cursor-pointer min-w-[420px]", isSelected === "Artist" && "bg-gray-200 border-3 border-primary dark:text-background")} onClick={() => setIsSelected("Artist")}>
                             <CardHeader>
                                 <Music4 />
                                 <CardTitle className="text-2xl">Artist</CardTitle>
-                                <CardDescription className={cn("text-lg", isSelected === "Artist" && "dark:text-background")}>The Creator. Create & manage upcoming events, engage with attendees & grow your community.</CardDescription>
+                                <CardDescription className={cn("text-lg", isSelected === "Artist" && "dark:text-background")}>{m.onb_Artist_Description()}</CardDescription>
                             </CardHeader>
                         </Card>
                     </div>
@@ -100,7 +97,7 @@ function View1({ isSelected, setIsSelected, setView1, setView2, setView3 }: { is
                     </div>
                     <div className="flex flex-row justify-between mt-10">
                         <Button className="hover:scale-105 transition-transform" onClick={() => toast.warning("No going back from here :)")}>
-                            <ArrowLeft /> Back
+                            <ArrowLeft /> {m.onb_back_Button()}
                         </Button>
 
                         <Button className="hover:scale-105 transition-transform" onClick={() => {
@@ -114,7 +111,7 @@ function View1({ isSelected, setIsSelected, setView1, setView2, setView3 }: { is
                                 toast.error("Please select an account type to proceed.");
                             }
                         }}>
-                            Next <ArrowRight />
+                            {m.onb_Continue_Button()} <ArrowRight />
                         </Button>
                     </div>
                 </CardContent>
@@ -172,12 +169,12 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
         <div>
             <Card className="w-[1000px] mx-auto mt-25 bg-card border-1 shadow-lg mb-25">
                 <CardHeader className="flex flex-col items-center">
-                    <CardTitle className="text-5xl text-primary">Great choice!</CardTitle>
-                    <CardDescription className="text-xl">You have selected the <span className="font-bold">{isSelected}</span> account type.</CardDescription>
+                    <CardTitle className="text-5xl text-primary">{m.onb_card2_title()}</CardTitle>
+                    <CardDescription className="text-xl">{m.onb_card2_description()} <span className="font-bold">{isSelected}</span> {m.onb_card2_description2()}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="">
-                        <Label className="text-xl">Next, please provide some additional information to help us personalize your experience.</Label>
+                        <Label className="text-xl">{m.onb_card2_label()}</Label>
                     </div>
                     <Form {...form}>
                         <form id="form" method="post" onSubmit={form.handleSubmit(onSubmit)}>
@@ -188,7 +185,7 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel htmlFor="phone" >
-                                                Phone
+                                                {m.personal_phone_label()}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -209,7 +206,7 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel htmlFor="location" >
-                                                Location
+                                                {m.personal_location_label()}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -235,10 +232,10 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
                             setView2(false);
                             setView3(false);
                         }}>
-                            <ArrowLeft /> Back
+                            <ArrowLeft /> {m.onb_back_Button()}
                         </Button>
                         <Button type="submit" className="hover:scale-105 transition-transform" form="form" onClick={() => form.handleSubmit(onSubmit)}>
-                           {form.formState.isDirty ? "Next" : "Skip"}<ArrowRight />
+                           {form.formState.isDirty ? m.onb_Continue_Button() : m.onb_Skip_Button()}<ArrowRight />
                         </Button>
                     </div>
                 </CardContent>
@@ -252,12 +249,12 @@ function View3({ setView1, setView2, setView3 }: { setView1: React.Dispatch<Reac
         <div>
             <Card className="w-[1000px] mx-auto mt-25 bg-card border-1 shadow-lg mb-25">
                 <CardHeader className="flex flex-col items-center">
-                    <CardTitle className="text-5xl text-primary">All set!</CardTitle>
-                    <CardDescription className="text-xl">You have completed the onboarding process.</CardDescription>
+                    <CardTitle className="text-5xl text-primary">{m.onb_card3_title()}</CardTitle>
+                    <CardDescription className="text-xl">{m.onb_card3_description()}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="">
-                        <Label className="text-xl">You can now proceed to explore the app and start using your new account.</Label>
+                        <Label className="text-xl">{m.onb_card3_label()}</Label>
                     </div>
                     <div className="mt-10">
                         <Separator />
@@ -269,7 +266,7 @@ function View3({ setView1, setView2, setView3 }: { setView1: React.Dispatch<Reac
                             setView3(false);
                         }
                         }>
-                            <ArrowLeft /> Back
+                            <ArrowLeft /> {m.onb_back_Button()}
                         </Button>
 
                         <Button className="hover:scale-105 transition-transform" onClick={() => {
@@ -277,7 +274,7 @@ function View3({ setView1, setView2, setView3 }: { setView1: React.Dispatch<Reac
                             window.location.href = "/";
                         }
                         }>
-                            Go to Dashboard <ArrowRight />
+                            {m.onb_card3_button()} <ArrowRight />
                         </Button>
                     </div>
                 </CardContent>

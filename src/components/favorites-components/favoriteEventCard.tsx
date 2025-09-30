@@ -17,6 +17,7 @@ import CommentSection from "../event-components/event-comment-section";
 import { toast } from "sonner";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { useRouter } from "@tanstack/react-router";
+import { m } from "@/paraglide/messages";
 
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
@@ -25,7 +26,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
 
         const creator = users.find((user) => user.id === favoriteEvent.userId);
 
-        return creator ? creator.name : "Unknown";
+        return creator ? creator.name : m.event_creator_unknown();
     }
 
     function getEventCreatorImage(favoriteEvent: EventWithComments) {
@@ -37,7 +38,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
     async function addOrRemoveFavorite() {
         if (!favoriteEvent.id) {
             console.error("favoriteEvent ID is undefined");
-            toast.error("favoriteEvent not found, please try again later.");
+            toast.error(m.toast_event_not_found());
             return;
         } // om favoriteEvent ID är undefined, skicka en toast som felmeddelar användaren
         console.log("Adding favorite for favoriteEvent ID:", favoriteEvent.id);
@@ -50,11 +51,11 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                 });
                 // setIsStarred(true);
                 favoriteEvent.isStarred = true; // Uppdatera favoriteEvent
-                toast.success("favoriteEvent added to favorites!");
+                toast.success(m.toast_favorite_added());
 
             } catch (error) {
                 console.error("Failed to add favoriteEvent to favorites:", error);
-                toast.error("Failed to add favoriteEvent to favorites. Please try again.");
+                toast.error(m.toast_favorite_add_failed());
             }
         } else // annars om IsStarred är True och favoriteEvent.id inte saknas, ta bort favoriteEventet från favoriter.
             if (favoriteEvent.isStarred && favoriteEvent.id) {
@@ -66,10 +67,10 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                     });
                     // setIsStarred(false);
                     favoriteEvent.isStarred = false; // Uppdatera favoriteEvent
-                    toast.success("favoriteEvent removed from favorites.");
+                    toast.success(m.toast_favorite_removed());
                 } catch (error) {
                     console.error("Failed to remove favoriteEvent from favorites:", error);
-                    toast.error("Failed to remove favoriteEvent from favorites. Please try again.");
+                    toast.error(m.toast_favorite_remove_failed());
                 } // försök att ta bort favoriteEventet från favoriter, om det misslyckas, skicka en toast som felmeddelar användaren
             }
         await router.invalidate(); // Invalidera routern för att uppdatera datan
@@ -102,7 +103,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                     <div className="justify-items-end-safe mx-5 " >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{favoriteEvent.startDate.toUTCString()}</CardDescription>
                         <div className="">
-                            {<p className="text-gray-600 dark:text-amber-50">Created by: {getEventCreatorName(favoriteEvent)}</p>}
+                            {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(favoriteEvent)}</p>}
                             {/* <Avatar className="h-7 w-7">
                             <AvatarImage src={getfavoriteEventCreatorImage(e) ?? undefined} alt="" />
                             </Avatar> */}

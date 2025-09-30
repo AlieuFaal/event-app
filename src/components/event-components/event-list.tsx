@@ -1,5 +1,6 @@
 import { EventWithComments, User } from "drizzle/db";
 import EventCards from "./event-cards";
+import { m } from "@/paraglide/messages";
 
 export default function EventList({ events, users }: { events: EventWithComments[], users: User[] }) {
     return (
@@ -7,7 +8,7 @@ export default function EventList({ events, users }: { events: EventWithComments
             <div className="">
                 <div className="flex flex-col justify-center items-center">
                     <h1 className="text-6xl mb-5 mt-5">
-                        Events
+                        {m.events_page_title()}
                     </h1>
                 </div>
             </div>

@@ -17,6 +17,7 @@ import { useState } from "react";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
+import { m } from "@/paraglide/messages";
 
 export default function EventCard({ event, users }: { event: EventWithComments, users: User[] }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
@@ -28,7 +29,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
 
         const creator = users.find((user) => user.id === event.userId);
 
-        return creator ? creator.name : "Unknown";
+        return creator ? creator.name : m.event_creator_unknown();
     }
 
     function getEventCreatorImage(event: Event) {
@@ -40,7 +41,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
     async function addOrRemoveFavorite() {
         if (!event.id) {
             console.error("Event ID is undefined");
-            toast.error("Event not found, please try again later.");
+            toast.error(m.toast_event_not_found());
             return;
         } // om event ID är undefined, skicka en toast som felmeddelar användaren
         console.log("Adding favorite for event ID:", event.id);
@@ -53,10 +54,10 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                 });
                 setIsStarred(true);
                 event.isStarred = true; // Uppdatera event objektet direkt
-                toast.success("Event added to favorites!");
+                toast.success(m.toast_favorite_added());
             } catch (error) {
                 console.error("Failed to add event to favorites:", error);
-                toast.error("Failed to add event to favorites. Please try again.");
+                toast.error(m.toast_favorite_add_failed());
             }
         } else // annars om setIsStarred är True och event.id inte saknas, ta bort eventet från favoriter.
             if (event.isStarred && event.id) {
@@ -68,10 +69,10 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                     });
                     setIsStarred(false);
                     event.isStarred = false; // Uppdatera event objektet direkt
-                    toast.success("Event removed from favorites.");
+                    toast.success(m.toast_favorite_removed());
                 } catch (error) {
                     console.error("Failed to remove event from favorites:", error);
-                    toast.error("Failed to remove event from favorites. Please try again.");
+                    toast.error(m.toast_favorite_remove_failed());
                 } // försök att ta bort eventet från favoriter, om det misslyckas, skicka en toast som felmeddelar användaren
             }
     }
@@ -104,7 +105,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                     <div className="justify-items-end-safe mx-5 " >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
                         <div className="">
-                            {<p className="text-gray-600 dark:text-amber-50">Created by: {getEventCreatorName(event)}</p>}
+                            {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}
                             {/* <Avatar className="h-7 w-7">
                             <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />
                             </Avatar> */}
@@ -121,13 +122,13 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                 </DialogHeader>
                 <div className="grid gap-10 mb-5">
                     <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Location: {event.location}</Label>
+                        <Label htmlFor="username-1" className="text-xl">{m.event_location_label()} {event.location}</Label>
                     </div>
                     <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Date: {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>
+                        <Label htmlFor="username-1" className="text-xl">{m.event_date_label()} {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>
                     </div>
                     <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(event)}</Label>
+                        <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(event)}</Label>
                     </div>
                 </div>
                 <CommentSection users={users} event={event} />

@@ -7,7 +7,7 @@ import { routeTree } from './routeTree.gen'
 export const createRouter = () => {
   return createTanstackRouter({
     routeTree,
-    scrollRestoration: true,    
+    scrollRestoration: false,    
     defaultPreloadStaleTime: 0,
   })
 }

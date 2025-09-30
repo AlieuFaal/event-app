@@ -1,3 +1,4 @@
+import { m } from "@/paraglide/messages";
 import { Link } from "@tanstack/react-router";
 
 export default function Footer() {
@@ -7,17 +8,17 @@ export default function Footer() {
                 <ul className='flex flex-wrap items-center justify-center gap-6'>
                     <li className=''>
                         <Link href="/" className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            Home
+                            {m.footer_home()}
                         </Link>
                     </li>
                     <li>
                         <Link to={"/events"} className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            Explore Events
+                            {m.footer_events()}
                         </Link>
                     </li>
                     <li>
                         <Link to={"/about"} className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            About Us
+                            {m.footer_about()}
                         </Link>
                     </li>
                     <li>
@@ -27,7 +28,7 @@ export default function Footer() {
                     </li>
                     <li>
                         <Link to={"/contact"} className="flex items-center gap-0.5 text-2xl transition-opacity hover:opacity-75">
-                            Contact
+                            {m.footer_contact()}
                         </Link>
                     </li>
                     <li>
@@ -46,7 +47,7 @@ export default function Footer() {
                 <ul className="flex flex-wrap items-center justify-center gap-6">
                     <li>
                         <Link to={"/privacy-policy"} className="text-xl text-muted-foreground transition-opacity hover:opacity-75">
-                            Privacy Policy
+                            {m.footer_privacy()}
                         </Link>
                     </li>
                 </ul>

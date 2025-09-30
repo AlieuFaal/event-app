@@ -15,6 +15,7 @@ import { useRouter } from '@tanstack/react-router';
 import { Label } from "../shadcn/ui/label";
 import { Input } from "../shadcn/ui/input";
 import { Button } from "../shadcn/ui/button";
+import { m } from "@/paraglide/messages";
 
 export default function SignUp() {
     const [firstName, setFirstName] = useState("");
@@ -42,16 +43,16 @@ export default function SignUp() {
     return (
         <Card className="z-50 rounded-md rounded-t-none max-w-md">
             <CardHeader>
-                <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
+                <CardTitle className="text-lg md:text-xl">{m.label_sign_up()}</CardTitle>
                 <CardDescription className="text-xs md:text-sm">
-                    Enter your information to create an account
+                    {m.signup_description()}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="grid gap-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="first-name">First name</Label>
+                            <Label htmlFor="first-name">{m.first_name()}</Label>
                             <Input
                                 id="first-name"
                                 placeholder="Max"
@@ -63,7 +64,7 @@ export default function SignUp() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="last-name">Last name</Label>
+                            <Label htmlFor="last-name">{m.last_name()}</Label>
                             <Input
                                 id="last-name"
                                 placeholder="Robinson"
@@ -76,7 +77,7 @@ export default function SignUp() {
                         </div>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">{m.label_email()}</Label>
                         <Input
                             id="email"
                             type="email"
@@ -89,25 +90,25 @@ export default function SignUp() {
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">{m.label_password()}</Label>
                         <Input
                             id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             autoComplete="new-password"
-                            placeholder="Password"
+                            placeholder={m.placeholder_password()}
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Confirm Password</Label>
+                        <Label htmlFor="password">{m.confirm_password()}</Label>
                         <Input
                             id="password_confirmation"
                             type="password"
                             value={passwordConfirmation}
                             onChange={(e) => setPasswordConfirmation(e.target.value)}
                             autoComplete="new-password"
-                            placeholder="Confirm Password"
+                            placeholder={m.confirm_password_placeholder()}
                         />
                     </div>
                     {/* <div className="grid gap-2">
@@ -172,7 +173,7 @@ export default function SignUp() {
                         {loading ? (
                             <Loader2 size={16} className="animate-spin" />
                         ) : (
-                            "Create an account"
+                            m.button_create_account()
                         )}
                     </Button>
                 </div>

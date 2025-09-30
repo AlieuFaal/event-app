@@ -1,13 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-background'
 import { Button } from '@/components/shadcn/ui/button'
+import { getServerMessage } from '@/services/get-server-message'
+import { m } from '@/paraglide/messages'
 
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
+    getServerMessage({ data: '🎉' }) // Prefetch for later use
     const ctx = context
 
     return { ctx }
-  },
+  }, 
   component: App,
 })
 
@@ -36,12 +39,12 @@ function App() {
             {ctx.IsAuthenticated ? (
               <Button className="text-xl px-14 py-6 rounded-full font-extrabold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
                 <a href="/events">
-                  Explore Events
+                  {m.Home_Button2()}
                 </a>
               </Button>
             ) : <Button className="text-xl px-14 py-6 rounded-full font-extrabold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
               <a href="/signin">
-                Sign In & Find Your Vibe!
+                {m.Home_Button()}
               </a>
             </Button>}
           </div>

@@ -1,18 +1,20 @@
-import {createStartHandler, defaultStreamHandler,} from '@tanstack/react-start/server'
-import { createRouter } from './router'
-import { auth } from './lib/auth'
+import {createStartHandler, defaultStreamHandler, getWebRequest,} from '@tanstack/react-start/server'
+import { createRouter, router } from './router'
 import 'localstorage-polyfill'
+import { paraglideMiddleware } from './paraglide/server';
+import { overwriteGetLocale } from './paraglide/runtime';
  
-export default createStartHandler({
-  createRouter,
-})(defaultStreamHandler)
+// export default createStartHandler({
+//   createRouter,
+// })(defaultStreamHandler)
 
-// const response = await auth.api.signInEmail({
-//   body: { 
-//     email,
-//     password
-//   },
-//   asResponse: true
-// })
+export default createStartHandler({
+  createRouter: () => router,
+})((event) =>
+  paraglideMiddleware(getWebRequest(), ({ locale }) => {
+    overwriteGetLocale(() => locale);
+    return defaultStreamHandler(event);
+  }),
+);
 
 global['localStorage'] = localStorage;

@@ -19,6 +19,7 @@ import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
+import { m } from "@/paraglide/messages";
 
 
 export default function EventCard() {
@@ -62,15 +63,15 @@ export default function EventCard() {
                 data: dataToSend
             });
 
-            toast.success("Event created successfully!");
+            toast.success(m.toast_event_created());
             router.navigate({ to: "/events" });
         } catch (error) {
             console.error("Error submitting event:", error);
             if (!session) {
-                toast.error("You must be logged in to create an event.");
+                toast.error(m.toast_login_required());
                 return;
             }
-            toast.error("Failed to create event. Please try again.");
+            toast.error(m.toast_event_failed());
         }
     }
 
@@ -78,9 +79,9 @@ export default function EventCard() {
         <div className="mt-5 flex flex-col">
             <Card className="p-20 shadow-lg border rounded-lg mx-30 mb-30 mt-20">
                 <CardHeader className="flex flex-col justify-center items-center">
-                    <CardTitle className="text-4xl mb-4">Create Event</CardTitle>
+                    <CardTitle className="text-4xl mb-4">{m.create_event_title()}</CardTitle>
                     <CardDescription className="text-gray-600 mb-4 text-lg">
-                        Fill in the details below to create your event.
+                        {m.create_event_description()}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -91,12 +92,12 @@ export default function EventCard() {
                                 name="title"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Title:</FormLabel>
+                                        <FormLabel>{m.form_title_label()}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Way Out West" {...field} />
+                                            <Input placeholder={m.form_title_placeholder()} {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            What's the name of your event?
+                                            {m.form_title_description()}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -108,12 +109,12 @@ export default function EventCard() {
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Description:</FormLabel>
+                                        <FormLabel>{m.form_description_label()}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="A cool and soulful evening..." {...field} />
+                                            <Input placeholder={m.form_description_placeholder()} {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Describe the Vibe of your event.
+                                            {m.form_description_description()}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -125,12 +126,12 @@ export default function EventCard() {
                                 name="location"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Location:</FormLabel>
+                                        <FormLabel>{m.form_location_label()}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Kaserntorget 6, 411 18, Göteborg" {...field} />
+                                            <Input placeholder={m.form_location_placeholder()} {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Where's the Vibe?
+                                            {m.form_location_description()}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -142,19 +143,19 @@ export default function EventCard() {
                                 name="color"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Color:</FormLabel>
+                                        <FormLabel>{m.form_color_label()}</FormLabel>
                                         <FormControl>
                                             <select {...field} className="w-full p-2 border rounded">
-                                                <option value="blue">Blue</option>
-                                                <option value="green">Green</option>
-                                                <option value="red">Red</option>
-                                                <option value="yellow">Yellow</option>
-                                                <option value="purple">Purple</option>
-                                                <option value="orange">Orange</option>
+                                                <option value="blue">{m.form_color_blue()}</option>
+                                                <option value="green">{m.form_color_green()}</option>
+                                                <option value="red">{m.form_color_red()}</option>
+                                                <option value="yellow">{m.form_color_yellow()}</option>
+                                                <option value="purple">{m.form_color_purple()}</option>
+                                                <option value="orange">{m.form_color_orange()}</option>
                                             </select>
                                         </FormControl>
                                         <FormDescription>
-                                            Choose a color to represent your event on the calendar.
+                                            {m.form_color_description()}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -167,7 +168,7 @@ export default function EventCard() {
                                         <Calendar24 value={field.value} onChange={field.onChange} />
                                     </FormControl>
                                     <FormDescription>
-                                        At what time and date does your event start?
+                                        {m.form_start_date_description()}
                                     </FormDescription>
                                 </FormItem>
                             )} >
@@ -179,14 +180,14 @@ export default function EventCard() {
                                         <Calendar24 value={field.value} onChange={field.onChange} />
                                     </FormControl>
                                     <FormDescription>
-                                        At what time and date does your event end?
+                                        {m.form_end_date_description()}
                                     </FormDescription>
                                 </FormItem>
                             )} >
                             </FormField>
 
                             <Button type="submit">
-                                Submit your event!
+                                {m.button_submit_event()}
                             </Button>
                         </form>
                     </Form>
