@@ -6,6 +6,7 @@ import {
 	transition,
 } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { m } from "@/paraglide/messages";
 
 const MotionButton = motion.create(Button);
 

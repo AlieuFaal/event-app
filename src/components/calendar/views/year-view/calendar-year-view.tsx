@@ -10,6 +10,7 @@ import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialo
 import { getCalendarCells } from "@/components/calendar/helpers";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
 import { Event, User } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
 	singleDayEvents: Event[];
@@ -17,27 +18,35 @@ interface IProps {
 	users: User[];
 }
 
-const MONTHS = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-];
-
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
 export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IProps) {
 	const { selectedDate, setSelectedDate } = useCalendar();
 	const currentYear = getYear(selectedDate);
 	const allEvents = [...multiDayEvents, ...singleDayEvents];
+
+	const MONTHS = [
+		m.calendar_month_january(),
+		m.calendar_month_february(),
+		m.calendar_month_march(),
+		m.calendar_month_april(),
+		m.calendar_month_may(),
+		m.calendar_month_june(),
+		m.calendar_month_july(),
+		m.calendar_month_august(),
+		m.calendar_month_september(),
+		m.calendar_month_october(),
+		m.calendar_month_november(),
+		m.calendar_month_december(),
+	];
+
+	const WEEKDAYS = [
+		m.calendar_weekday_mini_mo(),
+		m.calendar_weekday_mini_tu(),
+		m.calendar_weekday_mini_we(),
+		m.calendar_weekday_mini_th(),
+		m.calendar_weekday_mini_fr(),
+		m.calendar_weekday_mini_sa(),
+		m.calendar_weekday_mini_su(),
+	];
 
 	return (
 		<div className="flex flex-col h-full  overflow-y-auto p-4  sm:p-6">

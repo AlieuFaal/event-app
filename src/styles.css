@@ -193,6 +193,14 @@ code {
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
 }
 
+#map-container {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  outline-offset: 2px;
+  transition: box-shadow 0.2s ease, outline 0.2s ease;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

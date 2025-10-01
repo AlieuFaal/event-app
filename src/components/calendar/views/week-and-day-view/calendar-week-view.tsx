@@ -16,6 +16,7 @@ import {
     WeekViewMultiDayEventsRow
 } from "@/components/calendar/views/week-and-day-view/week-view-multi-day-events-row";
 import { Event, User } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
     singleDayEvents: Event[];
@@ -26,7 +27,7 @@ interface IProps {
 export function CalendarWeekView({singleDayEvents, multiDayEvents, users}: IProps) {
     const {selectedDate, use24HourFormat} = useCalendar();
 
-    const weekStart = startOfWeek(selectedDate);
+    const weekStart = startOfWeek(selectedDate, {weekStartsOn: 1}); // Week starts on Monday
     const weekDays = Array.from({length: 7}, (_, i) => addDays(weekStart, i));
     const hours = Array.from({length: 24}, (_, i) => i);
 
@@ -44,8 +45,8 @@ export function CalendarWeekView({singleDayEvents, multiDayEvents, users}: IProp
                 animate={{opacity: 1, y: 0}}
                 transition={transition}
             >
-                <p>Weekly view is not recommended on smaller devices.</p>
-                <p>Please switch to a desktop device or use the daily view instead.</p>
+                <p>{m.calendar_week_not_recommended()}</p>
+                <p>{m.calendar_use_desktop()}</p>
             </motion.div>
 
             <motion.div

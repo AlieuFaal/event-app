@@ -4,6 +4,7 @@ import type { TEventColor } from "@/components/calendar/types";
 import { Separator } from "@radix-ui/react-select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/shadcn/ui/dropdown-menu";
 import { Toggle } from "@/components/shadcn/ui/toggle";
+import { m } from "@/paraglide/messages";
 
 export default function FilterEvents() {
 	const { selectedColors, filterEventsBySelectedColors, clearFilter } =
@@ -17,6 +18,18 @@ export default function FilterEvents() {
 		"purple",
 		"orange",
 	];
+
+	const getColorName = (color: TEventColor): string => {
+		switch (color) {
+			case "blue": return m.calendar_filter_blue();
+			case "green": return m.calendar_filter_green();
+			case "red": return m.calendar_filter_red();
+			case "yellow": return m.calendar_filter_yellow();
+			case "purple": return m.calendar_filter_purple();
+			case "orange": return m.calendar_filter_orange();
+			default: return color;
+		}
+	};
 
 	return (
 		<DropdownMenu>
@@ -39,7 +52,7 @@ export default function FilterEvents() {
 							className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
 						/>
 						<span className="capitalize flex justify-center items-center gap-2">
-							{color}
+							{getColorName(color)}
 							<span>
 								{selectedColors.includes(color) && (
 									<span className="text-blue-500">

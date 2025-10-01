@@ -20,6 +20,7 @@ import { Route as protectedProfileRouteImport } from './routes/(protected)/profi
 import { Route as protectedOnboardingRouteImport } from './routes/(protected)/onboarding'
 import { Route as protectedFavoritesRouteImport } from './routes/(protected)/favorites'
 import { Route as protectedEventsRouteImport } from './routes/(protected)/events'
+import { Route as protectedEventMapRouteImport } from './routes/(protected)/event-map'
 import { Route as protectedEventCalendarRouteImport } from './routes/(protected)/event-calendar'
 import { Route as protectedCreateEventRouteImport } from './routes/(protected)/create-event'
 import { Route as protectedUserIdRouteImport } from './routes/(protected)/user.$id'
@@ -71,6 +72,11 @@ const protectedEventsRoute = protectedEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const protectedEventMapRoute = protectedEventMapRouteImport.update({
+  id: '/event-map',
+  path: '/event-map',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
 const protectedEventCalendarRoute = protectedEventCalendarRouteImport.update({
   id: '/event-calendar',
   path: '/event-calendar',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/create-event': typeof protectedCreateEventRoute
   '/event-calendar': typeof protectedEventCalendarRoute
+  '/event-map': typeof protectedEventMapRoute
   '/events': typeof protectedEventsRoute
   '/favorites': typeof protectedFavoritesRoute
   '/onboarding': typeof protectedOnboardingRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/create-event': typeof protectedCreateEventRoute
   '/event-calendar': typeof protectedEventCalendarRoute
+  '/event-map': typeof protectedEventMapRoute
   '/events': typeof protectedEventsRoute
   '/favorites': typeof protectedFavoritesRoute
   '/onboarding': typeof protectedOnboardingRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/(protected)/create-event': typeof protectedCreateEventRoute
   '/(protected)/event-calendar': typeof protectedEventCalendarRoute
+  '/(protected)/event-map': typeof protectedEventMapRoute
   '/(protected)/events': typeof protectedEventsRoute
   '/(protected)/favorites': typeof protectedFavoritesRoute
   '/(protected)/onboarding': typeof protectedOnboardingRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/create-event'
     | '/event-calendar'
+    | '/event-map'
     | '/events'
     | '/favorites'
     | '/onboarding'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/create-event'
     | '/event-calendar'
+    | '/event-map'
     | '/events'
     | '/favorites'
     | '/onboarding'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/(protected)/create-event'
     | '/(protected)/event-calendar'
+    | '/(protected)/event-map'
     | '/(protected)/events'
     | '/(protected)/favorites'
     | '/(protected)/onboarding'
@@ -270,6 +282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedEventsRouteImport
       parentRoute: typeof protectedRouteRoute
     }
+    '/(protected)/event-map': {
+      id: '/(protected)/event-map'
+      path: '/event-map'
+      fullPath: '/event-map'
+      preLoaderRoute: typeof protectedEventMapRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
     '/(protected)/event-calendar': {
       id: '/(protected)/event-calendar'
       path: '/event-calendar'
@@ -308,6 +327,7 @@ declare module '@tanstack/react-start/server' {
 interface protectedRouteRouteChildren {
   protectedCreateEventRoute: typeof protectedCreateEventRoute
   protectedEventCalendarRoute: typeof protectedEventCalendarRoute
+  protectedEventMapRoute: typeof protectedEventMapRoute
   protectedEventsRoute: typeof protectedEventsRoute
   protectedFavoritesRoute: typeof protectedFavoritesRoute
   protectedOnboardingRoute: typeof protectedOnboardingRoute
@@ -318,6 +338,7 @@ interface protectedRouteRouteChildren {
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedCreateEventRoute: protectedCreateEventRoute,
   protectedEventCalendarRoute: protectedEventCalendarRoute,
+  protectedEventMapRoute: protectedEventMapRoute,
   protectedEventsRoute: protectedEventsRoute,
   protectedFavoritesRoute: protectedFavoritesRoute,
   protectedOnboardingRoute: protectedOnboardingRoute,

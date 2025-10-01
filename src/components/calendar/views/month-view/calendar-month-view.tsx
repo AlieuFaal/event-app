@@ -13,6 +13,7 @@ import {
 
 import { DayCell } from "@/components/calendar/views/month-view/day-cell";
 import { Event, User } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
 	singleDayEvents: Event[];
@@ -20,10 +21,18 @@ interface IProps {
 	users: User[];
 }
 
-const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export function CalendarMonthView({ singleDayEvents, multiDayEvents, users }: IProps) {
 	const { selectedDate } = useCalendar();
+
+	const WEEK_DAYS = [
+		m.calendar_weekday_mon(),
+		m.calendar_weekday_tue(),
+		m.calendar_weekday_wed(),
+		m.calendar_weekday_thu(),
+		m.calendar_weekday_fri(),
+		m.calendar_weekday_sat(),
+		m.calendar_weekday_sun(),
+	];
 
 	const allEvents = [...multiDayEvents, ...singleDayEvents];
 

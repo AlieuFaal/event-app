@@ -18,6 +18,7 @@ import FilterEvents from "@/components/calendar/header/filter";
 import { TodayButton } from "@/components/calendar/header/today-button";
 import { Settings } from "@/components/calendar/settings/settings";
 import Views from "./view-tabs";
+import { m } from "@/paraglide/messages";
 
 export function CalendarHeader() {
 	const { view, events } = useCalendar();
@@ -53,7 +54,7 @@ export function CalendarHeader() {
 					<AddEditEventDialog>
 						<Button>
 							<Plus className="h-4 w-4" />
-							Add Event
+							{m.calendar_add_event()}
 						</Button>
 					</AddEditEventDialog>
 				</div>

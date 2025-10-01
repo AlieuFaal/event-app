@@ -19,6 +19,7 @@ import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
+import { AddressAutofill } from '@mapbox/search-js-react';
 import { m } from "@/paraglide/messages";
 
 
@@ -120,7 +121,7 @@ export default function EventCard() {
                                     </FormItem>
                                 )}
                             />
-
+                            <AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} >
                             <FormField
                                 control={form.control}
                                 name="location"
@@ -137,13 +138,14 @@ export default function EventCard() {
                                     </FormItem>
                                 )}
                             />
+                            </AddressAutofill>
 
                             <FormField
                                 control={form.control}
                                 name="color"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{m.form_color_label()}</FormLabel>
+                                        <FormLabel className="mt-5">{m.form_color_label()}</FormLabel>
                                         <FormControl>
                                             <select {...field} className="w-full p-2 border rounded">
                                                 <option value="blue">{m.form_color_blue()}</option>

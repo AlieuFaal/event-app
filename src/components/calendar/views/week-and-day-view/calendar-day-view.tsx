@@ -12,6 +12,7 @@ import { CalendarTimeline } from "@/components/calendar/views/week-and-day-view/
 import { DayViewMultiDayEventsRow } from "@/components/calendar/views/week-and-day-view/day-view-multi-day-events-row";
 import { RenderGroupedEvents } from "@/components/calendar/views/week-and-day-view/render-grouped-events";
 import { Event } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
 	singleDayEvents: Event[];
@@ -196,12 +197,12 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 							</span>
 
 							<p className="text-sm font-semibold text-t-secondary">
-								Happening now
+								{m.calendar_happening_now()}
 							</p>
 						</div>
 					) : (
 						<p className="p-4 text-center text-sm italic text-t-tertiary">
-							No appointments or consultations at the moment
+							{m.calendar_no_appointments()}
 						</p>
 					)}
 

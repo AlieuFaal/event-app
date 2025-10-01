@@ -13,37 +13,38 @@ import {
 } from "lucide-react";
 import { TCalendarView } from "../types";
 import { memo } from "react";
-
-const tabs = [
-  {
-    name: "Agenda",
-    value: "agenda",
-    icon: () => <CalendarRange className="h-4 w-4" />,
-  },
-  {
-    name: "Day",
-    value: "day",
-    icon: () => <List className="h-4 w-4" />,
-  },
-  {
-    name: "Week",
-    value: "week",
-    icon: () => <Columns className="h-4 w-4" />,
-  },
-  {
-    name: "Month",
-    value: "month",
-    icon: () => <Grid3X3 className="h-4 w-4" />,
-  },
-  {
-    name: "Year",
-    value: "year",
-    icon: () => <Grid2X2 className="h-4 w-4" />,
-  },
-];
+import { m } from "@/paraglide/messages";
 
 function Views() {
   const { view, setView } = useCalendar();
+
+  const tabs = [
+    {
+      name: m.calendar_view_agenda(),
+      value: "agenda",
+      icon: () => <CalendarRange className="h-4 w-4" />,
+    },
+    {
+      name: m.calendar_view_day(),
+      value: "day",
+      icon: () => <List className="h-4 w-4" />,
+    },
+    {
+      name: m.calendar_view_week(),
+      value: "week",
+      icon: () => <Columns className="h-4 w-4" />,
+    },
+    {
+      name: m.calendar_view_month(),
+      value: "month",
+      icon: () => <Grid3X3 className="h-4 w-4" />,
+    },
+    {
+      name: m.calendar_view_year(),
+      value: "year",
+      icon: () => <Grid2X2 className="h-4 w-4" />,
+    },
+  ];
 
   return (
     <Tabs

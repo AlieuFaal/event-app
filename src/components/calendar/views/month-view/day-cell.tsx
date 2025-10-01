@@ -22,6 +22,7 @@ import { AddEditEventDialog } from "../../dialogs/add-edit-event-dialog";
 import { Button } from "@/components/shadcn/ui/button";
 import { Plus } from "lucide-react";
 import { Event, User } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
   cell: ICalendarCell;
@@ -152,7 +153,7 @@ export function DayCell({ cell, events, eventPositions, users }: IProps) {
                     className="border opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="max-sm:hidden">Add Event</span>
+                    <span className="max-sm:hidden">{m.calendar_add_event()}</span>
                   </Button>
                 </AddEditEventDialog>
               </div>

@@ -3,7 +3,7 @@
 import * as React from 'react';
 // import { Session } from '@/lib/auth-client';
 import { useEffect, useState, useRef } from 'react';
-import { HelpCircleIcon, ChevronDownIcon } from 'lucide-react';
+import { HelpCircleIcon, ChevronDownIcon, LanguagesIcon } from 'lucide-react';
 import { Button } from "@/components/shadcn/ui/button"
 import {
   NavigationMenu,
@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
 import { m } from '@/paraglide/messages';
+import { setLocale } from '@/paraglide/runtime';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -93,6 +94,7 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/create-event', label: m.nav_create_event() },
   { href: '/events', label: m.nav_events() },
   { href: '/event-calendar', label: m.nav_calendar() },
+  { href: '/event-map', label: m.nav_map() },
   // { href: '/map', label: 'Map' },
   // { href: '/about', label: 'About Us' },
 ];
@@ -111,29 +113,23 @@ async function onLogout() {
   });
 }
 
-// Info Menu Component
-const InfoMenu = ({ onItemClick }: { onItemClick?: (item: string) => void }) => (
+// Language menu Component
+const LanguageMenu = () => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button variant="outline" size="icon" className="h-9 w-9">
-        <HelpCircleIcon className="h-4 w-4" />
-        <span className="sr-only">Help and Information</span>
+        <LanguagesIcon className="h-4 w-4" />
+        <span className="sr-only">Select language</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuLabel>{m.help_support()}</DropdownMenuLabel>
+      <DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onItemClick?.('help')}>
-        {m.help_center()}
+      <DropdownMenuItem onClick={() => setLocale('en')}>
+        {m.language_english()}
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.('documentation')}>
-        {m.help_documentation()}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.('contact')}>
-        {m.help_contact_support()}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onItemClick?.('feedback')}>
-        {m.help_send_feedback()}
+      <DropdownMenuItem onClick={() => setLocale('sv')}>
+        {m.language_swedish()}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
@@ -392,7 +388,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               {/* Mode */}
               <ModeToggle />
               {/* Info menu */}
-              <InfoMenu onItemClick={onInfoItemClick} />
+              <LanguageMenu />
               {/* Notification */}
               {/* <NotificationMenu
                 notificationCount={notificationCount}
@@ -420,5 +416,5 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
 
 Navbar05.displayName = 'Navbar05';
 
-export { Logo, HamburgerIcon, InfoMenu, UserMenu };
+export { Logo, HamburgerIcon, LanguageMenu as InfoMenu, UserMenu };
 // export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };
