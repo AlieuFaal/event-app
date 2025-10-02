@@ -1,6 +1,4 @@
 import { EventWithComments, User } from "drizzle/db";
-import EventCard from "../event-components/event-card";
-import favoriteEventCard from "./favoriteEventCard";
 import FavoriteEventCard from "./favoriteEventCard";
 
 

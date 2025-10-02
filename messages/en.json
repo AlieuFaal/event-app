@@ -91,7 +91,7 @@
   "account_info_description": "Manage your account settings and preferences.",
   "account_status": "Account Status",
   "account_status_active": "Your account is currently active",
-  "account_status_label": "Aktiv",
+  "account_status_badge": "Active",
   "account_switch_role": "Switch Role",
   "account_switch_role_description": "Switch betweeen the Artist role or Enthusiast role. Only Artists are able to create events. Default is Enthusiast.",
   "account_data_export": "Data Export",

@@ -75,7 +75,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                             const coordinates = result.geometry.coordinates;
                             mapRef.current.flyTo({
                                 center: coordinates.slice() as [number, number],
-                                zoom: 14,
+                                zoom: 14.5,
                                 essential: true
                             });
                         }
@@ -85,7 +85,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
             {!mapLoaded && (
                 <div className="flex items-center justify-center h-screen">
                     <div className="text-lg">
-                        <Spinner className="text-purple-700" size={400} variant='ring'/>
+                        <Spinner className="text-primary" size={200} variant='ring'/>
                     </div>
                 </div>
             )}

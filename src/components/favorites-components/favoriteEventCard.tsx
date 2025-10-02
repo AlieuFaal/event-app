@@ -6,7 +6,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/shadcn/ui/dialog"
 import { Label } from "../shadcn/ui/label";
 import { EventWithComments, User } from "drizzle/db";
@@ -17,9 +16,11 @@ import { toast } from "sonner";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { useRouter } from "@tanstack/react-router";
 import { m } from "@/paraglide/messages";
+import React from "react";
 
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
+    const [openDialog, setOpenDialog] = React.useState(false);
 
     function getEventCreatorName(favoriteEvent: EventWithComments) {
 
@@ -75,9 +76,8 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
         await router.invalidate(); // Invalidera routern för att uppdatera datan
     }
     return (
-        <Dialog>
-            <DialogTrigger className="w-full">
-                <Card className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <Card onClick={() => setOpenDialog(true)} className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
                     <CardContent className="flex flex-row space-x-16">
                         <img className="w-48 border-5 rounded-xl" src={DiscJockeyImage} alt="" />
                         <div className="flex flex-col justify-center">
@@ -109,7 +109,6 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                         </div>
                     </div>
                 </Card>
-            </DialogTrigger>
             <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card max-h-screen">
                 <DialogHeader className="items-center space-y-2 mb-5">
                     <DialogTitle className="text-6xl">{favoriteEvent.title}</DialogTitle>

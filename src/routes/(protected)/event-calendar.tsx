@@ -8,7 +8,6 @@ import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-conte
 export const Route = createFileRoute('/(protected)/event-calendar')({
   component: EventCalendarComponent,
   loader: async () => {
-    // const eventsforcalendar1 = await getCalendarEventData();
     const events = await getEventDataFn();
     const users = await getUserDataFn();
     return {

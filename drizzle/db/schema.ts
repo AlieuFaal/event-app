@@ -39,7 +39,7 @@ export type UpdateComment = z.infer<typeof commentUpdateSchema>;
 export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
 // Venue Types -----------------------------------------------------------------------------------------------------------------
-export type Venue = z.infer<typeof venueSchema>;
+// export type Venue = z.infer<typeof venueSchema>;
 
 // Additional Types without db tables -----------------------------------------------------------------------------------------------------------------
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
@@ -216,7 +216,7 @@ export const eventSchema = createSelectSchema(event, {
   .min(2, "Description must contain atleast 2 characters."),
   address: z.string().min(2, "Address must be atleast 2 characters."),
   color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
-  venue: z.string().optional(),
+  venue: z.string().nullable(),
 });
 
 export const geocodingSchema = eventSchema.pick({
@@ -261,8 +261,13 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   .optional(),
   address: z
   .string()
-  .min(2, "Address must be atleast 2 characters.")
-  .optional(),
+  .min(2, "Address must be atleast 2 characters."),
+  venue: z.string().nullable().optional(),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
+  updatedAt: z.date().optional(),
   color: z
   .enum(["blue", "green", "red", "yellow", "purple", "orange"])
   .optional(),
@@ -327,19 +332,19 @@ export const eventWithCommentsSchema = eventSchema.extend({
 });
 
 // Venue Table -------------------------------------------------------------------------------------------------------------
-export const venue = pgTable("venue", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  address: text("address").notNull(),
-  city: text("city").notNull(),
-  state: text("state").notNull(),
-  zipCode: text("zip_code").notNull(),
-  country: text("country").notNull(),
-  longitude: text("longitude").notNull(),
-  latitude: text("latitude").notNull(),
-});
+// export const venue = pgTable("venue", {
+//   id: uuid("id").defaultRandom().primaryKey(),
+//   name: text("name").notNull(),
+//   address: text("address").notNull(),
+//   city: text("city").notNull(),
+//   state: text("state").notNull(),
+//   zipCode: text("zip_code").notNull(),
+//   country: text("country").notNull(),
+//   longitude: text("longitude").notNull(),
+//   latitude: text("latitude").notNull(),
+// });
 
-export const venueSchema = createSelectSchema(venue);
+// export const venueSchema = createSelectSchema(venue);
 
 // Favorite events table -------------------------------------------------------------------------------------------------------------
 export const favoriteEvent = pgTable("favorite_event", {
@@ -411,7 +416,7 @@ export const schema = {
   verification,
   event,
   comment,
-  venue,
+  // venue,
   favoriteEvent,
   followersTable,
   followingTable,

@@ -24,25 +24,28 @@ import { useNavigate } from "@tanstack/react-router";
 import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
 import { updateUserDataFn } from "@/services/user-service";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../shadcn/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../shadcn/ui/dialog";
 import React from "react";
 import { m } from "@/paraglide/messages";
 
-export default function ProfileContent() {
-  const { data: session } = authClient.useSession();
-  const currentUser = session?.user as User;
+interface ProfileContentProps {
+  currentUser: User;
+}
+
+export default function ProfileContent({currentUser}: ProfileContentProps) {
   const navigate = useNavigate();
 
   const [switchState, setSwitchState] = React.useState(localStorage.getItem('userRole') === 'artist');
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const form = useForm<UserForm>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      id: currentUser?.id ?? "",
-      name: currentUser?.name ?? "",
-      phone: currentUser?.phone ?? "",
-      location: currentUser?.location ?? "",
-      bio: currentUser?.bio ?? "",
+      id: currentUser.id ?? "",
+      name: currentUser.name ?? "",
+      phone: currentUser.phone ?? "",
+      location: currentUser.location ?? "",
+      bio: currentUser.bio ?? "",
       role: currentUser?.role === "user" ? "user" : "artist",
     },
   });
@@ -86,7 +89,7 @@ export default function ProfileContent() {
       toast.error(m.toast_passwordchange_error());
     }
   };
-  
+
   const handleRoleToggle = async (checked: boolean): Promise<void> => {
     setSwitchState(checked);
     localStorage.setItem('userRole', checked ? 'artist' : 'user');
@@ -299,13 +302,11 @@ export default function ProfileContent() {
                   {m.account_delete_description()}
                 </p>
               </div>
-              <Dialog>
-                <DialogTrigger>
-                  <Button variant="destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    {m.account_delete()}
-                  </Button>
-                </DialogTrigger>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <Button variant="destructive" onClick={() => setDialogOpen(true)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {m.account_delete()}
+                </Button>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>{m.delete_modal_title()}</DialogTitle>
@@ -345,15 +346,13 @@ export default function ProfileContent() {
                   <Label className="text-base">{m.label_password()}</Label>
                   <p className="text-muted-foreground text-sm">{m.security_password_description()}</p>
                 </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <div className="flex items-center justify-end">
-                      <Button variant="outline">
-                        <Key className="mr-2 h-4 w-4" />
-                        {m.security_change_password_button()}
-                      </Button>
-                    </div>
-                  </DialogTrigger>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <div className="flex items-center justify-end">
+                    <Button variant="outline" onClick={() => setDialogOpen(true)}>
+                      <Key className="mr-2 h-4 w-4" />
+                      {m.security_change_password_button()}
+                    </Button>
+                  </div>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle>Change Password</DialogTitle>
