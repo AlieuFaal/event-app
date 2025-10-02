@@ -185,12 +185,15 @@ export const event = pgTable("event", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  location: text("location").notNull(),
+  venue: text("venue"),
+  address: text("address").notNull(),
   color: text("color").$type<EventColor>().notNull().default("blue"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull(),
+  latitude: text("latitude").notNull(),
+  longitude: text("longitude").notNull(),
   
 });
 
@@ -211,8 +214,13 @@ export const eventSchema = createSelectSchema(event, {
   description: z
   .string()
   .min(2, "Description must contain atleast 2 characters."),
-  location: z.string().min(2, "Location name must be atleast 2 characters."),
+  address: z.string().min(2, "Address must be atleast 2 characters."),
   color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+  venue: z.string().optional(),
+});
+
+export const geocodingSchema = eventSchema.pick({
+  address: true,
 });
 
 export const eventInsertSchema = createInsertSchema(event, {
@@ -225,8 +233,11 @@ export const eventInsertSchema = createInsertSchema(event, {
   description: z
   .string()
   .min(2, "Description must contain atleast 2 characters."),
-  location: z.string().min(2, "Location name must be atleast 2 characters."),
+  venue: z.string().optional(),
+  address: z.string().min(2, "Address must be atleast 2 characters."),
   color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+  latitude: z.string(),
+  longitude: z.string(),
   createdAt: z.date().optional(),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
@@ -248,9 +259,9 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   .string()
   .min(2, "Description must contain atleast 2 characters.")
   .optional(),
-  location: z
+  address: z
   .string()
-  .min(2, "Location name must be atleast 2 characters.")
+  .min(2, "Address must be atleast 2 characters.")
   .optional(),
   color: z
   .enum(["blue", "green", "red", "yellow", "purple", "orange"])

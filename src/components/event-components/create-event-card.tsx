@@ -49,7 +49,6 @@ export default function EventCard() {
         }
     })
 
-
     const { data: session } = authClient.useSession()
 
     const onSubmit = async (values: z.infer<typeof eventInsertSchema>) => {
@@ -81,7 +80,7 @@ export default function EventCard() {
             <Card className="p-20 shadow-lg border rounded-lg mx-30 mb-30 mt-20">
                 <CardHeader className="flex flex-col justify-center items-center">
                     <CardTitle className="text-4xl mb-4">{m.create_event_title()}</CardTitle>
-                    <CardDescription className="text-gray-600 mb-4 text-lg">
+                    <CardDescription className="text-gray mb-4 text-lg">
                         {m.create_event_description()}
                     </CardDescription>
                 </CardHeader>
@@ -121,23 +120,44 @@ export default function EventCard() {
                                     </FormItem>
                                 )}
                             />
-                            <AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} >
+
                             <FormField
                                 control={form.control}
-                                name="location"
+                                name="venue"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{m.form_location_label()}</FormLabel>
+                                        <FormLabel>{m.form_venue_label()}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={m.form_location_placeholder()} {...field} />
+                                            <Input placeholder={m.form_venue_placeholder()} {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            {m.form_location_description()}
+                                            {m.form_venue_description()}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
+                            <AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} onRetrieve={(res) => {
+                                form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || ""),
+                                    form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
+                            }} onSuggestError={(e) => console.log(e)}>
+                                <FormField
+                                    control={form.control}
+                                    name="address"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{m.form_address_label()}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={m.form_address_placeholder()} {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                {m.form_address_description()}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </AddressAutofill>
 
                             <FormField

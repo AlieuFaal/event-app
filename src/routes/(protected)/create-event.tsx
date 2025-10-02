@@ -7,6 +7,6 @@ export const Route = createFileRoute('/(protected)/create-event')({
 
 function CreateEventsComponent() {
   return (
-    <EventCard />
+      <EventCard />
   )
 }

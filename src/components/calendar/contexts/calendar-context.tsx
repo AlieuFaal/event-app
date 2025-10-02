@@ -162,10 +162,10 @@ export function CalendarProvider2({
 
 	const addEvent = async (event: Event) => {
 		console.log("Adding event:", event);
-		
+
 		setAllEvents((prev) => [...prev, event]);
 		setFilteredEvents((prev) => [...prev, event]);
-		
+
 		try {
 			await postCalendarEventDataFn({ data: event });
 			console.log("Event saved to database successfully");
@@ -186,7 +186,7 @@ export function CalendarProvider2({
 			prev.map((e) => (e.id === event.id ? updatedEvent : e)),
 		);
 		console.log("Updating event:", updatedEvent);
-		
+
 		try {
 			await putEventDataFn({ data: updatedEvent });
 			console.log("Event updated in database successfully");
@@ -198,7 +198,7 @@ export function CalendarProvider2({
 	const removeEvent = async (eventId: string) => {
 		setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
 		setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
-		
+
 		try {
 			await deleteEventDataFn({ data: { id: eventId } });
 			console.log("Event deleted from database successfully");

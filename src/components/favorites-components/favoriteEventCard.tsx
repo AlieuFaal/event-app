@@ -9,10 +9,9 @@ import {
     DialogTrigger,
 } from "@/components/shadcn/ui/dialog"
 import { Label } from "../shadcn/ui/label";
-import { Event, EventWithComments, User } from "drizzle/db";
+import { EventWithComments, User } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
 import { Star } from "lucide-react";
-import { useState } from "react";
 import CommentSection from "../event-components/event-comment-section";
 import { toast } from "sonner";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
@@ -84,7 +83,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                         <div className="flex flex-col justify-center">
                             <CardTitle className="text-5xl">{favoriteEvent.title}</CardTitle>
                             <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{favoriteEvent.description}</CardDescription>
-                            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{favoriteEvent.location}</CardDescription>
+                            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{favoriteEvent.address}</CardDescription>
                         </div>
                     </CardContent>
                     <div className="absolute top-3 right-3">
@@ -120,7 +119,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                 </DialogHeader>
                 <div className="grid gap-10 mb-5">
                     <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Location: {favoriteEvent.location}</Label>
+                        <Label htmlFor="username-1" className="text-xl">Location: {favoriteEvent.address}</Label>
                     </div>
                     <div className="grid gap-3">
                         <Label htmlFor="username-1" className="text-xl">Date: {favoriteEvent.startDate.toUTCString()} - {favoriteEvent.endDate.toUTCString()}</Label>

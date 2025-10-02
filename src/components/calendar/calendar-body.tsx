@@ -39,18 +39,21 @@ export function CalendarBody() {
 					<CalendarMonthView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
+						users={users}
 					/>
 				)}
 				{view === "week" && (
 					<CalendarWeekView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
+						users={users}
 					/>
 				)}
 				{view === "day" && (
 					<CalendarDayView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
+						
 					/>
 				)}
 				{view === "year" && (

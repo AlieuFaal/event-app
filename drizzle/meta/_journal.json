@@ -127,6 +127,20 @@
       "when": 1758622104533,
       "tag": "0017_lucky_clea",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1759307013263,
+      "tag": "0018_lyrical_scarlet_spider",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1759323880440,
+      "tag": "0019_charming_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,6 @@ import {
   calendarEventSchema,
   commentSchema,
   commentUpdateSchema,
-  NewEvent,
   Event,
 } from "drizzle/db/schema";
 import { createServerFn } from "@tanstack/react-start";
@@ -14,9 +13,6 @@ import { db } from "drizzle";
 import { eq, and } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
-
-// export type Event = z.infer<typeof eventInsertSchema>;
-// export type CalendarEvent = z.infer<typeof calendarEventSchema>;
 
 export const getEventDataFn = createServerFn({
   method: "GET",
@@ -45,10 +41,13 @@ export const getEventsWithCommentsFn = createServerFn({
       id: schema.event.id,
       title: schema.event.title,
       description: schema.event.description,
-      location: schema.event.location,
+      venue: schema.event.venue,
+      address: schema.event.address,
       color: schema.event.color,
       startDate: schema.event.startDate,
       endDate: schema.event.endDate,
+      latitude: schema.event.latitude,
+      longitude: schema.event.longitude,
       userId: schema.event.userId,
       createdAt: schema.event.createdAt,
     })
@@ -82,10 +81,13 @@ export const getUserEventsWithCommentsFn = createServerFn({
         id: schema.event.id,
         title: schema.event.title,
         description: schema.event.description,
-        location: schema.event.location,
+        venue: schema.event.venue,
+        address: schema.event.address,
         color: schema.event.color,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
+        latitude: schema.event.latitude,
+        longitude: schema.event.longitude,
         userId: schema.event.userId,
         createdAt: schema.event.createdAt,
       })
@@ -109,6 +111,31 @@ export const getUserEventsWithCommentsFn = createServerFn({
     });
   });
 
+export const getMapEventsFn = createServerFn({
+  method: "GET",
+  response: "data",
+}).handler(async () => {
+  const events = await db
+    .select({
+      id: schema.event.id,
+      title: schema.event.title,
+      description: schema.event.description,
+      venue: schema.event.venue,
+      address: schema.event.address,
+      color: schema.event.color,
+      startDate: schema.event.startDate,
+      endDate: schema.event.endDate,
+      latitude: schema.event.latitude,
+      longitude: schema.event.longitude,
+      userId: schema.event.userId,
+      createdAt: schema.event.createdAt,
+    })
+    .from(schema.event)
+    .orderBy(schema.event.startDate);
+
+  return events;
+});
+
 export const postEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(eventInsertSchema)
@@ -126,10 +153,13 @@ export const postEventDataFn = createServerFn({ method: "POST" })
         .values({
           title: data.title,
           description: data.description,
-          location: data.location,
+          venue: data.venue,
+          address: data.address,
           color: data.color,
           startDate: data.startDate,
           endDate: data.endDate,
+          latitude: data.latitude,
+          longitude: data.longitude,
           userId: userId,
           createdAt: new Date(),
         })
@@ -156,7 +186,8 @@ export const putEventDataFn = createServerFn({ method: "POST" })
       .set({
         title: data.title,
         description: data.description,
-        location: data.location,
+        venue: data.venue,
+        address: data.address,
         color: data.color,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -180,7 +211,7 @@ export const deleteEventDataFn = createServerFn({ method: "POST" })
       .delete(schema.event)
       .where(eq(schema.event.id, data.id));
 
-      console.log("Deleted event count:", deletedCount);
+    console.log("Deleted event count:", deletedCount);
 
     return { deletedCount };
   });
@@ -202,10 +233,13 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
         .values({
           title: data.title,
           description: data.description,
-          location: data.location,
+          venue: data.venue,
+          address: data.address,
           color: data.color,
           startDate: data.startDate,
           endDate: data.endDate,
+          latitude: data.latitude,
+          longitude: data.longitude,
           userId: userId,
           createdAt: new Date(),
         })
@@ -329,10 +363,13 @@ export const getFavoriteEventsFn = createServerFn({
         id: schema.event.id,
         title: schema.event.title,
         description: schema.event.description,
-        location: schema.event.location,
+        venue: schema.event.venue,
+        address: schema.event.address,
         color: schema.event.color,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
+        latitude: schema.event.latitude,
+        longitude: schema.event.longitude,
         userId: schema.event.userId,
         createdAt: schema.event.createdAt,
       })
@@ -375,10 +412,13 @@ export const getUserFavoriteEventsFn = createServerFn({
         id: schema.event.id,
         title: schema.event.title,
         description: schema.event.description,
-        location: schema.event.location,
+        venue: schema.event.venue,
+        address: schema.event.address,
         color: schema.event.color,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
+        latitude: schema.event.latitude,
+        longitude: schema.event.longitude,
         userId: schema.event.userId,
         createdAt: schema.event.createdAt,
       })

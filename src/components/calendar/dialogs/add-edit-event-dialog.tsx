@@ -91,7 +91,7 @@ export function AddEditEventDialog({
 		form.reset({
 			title: event?.title ?? "",
 			description: event?.description ?? "",
-			location: event?.location ?? "",
+			address: event?.address ?? "",
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 			color: event?.color ?? "blue",
@@ -174,15 +174,15 @@ export function AddEditEventDialog({
 						/>
 						<FormField
 							control={form.control}
-							name="location"
+							name="address"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel htmlFor="location" className="required">
+									<FormLabel htmlFor="address" className="required">
 										Location
 									</FormLabel>
 									<FormControl>
 										<Input
-											id="location"
+											id="address"
 											placeholder="Where's the event?"
 											{...field}
 											className={fieldState.invalid ? "border-red-500" : ""}
