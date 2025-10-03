@@ -1,6 +1,6 @@
 import { ClientOnly, createFileRoute } from '@tanstack/react-router';
 import { getMapEventsFn } from '@/services/eventService';
-import { EventMap } from '@/components/map-components/eventMap';
+import { EventMap } from '@/components/map-components/eventMapComponent';
 
 export const Route = createFileRoute('/(protected)/event-map')({
     component: RouteComponent,
@@ -19,6 +19,5 @@ function RouteComponent() {
         <ClientOnly>
             <EventMap events={events} accessToken={accessToken} />
         </ClientOnly>
-        
     );
 }

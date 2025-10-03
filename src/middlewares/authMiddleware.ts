@@ -10,9 +10,9 @@ export const authMiddleware = createMiddleware({ type: "function" })
 
     return next({
       context: {
-        currentUser: session?.user || null,
-        IsAuthenticated: !!session,
         session: session,
+        currentUser: session?.user,
+        IsAuthenticated: !!session,
       },
     });
   });

@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "src/components/shadcn/ui/popover.tsx"
+import { useCalendar } from "@/components/calendar/contexts/calendar-context"
 
 interface Calendar24Props {
   value?: Date
@@ -22,6 +23,7 @@ interface Calendar24Props {
 export function Calendar24({ value, onChange, placeholder = "Select date" }: Calendar24Props) {
   const [open, setOpen] = React.useState(false)
   const [time, setTime] = React.useState("")
+  const { use24HourFormat, removeEvent } = useCalendar();
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate && time) {

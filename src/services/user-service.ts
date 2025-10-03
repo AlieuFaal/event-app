@@ -338,5 +338,5 @@ export const getCurrentUserFn = createServerFn({
       .where(eq(schema.user.id, userId))
       .limit(1);
 
-    return result[0] || null;
+    return result[0];
   });

@@ -224,5 +224,7 @@
   "language_select_label": "Välj språk",
   "language_english": "Engelska 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
   "language_swedish": "Svenska 🇸🇪",
-  "nav_map": "Karta"
+  "nav_map": "Karta",
+  "start_date_label": "Startdatum:",
+  "end_date_label": "Slutdatum:"
 }

@@ -12,8 +12,6 @@ export const Route = createFileRoute('/(protected)/profile')({
         const followingCount = await getContextFollowingFn();
         const currentUser = await getCurrentUserFn();
 
-
-
         return { followersCount, followingCount, currentUser };
     }
 })
