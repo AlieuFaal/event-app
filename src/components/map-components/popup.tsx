@@ -12,6 +12,7 @@ import { m } from "@/paraglide/messages";
 export interface PopupProps {
     activeFeature: EventFeature;
     map: mapboxgl.Map | null;
+    onClick?: () => void;
 }
 
 export const Popup = ({ map, activeFeature }: PopupProps) => {

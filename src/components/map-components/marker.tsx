@@ -26,7 +26,7 @@ export const Marker = ({ feature, map, isActive, onClick }: MarkerProps) => {
     const { geometry, properties } = feature;
     const markerRef = useRef<mapboxgl.Marker | null>(null);
     const contentRef = useRef(document.createElement('div'));
-    const [isActiveState, setIsActive] = useState(false);
+    // const [isActiveState, setIsActive] = useState(false);
 
     useEffect(() => {
         markerRef.current = new mapboxgl.Marker(contentRef.current)

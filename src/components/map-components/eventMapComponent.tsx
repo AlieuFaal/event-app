@@ -6,6 +6,8 @@ import { getLocale } from '@/paraglide/runtime';
 import { EventFeature, Marker } from './marker';
 import { Event } from 'drizzle/db';
 import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
+import { Button } from '../shadcn/ui/button';
+import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
 
 interface EventMapViewProps {
     events: Event[];
@@ -32,29 +34,28 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
             zoom: 12.5,
             config: {
                 basemap: {
-                    lightPreset: "default",
+                    lightPreset: "day",
                     colorMotorways: "#2e89ff",
                     showPedestrianRoads: true,
-                    show3dObjects: true
-                    
+                    show3dObjects: true,
+                    theme: 'faded'
                 }
             },
             pitch: 50,
             bearing: 8,
         });
 
-        
         mapRef.current.on('load', () => {
             setMapLoaded(true);
         });
 
-        mapRef.current.dragRotate.enable();
-        mapRef.current.touchZoomRotate.enableRotation();
-        mapRef.current.touchPitch.enable();
+        // mapRef.current.dragRotate.enable();
+        // mapRef.current.touchZoomRotate.enableRotation();
+        // mapRef.current.touchPitch.enable();
 
         mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
-        mapRef.current.addControl(new mapboxgl.NavigationControl({visualizePitch: true, showCompass: true}), 'top-right');
+        mapRef.current.addControl(new mapboxgl.NavigationControl({ visualizePitch: true, showCompass: true }), 'top-right');
 
         mapRef.current.addControl(
             new mapboxgl.GeolocateControl({
@@ -84,7 +85,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     </div>
                 </div>
             )}
-            <div className="absolute top-15 left-15 z-10">
+            <div className="absolute top-15 left-15 z-10 w-50">
                 <Geocoder
                     accessToken={accessToken}
                     mapboxgl={mapboxgl}
@@ -104,11 +105,66 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                             mapRef.current.flyTo({
                                 center: coordinates.slice() as [number, number],
                                 zoom: 14.5,
-                                essential: true
+                                essential: true,
+                                animate: true,
                             });
                         }
                     }}
                 />
+            </div>
+            <div className="absolute top-25 left-15 z-10">
+                {mapRef.current && (
+                    <div className='flex flex-row gap-2 bg-background/30 p-2 rounded-lg shadow-lg'>
+                        <div>
+                            <Button className='hover:scale-110' onClick={() => {
+                                mapRef.current?.setConfig('basemap', {
+                                    lightPreset: "dawn", colorMotorways: "#2e89ff",
+                                    showPedestrianRoads: true,
+                                    show3dObjects: true,
+                                    theme: 'faded'
+                                })
+                            }}>
+                                <Sunrise />
+                            </Button>
+                        </div>
+                        <div>
+                            <Button className='hover:scale-110' onClick={() => {
+                                mapRef.current?.setConfig('basemap', {
+                                    lightPreset: "day", colorMotorways: "#2e89ff",
+                                    showPedestrianRoads: true,
+                                    show3dObjects: true,
+                                    theme: 'faded'
+                                })
+                            }}>
+                                <Sun />
+                            </Button>
+                        </div>
+                        <div>
+                            <Button className='hover:scale-110' onClick={() => {
+                                mapRef.current?.setConfig('basemap', {
+                                    lightPreset: "dusk", colorMotorways: "#2e89ff",
+                                    showPedestrianRoads: true,
+                                    show3dObjects: true,
+                                    theme: 'faded'
+                                })
+                            }}>
+                                <Sunset />
+                            </Button>
+                        </div>
+                        <div>
+                            <Button className='hover:scale-110' onClick={() => {
+                                mapRef.current?.setConfig('basemap', {
+                                    lightPreset: "night", colorMotorways: "#2e89ff",
+                                    showPedestrianRoads: true,
+                                    show3dObjects: true,
+                                    theme: 'faded'
+                                })
+                            }}>
+                                <MoonStar />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
             <div className="p-8 h-full">
                 <div id="map-container" className="w-full h-full" ref={mapContainerRef} />
@@ -128,12 +184,6 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                         }}
                     />
                 ))}
-                {/* {mapRef.current && activeFeature && (
-                    <Popup
-                        map={mapRef.current}
-                        activeFeature={activeFeature}
-                    />
-                )} */}
             </div>
         </div>
     );
