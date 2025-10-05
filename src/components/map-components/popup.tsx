@@ -18,7 +18,7 @@ export interface PopupProps {
 export const Popup = ({ map, activeFeature }: PopupProps) => {
 
     const startDate = activeFeature?.properties.Event.startDate;
-    const { use24HourFormat, removeEvent } = useCalendar();
+    const { use24HourFormat } = useCalendar();
 
     const popupRef = useRef<mapboxgl.Popup | null>(null);
 
@@ -31,7 +31,8 @@ export const Popup = ({ map, activeFeature }: PopupProps) => {
             closeOnClick: false,
             offset: 25,
             maxWidth: '400px',
-            className: 'custom-popup'
+            className: 'custom-popup',
+            closeButton: false // Remove default close button
         })
 
         return () => {

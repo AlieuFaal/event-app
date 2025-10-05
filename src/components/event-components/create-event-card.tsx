@@ -76,8 +76,8 @@ export default function EventCard() {
     }
 
     return (
-        <div className="mt-5 flex flex-col">
-            <Card className="p-20 shadow-lg border rounded-lg mx-30 mb-30 mt-20">
+        <div className="flex flex-col">
+            <Card className="p-10 shadow-lg border rounded-lg mx-30 mb-30 mt-10">
                 <CardHeader className="flex flex-col justify-center items-center">
                     <CardTitle className="text-4xl mb-4">{m.create_event_title()}</CardTitle>
                     <CardDescription className="text-gray mb-4 text-lg">

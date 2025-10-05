@@ -19,7 +19,7 @@ function EventsComponent() {
     const { events, users } = Route.useLoaderData();
     console.log("Events with comments:", events);
     return (
-        <div className='p-15'>
+        <div className='p-10'>
             <EventList events={events} users={users} />
         </div>
     )

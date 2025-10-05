@@ -201,6 +201,21 @@ code {
   transition: box-shadow 0.2s ease, outline 0.2s ease;
 }
 
+.mapboxgl-popup-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+
+.custom-popup .mapboxgl-popup-content {
+  background: transparent !important;
+  border: none !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

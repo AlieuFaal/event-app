@@ -10,10 +10,16 @@ import { Toaster } from 'sonner'
 import { getCurrentUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 
-export const Route = createRootRouteWithContext()({
+// Define the router context type
+interface RouterContext {
+  currentUser: Awaited<ReturnType<typeof getCurrentUserFn>>
+  IsAuthenticated: boolean
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
     const user = await getCurrentUserFn()
-    const isAuthenticated = user ? true : false
+    const isAuthenticated = !!user
 
     console.log("Current User in Root Route:", user?.name);
     console.log("Is Authenticated in Root Route:", isAuthenticated);
@@ -63,11 +69,11 @@ export const Route = createRootRouteWithContext()({
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { ctx } = Route.useLoaderData()
   return (
-    <html lang={getLocale()} className="scroll-smooth">
+    <html lang={getLocale()} className="scroll-smooth h-full">
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="flex flex-col min-h-full">
         {/* <div className="p-2 flex gap-2 text-lg">
           <Link
             to="/{-$locale}"
@@ -82,7 +88,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {ctx.IsAuthenticated && (
           <Header />
         )}
-        {children}
+        <main className="flex-1">
+          {children}
+        </main>
         <Toaster position="top-center" richColors={true} duration={1500} />
         <TanstackDevtools
           config={{
@@ -95,9 +103,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
           ]}
         />
-        <div>
-          <Footer />
-        </div>
+        <Footer />
         <Scripts />
       </body>
     </html>

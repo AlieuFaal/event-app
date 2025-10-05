@@ -225,6 +225,6 @@
   "language_english": "English 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
   "language_swedish": "Swedish 🇸🇪",
   "nav_map": "Map",
-  "start_date_label": "Start Date",
-  "end_date_label": "End Date"
+  "start_date_label": "Start Date:",
+  "end_date_label": "End Date:"
 }

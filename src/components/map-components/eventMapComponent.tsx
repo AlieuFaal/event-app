@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import mapboxgl, { Popup } from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getLocale } from '@/paraglide/runtime';
@@ -73,7 +73,12 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
     }, [accessToken]);
 
     const handleMarkerClick = (feature: EventFeature) => {
-        setActiveFeature(feature);
+        // Toggle popup if clicking the same marker
+        if (activeFeature?.properties.Event.id === feature.properties.Event.id) {
+            setActiveFeature(null);
+        } else {
+            setActiveFeature(feature);
+        }
     }
 
     return (
@@ -85,7 +90,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     </div>
                 </div>
             )}
-            <div className="absolute top-15 left-15 z-10 w-50">
+            <div className="absolute top-15 left-15 z-10 w-60">
                 <Geocoder
                     accessToken={accessToken}
                     mapboxgl={mapboxgl}
@@ -112,9 +117,9 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     }}
                 />
             </div>
-            <div className="absolute top-25 left-15 z-10">
+            <div className="absolute bottom-110 left-10 z-10">
                 {mapRef.current && (
-                    <div className='flex flex-row gap-2 bg-background/30 p-2 rounded-lg shadow-lg'>
+                    <div className='flex flex-col gap-2 bg-background/60 p-2 rounded-lg shadow-lg'>
                         <div>
                             <Button className='hover:scale-110' onClick={() => {
                                 mapRef.current?.setConfig('basemap', {
@@ -167,7 +172,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                 )}
             </div>
             <div className="p-8 h-full">
-                <div id="map-container" className="w-full h-full" ref={mapContainerRef} />
+                <div id="map-container" className="absolute w-full h-220" ref={mapContainerRef} />
                 {mapLoaded && events?.map((event) => (
                     <Marker
                         key={event.id}

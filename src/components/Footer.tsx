@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 
 export default function Footer() {
     return (
-        <section className='flex flex-col items-center justify-center gap-14 py-32 border-t'>
+        <footer className='flex flex-col items-center justify-center gap-14 py-20 border-t mt-auto'>
             <nav className='container flex flex-col items-center gap-4'>
                 <ul className='flex flex-wrap items-center justify-center gap-6'>
                     <li className=''>
@@ -52,6 +52,6 @@ export default function Footer() {
                     </li>
                 </ul>
             </nav>
-        </section>
+        </footer>
     )
 }
