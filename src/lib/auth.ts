@@ -17,7 +17,10 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
-  trustedOrigins: [process.env.VERCEL_URL!],
+  trustedOrigins: [
+    "http://localhost:3000", 
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : [])
+  ],
   user: {
     model: schema.user,
     sessionModel: schema.session,
