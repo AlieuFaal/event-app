@@ -17,6 +17,7 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
+  trustedOrigins: [process.env.VITE_PUBLIC_BETTER_AUTH_URL!],
   user: {
     model: schema.user,
     sessionModel: schema.session,
