@@ -13,6 +13,7 @@ import {
 } from "@/components/shadcn/ui/alert-dialog";
 import { Button } from "@/components/shadcn/ui/button";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { m } from "@/paraglide/messages";
 
 interface DeleteEventDialogProps {
 	eventId: string;
@@ -39,20 +40,19 @@ export default function DeleteEventDialog({ eventId }: DeleteEventDialogProps) {
 			<AlertDialogTrigger asChild>
 				<Button variant="destructive">
 					<TrashIcon />
-					Delete
+					{m.button_delete()}
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+					<AlertDialogTitle>{m.account_delete_confirm()}</AlertDialogTitle>
 					<AlertDialogDescription>
-						This action cannot be undone. This will permanently delete your
-						event and remove event data from our servers.
+						{m.delete_event_description()}
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={deleteEvent}>Continue</AlertDialogAction>
+					<AlertDialogCancel>{m.button_cancel()}</AlertDialogCancel>
+					<AlertDialogAction onClick={deleteEvent}>{m.onb_Continue_Button()}</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

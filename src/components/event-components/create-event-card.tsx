@@ -141,7 +141,7 @@ export default function EventCard() {
                             <AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} onRetrieve={(res) => {
                                 form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || ""),
                                     form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
-                            }} onSuggestError={(e) => console.log(e)}>
+                            }} onSuggestError={(e) => console.log(e)} browserAutofillEnabled={true} confirmOnBrowserAutofill={true}>
                                 <FormField
                                     control={form.control}
                                     name="address"

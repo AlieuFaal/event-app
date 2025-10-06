@@ -7,24 +7,26 @@ import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-conte
 
 export const Route = createFileRoute('/(protected)/event-calendar')({
   component: EventCalendarComponent,
-  loader: async () => {
+  loader: async (ctx) => {
     const events = await getEventDataFn();
     const users = await getUserDataFn();
+    const currentUser = ctx.context.currentUser;
     return {
       events,
-      users
+      users,
+      currentUser
     };
   }
 })
 
 function EventCalendarComponent() {
-  const { events, users } = Route.useLoaderData();
+  const { events, users, currentUser } = Route.useLoaderData();
 
   return (
     <div className=''>
       <Card className='m-10 p-10 py-15 shadow-lg border rounded-2xl'>
         <CalendarProvider2 events={events} users={users} view='month'>
-          <Calendar2 />
+          <Calendar2 currentUser={currentUser}/>
         </CalendarProvider2>
       </Card>
     </div>

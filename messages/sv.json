@@ -226,5 +226,10 @@
   "language_swedish": "Svenska 🇸🇪",
   "nav_map": "Karta",
   "start_date_label": "Startdatum:",
-  "end_date_label": "Slutdatum:"
+  "end_date_label": "Slutdatum:",
+  "save_changes": "Spara ändringar",
+  "edit_event_description": "Ändra ditt befintliga evenemang.",
+  "edit_event_label": "Redigera Evenemang",
+  "delete_event_description": "Denna åtgärd kan inte ångras. Detta kommer att radera ditt evenemang permanent och ta bort evenemangsdata från våra servrar.",
+  "edit_event_button": "Redigera"
 }

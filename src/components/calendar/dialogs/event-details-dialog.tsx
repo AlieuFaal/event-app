@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Calendar, Clock, Text, User as UserLucide } from "lucide-react";
+import { Calendar, Clock, MapPin, Text, User as UserLucide } from "lucide-react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
 	event: Event;
@@ -61,11 +62,11 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 				<ScrollArea className="max-h-[80vh]">
 					<div className="space-y-4 p-4">
 						<div className="flex items-start gap-2">
-							<UserLucide className="mt-1 size-4 shrink-0 text-muted-foreground" />
+							<MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">Responsible</p>
+								<p className="text-sm font-medium">{m.form_Address_label()}</p>
 								<p className="text-sm text-muted-foreground">
-									({"user.name"})
+									{event.address || "No address provided"}
 								</p>
 							</div>
 						</div>
@@ -73,7 +74,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 						<div className="flex items-start gap-2">
 							<Calendar className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">Start Date</p>
+								<p className="text-sm font-medium">{m.start_date_label()}</p>
 								<p className="text-sm text-muted-foreground">
 									{format(startDate, "EEEE dd MMMM")}
 									<span className="mx-1">at</span>
@@ -85,7 +86,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 						<div className="flex items-start gap-2">
 							<Clock className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">End Date</p>
+								<p className="text-sm font-medium">{m.end_date_label()}</p>
 								<p className="text-sm text-muted-foreground">
 									{format(endDate, "EEEE dd MMMM")}
 									<span className="mx-1">at</span>
@@ -97,7 +98,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 						<div className="flex items-start gap-2">
 							<Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">Description</p>
+								<p className="text-sm font-medium">{m.form_description_label()}</p>
 								<p className="text-sm text-muted-foreground">
 									{event.description}
 								</p>
@@ -108,7 +109,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 				{event.userId !== session?.data?.user.id ? null : (
 					<div className="flex justify-end gap-2">
 						<AddEditEventDialog event={event}>
-							<Button variant="outline">Edit</Button>
+							<Button variant="outline">{m.edit_event_button()}</Button>
 						</AddEditEventDialog>
 						<Button
 							variant="destructive"
@@ -116,7 +117,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 								deleteEvent(event.id);
 							}}
 						>
-							Delete
+							{m.button_delete()}
 						</Button>
 					</div>
 				)}

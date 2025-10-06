@@ -226,5 +226,10 @@
   "language_swedish": "Swedish 🇸🇪",
   "nav_map": "Map",
   "start_date_label": "Start Date:",
-  "end_date_label": "End Date:"
+  "end_date_label": "End Date:",
+  "save_changes": "Save Changes",
+  "edit_event_description": "Modify your existing event.",
+  "edit_event_label": "Edit Event",
+  "delete_event_description": "This action cannot be undone. This will permanently delete your event and remove event data from our servers.",
+  "edit_event_button": "Edit"
 }

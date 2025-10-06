@@ -1,7 +1,7 @@
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
-
+import { hydrateRoot } from 'react-dom/client';
 import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
@@ -9,6 +9,7 @@ import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
 import { getCurrentUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
+
 
 // Define the router context type
 interface RouterContext {
@@ -20,15 +21,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
     const user = await getCurrentUserFn()
     const isAuthenticated = !!user
-
+    
     console.log("Current User in Root Route:", user?.name);
     console.log("Is Authenticated in Root Route:", isAuthenticated);
-
+    
     return { currentUser: user, IsAuthenticated: isAuthenticated }
   },
   loader: async ({ context }) => {
     const ctx = context
-
+    
     return { ctx }
   },
   head: () => ({
@@ -74,17 +75,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-full">
-        {/* <div className="p-2 flex gap-2 text-lg">
-          <Link
-            to="/{-$locale}"
-            activeProps={{
-              className: "font-bold",
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>
-        </div> */}
         {ctx.IsAuthenticated && (
           <Header />
         )}
@@ -92,7 +82,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {children}
         </main>
         <Toaster position="top-center" richColors={true} duration={1500} />
-        <TanstackDevtools
+        {/* <TanstackDevtools
           config={{
             position: 'bottom-left',
           }}
@@ -102,7 +92,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               render: <TanStackRouterDevtoolsPanel />,
             },
           ]}
-        />
+        /> */}
         <Footer />
         <Scripts />
       </body>

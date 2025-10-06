@@ -233,7 +233,7 @@ export const eventInsertSchema = createInsertSchema(event, {
   description: z
   .string()
   .min(2, "Description must contain atleast 2 characters."),
-  venue: z.string().optional(),
+  venue: z.string().optional().nullable(),
   address: z.string().min(2, "Address must be atleast 2 characters."),
   color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
   latitude: z.string(),
@@ -262,13 +262,13 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   address: z
   .string()
   .min(2, "Address must be atleast 2 characters."),
-  venue: z.string().nullable().optional(),
+  venue: z.string().nullable(),
   latitude: z.string().optional(),
   longitude: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   updatedAt: z.date().optional(),
-  color: z
+  color: z    
   .enum(["blue", "green", "red", "yellow", "purple", "orange"])
   .optional(),
 }).superRefine((data, ctx) => {

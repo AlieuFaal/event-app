@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "start": "node .output/server/index.mjs",
-    "build": "vite build",
+    "build": "vite build --preset vercel",
     "serve": "vite preview",
     "test": "vitest run",
     "create-migration": "drizzle-kit generate",

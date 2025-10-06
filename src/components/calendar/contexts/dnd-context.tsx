@@ -12,7 +12,7 @@ import React, {
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { DndConfirmationDialog } from "@/components/calendar/dialogs/dnd-confirmation-dialog";
-import { Event } from "drizzle/db";
+import { Event, User } from "drizzle/db";
 
 interface PendingDropData {
 	event: Event;
@@ -36,6 +36,7 @@ interface DragDropContextType {
 interface DndProviderProps {
 	children: ReactNode;
 	showConfirmation: boolean;
+	currentUser?: User;
 }
 
 const DragDropContext = createContext<DragDropContextType | undefined>(
@@ -45,6 +46,7 @@ const DragDropContext = createContext<DragDropContextType | undefined>(
 export function DndProvider({
 	children,
 	showConfirmation: showConfirmationProp = false,
+	currentUser,
 }: DndProviderProps) {
 	const { updateEvent } = useCalendar();
 	const [dragState, setDragState] = useState<{
@@ -101,10 +103,16 @@ export function DndProvider({
 	}, []);
 
 	const handleEventDrop = useCallback(
-		(targetDate: Date, hour?: number, minute?: number) => {
+		(targetDate: Date, hour?: number, minute?: number,) => {
 			const { draggedEvent } = dragState;
 			if (!draggedEvent) return;
-
+			
+			if (currentUser?.id !== draggedEvent.userId) {
+				toast.error("You can only move your own events.");
+				endDrag();
+				return;
+			}
+			
 			const { newStart, newEnd } = calculateNewDates(
 				draggedEvent,
 				targetDate,
@@ -227,5 +235,6 @@ export function useDragDrop() {
 	if (!context) {
 		throw new Error("useDragDrop must be used within a DragDropProvider");
 	}
+
 	return context;
 }

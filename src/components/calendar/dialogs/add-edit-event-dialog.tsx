@@ -38,6 +38,8 @@ import { useDisclosure } from "@/components/calendar/hooks";
 import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
 import { authClient } from "@/lib/auth-client";
 import { Event } from "drizzle/db";
+import { AddressAutofill } from "@mapbox/search-js-react";
+import { m } from "@/paraglide/messages";
 
 interface IProps {
 	children: ReactNode;
@@ -138,11 +140,9 @@ export function AddEditEventDialog({
 			<ModalTrigger asChild>{children}</ModalTrigger>
 			<ModalContent>
 				<ModalHeader>
-					<ModalTitle>{isEditing ? "Edit Event" : "Add New Event"}</ModalTitle>
+					<ModalTitle>{isEditing ? `${m.edit_event_label()}` : `${m.create_event_title()}`}</ModalTitle>
 					<ModalDescription>
-						{isEditing
-							? "Modify your existing event."
-							: "Create a new event for your calendar."}
+						{isEditing ? `${m.edit_event_description()}` : `${m.create_event_description()}`}
 					</ModalDescription>
 				</ModalHeader>
 
@@ -158,12 +158,12 @@ export function AddEditEventDialog({
 							render={({ field, fieldState }) => (
 								<FormItem>
 									<FormLabel htmlFor="title" className="required">
-										Title
+										{m.form_title_label()}
 									</FormLabel>
 									<FormControl>
 										<Input
 											id="title"
-											placeholder="Enter a title"
+											placeholder={m.form_title_placeholder()}
 											{...field}
 											className={fieldState.invalid ? "border-red-500" : ""}
 										/>
@@ -172,26 +172,31 @@ export function AddEditEventDialog({
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="address"
-							render={({ field, fieldState }) => (
-								<FormItem>
-									<FormLabel htmlFor="address" className="required">
-										Location
-									</FormLabel>
-									<FormControl>
-										<Input
-											id="address"
-											placeholder="Where's the event?"
-											{...field}
-											className={fieldState.invalid ? "border-red-500" : ""}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} onRetrieve={(result) => {
+							form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
+							form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
+						}} browserAutofillEnabled={true} confirmOnBrowserAutofill={true}>
+							<FormField
+								control={form.control}
+								name="address"
+								render={({ field, fieldState }) => (
+									<FormItem>
+										<FormLabel htmlFor="address" className="required">
+											{m.form_address_label()}
+										</FormLabel>
+										<FormControl>
+											<Input
+												id="address"
+												placeholder={m.form_address_placeholder()}
+												{...field}
+												className={fieldState.invalid ? "border-red-500" : ""}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</AddressAutofill>
 						<FormField
 							control={form.control}
 							name="startDate"
@@ -211,7 +216,7 @@ export function AddEditEventDialog({
 							name="color"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">Color</FormLabel>
+									<FormLabel className="required">{m.form_color_label()}</FormLabel>
 									<FormControl>
 										<Select value={field.value} onValueChange={field.onChange}>
 											<SelectTrigger
@@ -243,11 +248,11 @@ export function AddEditEventDialog({
 							name="description"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">Description</FormLabel>
+									<FormLabel className="required">{m.form_description_label()}</FormLabel>
 									<FormControl>
 										<Textarea
 											{...field}
-											placeholder="Enter a description"
+											placeholder= {m.form_description_placeholder()}
 											className={fieldState.invalid ? "border-red-500" : ""}
 										/>
 									</FormControl>
@@ -257,19 +262,19 @@ export function AddEditEventDialog({
 						/>
 					</form>
 				</Form>
-				
+
 				<ModalFooter className="flex justify-end gap-2">
 					<ModalClose asChild>
 						<Button type="button" variant="outline">
-							Cancel
+							{m.button_cancel()}
 						</Button>
 					</ModalClose>
-					<Button 
-						form="event-form" 
+					<Button
+						form="event-form"
 						type="submit"
 						onClick={form.handleSubmit(onSubmit)}
 					>
-						{isEditing ? "Save Changes" : "Create Event"}
+						{isEditing ?  `${m.save_changes()}` : `${m.calendar_add_event()}`}
 					</Button>
 				</ModalFooter>
 			</ModalContent>
