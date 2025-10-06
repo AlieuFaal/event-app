@@ -290,5 +290,3 @@ Files prefixed with `demo` can be safely deleted. They are there to provide a st
 You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
 
 # Useful Commands
-
-docker run -d   --name event-app-db -e POSTGRES_DB=event   -e POSTGRES_USER=event   -e POSTGRES_PASSWORD=event   -p 5432:5432   postgres:latest
