@@ -16,4 +16,4 @@ export default createStartHandler({createRouter: () => router,})
   }),
 );
 
-// global['localStorage'] = localStorage;
+global['localStorage'] = localStorage;
