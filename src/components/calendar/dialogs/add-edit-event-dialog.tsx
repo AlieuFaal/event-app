@@ -38,8 +38,42 @@ import { useDisclosure } from "@/components/calendar/hooks";
 import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
 import { authClient } from "@/lib/auth-client";
 import { Event } from "drizzle/db";
-import { AddressAutofill } from "@mapbox/search-js-react";
 import { m } from "@/paraglide/messages";
+import { useState } from "react";
+
+// Dynamic import wrapper for AddressAutofill (client-side only)
+function AddressAutofillWrapper({ 
+    accessToken, 
+    onRetrieve, 
+    browserAutofillEnabled, 
+    confirmOnBrowserAutofill,
+    children 
+}: any) {
+    const [AddressAutofill, setAddressAutofill] = useState<any>(null);
+    
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            import('@mapbox/search-js-react').then(module => {
+                setAddressAutofill(() => module.AddressAutofill);
+            });
+        }
+    }, []);
+    
+    if (!AddressAutofill) {
+        return <>{children}</>;
+    }
+    
+    return (
+        <AddressAutofill
+            accessToken={accessToken}
+            onRetrieve={onRetrieve}
+            browserAutofillEnabled={browserAutofillEnabled}
+            confirmOnBrowserAutofill={confirmOnBrowserAutofill}
+        >
+            {children}
+        </AddressAutofill>
+    );
+}
 
 interface IProps {
 	children: ReactNode;
@@ -172,10 +206,15 @@ export function AddEditEventDialog({
 								</FormItem>
 							)}
 						/>
-						<AddressAutofill accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} onRetrieve={(result) => {
-							form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
-							form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
-						}} browserAutofillEnabled={true} confirmOnBrowserAutofill={true}>
+						<AddressAutofillWrapper 
+							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} 
+							onRetrieve={(result: any) => {
+								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
+								form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
+							}} 
+							browserAutofillEnabled={true} 
+							confirmOnBrowserAutofill={true}
+						>
 							<FormField
 								control={form.control}
 								name="address"
@@ -196,7 +235,7 @@ export function AddEditEventDialog({
 									</FormItem>
 								)}
 							/>
-						</AddressAutofill>
+						</AddressAutofillWrapper>
 						<FormField
 							control={form.control}
 							name="startDate"

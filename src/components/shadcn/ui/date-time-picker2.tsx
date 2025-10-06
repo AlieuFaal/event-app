@@ -18,6 +18,7 @@ import { ScrollArea, ScrollBar } from "@/components/shadcn/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import type { TEventFormData } from "@/components/calendar/schemas";
+import { useEffect, useState } from "react";
 
 interface DatePickerProps {
 	form: UseFormReturn<TEventFormData>;
@@ -26,6 +27,12 @@ interface DatePickerProps {
 
 export function DateTimePicker({ form, field }: DatePickerProps) {
 	const { use24HourFormat } = useCalendar();
+	const [isMounted, setIsMounted] = useState(false);
+
+	// Prevent hydration mismatch by only showing formatted date on client
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
 
 	function handleDateSelect(date: Date | undefined) {
 		if (date) {
@@ -67,12 +74,16 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 								"w-full pl-3 text-left font-normal",
 								!field.value && "text-muted-foreground",
 							)}
+							suppressHydrationWarning
 						>
-							{field.value ? (
+							{isMounted && field.value ? (
 								format(
 									field.value,
 									use24HourFormat ? "MM/dd/yyyy HH:mm" : "MM/dd/yyyy hh:mm aa",
 								)
+							) : field.value ? (
+								// During SSR and first render, show ISO format to prevent hydration mismatch
+								new Date(field.value).toISOString().slice(0, 16).replace('T', ' ')
 							) : (
 								<span>MM/DD/YYYY hh:mm aa</span>
 							)}

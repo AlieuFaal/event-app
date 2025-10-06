@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "src/components/shadcn/ui/popover.tsx"
-import { useCalendar } from "@/components/calendar/contexts/calendar-context"
 
 interface Calendar24Props {
   value?: Date
@@ -23,7 +22,12 @@ interface Calendar24Props {
 export function Calendar24({ value, onChange, placeholder = "Select date" }: Calendar24Props) {
   const [open, setOpen] = React.useState(false)
   const [time, setTime] = React.useState("")
-  const { use24HourFormat, removeEvent } = useCalendar();
+  const [isMounted, setIsMounted] = React.useState(false)
+
+  // Prevent hydration mismatch by only showing formatted date on client
+  React.useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate && time) {
@@ -66,8 +70,18 @@ export function Calendar24({ value, onChange, placeholder = "Select date" }: Cal
               variant="outline"
               id="date-picker"
               className="w-32 justify-between font-normal"
+              suppressHydrationWarning
             >
-              {value ? value.toLocaleDateString() : placeholder}
+              {value ? (
+                isMounted ? (
+                  value.toLocaleDateString()
+                ) : (
+                  // During SSR and first render, show ISO format to prevent hydration mismatch
+                  value.toISOString().split('T')[0]
+                )
+              ) : (
+                placeholder
+              )}
               <ChevronDownIcon />
             </Button>
           </PopoverTrigger>

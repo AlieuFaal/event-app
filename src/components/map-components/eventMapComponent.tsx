@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getLocale } from '@/paraglide/runtime';
 import { EventFeature, Marker } from './marker';
@@ -8,6 +7,34 @@ import { Event } from 'drizzle/db';
 import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
 import { Button } from '../shadcn/ui/button';
 import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
+
+// Dynamic import wrapper for Geocoder (client-side only)
+function GeocoderWrapper({ accessToken, onRetrieve, placeholder, value, onChange, proximity }: any) {
+    const [Geocoder, setGeocoder] = useState<any>(null);
+    
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            import('@mapbox/search-js-react').then(module => {
+                setGeocoder(() => module.Geocoder);
+            });
+        }
+    }, []);
+    
+    if (!Geocoder) {
+        return <input type="text" placeholder={placeholder} value={value} onChange={onChange} className="w-full px-4 py-2 border rounded" />;
+    }
+    
+    return (
+        <Geocoder
+            accessToken={accessToken}
+            onRetrieve={onRetrieve}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            proximity={proximity}
+        />
+    );
+}
 
 interface EventMapViewProps {
     events: Event[];
@@ -91,20 +118,15 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                 </div>
             )}
             <div className="absolute top-15 left-15 z-10 w-60">
-                <Geocoder
+                <GeocoderWrapper
                     accessToken={accessToken}
-                    mapboxgl={mapboxgl}
-                    marker={{ color: 'purple', draggable: false }}
                     placeholder={getLocale() === 'sv' ? 'Sök plats' : 'Search location'}
                     value={inputValue}
-                    options={{
-                        language: getLocale(),
-                        proximity: 'ip'
-                    }}
-                    onChange={(value) => {
+                    proximity="ip"
+                    onChange={(value: any) => {
                         setInputValue(value);
                     }}
-                    onRetrieve={(result) => {
+                    onRetrieve={(result: any) => {
                         if (mapRef.current && result.geometry?.coordinates) {
                             const coordinates = result.geometry.coordinates;
                             mapRef.current.flyTo({
