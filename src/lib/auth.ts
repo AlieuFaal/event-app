@@ -1,11 +1,8 @@
-import { betterAuth, Session } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle"; // your drizzle instance
 import { reactStartCookies } from "better-auth/react-start";
-import { sendEmail } from "../services/emailSenderService"; // your email sending function
 import { schema, session } from "../../drizzle/db/schema";
-import { customSession } from "better-auth/plugins";
-import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -70,11 +67,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true, // Enable email and password authentication
     autoSignIn: false, // Automatically sign in the user after sign up
-    async sendResetPassword(data, request) {
+    async sendResetPassword(_data, _request) {
       // Send an email to the user with a link to reset their password
     },
 
-    onPasswordReset: async ({ user }, request) => {
+    onPasswordReset: async ({ user }, _request) => {
       // logic here
       console.log(`Password reset for user: ${user.email}`);
     },
@@ -118,30 +115,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    customSession(async ({ user, session }) => {
-      const userWithRole = await db
-        .select()
-        .from(schema.user)
-        .where(eq(schema.user.id, session.userId))
-        .limit(1);
-
-      if (!userWithRole || userWithRole.length === 0) {
-        return { user, session };
-      }
-
-      const userData = userWithRole[0];
-
-      return {
-        user: {
-          ...user,
-          role: userData.role,
-          location: userData.location || "",
-          bio: userData.bio || "",
-          phone: userData.phone || "",
-        },
-        session,
-      };
-    }),
     reactStartCookies(),
   ], // make sure this is the last plugin in the array
 });

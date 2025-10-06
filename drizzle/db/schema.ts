@@ -17,8 +17,10 @@ import z from "zod";
 
 // User Types -----------------------------------------------------------------------------------------------------------------
 export type User = z.infer<typeof userSchema>;
-export type UserSession = z.infer<typeof userSessionSchema>;
-export type UserSocial = z.infer<typeof userSocialSchema>;
+
+// export type UserSession = z.infer<typeof userSessionSchema>;
+
+// export type UserSocial = z.infer<typeof userSocialSchema>;
 export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
@@ -38,11 +40,9 @@ export type NewComment = z.infer<typeof commentInsertSchema>;
 export type UpdateComment = z.infer<typeof commentUpdateSchema>;
 export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
-// Venue Types -----------------------------------------------------------------------------------------------------------------
-// export type Venue = z.infer<typeof venueSchema>;
-
 // Additional Types without db tables -----------------------------------------------------------------------------------------------------------------
-export type CurrentUser = z.infer<typeof CurrentUserSchema>;
+
+// export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
 
@@ -124,15 +124,15 @@ export const onboardingSchema = userFormSchema.pick({
   role: true,
 });
 
-export const userSessionSchema = userSchema.pick({
-  id: true,
-  name: true,
-  email: true,
-  emailVerified: true,
-  image: true,
-  createdAt: true,
-  updatedAt: true,
-});
+// export const userSessionSchema = userSchema.pick({
+//   id: true,
+//   name: true,
+//   email: true,
+//   emailVerified: true,
+//   image: true,
+//   createdAt: true,
+//   updatedAt: true,
+// });
 
 export const session = pgTable("session", {
   id: uuid("id").primaryKey(),
@@ -284,6 +284,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
 export const calendarEventSchema = eventSchema.extend({
   id: z.uuid(),
   userId: z.uuid().nullable().optional(),
+  createdAt: z.date().optional(), // Optional for new events
 });
 
 // Comment table -------------------------------------------------------------------------------------------------------------
@@ -331,20 +332,6 @@ export const eventWithCommentsSchema = eventSchema.extend({
   isStarred: z.boolean().optional(),
 });
 
-// Venue Table -------------------------------------------------------------------------------------------------------------
-// export const venue = pgTable("venue", {
-//   id: uuid("id").defaultRandom().primaryKey(),
-//   name: text("name").notNull(),
-//   address: text("address").notNull(),
-//   city: text("city").notNull(),
-//   state: text("state").notNull(),
-//   zipCode: text("zip_code").notNull(),
-//   country: text("country").notNull(),
-//   longitude: text("longitude").notNull(),
-//   latitude: text("latitude").notNull(),
-// });
-
-// export const venueSchema = createSelectSchema(venue);
 
 // Favorite events table -------------------------------------------------------------------------------------------------------------
 export const favoriteEvent = pgTable("favorite_event", {
@@ -396,18 +383,18 @@ export const passwordChangeSchema = z
   path: ["confirmPassword"],
 });
 
-export const CurrentUserSchema = userSchema
-.extend({
-  image: z.url("Invalid image URL").nullable().optional(),
-})
-.omit({
-  role: true,
-  bio: true,
-  location: true,
-  phone: true,
-  followers: true,
-  following: true,
-});
+// export const CurrentUserSchema = userSchema
+// .extend({
+//   image: z.url("Invalid image URL").nullable().optional(),
+// })
+// .omit({
+//   role: true,
+//   bio: true,
+//   location: true,
+//   phone: true,
+//   followers: true,
+//   following: true,
+// });
 
 export const schema = {
   user,

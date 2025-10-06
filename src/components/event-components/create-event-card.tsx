@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { postEventDataFn } from "@/services/eventService";
-import { eventInsertSchema } from "drizzle/db/schema";
+import { eventInsertSchema, User } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
@@ -23,7 +23,7 @@ import { AddressAutofill } from '@mapbox/search-js-react';
 import { m } from "@/paraglide/messages";
 
 
-export default function EventCard() {
+export default function EventCard(currentUser: User) {
 
     const getDefaultStartDate = () => {
         const tomorrow = new Date();
@@ -53,6 +53,10 @@ export default function EventCard() {
 
     const onSubmit = async (values: z.infer<typeof eventInsertSchema>) => {
         try {
+            if (currentUser.role !== "artist" && currentUser.role !== "admin") {
+                toast.error(m.toast_event_create_role());
+                return;
+            }
             const dataToSend = {
                 ...values,
                 userId: session?.user.id,

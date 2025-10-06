@@ -8,9 +8,7 @@ import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import { authClient } from "@/lib/auth-client";
-import { TEventFormData } from "../schemas";
-import { Event, User } from "drizzle/db";
+import type { Event, User, CalendarEvent } from "drizzle/db/schema";
 
 interface ICalendarContext {
 	selectedDate: Date;
@@ -30,9 +28,9 @@ interface ICalendarContext {
 	filterEventsBySelectedUser: (userId: User["id"] | "all") => void;
 	users: User[];
 	events: Event[];
-	addEvent: (event: TEventFormData) => void;
-	updateEvent: (event: TEventFormData) => void;
-	removeEvent: (eventId: string) => void;
+	addEvent: (event: CalendarEvent) => Promise<void>;
+	updateEvent: (event: CalendarEvent) => Promise<void>;
+	removeEvent: (eventId: string) => Promise<void>;
 	clearFilter: () => void;
 }
 
@@ -158,13 +156,19 @@ export function CalendarProvider2({
 		setSelectedDate(date);
 	};
 
-	const { data: session } = authClient.useSession()
-
-	const addEvent = async (event: Event) => {
+	const addEvent = async (event: CalendarEvent) => {
 		console.log("Adding event:", event);
 
-		setAllEvents((prev) => [...prev, event]);
-		setFilteredEvents((prev) => [...prev, event]);
+		// Convert CalendarEvent to Event for state management
+		const eventForState: Event = {
+			...event,
+			userId: event.userId || null,
+			venue: event.venue || null,
+			createdAt: new Date(),
+		};
+
+		setAllEvents((prev) => [...prev, eventForState]);
+		setFilteredEvents((prev) => [...prev, eventForState]);
 
 		try {
 			await postCalendarEventDataFn({ data: event });
@@ -174,11 +178,14 @@ export function CalendarProvider2({
 		}
 	};
 
-	const updateEvent = async (event: Event) => {
-		const updatedEvent = {
+	const updateEvent = async (event: CalendarEvent) => {
+		const updatedEvent: Event = {
 			...event,
+			userId: event.userId || null,
+			venue: event.venue || null,
+			createdAt: new Date(),
 			startDate: new Date(event.startDate),
-			endDate: new Date(event.endDate)
+			endDate: new Date(event.endDate),
 		};
 
 		setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updatedEvent : e)));

@@ -231,5 +231,6 @@
   "edit_event_description": "Modify your existing event.",
   "edit_event_label": "Edit Event",
   "delete_event_description": "This action cannot be undone. This will permanently delete your event and remove event data from our servers.",
-  "edit_event_button": "Edit"
+  "edit_event_button": "Edit",
+  "toast_event_create_role": "You must be an Artist to create events."
 }

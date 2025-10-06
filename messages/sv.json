@@ -231,5 +231,6 @@
   "edit_event_description": "Ändra ditt befintliga evenemang.",
   "edit_event_label": "Redigera Evenemang",
   "delete_event_description": "Denna åtgärd kan inte ångras. Detta kommer att radera ditt evenemang permanent och ta bort evenemangsdata från våra servrar.",
-  "edit_event_button": "Redigera"
+  "edit_event_button": "Redigera",
+  "toast_event_create_role": "Du måste vara en Artist för att skapa evenemang."
 }

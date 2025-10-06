@@ -108,7 +108,7 @@ export function AddEditEventDialog({
 				...values,
 				id: event?.id || crypto.randomUUID(),
 				userId: session?.user.id,
-				createdAt: event?.createdAt || new Date(),
+				venue: values.venue || null, // Ensure venue is null instead of undefined
 			};
 
 			if (isEditing) {

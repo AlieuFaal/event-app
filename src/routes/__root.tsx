@@ -1,22 +1,18 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
-import { getCurrentUserFn } from '@/services/user-service'
+import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 
 
-// Define the router context type
-interface RouterContext {
-  currentUser: Awaited<ReturnType<typeof getCurrentUserFn>>
-  IsAuthenticated: boolean
-}
-
-export const Route = createRootRouteWithContext<RouterContext>()({
+export const Route = createRootRoute({
   beforeLoad: async () => {
-    const user = await getCurrentUserFn()
+    // This makes ONE DB query per page load to get full user data with all fields (role, bio, etc.)
+    // TanStack Router caches this, so child routes can access it via context without re-querying
+    const user = await getSessionUserFn()
     const isAuthenticated = !!user
     
     console.log("Current User in Root Route:", user?.name);

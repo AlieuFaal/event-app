@@ -1,12 +1,20 @@
 import EventCard from '@/components/event-components/create-event-card'
+import { routeTree } from '@/routeTree.gen'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(protected)/create-event')({
+  loader: async (ctx) => {
+    const currentUser = ctx.context.currentUser;
+    console.log("Current User in Create Event Route:", currentUser?.name);
+
+    return { currentUser }
+  },
   component: CreateEventsComponent,
 })
 
 function CreateEventsComponent() {
+  const { currentUser } = Route.useLoaderData();
   return (
-      <EventCard />
+    <EventCard currentUser={currentUser} />
   )
 }

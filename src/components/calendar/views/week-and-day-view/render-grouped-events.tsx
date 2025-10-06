@@ -1,6 +1,5 @@
-import { areIntervalsOverlapping, parseISO } from "date-fns";
+import { areIntervalsOverlapping } from "date-fns";
 import { getEventBlockStyle } from "@/components/calendar/helpers";
-import type { IEvent } from "@/components/calendar/interfaces";
 import { EventBlock } from "@/components/calendar/views/week-and-day-view/event-block";
 import { Event, User } from "drizzle/db";
 

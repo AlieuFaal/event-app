@@ -340,3 +340,24 @@ export const getCurrentUserFn = createServerFn({
 
     return result[0];
   });
+
+
+export const getSessionUserFn = createServerFn({
+  method: "GET",
+  response: "data",
+})
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const sessionUser = context.currentUser;
+    if (!sessionUser?.id) {
+      return null;
+    }
+
+    const result = await db
+      .select()
+      .from(schema.user)
+      .where(eq(schema.user.id, sessionUser.id))
+      .limit(1);
+
+    return result[0] || null;
+  });
