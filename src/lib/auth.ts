@@ -94,7 +94,7 @@ export const auth = betterAuth({
     },
   },
   secret: process.env.BETTER_AUTH_SECRET as string, // set this to a long random string in production
-  baseURL: process.env.BETTER_AUTH_URL as string, // The base URL of your app
+  baseURL: process.env.VITE_PUBLIC_BETTER_AUTH_URL as string, // The base URL of your app
   advanced: {
     database: {
       generateId: () => crypto.randomUUID(),

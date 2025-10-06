@@ -3,5 +3,5 @@ import { customSessionClient } from "better-auth/client/plugins";
 import { auth } from "@/lib/auth";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.VITE_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
 });

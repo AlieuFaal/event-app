@@ -1,7 +1,4 @@
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
-import { hydrateRoot } from 'react-dom/client';
 import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
