@@ -17,7 +17,7 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
-  trustedOrigins: [process.env.BETTER_AUTH_URL!],
+  trustedOrigins: [process.env.VERCEL_URL!],
   user: {
     model: schema.user,
     sessionModel: schema.session,
