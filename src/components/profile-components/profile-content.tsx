@@ -35,7 +35,9 @@ interface ProfileContentProps {
 export default function ProfileContent({currentUser}: ProfileContentProps) {
   const navigate = useNavigate();
 
-  const [switchState, setSwitchState] = React.useState(localStorage.getItem('userRole') === 'artist');
+  const [switchState, setSwitchState] = React.useState(
+    typeof window !== 'undefined' ? localStorage.getItem('userRole') === 'artist' : false
+  );
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const form = useForm<UserForm>({
@@ -92,7 +94,9 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
 
   const handleRoleToggle = async (checked: boolean): Promise<void> => {
     setSwitchState(checked);
-    localStorage.setItem('userRole', checked ? 'artist' : 'user');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userRole', checked ? 'artist' : 'user');
+    }
     console.log('User role set to:', checked ? 'artist' : 'user');
     const newRole: "artist" | "user" = checked ? "artist" : "user";
 
