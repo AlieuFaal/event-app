@@ -19,7 +19,7 @@ export const auth = betterAuth({
   }),
   trustedOrigins: [
     "http://localhost:3000", 
-    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : [])
+    ...(process.env.BETTER_AUTH_URL ? [`https://${process.env.BETTER_AUTH_URL}`] : [])
   ],
   user: {
     model: schema.user,
