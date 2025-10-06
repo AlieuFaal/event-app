@@ -8,13 +8,12 @@ import { overwriteGetLocale } from './paraglide/runtime';
 //   createRouter,
 // })(defaultStreamHandler)
 
-export default createStartHandler({
-  createRouter: () => router,
-})((event) =>
+export default createStartHandler({createRouter: () => router,})
+((event) =>
   paraglideMiddleware(getWebRequest(), ({ locale }) => {
     overwriteGetLocale(() => locale);
     return defaultStreamHandler(event);
   }),
 );
 
-global['localStorage'] = localStorage;
+// global['localStorage'] = localStorage;
