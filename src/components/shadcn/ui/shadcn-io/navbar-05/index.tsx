@@ -31,6 +31,7 @@ import { Link } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
 import { m } from '@/paraglide/messages';
 import { setLocale } from '@/paraglide/runtime';
+import { User } from 'drizzle/db';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -100,14 +101,18 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
 ];
 
 function onClickHandler(route: string) {
-  window.location.href = route;
+  if (typeof window !== 'undefined') {
+    window.location.href = route;
+  }
 }
 
 async function onLogout() {
   await authClient.signOut({
     fetchOptions: {
       onSuccess: () => {
-        window.location.href = '/';
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
       }
     }
   });
@@ -242,6 +247,7 @@ export interface Navbar05Props extends React.HTMLAttributes<HTMLElement> {
   logo?: React.ReactNode;
   logoHref?: string;
   navigationLinks?: Navbar05NavItem[];
+  currentUser?: User | null;
   userName?: string;
   userEmail?: string;
   userAvatar?: string;
@@ -267,17 +273,14 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       onInfoItemClick,
       onNotificationItemClick,
       onUserItemClick,
+      currentUser,
       ...props
     },
     ref
   ) => {
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
-    const { data } = authClient.useSession();
-
-
-
-
+    const user = currentUser;
 
     useEffect(() => {
       const checkWidth = () => {
@@ -309,6 +312,8 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       }
     }, [ref]);
 
+    const filteredNavLinks = user?.role === 'user' ? navigationLinks.filter(link => link.href !== '/create-event') : navigationLinks;
+
     return (
       <header
         ref={combinedRef}
@@ -336,7 +341,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                 <PopoverContent align="start" className="w-64 p-1">
                   <NavigationMenu className="max-w-none">
                     <NavigationMenuList className="flex-col items-start gap-0">
-                      {navigationLinks.map((link, index) => (
+                      {filteredNavLinks.map((link, index) => (
                         <NavigationMenuItem key={index} className="w-full">
                           <button
                             onClick={(e) => {
@@ -370,7 +375,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               {!isMobile && (
                 <NavigationMenu className="flex">
                   <NavigationMenuList className="gap-1">
-                    {navigationLinks.map((link, index) => (
+                    {filteredNavLinks.map((link, index) => (
                       <NavigationMenuItem key={index}>
                         <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                           <Link to={link.href}>{link.label}</Link>
@@ -396,15 +401,15 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               /> */}
             </div>
             {/* User menu */}
-            {data && (
+            {user && (
               <UserMenu
-                userName={data?.user.name}
-                userEmail={data?.user.email}
-                userAvatar={data?.user.image}
+                userName={user?.name}
+                userEmail={user?.email}
+                userAvatar={user?.image}
                 onItemClick={onUserItemClick}
               />
             )}
-            {!data && (
+            {!user && (
               <Button variant={'outline'} onClick={() => onClickHandler('/signin')}>{m.signin_card_title()}</Button>
             )}
           </div>

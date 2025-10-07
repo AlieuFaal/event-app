@@ -40,40 +40,8 @@ import { authClient } from "@/lib/auth-client";
 import { Event } from "drizzle/db";
 import { m } from "@/paraglide/messages";
 import { useState } from "react";
+import { AddressAutofill } from "@mapbox/search-js-react";
 
-// Dynamic import wrapper for AddressAutofill (client-side only)
-function AddressAutofillWrapper({ 
-    accessToken, 
-    onRetrieve, 
-    browserAutofillEnabled, 
-    confirmOnBrowserAutofill,
-    children 
-}: any) {
-    const [AddressAutofill, setAddressAutofill] = useState<any>(null);
-    
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            import('@mapbox/search-js-react').then(module => {
-                setAddressAutofill(() => module.AddressAutofill);
-            });
-        }
-    }, []);
-    
-    if (!AddressAutofill) {
-        return <>{children}</>;
-    }
-    
-    return (
-        <AddressAutofill
-            accessToken={accessToken}
-            onRetrieve={onRetrieve}
-            browserAutofillEnabled={browserAutofillEnabled}
-            confirmOnBrowserAutofill={confirmOnBrowserAutofill}
-        >
-            {children}
-        </AddressAutofill>
-    );
-}
 
 interface IProps {
 	children: ReactNode;
@@ -142,7 +110,7 @@ export function AddEditEventDialog({
 				...values,
 				id: event?.id || crypto.randomUUID(),
 				userId: session?.user.id,
-				venue: values.venue || null, // Ensure venue is null instead of undefined
+				venue: values.venue || null, 
 			};
 
 			if (isEditing) {
@@ -171,7 +139,7 @@ export function AddEditEventDialog({
 
 	return (
 		<Modal open={isOpen} onOpenChange={onToggle} modal={false}>
-			<ModalTrigger asChild>{children}</ModalTrigger>
+			<Button onClick={onToggle} asChild>{children}</Button>
 			<ModalContent>
 				<ModalHeader>
 					<ModalTitle>{isEditing ? `${m.edit_event_label()}` : `${m.create_event_title()}`}</ModalTitle>
@@ -206,7 +174,7 @@ export function AddEditEventDialog({
 								</FormItem>
 							)}
 						/>
-						<AddressAutofillWrapper 
+						<AddressAutofill
 							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} 
 							onRetrieve={(result: any) => {
 								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
@@ -235,7 +203,7 @@ export function AddEditEventDialog({
 									</FormItem>
 								)}
 							/>
-						</AddressAutofillWrapper>
+						</AddressAutofill>
 						<FormField
 							control={form.control}
 							name="startDate"

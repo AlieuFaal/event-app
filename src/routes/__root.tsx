@@ -1,16 +1,15 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
 import Footer from '@/components/Footer'
 import { Toaster } from 'sonner'
 import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
+import { Header } from '@/components/Header.js'
 
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
-
     const user = await getSessionUserFn()
     const isAuthenticated = !!user
     
@@ -68,7 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col min-h-full">
         {ctx.IsAuthenticated && (
-          <Header />
+          <Header currentUser={ctx.currentUser}/>
         )}
         <main className="flex-1">
           {children}

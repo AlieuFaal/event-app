@@ -89,7 +89,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                     <div className="absolute top-3 right-3">
                         <Button
                             className=""
-                            variant={"outline"}
+                            variant={"ghost"}
                             size={"icon"}
                             onClick={(e) => {
                                 addOrRemoveFavorite();

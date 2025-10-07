@@ -12,7 +12,7 @@ import { Label } from "../shadcn/ui/label";
 import CommentSection from "./event-comment-section";
 import { Event, EventWithComments, User } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
-import { Star } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
 import { useState } from "react";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
     const removeFavoriteEvent = useServerFn(removeFavoriteEventFn)
     const [dialogOpen, setDialogOpen] = useState(false);
-    
+
     const [isStarred, setIsStarred] = useState(false);
 
     function getEventCreatorName(event: Event) {
@@ -34,7 +34,6 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
     }
 
     function getEventCreatorImage(event: Event) {
-
         const creator = users.find((user) => user.id === event.userId);
         return creator ? creator.image : DiscJockeyImage;
     }
@@ -81,18 +80,20 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
 
     return (
         <>
-            <Card onClick={() => setDialogOpen(true)} className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
+            <Card onClick={() => setDialogOpen(true)} className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative">
                 <CardContent className="flex flex-row space-x-16">
-                    <img className="w-48 border-5 rounded-xl" src={DiscJockeyImage} alt="" />
-                    <div className="flex flex-col justify-center">
-                        <CardTitle className="text-5xl">{event.title}</CardTitle>
+                    <div>
+                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={DiscJockeyImage} alt="" />
+                    </div>
+                    <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-210 relative">
+                        <CardTitle className="text-3xl">{event.title}</CardTitle>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{event.description}</CardDescription>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{event.address}</CardDescription>
                     </div>
                 </CardContent>
                 <Button
                     className="absolute top-3 right-3"
-                    variant={"outline"}
+                    variant={"ghost"}
                     size={"icon"}
                     onClick={(e) => {
                         addOrRemoveFavorite();
@@ -101,7 +102,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                 >
                     <Star fill={event.isStarred ? "yellow" : "none"} color={event.isStarred ? "yellow" : "currentColor"} />
                 </Button>
-                <div className="justify-items-end-safe mx-5 " >
+                <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl w-70 p-2 relative left-240 shadow-lg" >
                     <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
                     <div className="">
                         {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}

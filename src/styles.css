@@ -207,9 +207,9 @@ code {
   padding: 0 !important;
 }
 
-.mapboxgl-popup-tip {
-  /* display: none !important; */
-}
+/* .mapboxgl-popup-tip {
+  display: none !important;
+} */
 
 .custom-popup .mapboxgl-popup-content {
   background: transparent !important;
