@@ -15,8 +15,10 @@ export const auth = betterAuth({
     },
   }),
   trustedOrigins: [
-    "http://localhost:3000", 
-    ...(process.env.BETTER_AUTH_URL ? [`https://${process.env.BETTER_AUTH_URL}`] : [])
+    "http://localhost:3000",
+    ...(process.env.BETTER_AUTH_URL
+      ? [`https://${process.env.BETTER_AUTH_URL}`]
+      : []),
   ],
   user: {
     model: schema.user,
@@ -70,7 +72,6 @@ export const auth = betterAuth({
     async sendResetPassword(_data, _request) {
       // Send an email to the user with a link to reset their password
     },
-
     onPasswordReset: async ({ user }, _request) => {
       // logic here
       console.log(`Password reset for user: ${user.email}`);
@@ -114,7 +115,5 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [
-    reactStartCookies(),
-  ], // make sure this is the last plugin in the array
+  plugins: [reactStartCookies()], // make sure this is the last plugin in the array
 });

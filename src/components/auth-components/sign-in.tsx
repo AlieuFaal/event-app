@@ -14,6 +14,7 @@ import { authClient } from "@/lib/auth-client";
 import { useServerFn } from "@tanstack/react-start";
 import { onUserLoginFn } from "@/services/user-service";
 import { m } from "@/paraglide/messages";
+import { toast } from "sonner";
 
 export default function SignIn() {
     const [email, setEmail] = useState("");
@@ -37,12 +38,16 @@ export default function SignIn() {
                 onResponse: (ctx) => {
                     setLoading(false);
                 },
+                onError(ctx) {
+                    toast.error(ctx.error.message);
+                },
                 onSuccess: async (ctx) => {
                     const loginResult = await onNewUserLogin();
 
                     if (loginResult?.redirectTo) {
                         router.navigate({ to: loginResult.redirectTo });
                     }
+                    toast.success("Login successful!");
                 }
             });
     }
@@ -238,7 +243,7 @@ export default function SignIn() {
                                     fill="currentColor"
                                 ></path>
                             </svg>
-                          {m.sign_in_With_Facebook()}
+                            {m.sign_in_With_Facebook()}
                         </Button>
                     </div>
                 </div>

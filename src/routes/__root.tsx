@@ -10,8 +10,7 @@ import { getLocale } from "../paraglide/runtime.js";
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
-    // This makes ONE DB query per page load to get full user data with all fields (role, bio, etc.)
-    // TanStack Router caches this, so child routes can access it via context without re-querying
+
     const user = await getSessionUserFn()
     const isAuthenticated = !!user
     

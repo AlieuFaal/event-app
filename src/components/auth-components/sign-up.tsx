@@ -16,6 +16,7 @@ import { Label } from "../shadcn/ui/label";
 import { Input } from "../shadcn/ui/input";
 import { Button } from "../shadcn/ui/button";
 import { m } from "@/paraglide/messages";
+import { toast } from "sonner";
 
 export default function SignUp() {
     const [firstName, setFirstName] = useState("");
@@ -28,17 +29,17 @@ export default function SignUp() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         setImage(file);
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setImagePreview(reader.result as string);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
 
     return (
         <Card className="z-50 rounded-md rounded-t-none max-w-md">
@@ -81,7 +82,7 @@ export default function SignUp() {
                         <Input
                             id="email"
                             type="email"
-                            placeholder="vibe.spot@example.com"
+                            placeholder="vibespot@example.com"
                             required
                             onChange={(e) => {
                                 setEmail(e.target.value);
@@ -103,7 +104,7 @@ export default function SignUp() {
                     <div className="grid gap-2">
                         <Label htmlFor="password">{m.confirm_password()}</Label>
                         <Input
-                            id="password_confirmation"
+                            id="confirm_password"
                             type="password"
                             value={passwordConfirmation}
                             onChange={(e) => setPasswordConfirmation(e.target.value)}
@@ -159,14 +160,23 @@ export default function SignUp() {
                                     },
                                     onRequest: () => {
                                         setLoading(true);
+                                        if (password !== passwordConfirmation) {
+                                            toast.error("Passwords do not match");
+                                            setLoading(false);
+                                            throw new Error("Passwords do not match");
+                                        }
                                     },
                                     onError: (ctx) => {
-                                        Error(ctx.error.message);
+                                        setLoading(false);
+                                        console.error("Error signing up:", ctx.error);
+                                        toast.error(ctx.error.message);
                                     },
                                     onSuccess: async () => {
-                                        await router.navigate({to: '/signin'});
-                                },
-                            }
+                                        setLoading(false);
+                                        toast.success("Account created successfully!");
+                                        await router.navigate({ to: '/signin' });
+                                    },
+                                }
                             });
                         }}
                     >
