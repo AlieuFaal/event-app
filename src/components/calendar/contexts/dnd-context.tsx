@@ -36,7 +36,7 @@ interface DragDropContextType {
 interface DndProviderProps {
 	children: ReactNode;
 	showConfirmation: boolean;
-	currentUser?: User;
+	currentUser?: User | null;
 }
 
 const DragDropContext = createContext<DragDropContextType | undefined>(

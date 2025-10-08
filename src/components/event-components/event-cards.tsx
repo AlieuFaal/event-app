@@ -2,7 +2,7 @@ import { EventWithComments, User } from "drizzle/db";
 import EventCard from "./event-card";
 
 
-export default function EventCards({ events, users, filteredEvents }: { events: EventWithComments[], users: User[], filteredEvents?: EventWithComments[] }) {
+export default function EventCards({ events, users }: { events: EventWithComments[], users: User[] }) {
 
     return (
         <>

@@ -37,9 +37,8 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
 import { authClient } from "@/lib/auth-client";
-import { Event } from "drizzle/db";
+import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
-import { useState } from "react";
 import { AddressAutofill } from "@mapbox/search-js-react";
 
 
@@ -48,6 +47,7 @@ interface IProps {
 	startDate?: Date;
 	startTime?: { hour: number; minute: number };
 	event?: Event;
+	currentUser?: User | null;
 }
 
 export function AddEditEventDialog({
@@ -55,6 +55,7 @@ export function AddEditEventDialog({
 	startDate,
 	startTime,
 	event,
+	currentUser,
 }: IProps) {
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const { addEvent, updateEvent } = useCalendar();
@@ -110,7 +111,7 @@ export function AddEditEventDialog({
 				...values,
 				id: event?.id || crypto.randomUUID(),
 				userId: session?.user.id,
-				venue: values.venue || null, 
+				venue: values.venue || null,
 			};
 
 			if (isEditing) {
@@ -139,7 +140,11 @@ export function AddEditEventDialog({
 
 	return (
 		<Modal open={isOpen} onOpenChange={onToggle} modal={false}>
-			<Button onClick={onToggle} asChild>{children}</Button>
+			{currentUser?.role !== "user" && (
+				<>
+				<ModalTrigger onClick={onToggle} asChild>{children}</ModalTrigger>
+				</>
+			)}
 			<ModalContent>
 				<ModalHeader>
 					<ModalTitle>{isEditing ? `${m.edit_event_label()}` : `${m.create_event_title()}`}</ModalTitle>
@@ -175,12 +180,12 @@ export function AddEditEventDialog({
 							)}
 						/>
 						<AddressAutofill
-							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} 
+							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
 							onRetrieve={(result: any) => {
 								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
 								form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
-							}} 
-							browserAutofillEnabled={true} 
+							}}
+							browserAutofillEnabled={true}
 							confirmOnBrowserAutofill={true}
 						>
 							<FormField
@@ -259,7 +264,7 @@ export function AddEditEventDialog({
 									<FormControl>
 										<Textarea
 											{...field}
-											placeholder= {m.form_description_placeholder()}
+											placeholder={m.form_description_placeholder()}
 											className={fieldState.invalid ? "border-red-500" : ""}
 										/>
 									</FormControl>
@@ -281,7 +286,7 @@ export function AddEditEventDialog({
 						type="submit"
 						onClick={form.handleSubmit(onSubmit)}
 					>
-						{isEditing ?  `${m.save_changes()}` : `${m.calendar_add_event()}`}
+						{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
 					</Button>
 				</ModalFooter>
 			</ModalContent>

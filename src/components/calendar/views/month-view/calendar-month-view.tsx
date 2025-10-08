@@ -19,9 +19,10 @@ interface IProps {
 	singleDayEvents: Event[];
 	multiDayEvents: Event[];
 	users: User[];
+	currentUser?: User | null;
 }
 
-export function CalendarMonthView({ singleDayEvents, multiDayEvents, users }: IProps) {
+export function CalendarMonthView({ singleDayEvents, multiDayEvents, users, currentUser }: IProps) {
 	const { selectedDate } = useCalendar();
 
 	const WEEK_DAYS = [
@@ -72,6 +73,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents, users }: IP
 						events={allEvents}
 						users={users}
 						eventPositions={eventPositions}
+						currentUser={currentUser}
 					/>
 				))}
 			</div>

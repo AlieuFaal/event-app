@@ -9,8 +9,13 @@ import { CalendarMonthView } from "@/components/calendar/views/month-view/calend
 import { CalendarDayView } from "@/components/calendar/views/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/components/calendar/views/week-and-day-view/calendar-week-view";
 import { CalendarYearView } from "@/components/calendar/views/year-view/calendar-year-view";
+import { User } from "drizzle/db";
 
-export function CalendarBody() {
+interface IProps {
+	currentUser?: User | null;
+}
+
+export function CalendarBody({ currentUser }: IProps) {
 	const { view, events, users } = useCalendar();
 
 	const singleDayEvents = events.filter((event) => {
@@ -40,6 +45,7 @@ export function CalendarBody() {
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
 						users={users}
+						currentUser={currentUser}
 					/>
 				)}
 				{view === "week" && (
@@ -53,7 +59,7 @@ export function CalendarBody() {
 					<CalendarDayView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
-						
+
 					/>
 				)}
 				{view === "year" && (

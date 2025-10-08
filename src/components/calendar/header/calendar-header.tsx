@@ -19,8 +19,14 @@ import { TodayButton } from "@/components/calendar/header/today-button";
 import { Settings } from "@/components/calendar/settings/settings";
 import Views from "./view-tabs";
 import { m } from "@/paraglide/messages";
+import { User } from "drizzle/db";
 
-export function CalendarHeader() {
+interface calendarHeaderProps
+{
+	currentUser?: User | null;
+}
+
+export function CalendarHeader({currentUser}: calendarHeaderProps) {
 	const { view, events } = useCalendar();
 
 	return (
@@ -51,7 +57,7 @@ export function CalendarHeader() {
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-1.5">
 					{/* <UserSelect /> */}
 
-					<AddEditEventDialog>
+					<AddEditEventDialog currentUser={currentUser}>
 						<Button>
 							<Plus className="h-4 w-4" />
 							{m.calendar_add_event()}

@@ -143,9 +143,11 @@ export const postEventDataFn = createServerFn({ method: "POST" })
     try {
       console.log("Received data:", data);
 
-      const userId = context.currentUser?.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
+      const user = context.currentUser;
+      if (!user?.id || user.role === "user") {
+        throw new Error(
+          "User not authenticated or authorized to handle events"
+        );
       }
 
       const event = await db
@@ -160,7 +162,7 @@ export const postEventDataFn = createServerFn({ method: "POST" })
           endDate: data.endDate,
           latitude: data.latitude,
           longitude: data.longitude,
-          userId: userId,
+          userId: user.id,
           createdAt: new Date(),
         })
         .returning();
@@ -176,9 +178,9 @@ export const putEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(calendarEventSchema)
   .handler(async ({ data, context }) => {
-    const userId = context.currentUser?.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
+    const user = context.currentUser;
+    if (!user?.id || user.role === "user") {
+      throw new Error("User not authenticated or authorized to handle events");
     }
 
     const updatedEvent = await db
@@ -191,7 +193,7 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         color: data.color,
         startDate: data.startDate,
         endDate: data.endDate,
-        userId: userId,
+        userId: user.id,
       })
       .where(eq(schema.event.id, data.id));
     console.log("Updated event:", updatedEvent);
@@ -202,9 +204,9 @@ export const deleteEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(calendarEventSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
-    const userId = context.currentUser?.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
+    const user = context.currentUser;
+    if (!user?.id || user.role === "user") {
+      throw new Error("User not authenticated or authorized to handle events");
     }
 
     const deletedCount = await db
@@ -223,9 +225,11 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
     try {
       console.log("Received data:", data);
 
-      const userId = context.currentUser?.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
+      const user = context.currentUser;
+      if (!user?.id || user.role === "user") {
+        throw new Error(
+          "User not authenticated or authorized to handle events"
+        );
       }
 
       const event = await db
@@ -240,7 +244,7 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
           endDate: data.endDate,
           latitude: data.latitude,
           longitude: data.longitude,
-          userId: userId,
+          userId: user.id,
           createdAt: new Date(),
         })
         .returning();

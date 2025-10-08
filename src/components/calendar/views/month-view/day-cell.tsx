@@ -29,6 +29,7 @@ interface IProps {
   users: User[];
   events: Event[];
   eventPositions: Record<string, number>;
+  currentUser?: User | null;
 }
 
 export const dayCellVariants = cva("text-white", {
@@ -54,11 +55,10 @@ export const dayCellVariants = cva("text-white", {
 
 const MAX_VISIBLE_EVENTS = 3;
 
-export function DayCell({ cell, events, eventPositions, users }: IProps) {
+export function DayCell({ cell, events, eventPositions, users, currentUser }: IProps) {
   const { day, currentMonth, date } = cell;
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Memoize cellEvents and currentCellMonth for performance
   const { cellEvents, currentCellMonth } = useMemo(() => {
     const cellEvents = getMonthCellEvents(date, events, eventPositions);
     const currentCellMonth = startOfDay(
@@ -67,7 +67,6 @@ export function DayCell({ cell, events, eventPositions, users }: IProps) {
     return { cellEvents, currentCellMonth };
   }, [date, events, eventPositions]);
 
-  // Memoize event rendering for each position with animation
   const renderEventAtPosition = useCallback(
     (position: number) => {
       const event = cellEvents.find((e) => e.position === position);
@@ -133,7 +132,7 @@ export function DayCell({ cell, events, eventPositions, users }: IProps) {
               "h-6 px-1 text-xs font-semibold lg:px-2",
               !currentMonth && "opacity-20",
               isToday(date) &&
-                "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground"
+              "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground"
             )}
           >
             {day}
@@ -147,15 +146,17 @@ export function DayCell({ cell, events, eventPositions, users }: IProps) {
           >
             {(cellEvents.length === 0 && !isMobile) ? (
               <div className="w-full h-full flex justify-center items-center group">
-                <AddEditEventDialog startDate={date}>
-                  <Button
-                    variant="ghost"
-                    className="border opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span className="max-sm:hidden">{m.calendar_add_event()}</span>
-                  </Button>
-                </AddEditEventDialog>
+                {currentUser?.role !== "user" && (
+                  <AddEditEventDialog startDate={date}>
+                    <Button
+                      variant="ghost"
+                      className="border opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span className="max-sm:hidden">{m.calendar_add_event()}</span>
+                    </Button>
+                  </AddEditEventDialog>
+                  )}
               </div>
             ) : (
               [0, 1, 2].map(renderEventAtPosition)

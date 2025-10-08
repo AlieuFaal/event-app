@@ -20,7 +20,7 @@ interface IProps {
 	children: ReactNode;
 }
 
-export function EventDetailsDialog({ event, children, users }: IProps) {
+export function EventDetailsDialog({ event, children }: IProps) {
 	const startDate = event.startDate;
 	const endDate = event.endDate;
 	const { use24HourFormat, removeEvent } = useCalendar();
@@ -45,11 +45,6 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 			toast.error("Error deleting event.");
 		}
 	};
-	
-	function findEventUserName(event: Event) {
-		const user = users.find((user) => user.id === event.userId) || { name: "Unknown User" };
-		return user.name;
-	}
 
 	return (
 		<Dialog>
@@ -64,7 +59,7 @@ export function EventDetailsDialog({ event, children, users }: IProps) {
 						<div className="flex items-start gap-2">
 							<MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">{m.form_Address_label()}</p>
+								<p className="text-sm font-medium">{m.form_address_label()}</p>
 								<p className="text-sm text-muted-foreground">
 									{event.address || "No address provided"}
 								</p>
