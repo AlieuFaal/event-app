@@ -79,9 +79,9 @@ export const user = pgTable(
 const roles = ["user", "artist", "admin", "New User"] as const;
 
 export const userSchema = createSelectSchema(user, {
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email format"),
-  image: z.url("Invalid image URL").optional().nullable(),
+  name: z.string().min(1, "Please enter your name"),
+  email: z.string().email("Please enter a valid email address"),
+  image: z.string().url("Please enter a valid image URL").optional().nullable(),
 });
 
 export const userSocialSchema = userSchema.extend({
@@ -89,15 +89,15 @@ export const userSocialSchema = userSchema.extend({
 });
 
 export const userInsertSchema = createInsertSchema(user, {
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email format"),
-  image: z.url("Invalid image URL").optional(),
+  name: z.string().min(1, "Please enter your name"),
+  email: z.string().email("Please enter a valid email address"),
+  image: z.string().url("Please enter a valid image URL").optional(),
 });
 
 export const userUpdateSchema = createUpdateSchema(user, {
-  name: z.string().min(1, "Name is required").optional(),
-  email: z.email("Invalid email format").optional(),
-  image: z.url("Invalid image URL").optional(),
+  name: z.string().min(1, "Please enter your name").optional(),
+  email: z.string().email("Please enter a valid email address").optional(),
+  image: z.string().url("Please enter a valid image URL").optional(),
 });
 
 export const userFormSchema = userUpdateSchema
@@ -187,7 +187,7 @@ export const event = pgTable("event", {
   description: text("description").notNull(),
   venue: text("venue"),
   address: text("address").notNull(),
-  color: text("color").$type<EventColor>().notNull().default("blue"),
+  color: text("color").$type<EventColor>().notNull().default("Blue"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
@@ -198,24 +198,24 @@ export const event = pgTable("event", {
 });
 
 const eventColors = [
-  "blue",
-  "green",
-  "red",
-  "yellow",
-  "purple",
-  "orange",
+  "Blue",
+  "Green",
+  "Red",
+  "Yellow",
+  "Purple",
+  "Orange",
 ] as const;
 
 export const eventSchema = createSelectSchema(event, {
   title: z
   .string()
-  .min(2, "Event title must have at least 2 characters.")
-  .max(100, "Event name must have at most 100 characters."),
+  .min(2, "Please enter an event title (at least 2 characters)")
+  .max(100, "Event title cannot be longer than 100 characters"),
   description: z
   .string()
-  .min(2, "Description must contain atleast 2 characters."),
-  address: z.string().min(2, "Address must be atleast 2 characters."),
-  color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+  .min(2, "Please provide a description for your event (at least 2 characters)"),
+  address: z.string().min(2, "Please enter the event location address (at least 2 characters)"),
+  color: z.enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"]),
   venue: z.string().nullable(),
 });
 
@@ -224,18 +224,18 @@ export const geocodingSchema = eventSchema.pick({
 });
 
 export const eventInsertSchema = createInsertSchema(event, {
-  id: z.uuid().optional(),
-  userId: z.uuid().nullable().optional(),
+  id: z.string().uuid().optional(),
+  userId: z.string().uuid().nullable().optional(),
   title: z
   .string()
-  .min(2, "Event title must have at least 2 characters.")
-  .max(100, "Event name must have at most 100 characters."),
+  .min(2, "Please enter an event title (at least 2 characters)")
+  .max(100, "Event title cannot be longer than 100 characters"),
   description: z
   .string()
-  .min(2, "Description must contain atleast 2 characters."),
+  .min(2, "Please provide a description for your event (at least 2 characters)"),
   venue: z.string().optional().nullable(),
-  address: z.string().min(2, "Address must be atleast 2 characters."),
-  color: z.enum(["blue", "green", "red", "yellow", "purple", "orange"]),
+  address: z.string().min(2, "Please enter the event location address (at least 2 characters)"),
+  color: z.enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"]),
   latitude: z.string(),
   longitude: z.string(),
   createdAt: z.date().optional(),
@@ -243,7 +243,7 @@ export const eventInsertSchema = createInsertSchema(event, {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Start date must be before end date",
+      message: "The start date must be before the end date",
       path: ["startDate"],
     });
   }
@@ -252,16 +252,16 @@ export const eventInsertSchema = createInsertSchema(event, {
 export const eventUpdateSchema = createUpdateSchema(event, {
   title: z
   .string()
-  .min(2, "Event title must have at least 2 characters.")
-  .max(100, "Event name must have at most 100 characters.")
+  .min(2, "Please enter an event title (at least 2 characters)")
+  .max(100, "Event title cannot be longer than 100 characters")
   .optional(),
   description: z
   .string()
-  .min(2, "Description must contain atleast 2 characters.")
+  .min(2, "Please provide a description for your event (at least 2 characters)")
   .optional(),
   address: z
   .string()
-  .min(2, "Address must be atleast 2 characters."),
+  .min(2, "Please enter the event location address (at least 2 characters)"),
   venue: z.string().nullable(),
   latitude: z.string().optional(),
   longitude: z.string().optional(),
@@ -269,21 +269,21 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   endDate: z.date().optional(),
   updatedAt: z.date().optional(),
   color: z    
-  .enum(["blue", "green", "red", "yellow", "purple", "orange"])
+  .enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"])
   .optional(),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Start date must be before end date",
+      message: "The start date must be before the end date",
       path: ["startDate"],
     });
   }
 });
 
 export const calendarEventSchema = eventSchema.extend({
-  id: z.uuid(),
-  userId: z.uuid().nullable().optional(),
+  id: z.string().uuid(),
+  userId: z.string().uuid().nullable().optional(),
   createdAt: z.date().optional(), // Optional for new events
 });
 
@@ -306,13 +306,13 @@ export const comment = pgTable("comment", {
 });
 
 export const commentSchema = createSelectSchema(comment, {
-  content: z.string().min(1, "Comment content cannot be empty"),
+  content: z.string().min(1, "Please enter your comment"),
 });
 
 
 export const commentInsertSchema = createInsertSchema(comment,
   {
-    content: z.string().min(1, "Comment content cannot be empty"),
+    content: z.string().min(1, "Please enter your comment"),
   }
 ).omit({
   id: true,
@@ -323,7 +323,7 @@ export const commentInsertSchema = createInsertSchema(comment,
 });
 
 export const commentUpdateSchema = createUpdateSchema(comment, {
-  content: z.string().min(1, "Comment content cannot be empty").optional(),
+  content: z.string().min(1, "Please enter your comment").optional(),
   updatedAt: z.date().optional(),
 });
 
@@ -372,20 +372,20 @@ export const followingTable = pgTable("following",
 // Additional Schemas without db tables -------------------------------------------------------------------------------------------------------------
 export const passwordChangeSchema = z
 .object({
-  currentPassword: z.string().min(1, "Current password is required"),
+  currentPassword: z.string().min(1, "Please enter your current password"),
   newPassword: z
   .string()
-  .min(8, "New password must be at least 8 characters"),
+  .min(8, "Your new password must be at least 8 characters long"),
   confirmPassword: z.string().min(1, "Please confirm your new password"),
 })
 .refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "The passwords you entered don't match. Please try again",
   path: ["confirmPassword"],
 });
 
 export const CurrentUserSchema = userSchema
 .extend({
-  image: z.url("Invalid image URL").nullable().optional(),
+  image: z.string().url("Please enter a valid image URL").nullable().optional(),
 })
 .omit({
   role: true,

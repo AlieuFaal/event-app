@@ -87,6 +87,13 @@ export function AddEditEventDialog({
 	const form = useForm<TEventFormData>({
 		resolver: zodResolver(calendarFormSchema),
 		defaultValues: {
+			title: "",
+			description: "",
+			address: "",
+			venue: "",
+			latitude: "",
+			longitude: "",
+			color: "Blue",
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 		},
@@ -99,7 +106,7 @@ export function AddEditEventDialog({
 			address: event?.address ?? "",
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
-			color: event?.color ?? "blue",
+			color: event?.color ?? "Blue",
 		});
 	}, [event, initialDates, form]);
 

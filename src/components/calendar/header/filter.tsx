@@ -11,22 +11,22 @@ export default function FilterEvents() {
 		useCalendar();
 
 	const colors: TEventColor[] = [
-		"blue",
-		"green",
-		"red",
-		"yellow",
-		"purple",
-		"orange",
+		"Blue",
+		"Green",
+		"Red",
+		"Yellow",
+		"Purple",
+		"Orange",
 	];
 
 	const getColorName = (color: TEventColor): string => {
 		switch (color) {
-			case "blue": return m.calendar_filter_blue();
-			case "green": return m.calendar_filter_green();
-			case "red": return m.calendar_filter_red();
-			case "yellow": return m.calendar_filter_yellow();
-			case "purple": return m.calendar_filter_purple();
-			case "orange": return m.calendar_filter_orange();
+			case "Blue": return m.calendar_filter_blue();
+			case "Green": return m.calendar_filter_green();
+			case "Red": return m.calendar_filter_red();
+			case "Yellow": return m.calendar_filter_yellow();
+			case "Purple": return m.calendar_filter_purple();
+			case "Orange": return m.calendar_filter_orange();
 			default: return color;
 		}
 	};

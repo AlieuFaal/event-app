@@ -21,13 +21,14 @@ import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
 import { AddressAutofill } from "@mapbox/search-js-react";
+import { ColorPicker } from "../color-picker-component/color-picker";
 
 interface EventCardProps {
     currentUser: User | null;
 }
 
 export default function EventCard({ currentUser: _currentUser }: EventCardProps) {
-    
+
     const getDefaultStartDate = () => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -46,7 +47,13 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
         mode: "onBlur",
         resolver: zodResolver(eventInsertSchema),
         defaultValues: {
-            color: "blue",
+            title: "",
+            description: "",
+            address: "",
+            venue: "",
+            latitude: "",
+            longitude: "",
+            color: "Blue",
             startDate: getDefaultStartDate(),
             endDate: getDefaultEndDate(),
         }
@@ -99,11 +106,11 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 name="title"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{m.form_title_label()}</FormLabel>
+                                        <FormLabel className="relative left-3">{m.form_title_label()}</FormLabel>
                                         <FormControl>
                                             <Input placeholder={m.form_title_placeholder()} {...field} />
                                         </FormControl>
-                                        <FormDescription>
+                                        <FormDescription className="relative left-3">
                                             {m.form_title_description()}
                                         </FormDescription>
                                         <FormMessage />
@@ -116,11 +123,11 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{m.form_description_label()}</FormLabel>
+                                        <FormLabel className="relative left-3">{m.form_description_label()}</FormLabel>
                                         <FormControl>
                                             <Input placeholder={m.form_description_placeholder()} {...field} />
                                         </FormControl>
-                                        <FormDescription>
+                                        <FormDescription className="relative left-3">
                                             {m.form_description_description()}
                                         </FormDescription>
                                         <FormMessage />
@@ -128,101 +135,97 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="venue"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{m.form_venue_label()}</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={m.form_venue_placeholder()} {...field} value={field.value || ''} />
-                                        </FormControl>
-                                        <FormDescription>
-                                            {m.form_venue_description()}
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <AddressAutofill 
-                                accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} 
-                                onRetrieve={(res: any) => {
-                                    form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
-                                    form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
-                                }} 
-                                onSuggestError={(e: any) => console.log(e)} 
-                                browserAutofillEnabled={false} 
-                                confirmOnBrowserAutofill={false}
-                                options={{ country: 'se' }}
-                                theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
-                            >
+                            <div className="flex flex-col md:flex-row justify-between">
                                 <FormField
                                     control={form.control}
-                                    name="address"
+                                    name="venue"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{m.form_address_label()}</FormLabel>
-                                            <FormControl aria-autocomplete="none" autoSave="off">
-                                                <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off"/>
+                                        <FormItem className="w-100">
+                                            <FormLabel className="relative left-3">{m.form_venue_label()}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={m.form_venue_placeholder()} {...field} value={field.value || ''} />
                                             </FormControl>
-                                            <FormDescription>
-                                                {m.form_address_description()}
+                                            <FormDescription className="relative left-3">
+                                                {m.form_venue_description()}
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                            </AddressAutofill>
 
-                            <FormField
-                                control={form.control}
-                                name="color"
-                                render={({ field }) => (
+                                <AddressAutofill
+                                    accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
+                                    onRetrieve={(res: any) => {
+                                        form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
+                                        form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
+                                    }}
+                                    onSuggestError={(e: any) => console.log(e)}
+                                    browserAutofillEnabled={false}
+                                    confirmOnBrowserAutofill={false}
+                                    options={{ country: 'se' }}
+                                    theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
+
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name="address"
+                                        render={({ field }) => (
+                                            <FormItem className="w-100">
+                                                <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
+                                                <FormControl aria-autocomplete="none" autoSave="off">
+                                                    <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off" />
+                                                </FormControl>
+                                                <FormDescription className="relative left-3">
+                                                    {m.form_address_description()}
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </AddressAutofill>
+
+                                <FormField
+                                    control={form.control}
+                                    name="color"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="relative left-3">{m.form_color_label()}</FormLabel>
+                                            <FormControl>
+                                                <ColorPicker color={field.value} onChange={(color) => field.onChange(color)} />
+                                            </FormControl>
+                                            <FormDescription className="relative left-3">
+                                                {m.form_color_description()}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-col md:flex-row justify-around">
+                                <FormField control={form.control} name="startDate" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="mt-5">{m.form_color_label()}</FormLabel>
                                         <FormControl>
-                                            <select {...field} className="w-full p-2 border rounded">
-                                                <option value="blue">{m.form_color_blue()}</option>
-                                                <option value="green">{m.form_color_green()}</option>
-                                                <option value="red">{m.form_color_red()}</option>
-                                                <option value="yellow">{m.form_color_yellow()}</option>
-                                                <option value="purple">{m.form_color_purple()}</option>
-                                                <option value="orange">{m.form_color_orange()}</option>
-                                            </select>
+                                            <Calendar24 value={field.value} onChange={field.onChange} />
                                         </FormControl>
-                                        <FormDescription>
-                                            {m.form_color_description()}
+                                        <FormDescription className="relative left-3">
+                                            {m.form_start_date_description()}
                                         </FormDescription>
-                                        <FormMessage />
                                     </FormItem>
-                                )}
-                            />
+                                )} >
+                                </FormField>
 
-                            <FormField control={form.control} name="startDate" render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Calendar24 value={field.value} onChange={field.onChange} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        {m.form_start_date_description()}
-                                    </FormDescription>
-                                </FormItem>
-                            )} >
-                            </FormField>
-
-                            <FormField control={form.control} name="endDate" render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Calendar24 value={field.value} onChange={field.onChange} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        {m.form_end_date_description()}
-                                    </FormDescription>
-                                </FormItem>
-                            )} >
-                            </FormField>
-
+                                <FormField control={form.control} name="endDate" render={({ field }) => (
+                                    <FormItem >
+                                        <FormControl>
+                                            <Calendar24 value={field.value} onChange={field.onChange} />
+                                        </FormControl>
+                                        <FormDescription className="relative left-3">
+                                            {m.form_end_date_description()}
+                                        </FormDescription>
+                                    </FormItem>
+                                )} >
+                                </FormField>
+                            </div>
                             <Button type="submit">
                                 {m.button_submit_event()}
                             </Button>

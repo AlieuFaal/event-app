@@ -61,7 +61,7 @@ export function Calendar24({ value, onChange, placeholder = "Select date" }: Cal
   return (
     <div className="flex gap-4">
       <div className="flex flex-col gap-3">
-        <Label htmlFor="date-picker" className="px-1">
+        <Label htmlFor="date-picker" className="px-1 relative left-3">
           Date
         </Label>
         <Popover open={open} onOpenChange={setOpen}>
@@ -96,7 +96,7 @@ export function Calendar24({ value, onChange, placeholder = "Select date" }: Cal
         </Popover>
       </div>
       <div className="flex flex-col gap-3">
-        <Label htmlFor="time-picker" className="px-1">
+        <Label htmlFor="time-picker" className="px-1 relative left-3">
           Time
         </Label>
         <Input

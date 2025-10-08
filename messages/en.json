@@ -144,7 +144,7 @@
   "form_venue_placeholder": "Pustervik (optional)",
   "form_venue_description": "In what Venue is the event happening?",
   "form_address_label": "Address:",
-  "form_address_placeholder": "Kaserntorget 6, 411 18, Göteborg",
+  "form_address_placeholder": "Kaserntorget 6",
   "form_address_description": "Where's the Vibe?",
   "form_color_label": "Color:",
   "form_color_description": "Choose a color to represent your event on the calendar.",
