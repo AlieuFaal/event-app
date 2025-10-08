@@ -185,8 +185,11 @@ export function AddEditEventDialog({
 								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
 								form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
 							}}
-							browserAutofillEnabled={true}
-							confirmOnBrowserAutofill={true}
+                                onSuggestError={(e: any) => console.log(e)} 
+                                browserAutofillEnabled={false} 
+                                confirmOnBrowserAutofill={false}
+                                options={{ country: 'se' }}
+                                theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
 						>
 							<FormField
 								control={form.control}

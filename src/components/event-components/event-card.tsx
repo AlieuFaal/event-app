@@ -1,4 +1,4 @@
-import { DiscJockeyImage } from "../../assets";
+import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
 import {
     Dialog,
@@ -6,18 +6,18 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/shadcn/ui/dialog"
 import { Label } from "../shadcn/ui/label";
 import CommentSection from "./event-comment-section";
 import { Event, EventWithComments, User } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
-import { MapPin, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useState } from "react";
 import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventService";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
+import { TodayButton } from "../calendar/header/today-button";
 
 export default function EventCard({ event, users }: { event: EventWithComments, users: User[] }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
@@ -31,11 +31,6 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
         const creator = users.find((user) => user.id === event.userId);
 
         return creator ? creator.name : m.event_creator_unknown();
-    }
-
-    function getEventCreatorImage(event: Event) {
-        const creator = users.find((user) => user.id === event.userId);
-        return creator ? creator.image : DiscJockeyImage;
     }
 
     async function addOrRemoveFavorite() {
@@ -77,13 +72,18 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
             }
     }
 
+    function randomImage() {
+        const images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
+        return images[Math.floor(Math.random() * images.length)];
+    }
+
 
     return (
         <>
             <Card onClick={() => setDialogOpen(true)} className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative">
                 <CardContent className="flex flex-row space-x-16">
                     <div>
-                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={DiscJockeyImage} alt="" />
+                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={randomImage()} alt="" /> {/* Mock för tillfället */}
                     </div>
                     <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-210 relative">
                         <CardTitle className="text-3xl">{event.title}</CardTitle>
@@ -102,13 +102,15 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                 >
                     <Star fill={event.isStarred ? "yellow" : "none"} color={event.isStarred ? "yellow" : "currentColor"} />
                 </Button>
-                <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl w-70 p-2 relative left-240 shadow-lg" >
-                    <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
-                    <div className="">
-                        {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}
-                        {/* <Avatar className="h-7 w-7">
+                <div className="flex justify-end">
+                    <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-2" >
+                        <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
+                        <div className="">
+                            {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}
+                            {/* <Avatar className="h-7 w-7">
                             <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />
                             </Avatar> */}
+                        </div>
                     </div>
                 </div>
             </Card>

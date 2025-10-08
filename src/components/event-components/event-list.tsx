@@ -1,7 +1,6 @@
 import { EventWithComments, User } from "drizzle/db";
 import EventCards from "./event-cards";
 import { Separator } from "../shadcn/ui/separator";
-import { useState, useMemo } from "react";
 
 export default function EventList({ events, users }: { events: EventWithComments[], users: User[] }) {
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
@@ -26,7 +25,7 @@ export default function EventList({ events, users }: { events: EventWithComments
                 {currentMonthEvents.length > 0 && (
                     <>
                         <div className="bg-primary w-fit p-3 rounded-t-lg relative">
-                            <p className="text-2xl font-bold mb-4">{currentMonth}</p>
+                            <p className="text-2xl font-bold mb-4 text-secondary">{currentMonth.toUpperCase()}</p>
                         </div>
                         <Separator className="bg-primary mb-2 py-0.5 rounded-r-lg" />
                     </>
@@ -36,8 +35,8 @@ export default function EventList({ events, users }: { events: EventWithComments
 
                 {nextMonthEvents.length > 0 && (
                     <>
-                        <div className="bg-primary w-fit p-3 rounded-t-lg relative mt-5">
-                            <p className="text-2xl font-bold mb-4">{nextMonth}</p>
+                        <div className="bg-primary w-fit p-3 rounded-t-lg relative mt-15">
+                            <p className="text-2xl font-bold mb-4 text-secondary">{nextMonth.toUpperCase()}</p>
                         </div>
                         <Separator className="bg-primary mb-2 py-0.5 rounded-r-lg" />
                     </>

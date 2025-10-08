@@ -194,7 +194,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                 )}
             </div>
             <div className="p-8 h-full">
-                <div id="map-container" className="absolute w-full h-220" ref={mapContainerRef} />
+                <div id="map-container" className="absolute w-full h-245" ref={mapContainerRef} />
                 {mapLoaded && events?.map((event) => (
                     <Marker
                         key={event.id}

@@ -1,4 +1,4 @@
-import { DiscJockeyImage } from "../../assets";
+import { PlaceholderImage1 } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
 import {
     Dialog,
@@ -32,7 +32,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
     function getEventCreatorImage(favoriteEvent: EventWithComments) {
 
         const creator = users.find((user) => user.id === favoriteEvent.userId);
-        return creator ? creator.image : DiscJockeyImage;
+        return creator ? creator.image : PlaceholderImage1;
     }
 
     async function addOrRemoveFavorite() {
@@ -79,7 +79,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <Card onClick={() => setOpenDialog(true)} className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
                     <CardContent className="flex flex-row space-x-16">
-                        <img className="w-48 border-5 rounded-xl" src={DiscJockeyImage} alt="" />
+                        <img className="w-48 border-5 rounded-xl" src={PlaceholderImage1} alt="" />
                         <div className="flex flex-col justify-center">
                             <CardTitle className="text-5xl">{favoriteEvent.title}</CardTitle>
                             <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{favoriteEvent.description}</CardDescription>

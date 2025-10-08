@@ -42,7 +42,7 @@ export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
 // Additional Types without db tables -----------------------------------------------------------------------------------------------------------------
 
-// export type CurrentUser = z.infer<typeof CurrentUserSchema>;
+export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
 
@@ -383,18 +383,18 @@ export const passwordChangeSchema = z
   path: ["confirmPassword"],
 });
 
-// export const CurrentUserSchema = userSchema
-// .extend({
-//   image: z.url("Invalid image URL").nullable().optional(),
-// })
-// .omit({
-//   role: true,
-//   bio: true,
-//   location: true,
-//   phone: true,
-//   followers: true,
-//   following: true,
-// });
+export const CurrentUserSchema = userSchema
+.extend({
+  image: z.url("Invalid image URL").nullable().optional(),
+})
+.omit({
+  role: true,
+  bio: true,
+  location: true,
+  phone: true,
+  followers: true,
+  following: true,
+});
 
 export const schema = {
   user,

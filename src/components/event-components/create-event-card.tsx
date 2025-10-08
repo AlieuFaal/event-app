@@ -20,50 +20,13 @@ import { router } from "@/router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
-import { useEffect, useState } from "react";
-
-// Dynamic import for AddressAutofill
-function AddressAutofillWrapper({ 
-    accessToken, 
-    onRetrieve, 
-    onSuggestError, 
-    browserAutofillEnabled, 
-    confirmOnBrowserAutofill,
-    children 
-}: any) {
-    const [AddressAutofill, setAddressAutofill] = useState<any>(null);
-    
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            import('@mapbox/search-js-react').then(module => {
-                setAddressAutofill(() => module.AddressAutofill);
-            });
-        }
-    }, []);
-    
-    if (!AddressAutofill) {
-        return <>{children}</>;
-    }
-    
-    return (
-        <AddressAutofill
-            accessToken={accessToken}
-            onRetrieve={onRetrieve}
-            onSuggestError={onSuggestError}
-            browserAutofillEnabled={browserAutofillEnabled}
-            confirmOnBrowserAutofill={confirmOnBrowserAutofill}
-        >
-            {children}
-        </AddressAutofill>
-    );
-}
+import { AddressAutofill } from "@mapbox/search-js-react";
 
 interface EventCardProps {
     currentUser: User | null;
 }
 
 export default function EventCard({ currentUser: _currentUser }: EventCardProps) {
-    // Note: _currentUser is kept for future role-based validation (see commented code in onSubmit)
     
     const getDefaultStartDate = () => {
         const tomorrow = new Date();
@@ -121,16 +84,16 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
 
     return (
         <div className="flex flex-col">
-            <Card className="p-10 shadow-lg border rounded-lg mx-30 mb-30 mt-10">
-                <CardHeader className="flex flex-col justify-center items-center">
-                    <CardTitle className="text-4xl mb-4">{m.create_event_title()}</CardTitle>
+            <Card className="p-10 bg-muted">
+                <CardHeader className="flex flex-col justify-center items-center bg-primary text-secondary p-20 rounded-lg mb-5 shadow-2xl">
+                    <CardTitle className="text-6xl mb-4">{m.create_event_title()}</CardTitle>
                     <CardDescription className="text-gray mb-4 text-lg">
                         {m.create_event_description()}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -182,15 +145,17 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )}
                             />
 
-                            <AddressAutofillWrapper 
+                            <AddressAutofill 
                                 accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN} 
                                 onRetrieve={(res: any) => {
                                     form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
                                     form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
                                 }} 
                                 onSuggestError={(e: any) => console.log(e)} 
-                                browserAutofillEnabled={true} 
-                                confirmOnBrowserAutofill={true}
+                                browserAutofillEnabled={false} 
+                                confirmOnBrowserAutofill={false}
+                                options={{ country: 'se' }}
+                                theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
                             >
                                 <FormField
                                     control={form.control}
@@ -198,8 +163,8 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{m.form_address_label()}</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={m.form_address_placeholder()} {...field} />
+                                            <FormControl aria-autocomplete="none" autoSave="off">
+                                                <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off"/>
                                             </FormControl>
                                             <FormDescription>
                                                 {m.form_address_description()}
@@ -208,7 +173,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         </FormItem>
                                     )}
                                 />
-                            </AddressAutofillWrapper>
+                            </AddressAutofill>
 
                             <FormField
                                 control={form.control}

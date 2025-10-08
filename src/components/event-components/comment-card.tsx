@@ -1,11 +1,10 @@
-import { DiscJockeyImage } from "@/assets";
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { Card } from "../shadcn/ui/card";
-import { parseISO } from "date-fns";
 import { Comment, CurrentUser, EventWithComments, User } from "drizzle/db";
 import { toast } from "sonner";
 import { router } from "@/router";
 import { Button } from "../shadcn/ui/button";
+import { PlaceholderImage1 } from "@/assets";
 
 interface CommentCardProps {
     users: User[];
@@ -25,7 +24,7 @@ export default function CommentCard({ comment, users, currentUser }: CommentCard
     function getCommentCreatorImage(comment: Comment) {
 
         const creator = users.find((user) => user.id === comment.userId);
-        return creator ? creator.image! : DiscJockeyImage;
+        return creator ? creator.image! : PlaceholderImage1;
     }
 
     function visitUserProfile(comment: Comment) {
