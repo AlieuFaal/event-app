@@ -10,7 +10,7 @@ import z from "zod";
 import { _encode } from "better-auth";
 import { schema } from "drizzle/db";
 import { db } from "drizzle";
-import { eq, and } from "drizzle-orm";
+import { eq, and, is } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
 
@@ -31,6 +31,11 @@ export const getEventDataFn = createServerFn({
 
   return eventsWithStringDates;
 });
+
+export const isEventExpired = (endDate: Date): boolean => {
+  const now = new Date();
+  return endDate < now;
+};
 
 export const getEventsWithCommentsFn = createServerFn({
   method: "GET",
@@ -53,7 +58,7 @@ export const getEventsWithCommentsFn = createServerFn({
     })
     .from(schema.event)
     .orderBy(schema.event.startDate);
-
+  
   const comments = await db
     .select()
     .from(schema.comment)

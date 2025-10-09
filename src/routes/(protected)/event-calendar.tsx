@@ -24,7 +24,7 @@ function EventCalendarComponent() {
 
   return (
     <div className=''>
-      <Card className='m-10 p-10 py-15 shadow-lg border rounded-2xl'>
+      <Card className='m-10 p-10 py-15 shadow-lg border rounded-2xl max-w-350 mx-auto'>
         <CalendarProvider2 events={events} users={users} view='month'>
           <Calendar2 currentUser={currentUser}/>
         </CalendarProvider2>

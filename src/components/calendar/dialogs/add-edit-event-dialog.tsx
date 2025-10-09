@@ -133,6 +133,11 @@ export function AddEditEventDialog({
 					toast.error("You must be logged in to create an event.");
 					return;
 				}
+				else if (values.latitude === "" || values.longitude === "") {
+					toast.error("Please select a valid address from the suggestions.");
+					console.log("Latitude or Longitude is empty:", values.latitude, values.longitude);
+					return;
+				}
 				await addEvent(formattedEvent);
 				toast.success("Event created successfully");
 			}
@@ -146,11 +151,9 @@ export function AddEditEventDialog({
 	};
 
 	return (
-		<Modal open={isOpen} onOpenChange={onToggle} modal={false}>
+		<Modal open={isOpen} onOpenChange={onToggle} modal={true}>
 			{currentUser?.role !== "user" && (
-				<>
-				<ModalTrigger onClick={onToggle} asChild>{children}</ModalTrigger>
-				</>
+				<ModalTrigger onChange={onToggle} asChild>{children}</ModalTrigger>
 			)}
 			<ModalContent>
 				<ModalHeader>
@@ -165,6 +168,9 @@ export function AddEditEventDialog({
 						id="event-form"
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="grid gap-4 py-4"
+						autoComplete="off"
+						autoSave="off"
+						aria-autocomplete="none"
 					>
 						<FormField
 							control={form.control}
@@ -186,17 +192,38 @@ export function AddEditEventDialog({
 								</FormItem>
 							)}
 						/>
+
+						<FormField
+							control={form.control}
+							name="venue"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="venue">
+										{m.form_venue_label()}
+									</FormLabel>
+									<FormControl>
+										<Input
+											id="venue"
+											placeholder={m.form_venue_placeholder()}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<AddressAutofill
 							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
 							onRetrieve={(result: any) => {
 								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
 								form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
 							}}
-                                onSuggestError={(e: any) => console.log(e)} 
-                                browserAutofillEnabled={false} 
-                                confirmOnBrowserAutofill={false}
-                                options={{ country: 'se' }}
-                                theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
+							onSuggestError={(e: any) => console.log(e)}
+							browserAutofillEnabled={false}
+							confirmOnBrowserAutofill={false}
+							options={{ country: 'se' }}
+							theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
 						>
 							<FormField
 								control={form.control}
@@ -206,12 +233,15 @@ export function AddEditEventDialog({
 										<FormLabel htmlFor="address" className="required">
 											{m.form_address_label()}
 										</FormLabel>
-										<FormControl>
+										<FormControl autoSave="off" aria-autocomplete="none" >
 											<Input
 												id="address"
 												placeholder={m.form_address_placeholder()}
 												{...field}
 												className={fieldState.invalid ? "border-red-500" : ""}
+												autoComplete="off"
+												autoSave="off"
+												aria-autocomplete="none"
 											/>
 										</FormControl>
 										<FormMessage />
@@ -252,7 +282,7 @@ export function AddEditEventDialog({
 													<SelectItem value={color} key={color}>
 														<div className="flex items-center gap-2">
 															<div
-																className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
+																className={`size-3.5 rounded-full bg-${color.toLowerCase()}-600 dark:bg-${color.toLowerCase()}-700`}
 															/>
 															{color.charAt(0).toUpperCase() + color.slice(1)}
 														</div>
@@ -275,7 +305,7 @@ export function AddEditEventDialog({
 										<Textarea
 											{...field}
 											placeholder={m.form_description_placeholder()}
-											className={fieldState.invalid ? "border-red-500" : ""}
+											className={`${fieldState.invalid ? "border-red-500" : ""} max-h-40`}
 										/>
 									</FormControl>
 									<FormMessage />

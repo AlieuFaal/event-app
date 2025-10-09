@@ -17,7 +17,9 @@ function RouteComponent() {
 
     return (
         <ClientOnly>
-            <EventMap events={events} accessToken={accessToken} />
+            <div className='max-w-450 min-w-sm mx-auto min-h-sm'>
+                <EventMap events={events} accessToken={accessToken} />
+            </div>
         </ClientOnly>
     );
 }

@@ -26,8 +26,8 @@ export function ColorPicker({ color, onChange }: ColorPickerProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start gap-3 h-10 bg-transparent" type="button">
-                    <div className="h-6 w-6 rounded-lg border-2 border-background shadow-sm" style={{ backgroundColor: color }} />
+                <Button variant="outline" className="max-w-80 justify-start gap-3 h-9 bg-transparent" type="button">
+                    <div className="h-6 w-6 rounded-lg border-none shadow-xl" style={{ backgroundColor: color }} />
                     <span className="flex-1 text-left">{PRESET_COLORS.find((c) => c.name === color)?.name || "Custom"}</span>
                 </Button>
             </PopoverTrigger>

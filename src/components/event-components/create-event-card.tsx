@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
 import { AddressAutofill } from "@mapbox/search-js-react";
 import { ColorPicker } from "../color-picker-component/color-picker";
+import { Textarea } from "../shadcn/ui/textarea";
 
 interface EventCardProps {
     currentUser: User | null;
@@ -73,10 +74,15 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                 id: crypto.randomUUID()
             };
 
+            if (dataToSend.latitude === "" || dataToSend.longitude === "") {
+                toast.error("Please select a valid address from the suggestions.");
+                return;
+            }
+
             await postEventDataFn({
                 data: dataToSend
             });
-
+            
             toast.success(m.toast_event_created());
             router.navigate({ to: "/events" });
         } catch (error) {
@@ -90,8 +96,8 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
     }
 
     return (
-        <div className="flex flex-col">
-            <Card className="p-10 bg-muted">
+        <div className="flex flex-col max-w-7xl mx-auto my-10">
+            <Card className="p-10 bg-primary-foreground">
                 <CardHeader className="flex flex-col justify-center items-center bg-primary text-secondary p-20 rounded-lg mb-5 shadow-2xl">
                     <CardTitle className="text-6xl mb-4">{m.create_event_title()}</CardTitle>
                     <CardDescription className="text-gray mb-4 text-lg">
@@ -100,7 +106,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" autoComplete="off">
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -125,7 +131,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     <FormItem>
                                         <FormLabel className="relative left-3">{m.form_description_label()}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={m.form_description_placeholder()} {...field} />
+                                            <Textarea placeholder={m.form_description_placeholder()} {...field} className="resize-none"/>
                                         </FormControl>
                                         <FormDescription className="relative left-3">
                                             {m.form_description_description()}
@@ -135,12 +141,12 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )}
                             />
 
-                            <div className="flex flex-col md:flex-row justify-between">
+                            <div className="flex flex-col md:flex-row justify-between space-x-15">
                                 <FormField
                                     control={form.control}
                                     name="venue"
                                     render={({ field }) => (
-                                        <FormItem className="w-100">
+                                        <FormItem className="max-w-80 relative bottom-1.5">
                                             <FormLabel className="relative left-3">{m.form_venue_label()}</FormLabel>
                                             <FormControl>
                                                 <Input placeholder={m.form_venue_placeholder()} {...field} value={field.value || ''} />
@@ -170,7 +176,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         control={form.control}
                                         name="address"
                                         render={({ field }) => (
-                                            <FormItem className="w-100">
+                                            <FormItem className="max-w-80">
                                                 <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
                                                 <FormControl aria-autocomplete="none" autoSave="off">
                                                     <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off" />
@@ -226,9 +232,11 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )} >
                                 </FormField>
                             </div>
-                            <Button type="submit">
-                                {m.button_submit_event()}
-                            </Button>
+                            <div className="flex justify-center">
+                                <Button type="submit">
+                                    {m.button_submit_event()}
+                                </Button>
+                            </div>
                         </form>
                     </Form>
                 </CardContent>

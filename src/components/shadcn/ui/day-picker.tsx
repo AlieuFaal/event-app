@@ -19,6 +19,7 @@ function DayPicker({
 	return (
 		<ReactDayPicker
 			showOutsideDays={showOutsideDays}
+			weekStartsOn={1}
 			className={cn("p-3", className)}
 			classNames={{
 				months:
@@ -26,7 +27,7 @@ function DayPicker({
 				month: "space-y-4",
 
 				caption: "flex justify-center pt-1 relative items-center capitalize",
-				caption_label: "text-sm font-medium",
+				caption_label: "text-lg font-medium",
 
 				nav: "space-x-1 flex items-center",
 				nav_button: cn(
@@ -36,8 +37,8 @@ function DayPicker({
 				nav_button_previous: "absolute left-1",
 				nav_button_next: "absolute right-1",
 				head_row: "flex",
-				head_cell: "w-9 font-medium text-sm capitalize",
-				row: "flex w-full mt-2",
+				head_cell: "w-9 font-large text-sm capitalize",
+				row: "flex w-full mt-20",
 
 				cell: cn(
 					"size-9 flex items-center justify-center text-t-secondary text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
@@ -45,7 +46,7 @@ function DayPicker({
 				),
 				day: cn(
 					buttonVariants({ variant: "ghost" }),
-					"size-8.5 p-0 font-normal aria-selected:opacity-100",
+					"size-8.5 p-1 font-normal aria-selected:opacity-100",
 				),
 				day_selected:
 					"bg-primary text-white dark:text-black dark:hover:!text-white",
@@ -56,11 +57,14 @@ function DayPicker({
 				day_hidden: "invisible",
 				...classNames,
 			}}
+
 			components={
 				{
+					Weekdays: props => <div {...props} className="mb-2 flex w-full justify-between px-1" />,
 					IconLeft: () => <ChevronLeft className="size-4" />,
 					IconRight: () => <ChevronRight className="size-4" />,
-				} as Partial<CustomComponents>
+				} as Partial<CustomComponents> 
+				
 			}
 			locale={enUS}
 			{...props}

@@ -85,7 +85,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                     <div>
                         <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={randomImage()} alt="" /> {/* Mock för tillfället */}
                     </div>
-                    <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-210 relative">
+                    <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-160 relative">
                         <CardTitle className="text-3xl">{event.title}</CardTitle>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{event.description}</CardDescription>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{event.address}</CardDescription>
@@ -103,7 +103,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                     <Star fill={event.isStarred ? "yellow" : "none"} color={event.isStarred ? "yellow" : "currentColor"} />
                 </Button>
                 <div className="flex justify-end">
-                    <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-2" >
+                    <div className="justify-items-end-safe mx-15 bg-muted/70 rounded-xl shadow-lg w-fit p-3" >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
                         <div className="">
                             {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}

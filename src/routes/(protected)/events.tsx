@@ -1,9 +1,10 @@
 import EventList from '@/components/event-components/event-list'
 import EventPageHeader from '@/components/event-components/event-page-header';
+import { useIsVisible } from '@/hooks/useIsVisible';
 import { getEventsWithCommentsFn } from '@/services/eventService';
 import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 
 export const Route = createFileRoute('/(protected)/events')({
     component: EventsComponent,
@@ -35,10 +36,17 @@ function EventsComponent() {
         });
     }, [events, users, searchInput]);
 
+    const ref1 = useRef<HTMLDivElement>(null);
+    const isVisible1 = useIsVisible(ref1);
+
     return (
         <>
-            <EventPageHeader searchInput={searchInput} onSearchChange={setSearchInput} />
-            <EventList events={filteredEvents} users={users} />
+            <div className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"}`} ref={ref1} >
+                <div className='max-w-350 min-w-3xl mx-auto'>
+                    <EventPageHeader searchInput={searchInput} onSearchChange={setSearchInput} />
+                    <EventList events={filteredEvents} users={users} />
+                </div>
+            </div>
         </>
     )
 }
