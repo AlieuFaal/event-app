@@ -100,7 +100,6 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
     }, [accessToken]);
 
     const handleMarkerClick = (feature: EventFeature) => {
-        // Toggle popup if clicking the same marker
         if (activeFeature?.properties.Event.id === feature.properties.Event.id) {
             setActiveFeature(null);
         } else {
@@ -141,9 +140,9 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
             </div>
             <div className="absolute bottom-110 left-10 z-10">
                 {mapRef.current && (
-                    <div className='flex flex-col gap-2 bg-background/60 p-2 rounded-lg shadow-lg'>
+                    <div className='flex flex-col gap-2 bg-background/60 p-2 rounded-full shadow-lg'>
                         <div>
-                            <Button className='hover:scale-110' onClick={() => {
+                            <Button className='hover:scale-110 rounded-full' onClick={() => {
                                 mapRef.current?.setConfig('basemap', {
                                     lightPreset: "dawn", colorMotorways: "#2e89ff",
                                     showPedestrianRoads: true,
@@ -155,7 +154,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                             </Button>
                         </div>
                         <div>
-                            <Button className='hover:scale-110' onClick={() => {
+                            <Button className='hover:scale-110 rounded-full' onClick={() => {
                                 mapRef.current?.setConfig('basemap', {
                                     lightPreset: "day", colorMotorways: "#2e89ff",
                                     showPedestrianRoads: true,
