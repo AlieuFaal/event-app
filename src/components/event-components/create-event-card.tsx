@@ -99,8 +99,8 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
         <div className="flex flex-col max-w-7xl mx-auto my-10">
             <Card className="p-10 bg-primary-foreground">
                 <CardHeader className="flex flex-col justify-center items-center bg-primary text-secondary p-20 rounded-lg mb-5 shadow-2xl">
-                    <CardTitle className="text-6xl mb-4">{m.create_event_title()}</CardTitle>
-                    <CardDescription className="text-gray mb-4 text-lg">
+                    <CardTitle className="text-6xl mb-4 font-mono">{m.create_event_title().toLocaleUpperCase()}</CardTitle>
+                    <CardDescription className="text-gray mb-4 text-lg font-mono">
                         {m.create_event_description()}
                     </CardDescription>
                 </CardHeader>

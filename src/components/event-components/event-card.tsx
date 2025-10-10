@@ -17,7 +17,6 @@ import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventServi
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
-import { TodayButton } from "../calendar/header/today-button";
 
 export default function EventCard({ event, users }: { event: EventWithComments, users: User[] }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)

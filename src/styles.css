@@ -3,6 +3,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#smooth-wrapper {
+  overflow: visible;
+  height: 100%;
+  width: 100%;
+}
+
+#smooth-content {
+  overflow: visible;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
 body {
   @apply m-0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

@@ -5,7 +5,7 @@ interface EventPageHeaderProps {
     onSearchChange: (value: string) => void;
 }
 
-export default function EventPageHeader({ searchInput, onSearchChange }: EventPageHeaderProps) {
+export default function FavEventPageHeader({ searchInput, onSearchChange }: EventPageHeaderProps) {
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         onSearchChange(e.target.value);
@@ -15,9 +15,8 @@ export default function EventPageHeader({ searchInput, onSearchChange }: EventPa
         <>
             <div className="flex flex-row justify-start items-center m-10 bg-primary space-x-20 p-20 rounded-lg shadow-2xl font-mono">
                 <h1 className="text-7xl text-secondary font-bold">
-                    ALL EVENTS
+                    FAVORITE EVENTS
                 </h1>
-                <h2 className="text-lg text-secondary font-mono">GOOD THINGS HAPPEN WHEN HAPPY PEOPLE GET TOGETHER...</h2>
             </div>
             <div className="mx-10">
                 {/* <Separator className="bg-primary rounded-lg"></Separator> */}

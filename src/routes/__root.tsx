@@ -7,8 +7,9 @@ import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 import { Header } from '@/components/Header.js'
 import { getThemeServerFn } from '@/services/ThemeService.js'
-import { cn } from '@/lib/utils.js'
-import { ThemeProvider } from '@/components/Themeprovider'
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react'
+import { ScrollToPlugin, ScrollSmoother, ScrollTrigger } from 'gsap/all'
 
 
 export const Route = createRootRoute({
@@ -24,8 +25,8 @@ export const Route = createRootRoute({
   loader: async ({ context }) => {
     const ctx = context
 
-    getThemeServerFn() 
-    
+    getThemeServerFn()
+
     return { ctx, theme: await getThemeServerFn() }
   },
   head: () => ({
@@ -65,32 +66,43 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { ctx, theme } = Route.useLoaderData()
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, ScrollSmoother);
+  }
+  
+  useGSAP(() => {
+    let smoother = ScrollSmoother.create({
+      wrapper: "#smooth-wrapper",
+      content: "#smooth-content",
+      smooth: 1.2,
+      effects: true,
+      normalizeScroll: true,
+    });
+
+    return () => {
+      smoother.kill();
+    };
+  }, []);
+
   return (
-    <html lang={getLocale()} className={`${theme} scroll-smooth h-full`}  suppressHydrationWarning>
+    <html lang={getLocale()} className={`${theme}`} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body className="flex flex-col min-h-full">
-        {ctx.IsAuthenticated && (
-          <Header currentUser={ctx.currentUser} theme={theme}/>
-        )}
-        {/* <ThemeProvider theme={theme}>{children}</ThemeProvider> */}
-        <main className="flex-1">
-          {children}
-        </main>
+      <body>
+        <div id="smooth-wrapper">
+          <div id="smooth-content">
+            {ctx.IsAuthenticated && (
+              <Header currentUser={ctx.currentUser} theme={theme} />
+            )}
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </div>
         <Toaster position="top-center" richColors={true} duration={1500} />
-        {/* <TanstackDevtools
-          config={{
-            position: 'bottom-left',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        /> */}
-        <Footer />
         <Scripts />
       </body>
     </html>

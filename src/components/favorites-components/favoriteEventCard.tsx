@@ -1,4 +1,4 @@
-import { PlaceholderImage1 } from "../../assets";
+import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "../../assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../shadcn/ui/card";
 import {
     Dialog,
@@ -20,7 +20,7 @@ import React from "react";
 
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
-    const [openDialog, setOpenDialog] = React.useState(false);
+    const [dialogOpen, setDialogOpen] = React.useState(false);
 
     function getEventCreatorName(favoriteEvent: EventWithComments) {
 
@@ -75,60 +75,70 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
             }
         await router.invalidate(); // Invalidera routern för att uppdatera datan
     }
+    
+    function randomImage() {
+        const images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
+        return images[Math.floor(Math.random() * images.length)];
+    }
+
     return (
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <Card onClick={() => setOpenDialog(true)} className="bg-card text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] border-2">
-                    <CardContent className="flex flex-row space-x-16">
-                        <img className="w-48 border-5 rounded-xl" src={PlaceholderImage1} alt="" />
-                        <div className="flex flex-col justify-center">
-                            <CardTitle className="text-5xl">{favoriteEvent.title}</CardTitle>
-                            <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{favoriteEvent.description}</CardDescription>
-                            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{favoriteEvent.address}</CardDescription>
-                        </div>
-                    </CardContent>
-                    <div className="absolute top-3 right-3">
-                        <Button
-                            className=""
-                            variant={"ghost"}
-                            size={"icon"}
-                            onClick={(e) => {
-                                addOrRemoveFavorite();
-                                e.stopPropagation(); // Förhindra att dialogen öppnas när knappen klickas
-                            }}
-                        >
-                            <Star fill={favoriteEvent.isStarred ? "yellow" : "none"} color={favoriteEvent.isStarred ? "yellow" : "currentColor"} />
-                        </Button>
+        <>
+            <Card onClick={() => setDialogOpen(true)} className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative">
+                <CardContent className="flex flex-row space-x-16">
+                    <div>
+                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={randomImage()} alt="" /> {/* Mock för tillfället */}
                     </div>
-                    <div className="justify-items-end-safe mx-5 " >
+                    <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-160 relative">
+                        <CardTitle className="text-3xl">{favoriteEvent.title}</CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{favoriteEvent.description}</CardDescription>
+                        <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{favoriteEvent.address}</CardDescription>
+                    </div>
+                </CardContent>
+                <Button
+                    className="absolute top-3 right-3"
+                    variant={"ghost"}
+                    size={"icon"}
+                    onClick={(e) => {
+                        addOrRemoveFavorite();
+                        e.stopPropagation(); // Förhindra att dialogen öppnas när knappen klickas
+                    }}
+                >
+                    <Star fill={favoriteEvent.isStarred ? "yellow" : "none"} color={favoriteEvent.isStarred ? "yellow" : "currentColor"} />
+                </Button>
+                <div className="flex justify-end">
+                    <div className="justify-items-end-safe mx-15 bg-muted/70 rounded-xl shadow-lg w-fit p-3" >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{favoriteEvent.startDate.toUTCString()}</CardDescription>
                         <div className="">
                             {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(favoriteEvent)}</p>}
                             {/* <Avatar className="h-7 w-7">
-                            <AvatarImage src={getfavoriteEventCreatorImage(e) ?? undefined} alt="" />
+                            <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />
                             </Avatar> */}
                         </div>
                     </div>
-                </Card>
-            <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card max-h-screen">
-                <DialogHeader className="items-center space-y-2 mb-5">
-                    <DialogTitle className="text-6xl">{favoriteEvent.title}</DialogTitle>
-                    <DialogDescription className="text-xl">
-                        {favoriteEvent.description}
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-10 mb-5">
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Location: {favoriteEvent.address}</Label>
-                    </div>
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Date: {favoriteEvent.startDate.toUTCString()} - {favoriteEvent.endDate.toUTCString()}</Label>
-                    </div>
-                    <div className="grid gap-3">
-                        <Label htmlFor="username-1" className="text-xl">Created by: {getEventCreatorName(favoriteEvent)}</Label>
-                    </div>
                 </div>
-                <CommentSection users={users} event={favoriteEvent} />
-            </DialogContent>
-        </Dialog>
+            </Card>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card max-h-screen">
+                    <DialogHeader className="items-center space-y-2 mb-5">
+                        <DialogTitle className="text-6xl">{favoriteEvent.title}</DialogTitle>
+                        <DialogDescription className="text-xl">
+                            {favoriteEvent.description}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-10 mb-5">
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">{m.event_address_label()} {favoriteEvent.address}</Label>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">{m.event_date_label()} {favoriteEvent.startDate.toUTCString()} - {favoriteEvent.endDate.toUTCString()}</Label>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(favoriteEvent)}</Label>
+                        </div>
+                    </div>
+                    <CommentSection users={users} event={favoriteEvent} />
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }

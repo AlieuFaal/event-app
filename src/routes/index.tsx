@@ -7,10 +7,13 @@ import { useRef } from 'react'
 import { useIsVisible } from '@/hooks/useIsVisible'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/ui/card'
 import { PlaceholderImage1, PlaceholderImage2 } from '@/assets'
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react'
+import { ScrollToPlugin } from 'gsap/all'
 
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
-    getServerMessage({ data: '🎉' }) // Prefetch for later use
+    getServerMessage({ data: '🎉' })
     const ctx = context
 
     return { ctx }
@@ -20,34 +23,43 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { ctx } = Route.useLoaderData()
-  
+
   const ref1 = useRef<HTMLDivElement>(null);
   const isVisible1 = useIsVisible(ref1);
 
-  
   const ref2 = useRef<HTMLDivElement>(null);
   const isVisible2 = useIsVisible(ref2);
-  
+
   const ref3 = useRef<HTMLDivElement>(null);
   const isVisible3 = useIsVisible(ref3);
-  
+
   const ref4 = useRef<HTMLDivElement>(null);
   const isVisible4 = useIsVisible(ref4);
-  
-  
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(useGSAP, ScrollToPlugin,);
+  }
+
+  // useGSAP(() => {
+  //   gsap.to(window, {
+  //     duration: 1,
+  //     scrollTo: { y: "#section2"},
+  //     ease: "power2.out",
+  //   });
+  // });
+
   return (
     <div className={`max-w-350 mx-auto`}>
-      <div ref={ref1} className={`transition-opacity ease-in duration-1000 ${isVisible1 ? "opacity-100" : "opacity-0"} relative h-screen w-full overflow`}>
+      <div id='section1' ref={ref1} className={`transition-opacity ease-in duration-1000 ${isVisible1 ? "opacity-100" : "opacity-0"} relative h-screen w-full overflow`}>
         <WavyBackground
           backgroundFill="#0f0f23"
           colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9"]}
-          waveWidth={50}
-          blur={10}
+          waveWidth={30}
+          blur={15}
           speed="fast"
-          waveOpacity={0.5}
+          waveOpacity={1}
           containerClassName="h-full w-full"
           className="flex items-center justify-center">
-          {/* Your content flows above */}
           <div className="text-center text-white z-10">
             <h1 className="text-6xl font-bold mb-4">
               VibeSpot
@@ -71,9 +83,9 @@ function App() {
           </div>
         </WavyBackground>
       </div>
-      <div className="flex flex-col w-full text-center text-white border-t-1 border-b-1">
+      <div id='section2' className="flex flex-col w-full text-center text-white border-t-1 border-b-1">
         <div ref={ref2} className={`transition-opacity ease-in duration-1300 ${isVisible2 ? "opacity-100" : "opacity-0"}`}>
-          <Card className="bg-secondary shadow-lg m-10 p-20">
+          <Card className="bg-secondary shadow-lg m-10 p-20 transition-transform duration-300">
             <CardHeader>
               <CardTitle className='text-3xl'>
                 "VibeSpot isn't just an app, it's your gateway to unforgettable live music experiences. Discover events, connect with fellow music lovers, and let the rhythm of the city guide you to your next great adventure."
