@@ -6,22 +6,27 @@ import { Toaster } from 'sonner'
 import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 import { Header } from '@/components/Header.js'
+import { getThemeServerFn } from '@/services/ThemeService.js'
+import { cn } from '@/lib/utils.js'
+import { ThemeProvider } from '@/components/Themeprovider'
 
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
     const user = await getSessionUserFn()
     const isAuthenticated = !!user
-    
+
     console.log("Current User in Root Route:", user?.name);
     console.log("Is Authenticated in Root Route:", isAuthenticated);
-    
+
     return { currentUser: user, IsAuthenticated: isAuthenticated }
   },
   loader: async ({ context }) => {
     const ctx = context
+
+    getThemeServerFn() 
     
-    return { ctx }
+    return { ctx, theme: await getThemeServerFn() }
   },
   head: () => ({
     meta: [
@@ -59,16 +64,17 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { ctx } = Route.useLoaderData()
+  const { ctx, theme } = Route.useLoaderData()
   return (
-    <html lang={getLocale()} className="scroll-smooth h-full">
+    <html lang={getLocale()} className={`${theme} scroll-smooth h-full`}  suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-full">
         {ctx.IsAuthenticated && (
-          <Header currentUser={ctx.currentUser}/>
+          <Header currentUser={ctx.currentUser} theme={theme}/>
         )}
+        {/* <ThemeProvider theme={theme}>{children}</ThemeProvider> */}
         <main className="flex-1">
           {children}
         </main>

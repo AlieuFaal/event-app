@@ -7,8 +7,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
 } from "@/components/shadcn/ui/dropdown-menu"
 import { useTheme } from "../components/Themeprovider"
 import { m } from "@/paraglide/messages"

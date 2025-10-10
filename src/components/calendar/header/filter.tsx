@@ -34,7 +34,7 @@ export default function FilterEvents() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Toggle variant="outline" className="cursor-pointer w-fit">
+				<Toggle variant="outline" className="cursor-pointer w-fit hover:scale-110 shadow-lg">
 					<Filter className="h-4 w-4" />
 				</Toggle>
 			</DropdownMenuTrigger>
@@ -49,7 +49,7 @@ export default function FilterEvents() {
 						}}
 					>
 						<div
-							className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
+							className={`size-3.5 rounded-full bg-${color.toLowerCase()}-600 dark:bg-${color.toLowerCase()}-700`}
 						/>
 						<span className="capitalize flex justify-center items-center gap-2">
 							{getColorName(color)}

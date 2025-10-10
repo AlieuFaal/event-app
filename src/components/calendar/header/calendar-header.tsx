@@ -58,7 +58,7 @@ export function CalendarHeader({currentUser}: calendarHeaderProps) {
 					{/* <UserSelect /> */}
 
 					<AddEditEventDialog currentUser={currentUser}>
-						<Button>
+						<Button className="shadow-lg hover:scale-110">
 							<Plus className="h-4 w-4" />
 							{m.calendar_add_event()}
 						</Button>

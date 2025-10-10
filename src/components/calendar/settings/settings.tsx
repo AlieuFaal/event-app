@@ -45,7 +45,7 @@ export function Settings() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon">
+				<Button variant="outline" size="icon" className="shadow-lg hover:scale-110">
 					<SettingsIcon />
 				</Button>
 			</DropdownMenuTrigger>
@@ -53,24 +53,6 @@ export function Settings() {
 				<DropdownMenuLabel>Calendar settings</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem>
-						Use dark mode
-						<DropdownMenuShortcut>
-							<Switch
-								icon={
-									isDarkMode ? (
-										<MoonIcon className="h-4 w-4" />
-									) : (
-										<SunMediumIcon className="h-4 w-4" />
-									)
-								}
-								checked={isDarkMode}
-								onCheckedChange={(checked) =>
-									setTheme(checked ? "dark" : "light")
-								}
-							/>
-						</DropdownMenuShortcut>
-					</DropdownMenuItem>
 					<DropdownMenuItem>
 						Show confirmation dialog on event drop
 						<DropdownMenuShortcut>

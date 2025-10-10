@@ -135,7 +135,7 @@ export function DayCell({ cell, events, eventPositions, users, currentUser }: IP
               "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground"
             )}
           >
-            {day}
+            {day + 1}
           </motion.span>
 
           <motion.div
