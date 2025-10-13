@@ -10,7 +10,7 @@ import z from "zod";
 import { _encode } from "better-auth";
 import { schema } from "drizzle/db";
 import { db } from "drizzle";
-import { eq, and, is } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
 
@@ -49,6 +49,7 @@ export const getEventsWithCommentsFn = createServerFn({
       venue: schema.event.venue,
       address: schema.event.address,
       color: schema.event.color,
+      genre: schema.event.genre,
       startDate: schema.event.startDate,
       endDate: schema.event.endDate,
       latitude: schema.event.latitude,
@@ -89,6 +90,7 @@ export const getUserEventsWithCommentsFn = createServerFn({
         venue: schema.event.venue,
         address: schema.event.address,
         color: schema.event.color,
+        genre: schema.event.genre,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
         latitude: schema.event.latitude,
@@ -128,6 +130,7 @@ export const getMapEventsFn = createServerFn({
       venue: schema.event.venue,
       address: schema.event.address,
       color: schema.event.color,
+      genre: schema.event.genre,
       startDate: schema.event.startDate,
       endDate: schema.event.endDate,
       latitude: schema.event.latitude,
@@ -163,6 +166,7 @@ export const postEventDataFn = createServerFn({ method: "POST" })
           venue: data.venue,
           address: data.address,
           color: data.color,
+          genre: data.genre,
           startDate: data.startDate,
           endDate: data.endDate,
           latitude: data.latitude,
@@ -196,6 +200,7 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         venue: data.venue,
         address: data.address,
         color: data.color,
+        genre: data.genre,
         startDate: data.startDate,
         endDate: data.endDate,
         userId: user.id,
@@ -245,6 +250,7 @@ export const postCalendarEventDataFn = createServerFn({ method: "POST" })
           venue: data.venue,
           address: data.address,
           color: data.color,
+          genre: data.genre,
           startDate: data.startDate,
           endDate: data.endDate,
           latitude: data.latitude,
@@ -375,6 +381,7 @@ export const getFavoriteEventsFn = createServerFn({
         venue: schema.event.venue,
         address: schema.event.address,
         color: schema.event.color,
+        genre: schema.event.genre,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
         latitude: schema.event.latitude,
@@ -424,6 +431,7 @@ export const getUserFavoriteEventsFn = createServerFn({
         venue: schema.event.venue,
         address: schema.event.address,
         color: schema.event.color,
+        genre: schema.event.genre,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
         latitude: schema.event.latitude,

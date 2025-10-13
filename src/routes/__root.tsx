@@ -7,9 +7,8 @@ import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 import { Header } from '@/components/Header.js'
 import { getThemeServerFn } from '@/services/ThemeService.js'
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react'
-import { ScrollToPlugin, ScrollSmoother, ScrollTrigger } from 'gsap/all'
+import React, { use, useEffect } from 'react'
+
 
 
 export const Route = createRootRoute({
@@ -66,23 +65,12 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { ctx, theme } = Route.useLoaderData()
+  const [hideFooter, setHideFooter] = React.useState(false);
 
-  if (typeof window !== "undefined") {
-    gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, ScrollSmoother);
-  }
-  
-  useGSAP(() => {
-    let smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.2,
-      effects: true,
-      normalizeScroll: true,
-    });
-
-    return () => {
-      smoother.kill();
-    };
+  useEffect(() => {
+    if (window.location.pathname === "/") {
+      setHideFooter(false)
+    }
   }, []);
 
   return (
@@ -91,17 +79,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <div id="smooth-wrapper">
-          <div id="smooth-content">
-            {ctx.IsAuthenticated && (
-              <Header currentUser={ctx.currentUser} theme={theme} />
-            )}
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </div>
+        {ctx.IsAuthenticated && (
+          <Header currentUser={ctx.currentUser} theme={theme} />
+        )}
+        <main className="flex-1 max-w-350 min-w-3xl mx-auto">
+          {children}
+        </main>
+        {hideFooter && (
+          <Footer />
+        )}
         <Toaster position="top-center" richColors={true} duration={1500} />
         <Scripts />
       </body>

@@ -32,7 +32,7 @@ import {
 	SelectValue,
 } from "@/components/shadcn/ui/select";
 import { Textarea } from "@/components/shadcn/ui/textarea";
-import { COLORS } from "@/components/calendar/constants";
+import { COLORS, GENRES } from "@/components/calendar/constants";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
@@ -94,6 +94,7 @@ export function AddEditEventDialog({
 			latitude: "",
 			longitude: "",
 			color: "Blue",
+			genre: "Indie",
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 		},
@@ -107,6 +108,7 @@ export function AddEditEventDialog({
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 			color: event?.color ?? "Blue",
+			genre: event?.genre ?? "Indie",
 		});
 	}, [event, initialDates, form]);
 
@@ -286,6 +288,33 @@ export function AddEditEventDialog({
 															/>
 															{color.charAt(0).toUpperCase() + color.slice(1)}
 														</div>
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="genre"
+							render={({ field, fieldState }) => (
+								<FormItem>
+									<FormLabel className="required">Genre</FormLabel>
+									<FormControl>
+										<Select value={field.value} onValueChange={field.onChange}>
+											<SelectTrigger
+												className={`w-full ${fieldState.invalid ? "border-red-500" : ""
+													}`}
+											>
+												<SelectValue placeholder="Select a genre" />
+											</SelectTrigger>
+											<SelectContent className="max-h-[300px]">
+												{GENRES.map((genre) => (
+													<SelectItem value={genre} key={genre}>
+														{genre}
 													</SelectItem>
 												))}
 											</SelectContent>

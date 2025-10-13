@@ -39,6 +39,8 @@ export default function CommentCard({ comment, users, currentUser }: CommentCard
         return router.navigate({ to: `/user/${user.id}` })
     }
 
+    const commentOwner = users.find((user) => user.id === comment?.userId);
+
     return (
         <div className="mt-3">
             <Card className="bg-card text-card-foreground flex flex-col transition-all border-1 hover:shadow-lg hover:scale-105 hover:border-purple-600 mb-3">
@@ -48,7 +50,7 @@ export default function CommentCard({ comment, users, currentUser }: CommentCard
                 <div className="flex flex-row items-center space-x-2 px-3 -mt-10">
                     <Avatar className="h-12 w-12">
                         <AvatarImage src={getCommentCreatorImage(comment)} alt="Profile"/>
-                        <AvatarFallback className="text-2xl">{"user?.name?.split(' ').map((n: string) => n[0]).join('')"}</AvatarFallback>
+                        <AvatarFallback className="text-2xl">{commentOwner?.name?.split(' ').map((n: string) => n[0]).join('').toLocaleUpperCase()}</AvatarFallback>
                     </Avatar>
                     <Button className="font-light text-md -mx-4" variant={"link"} onClick={() => visitUserProfile(comment)}>{getCommentCreatorName(comment)}</Button>
                 </div>

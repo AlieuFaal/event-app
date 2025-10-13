@@ -15,6 +15,7 @@ export const Route = createFileRoute('/(protected)/create-event')({
 
 function CreateEventsComponent() {
   const { currentUser } = Route.useLoaderData();
+  
   const ref1 = useRef<HTMLDivElement>(null);
   const isVisible1 = useIsVisible(ref1);
 

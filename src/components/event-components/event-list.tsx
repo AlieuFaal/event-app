@@ -2,7 +2,7 @@ import { EventWithComments, User } from "drizzle/db";
 import EventCards from "./event-cards";
 import { Separator } from "../shadcn/ui/separator";
 
-export default function EventList({ events, users }: { events: EventWithComments[], users: User[] }) {
+export default function EventList({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User }) {
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
     const nextMonth = new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleString('default', { month: 'long' });
 
@@ -31,7 +31,7 @@ export default function EventList({ events, users }: { events: EventWithComments
                     </>
                 )}
 
-                <EventCards events={currentMonthEvents} users={users} />
+                <EventCards events={currentMonthEvents} users={users} currentUser={currentUser}/>
 
                 {nextMonthEvents.length > 0 && (
                     <>
@@ -42,7 +42,7 @@ export default function EventList({ events, users }: { events: EventWithComments
                     </>
                 )}
 
-                <EventCards events={nextMonthEvents} users={users} />
+                <EventCards events={nextMonthEvents} users={users} currentUser={currentUser}/>
                 
             </div>
         </div>

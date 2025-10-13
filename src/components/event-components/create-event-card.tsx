@@ -23,6 +23,14 @@ import { m } from "@/paraglide/messages";
 import { AddressAutofill } from "@mapbox/search-js-react";
 import { ColorPicker } from "../color-picker-component/color-picker";
 import { Textarea } from "../shadcn/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "../shadcn/ui/select";
+import { GENRES } from "../calendar/constants";
 
 interface EventCardProps {
     currentUser: User | null;
@@ -55,6 +63,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
             latitude: "",
             longitude: "",
             color: "Blue",
+            genre: "Indie",
             startDate: getDefaultStartDate(),
             endDate: getDefaultEndDate(),
         }
@@ -141,17 +150,17 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )}
                             />
 
-                            <div className="flex flex-col md:flex-row justify-between space-x-15">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 <FormField
                                     control={form.control}
                                     name="venue"
                                     render={({ field }) => (
-                                        <FormItem className="max-w-80 relative bottom-1.5">
+                                        <FormItem>
                                             <FormLabel className="relative left-3">{m.form_venue_label()}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={m.form_venue_placeholder()} {...field} value={field.value || ''} />
+                                                <Input placeholder={m.form_venue_placeholder()} {...field} value={field.value || ''} className="h-9" />
                                             </FormControl>
-                                            <FormDescription className="relative left-3">
+                                            <FormDescription className="relative left-3 text-xs">
                                                 {m.form_venue_description()}
                                             </FormDescription>
                                             <FormMessage />
@@ -176,12 +185,12 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         control={form.control}
                                         name="address"
                                         render={({ field }) => (
-                                            <FormItem className="max-w-80">
+                                            <FormItem>
                                                 <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
                                                 <FormControl aria-autocomplete="none" autoSave="off">
-                                                    <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off" />
+                                                    <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off" className="h-9" />
                                                 </FormControl>
-                                                <FormDescription className="relative left-3">
+                                                <FormDescription className="relative left-3 text-xs">
                                                     {m.form_address_description()}
                                                 </FormDescription>
                                                 <FormMessage />
@@ -199,8 +208,36 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                             <FormControl>
                                                 <ColorPicker color={field.value} onChange={(color) => field.onChange(color)} />
                                             </FormControl>
-                                            <FormDescription className="relative left-3">
+                                            <FormDescription className="relative left-3 text-xs">
                                                 {m.form_color_description()}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="genre"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="relative left-3">Genre</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full h-9">
+                                                        <SelectValue placeholder="Select a genre" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent className="max-h-[300px]">
+                                                    {GENRES.map((genre) => (
+                                                        <SelectItem key={genre} value={genre}>
+                                                            {genre}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormDescription className="relative left-3 text-xs">
+                                                Choose the music genre for your event
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>

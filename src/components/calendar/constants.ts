@@ -1,4 +1,4 @@
-import type { TEventColor } from "@/components/calendar/types";
+import type { TEventColor, TGenres } from "@/components/calendar/types";
 
 export const COLORS: TEventColor[] = [
 	"Blue",
@@ -7,4 +7,40 @@ export const COLORS: TEventColor[] = [
 	"Yellow",
 	"Purple",
 	"Orange",
+];
+
+export const GENRES: TGenres[] = [
+	"Hip-Hop",
+	"Rock",
+	"Indie",
+	"Pop",
+	"Jazz",
+	"Classical",
+	"Electronic",
+	"Country",
+	"Reggae",
+	"Blues",
+	"Folk",
+	"Metal",
+	"R&B",
+	"Soul",
+	"Afrobeat",
+	"Punk",
+	"Disco",
+	"Funk",
+	"Gospel",
+	"Techno",
+	"House",
+	"Trance",
+	"Dubstep",
+	"Ambient",
+	"Alternative",
+	"Grunge",
+	"New Wave",
+	"Synthpop",
+	"Progressive Rock",
+	"Hard Rock",
+	"Soft Rock",
+	"Acoustic",
+	"Instrumental",
 ];

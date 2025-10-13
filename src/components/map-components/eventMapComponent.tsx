@@ -138,9 +138,9 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     }}
                 />
             </div>
-            <div className="absolute bottom-110 left-10 z-10">
+            <div className="absolute bottom-25 left-110 z-10 w-auto">
                 {mapRef.current && (
-                    <div className='flex flex-col gap-2 bg-background/60 p-2 rounded-full shadow-lg'>
+                    <div className='flex flex-row gap-2 bg-background/60 p-2 rounded-full shadow-lg'>
                         <div>
                             <Button className='hover:scale-110 rounded-full' onClick={() => {
                                 mapRef.current?.setConfig('basemap', {
@@ -192,8 +192,8 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     </div>
                 )}
             </div>
-            <div className="p-8 h-full">
-                <div id="map-container" className="absolute w-full h-245" ref={mapContainerRef} />
+            <div className="p-4 h-full">
+                <div id="map-container" className=" w-full h-145" ref={mapContainerRef} />
                 {mapLoaded && events?.map((event) => (
                     <Marker
                         key={event.id}

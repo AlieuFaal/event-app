@@ -13,24 +13,24 @@ import { useForm } from "react-hook-form";
 import { EventWithComments } from "drizzle/db";
 import { m } from "@/paraglide/messages";
 
-export default function CommentSection({ event, users }: { event: EventWithComments, users: User[] }) {
+export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User }) {
 
     const form = useForm<z.infer<typeof commentInsertSchema>>({
         mode: "onBlur",
         resolver: zodResolver(commentInsertSchema),
     })
 
-    const currentUser = authClient.useSession();
+    const session = authClient.useSession();
 
     const onSubmit = async (values: z.infer<typeof commentInsertSchema>) => {
-        if (!currentUser.data) {
+        if (!session.data) {
             toast.warning(m.toast_comment_login_required());
             return;
         }
         const newComment: Comment = {
             ...values,
             id: crypto.randomUUID(),
-            userId: currentUser.data.user.id,
+            userId: currentUser.id,
             eventId: event.id,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -79,7 +79,7 @@ export default function CommentSection({ event, users }: { event: EventWithComme
                                 key={comment.id}
                                 comment={comment}
                                 users={users}
-                                currentUser={currentUser.data!.user} />
+                                currentUser={currentUser} />
                         )
                         )}
                     </div>

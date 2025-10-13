@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
 
-export default function EventCard({ event, users }: { event: EventWithComments, users: User[] }) {
+export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
     const removeFavoriteEvent = useServerFn(removeFavoriteEventFn)
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -132,7 +132,7 @@ export default function EventCard({ event, users }: { event: EventWithComments, 
                             <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(event)}</Label>
                         </div>
                     </div>
-                    <CommentSection users={users} event={event} />
+                    <CommentSection users={users} event={event} currentUser={currentUser}/>
                 </DialogContent>
             </Dialog>
         </>

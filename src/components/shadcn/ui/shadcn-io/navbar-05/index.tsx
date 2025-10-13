@@ -208,7 +208,7 @@ const UserMenu = ({
         <Avatar className="h-7 w-7">
           <AvatarImage src={userAvatar ?? undefined} alt={userName} />
           <AvatarFallback className="text-xs">
-            {userName.split(' ').map(n => n[0]).join('')}
+            {userName.split(' ').map(n => n[0]).join('').toLocaleUpperCase()}
           </AvatarFallback>
         </Avatar>
         <ChevronDownIcon className="h-3 w-3 ml-1" />
