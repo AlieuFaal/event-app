@@ -6,7 +6,7 @@ import { m } from '@/paraglide/messages'
 import { useRef } from 'react'
 import { useIsVisible } from '@/hooks/useIsVisible'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/ui/card'
-import { PlaceholderImage1, PlaceholderImage2 } from '@/assets'
+import { PlaceholderImage2, PlaceholderImage3 } from '@/assets'
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react'
 import { ScrollToPlugin, ScrollSmoother, ScrollTrigger } from 'gsap/all'
@@ -115,12 +115,12 @@ function App() {
               </CardHeader>
             </Card>
             <div className='m-10 w-1/4'>
-              <img src={PlaceholderImage1} alt="" className='rounded-2xl w-fit h-47 shadow-2xl' />
+              <img src={PlaceholderImage2} alt="" className='rounded-2xl w-fit h-47 shadow-2xl' />
             </div>
           </div>
           <div ref={ref4} className={`transition-opacity ease-in duration-1300 ${isVisible4 ? "opacity-100" : "opacity-0"} flex flex-row justify-between`}>
             <div className='m-10 w-1/4'>
-              <img src={PlaceholderImage2} alt="" className='rounded-2xl w-fit h-54 shadow-2xl' />
+              <img src={PlaceholderImage3} alt="" className='rounded-2xl w-fit h-54 shadow-2xl' />
             </div>
             <Card className="bg-secondary shadow-lg m-10 p-10 w-1/2">
               <CardHeader>

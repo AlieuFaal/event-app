@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addMinutes, set } from "date-fns";
-import { type ReactNode, useEffect, useMemo } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/shadcn/ui/button";
@@ -39,7 +39,7 @@ import { calendarFormSchema, type TEventFormData } from "@/components/calendar/s
 import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
-import { AddressAutofill } from "@mapbox/search-js-react";
+import { useAddressAutofillCore } from "@mapbox/search-js-react";
 
 
 interface IProps {
@@ -59,6 +59,7 @@ export function AddEditEventDialog({
 }: IProps) {
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const { addEvent, updateEvent } = useCalendar();
+	const [autofillResponse, setAutofillResponse] = useState<{ suggestions: any[] }>({ suggestions: [] });
 	const isEditing = !!event;
 
 	const initialDates = useMemo(() => {
@@ -105,6 +106,9 @@ export function AddEditEventDialog({
 			title: event?.title ?? "",
 			description: event?.description ?? "",
 			address: event?.address ?? "",
+			venue: event?.venue ?? "",
+			latitude: event?.latitude ?? "",
+			longitude: event?.longitude ?? "",
 			startDate: initialDates.startDate,
 			endDate: initialDates.endDate,
 			color: event?.color ?? "Blue",
@@ -151,6 +155,18 @@ export function AddEditEventDialog({
 			toast.error("Failed to save event. Please try again.");
 		}
 	};
+
+	const addressAutofill = useAddressAutofillCore({ accessToken: import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN });
+
+	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		form.setValue("address", e.target.value);
+
+		const searchText = form.getValues("address");
+		const autofillResponse = await addressAutofill.suggest(searchText, { sessionToken: currentUser?.id || '' });
+		setAutofillResponse(autofillResponse);
+		console.log(autofillResponse);
+	};
+
 
 	return (
 		<Modal open={isOpen} onOpenChange={onToggle} modal={true}>
@@ -215,42 +231,44 @@ export function AddEditEventDialog({
 							)}
 						/>
 
-						<AddressAutofill
-							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
-							onRetrieve={(result: any) => {
-								form.setValue("latitude", result.features[0]?.geometry.coordinates[0].toString() || "")
-								form.setValue("longitude", result.features[0]?.geometry.coordinates[1].toString() || "")
-							}}
-							onSuggestError={(e: any) => console.log(e)}
-							browserAutofillEnabled={false}
-							confirmOnBrowserAutofill={false}
-							options={{ country: 'se' }}
-							theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
-						>
-							<FormField
-								control={form.control}
-								name="address"
-								render={({ field, fieldState }) => (
-									<FormItem>
-										<FormLabel htmlFor="address" className="required">
-											{m.form_address_label()}
-										</FormLabel>
-										<FormControl autoSave="off" aria-autocomplete="none" >
-											<Input
-												id="address"
-												placeholder={m.form_address_placeholder()}
-												{...field}
-												className={fieldState.invalid ? "border-red-500" : ""}
-												autoComplete="off"
-												autoSave="off"
-												aria-autocomplete="none"
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</AddressAutofill>
+						<FormField
+							control={form.control}
+							name="address"
+							render={({ field, fieldState }) => (
+								<FormItem>
+									<FormLabel htmlFor="address" className="required">
+										{m.form_address_label()}
+									</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											id="address"
+											placeholder={m.form_address_placeholder()}
+											value={field.value}
+											onChange={handleChange}
+											autoComplete="address-line3"
+											className={fieldState.invalid ? "border-red-500" : ""}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{!form.getFieldState("address").isTouched && autofillResponse.suggestions.slice(0, 2).map((suggestion, index) => (
+							<div
+								key={index}
+								className="w-full bg-muted p-1 rounded-2xl hover:scale-105 shadow-lg cursor-pointer "
+								onClick={() => {
+									form.setValue("address", suggestion.place_name);
+									form.setValue("latitude", suggestion.geometry.coordinates[1].toString());
+									form.setValue("longitude", suggestion.geometry.coordinates[0].toString());
+									setAutofillResponse({ suggestions: [] });
+								}}
+							>
+								{suggestion.place_name}
+							</div>
+						))}
+						
 						<FormField
 							control={form.control}
 							name="startDate"

@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { EventWithComments } from "drizzle/db";
 import { m } from "@/paraglide/messages";
 
-export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User }) {
+export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null}) {
 
     const form = useForm<z.infer<typeof commentInsertSchema>>({
         mode: "onBlur",
@@ -30,7 +30,7 @@ export default function CommentSection({ event, users, currentUser }: { event: E
         const newComment: Comment = {
             ...values,
             id: crypto.randomUUID(),
-            userId: currentUser.id,
+            userId: currentUser!.id,
             eventId: event.id,
             createdAt: new Date(),
             updatedAt: new Date(),

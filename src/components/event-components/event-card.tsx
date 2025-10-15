@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
 
-export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User }) {
+export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
     const removeFavoriteEvent = useServerFn(removeFavoriteEventFn)
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -102,7 +102,12 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                     <Star fill={event.isStarred ? "yellow" : "none"} color={event.isStarred ? "yellow" : "currentColor"} />
                 </Button>
                 <div className="flex justify-end">
-                    <div className="justify-items-end-safe mx-15 bg-muted/70 rounded-xl shadow-lg w-fit p-3" >
+                    <div className="flex items-center mx-55">
+                        <div className="border-1 h-fit w-30 bg-muted/70 p-3 rounded-sm shadow-lg flex justify-center">
+                            <CardDescription className="text-xl text-card-foreground">{event.genre}</CardDescription>
+                        </div>
+                    </div>
+                    <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-3" >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
                         <div className="">
                             {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}
@@ -132,7 +137,7 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                             <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(event)}</Label>
                         </div>
                     </div>
-                    <CommentSection users={users} event={event} currentUser={currentUser}/>
+                    <CommentSection users={users} event={event} currentUser={currentUser} />
                 </DialogContent>
             </Dialog>
         </>

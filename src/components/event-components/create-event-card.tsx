@@ -91,7 +91,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
             await postEventDataFn({
                 data: dataToSend
             });
-            
+
             toast.success(m.toast_event_created());
             router.navigate({ to: "/events" });
         } catch (error) {
@@ -104,6 +104,10 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
         }
     }
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        form.setValue("address", e.target.value);
+    }
+    
     return (
         <div className="flex flex-col max-w-7xl mx-auto my-10">
             <Card className="p-10 bg-primary-foreground">
@@ -140,7 +144,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     <FormItem>
                                         <FormLabel className="relative left-3">{m.form_description_label()}</FormLabel>
                                         <FormControl>
-                                            <Textarea placeholder={m.form_description_placeholder()} {...field} className="resize-none"/>
+                                            <Textarea placeholder={m.form_description_placeholder()} {...field} className="resize-none" />
                                         </FormControl>
                                         <FormDescription className="relative left-3">
                                             {m.form_description_description()}
@@ -175,10 +179,10 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
                                     }}
                                     onSuggestError={(e: any) => console.log(e)}
-                                    browserAutofillEnabled={false}
-                                    confirmOnBrowserAutofill={false}
-                                    options={{ country: 'se' }}
-                                    theme={{ variables: { borderRadius: '0.5rem', padding: "0.7rem" } }}
+                                    browserAutofillEnabled={true}
+                                    confirmOnBrowserAutofill={true}
+                                    options={{ country: 'se', streets: true }}
+                                    theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
 
                                 >
                                     <FormField
@@ -187,8 +191,8 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
-                                                <FormControl aria-autocomplete="none" autoSave="off">
-                                                    <Input placeholder={m.form_address_placeholder()} {...field} autoComplete="off" className="h-9" />
+                                                <FormControl>
+                                                    <Input placeholder={m.form_address_placeholder()} {...field} value={field.value} onChange={handleChange} autoComplete="address-line3" className="h-9" />
                                                 </FormControl>
                                                 <FormDescription className="relative left-3 text-xs">
                                                     {m.form_address_description()}
@@ -221,7 +225,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     name="genre"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="relative left-3">Genre</FormLabel>
+                                            <FormLabel className="relative left-3">{m.form_genre_label()}</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger className="w-full h-9">
@@ -237,14 +241,14 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                                 </SelectContent>
                                             </Select>
                                             <FormDescription className="relative left-3 text-xs">
-                                                Choose the music genre for your event
+                                                {m.form_genre_description()}
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-                            <div className="flex flex-col md:flex-row justify-around">
+                            <div className="flex flex-col md:flex-row justify-around mt-10">
                                 <FormField control={form.control} name="startDate" render={({ field }) => (
                                     <FormItem>
                                         <FormControl>

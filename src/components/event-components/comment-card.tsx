@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { Card } from "../shadcn/ui/card";
-import { Comment, CurrentUser, EventWithComments, User } from "drizzle/db";
+import { Comment, User } from "drizzle/db";
 import { toast } from "sonner";
 import { router } from "@/router";
 import { Button } from "../shadcn/ui/button";
@@ -9,7 +9,7 @@ import { PlaceholderImage1 } from "@/assets";
 interface CommentCardProps {
     users: User[];
     comment: Comment;
-    currentUser: CurrentUser;
+    currentUser: User | null;
 }
 
 export default function CommentCard({ comment, users, currentUser }: CommentCardProps) {

@@ -13,7 +13,7 @@ export default function EventPageHeader({ searchInput, onSearchChange }: EventPa
 
     return (
         <>
-            <div className="flex flex-row justify-start items-center m-10 bg-primary space-x-20 p-20 rounded-lg shadow-2xl font-mono">
+            <div className="flex flex-row justify-start items-center m-10 bg-primary space-x-20 p-15 rounded-lg shadow-2xl font-mono">
                 <h1 className="text-7xl text-secondary font-bold">
                     ALL EVENTS
                 </h1>

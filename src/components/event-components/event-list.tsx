@@ -1,8 +1,8 @@
-import { EventWithComments, User } from "drizzle/db";
+import { CurrentUser, EventWithComments, User } from "drizzle/db";
 import EventCards from "./event-cards";
 import { Separator } from "../shadcn/ui/separator";
 
-export default function EventList({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User }) {
+export default function EventList({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User | null }) {
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
     const nextMonth = new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleString('default', { month: 'long' });
 

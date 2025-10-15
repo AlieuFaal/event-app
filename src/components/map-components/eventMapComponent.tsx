@@ -8,7 +8,6 @@ import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
 import { Button } from '../shadcn/ui/button';
 import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
 
-// Dynamic import wrapper for Geocoder (client-side only)
 function GeocoderWrapper({ accessToken, onRetrieve, placeholder, value, onChange, proximity }: any) {
     const [Geocoder, setGeocoder] = useState<any>(null);
     
@@ -76,10 +75,6 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
             setMapLoaded(true);
         });
 
-        // mapRef.current.dragRotate.enable();
-        // mapRef.current.touchZoomRotate.enableRotation();
-        // mapRef.current.touchPitch.enable();
-
         mapRef.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
         mapRef.current.addControl(new mapboxgl.NavigationControl({ visualizePitch: true, showCompass: true }), 'top-right');
@@ -108,7 +103,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
     }
 
     return (
-        <div className="relative h-screen w-full min-h-50">
+        <div className="-mt-7">
             {!mapLoaded && (
                 <div className="flex items-center justify-center h-screen">
                     <div className="text-lg">
@@ -116,7 +111,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     </div>
                 </div>
             )}
-            <div className="absolute top-15 left-15 z-10 w-60">
+            <div className="relative top-15 left-10 z-1 w-50">
                 <GeocoderWrapper
                     accessToken={accessToken}
                     placeholder={getLocale() === 'sv' ? 'Sök plats' : 'Search location'}
@@ -138,7 +133,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     }}
                 />
             </div>
-            <div className="absolute bottom-25 left-110 z-10 w-auto">
+            {/* <div className="z-1 w-fit absolute top-240 left-140 m-4">
                 {mapRef.current && (
                     <div className='flex flex-row gap-2 bg-background/60 p-2 rounded-full shadow-lg'>
                         <div>
@@ -191,13 +186,14 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                         </div>
                     </div>
                 )}
-            </div>
+            </div> */}
             <div className="p-4 h-full">
-                <div id="map-container" className=" w-full h-145" ref={mapContainerRef} />
+                <div id="map-container" className="w-full h-190 sm:h-130 md:h-135 lg:h-140 xl:h-190 2xl:h-235" ref={mapContainerRef} />
                 {mapLoaded && events?.map((event) => (
                     <Marker
                         key={event.id}
                         map={mapRef.current}
+                        events={events}
                         onClick={handleMarkerClick}
                         isActive={activeFeature?.properties.Event.id === event.id}
                         feature={{

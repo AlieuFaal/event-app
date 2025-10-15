@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useIsVisible } from "@/hooks/useIsVisible";
 
 
-export default function EventCards({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User }) {
+export default function EventCards({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User | null }) {
 
     const ref1 = useRef<HTMLDivElement>(null);
     const isVisible1 = useIsVisible(ref1);
