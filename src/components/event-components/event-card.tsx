@@ -17,6 +17,7 @@ import { addFavoriteEventFn, removeFavoriteEventFn } from "@/services/eventServi
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
+import { router } from "@/router";
 
 export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
@@ -72,10 +73,13 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
     }
 
     function randomImage() {
-        const images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
+        let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
         return images[Math.floor(Math.random() * images.length)];
     }
 
+    function handleFlyTo(event: Event) {
+        router.navigate({ to: "/event-map", search: { id: event.id } });
+    }
 
     return (
         <>
@@ -119,7 +123,7 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                 </div>
             </Card>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card max-h-screen">
+                <DialogContent className="sm:max-w-[800px] text-card-foreground bg-card max-h-[79vh] overflow-y-auto">
                     <DialogHeader className="items-center space-y-2 mb-5">
                         <DialogTitle className="text-6xl">{event.title}</DialogTitle>
                         <DialogDescription className="text-xl">
@@ -127,8 +131,13 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-10 mb-5">
-                        <div className="grid gap-3">
-                            <Label htmlFor="username-1" className="text-xl">{m.event_address_label()} {event.address}</Label>
+                        <div className="gap-3 flex flex-row justify-between">
+                            <div>
+                                <Label htmlFor="username-1" className="text-xl">{m.event_address_label()} {event.address}</Label>
+                            </div>
+                            <div>
+                                <Button onClick={() => handleFlyTo(event)}>Fly To</Button>
+                            </div>
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="username-1" className="text-xl">{m.event_date_label()} {event.startDate.toUTCString()} - {event.endDate.toUTCString()}</Label>

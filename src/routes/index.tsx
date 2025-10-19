@@ -67,21 +67,21 @@ function App() {
             waveOpacity={1}
             containerClassName="h-full w-full"
             className="flex items-center justify-center">
-            <div className="text-center text-white z-10">
-              <h1 className="text-6xl font-bold mb-4">
+            <div className="text-center text-white z-10 px-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
                 VibeSpot
               </h1>
-              <p className="text-2xl opacity-80">
+              <p className="text-lg md:text-xl lg:text-2xl opacity-80">
                 Where music meets the moment
               </p>
-              <div className='mt-12 flex justify-center'>
+              <div className='mt-8 md:mt-12 flex justify-center'>
                 {ctx.IsAuthenticated ? (
-                  <Button className="text-xl px-14 py-6 rounded-full font-bold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+                  <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
                     <a href="/events">
                       {m.Home_Button2()}
                     </a>
                   </Button>
-                ) : <Button className="text-xl px-14 py-6 rounded-full font-bold transition-duration-300 hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+                ) : <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
                   <a href="/signin">
                     {m.Home_Button()}
                   </a>
@@ -92,46 +92,46 @@ function App() {
         </div>
         <div id='section2' className="flex flex-col w-full text-center text-white border-t-1 border-b-1">
           <div ref={ref2} className={`transition-opacity ease-in duration-1300 ${isVisible2 ? "opacity-100" : "opacity-0"}`}>
-            <Card className="bg-secondary shadow-lg m-10 p-20 transition-transform duration-300">
+            <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-8 md:p-12 lg:p-20 transition-transform duration-300">
               <CardHeader>
-                <CardTitle className='text-3xl'>
+                <CardTitle className='text-xl md:text-2xl lg:text-3xl'>
                   "VibeSpot isn't just an app, it's your gateway to unforgettable live music experiences. Discover events, connect with fellow music lovers, and let the rhythm of the city guide you to your next great adventure."
                 </CardTitle>
-                <CardDescription className='text-2xl'>
+                <CardDescription className='text-lg md:text-xl lg:text-2xl'>
                   - Alex R., Event Manager
                 </CardDescription>
               </CardHeader>
             </Card>
           </div>
-          <div ref={ref3} className={`transition-opacity ease-in duration-1300 ${isVisible3 ? "opacity-100" : "opacity-0"} flex flex-row justify-between`}>
-            <Card className="bg-secondary shadow-lg m-10 p-10 w-1/2">
+          <div ref={ref3} className={`transition-opacity ease-in duration-1300 ${isVisible3 ? "opacity-100" : "opacity-0"} flex flex-col md:flex-row justify-between items-center`}>
+            <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-6 md:p-8 lg:p-10 w-full md:w-1/2">
               <CardHeader>
-                <CardTitle className='text-xl'>
+                <CardTitle className='text-base md:text-lg lg:text-xl'>
                   Discover live music events happening around you with VibeSpot. Whether you're into rock, jazz, pop, or indie, our app helps you find the perfect event to match your vibe.
                 </CardTitle>
-                <CardDescription className='text-2xl'>
+                <CardDescription className='text-base md:text-lg lg:text-2xl'>
 
                 </CardDescription>
               </CardHeader>
             </Card>
-            <div className='m-10 w-1/4'>
-              <img src={PlaceholderImage2} alt="" className='rounded-2xl w-fit h-47 shadow-2xl' />
+            <div className='m-4 md:m-8 lg:m-10 w-full md:w-1/4'>
+              <img src={PlaceholderImage2} alt="" className='rounded-2xl w-full h-auto max-h-60 md:max-h-none md:h-47 shadow-2xl object-cover' />
             </div>
           </div>
-          <div ref={ref4} className={`transition-opacity ease-in duration-1300 ${isVisible4 ? "opacity-100" : "opacity-0"} flex flex-row justify-between`}>
-            <div className='m-10 w-1/4'>
-              <img src={PlaceholderImage3} alt="" className='rounded-2xl w-fit h-54 shadow-2xl' />
-            </div>
-            <Card className="bg-secondary shadow-lg m-10 p-10 w-1/2">
+          <div ref={ref4} className={`transition-opacity ease-in duration-1300 ${isVisible4 ? "opacity-100" : "opacity-0"} flex flex-col md:flex-row-reverse justify-between items-center`}>
+            <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-6 md:p-8 lg:p-10 w-full md:w-1/2">
               <CardHeader>
-                <CardTitle className='text-xl'>
+                <CardTitle className='text-base md:text-lg lg:text-xl'>
                   "VibeSpot makes it easy to connect with friends and fellow music enthusiasts. Share events, plan meetups, and create unforgettable memories together."
                 </CardTitle>
-                <CardDescription className='text-lg'>
+                <CardDescription className='text-sm md:text-base lg:text-lg'>
                   - Jamie L., Music Enthusiast
                 </CardDescription>
               </CardHeader>
             </Card>
+            <div className='m-4 md:m-8 lg:m-10 w-full md:w-1/4'>
+              <img src={PlaceholderImage3} alt="" className='rounded-2xl w-full h-auto max-h-60 md:max-h-none md:h-54 shadow-2xl object-cover' />
+            </div>
           </div>
         </div>
       </div>

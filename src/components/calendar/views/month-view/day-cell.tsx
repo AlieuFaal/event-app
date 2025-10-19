@@ -1,7 +1,7 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { isToday, startOfDay, isSunday, isSameMonth } from "date-fns";
+import { isToday, startOfDay, isSunday, isSameMonth, isSameDay } from "date-fns";
 import { motion } from "framer-motion";
 import { useMemo, useCallback } from "react";
 
@@ -131,7 +131,7 @@ export function DayCell({ cell, events, eventPositions, users, currentUser }: IP
             className={cn(
               "h-6 px-1 text-xs font-semibold lg:px-2",
               !currentMonth && "opacity-20",
-              isToday(date) &&
+              isSameDay(startOfDay(date), startOfDay(new Date())) &&
               "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground"
             )}
           >

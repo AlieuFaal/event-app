@@ -1,11 +1,16 @@
-import { ClientOnly, createFileRoute } from '@tanstack/react-router';
+import { ClientOnly, createFileRoute, useParams } from '@tanstack/react-router';
 import { getMapEventsFn } from '@/services/eventService';
 import { EventMap } from '@/components/map-components/eventMapComponent';
 import { useRef } from 'react';
 import { useIsVisible } from '@/hooks/useIsVisible';
+import { zodValidator } from '@tanstack/zod-adapter'
+import { z } from 'zod';
 
 export const Route = createFileRoute('/(protected)/event-map')({
     component: RouteComponent,
+    validateSearch: zodValidator(z.object({
+        id: z.uuid().optional()
+    })),
     loader: async () => {
         const events = await getMapEventsFn();
         return events;

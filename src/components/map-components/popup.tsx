@@ -133,7 +133,7 @@ export const Popup = ({ map, activeFeature, events }: PopupProps) => {
                                         className="bg-transparent shadow-none border-none hover:bg-muted hover:scale-120 disabled:opacity-50 disabled:cursor-not-allowed"
                                         onClick={showPreviousEvent}
                                     >
-                                        <ArrowLeft className="text-black" />
+                                        <ArrowLeft className="text-black dark:text-white" />
                                     </Button>
 
                                     <div className="flex flex-row justify-center mt-3">
@@ -146,7 +146,7 @@ export const Popup = ({ map, activeFeature, events }: PopupProps) => {
                                         className="bg-transparent shadow-none border-none hover:bg-muted hover:scale-120 disabled:opacity-50 disabled:cursor-not-allowed"
                                         onClick={showNextEvent}
                                     >
-                                        <ArrowRight className="text-black" />
+                                        <ArrowRight className="text-black dark:text-white" />
                                     </Button>
                                 </div>
                             </CardContent>

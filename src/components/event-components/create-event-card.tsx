@@ -109,11 +109,11 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
     }
     
     return (
-        <div className="flex flex-col max-w-7xl mx-auto my-10">
-            <Card className="p-10 bg-primary-foreground">
-                <CardHeader className="flex flex-col justify-center items-center bg-primary text-secondary p-20 rounded-lg mb-5 shadow-2xl">
-                    <CardTitle className="text-6xl mb-4 font-mono">{m.create_event_title().toLocaleUpperCase()}</CardTitle>
-                    <CardDescription className="text-gray mb-4 text-lg font-mono">
+        <div className="flex flex-col max-w-7xl mx-auto my-4 md:my-8 lg:my-10 px-4">
+            <Card className="p-4 md:p-8 lg:p-10 bg-primary-foreground">
+                <CardHeader className="flex flex-col justify-center items-center bg-primary text-secondary p-6 md:p-12 lg:p-20 rounded-lg mb-5 shadow-2xl">
+                    <CardTitle className="text-2xl md:text-4xl lg:text-6xl mb-2 md:mb-4 font-mono text-center">{m.create_event_title().toLocaleUpperCase()}</CardTitle>
+                    <CardDescription className="text-gray mb-2 md:mb-4 text-sm md:text-base lg:text-lg font-mono text-center">
                         {m.create_event_description()}
                     </CardDescription>
                 </CardHeader>
@@ -183,7 +183,6 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     confirmOnBrowserAutofill={true}
                                     options={{ country: 'se', streets: true }}
                                     theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
-
                                 >
                                     <FormField
                                         control={form.control}

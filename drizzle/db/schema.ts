@@ -7,6 +7,7 @@ import {
   check,
   uuid,
   primaryKey,
+  pgView,
 } from "drizzle-orm/pg-core";
 import {
   createSelectSchema,
@@ -46,7 +47,6 @@ export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
-
 // User Table -------------------------------------------------------------------------------------------------------------
 export const user = pgTable(
   "user",
@@ -55,18 +55,18 @@ export const user = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified")
-    .$defaultFn(() => false)
-    .notNull(),
+      .$defaultFn(() => false)
+      .notNull(),
     phone: text("phone"),
     image: text("image"),
     location: text("location"),
     bio: text("bio"),
     createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
     updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
     role: text("role").$type<Role>().notNull().default("New User"),
   },
   (table) => [
@@ -102,16 +102,16 @@ export const userUpdateSchema = createUpdateSchema(user, {
 });
 
 export const userFormSchema = userUpdateSchema
-.extend({
-  id: z.string(),
-  role: z.enum(["user", "artist"]).default("user").optional(),
-})
-.omit({
-  email: true,
-  emailVerified: true,
-  createdAt: true,
-  updatedAt: true,
-});
+  .extend({
+    id: z.string(),
+    role: z.enum(["user", "artist"]).default("user").optional(),
+  })
+  .omit({
+    email: true,
+    emailVerified: true,
+    createdAt: true,
+    updatedAt: true,
+  });
 
 export const onbFormUpdateSchema = userFormSchema.omit({
   id: true,
@@ -144,8 +144,8 @@ export const session = pgTable("session", {
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: uuid("user_id")
-  .notNull()
-  .references(() => user.id, { onDelete: "cascade" }),
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const sessionSchema = createSelectSchema(session);
@@ -155,8 +155,8 @@ export const account = pgTable("account", {
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: uuid("user_id")
-  .notNull()
-  .references(() => user.id, { onDelete: "cascade" }),
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
@@ -241,18 +241,22 @@ export const event = pgTable("event", {
   createdAt: timestamp("created_at").notNull(),
   latitude: text("latitude").notNull(),
   longitude: text("longitude").notNull(),
-  
 });
 
 export const eventSchema = createSelectSchema(event, {
   title: z
-  .string()
-  .min(2, "Please enter an event title (at least 2 characters)")
-  .max(100, "Event title cannot be longer than 100 characters"),
+    .string()
+    .min(2, "Please enter an event title (at least 2 characters)")
+    .max(100, "Event title cannot be longer than 100 characters"),
   description: z
-  .string()
-  .min(2, "Please provide a description for your event (at least 2 characters)"),
-  address: z.string().min(2, "Please enter the event location address (at least 2 characters)"),
+    .string()
+    .min(
+      2,
+      "Please provide a description for your event (at least 2 characters)"
+    ),
+  address: z
+    .string()
+    .min(2, "Please enter the event location address (at least 2 characters)"),
   color: z.enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"]),
   genre: z.enum([
     "Hip-Hop",
@@ -300,14 +304,19 @@ export const eventInsertSchema = createInsertSchema(event, {
   id: z.string().uuid().optional(),
   userId: z.string().uuid().nullable().optional(),
   title: z
-  .string()
-  .min(2, "Please enter an event title (at least 2 characters)")
-  .max(100, "Event title cannot be longer than 100 characters"),
+    .string()
+    .min(2, "Please enter an event title (at least 2 characters)")
+    .max(100, "Event title cannot be longer than 100 characters"),
   description: z
-  .string()
-  .min(2, "Please provide a description for your event (at least 2 characters)"),
+    .string()
+    .min(
+      2,
+      "Please provide a description for your event (at least 2 characters)"
+    ),
   venue: z.string().optional().nullable(),
-  address: z.string().min(2, "Please enter the event location address (at least 2 characters)"),
+  address: z
+    .string()
+    .min(2, "Please enter the event location address (at least 2 characters)"),
   color: z.enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"]),
   genre: z.enum([
     "Hip-Hop",
@@ -359,61 +368,66 @@ export const eventInsertSchema = createInsertSchema(event, {
 
 export const eventUpdateSchema = createUpdateSchema(event, {
   title: z
-  .string()
-  .min(2, "Please enter an event title (at least 2 characters)")
-  .max(100, "Event title cannot be longer than 100 characters")
-  .optional(),
+    .string()
+    .min(2, "Please enter an event title (at least 2 characters)")
+    .max(100, "Event title cannot be longer than 100 characters")
+    .optional(),
   description: z
-  .string()
-  .min(2, "Please provide a description for your event (at least 2 characters)")
-  .optional(),
+    .string()
+    .min(
+      2,
+      "Please provide a description for your event (at least 2 characters)"
+    )
+    .optional(),
   address: z
-  .string()
-  .min(2, "Please enter the event location address (at least 2 characters)"),
+    .string()
+    .min(2, "Please enter the event location address (at least 2 characters)"),
   venue: z.string().nullable(),
   latitude: z.string().optional(),
   longitude: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   updatedAt: z.date().optional(),
-  color: z    
-  .enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"])
-  .optional(),
-  genre: z.enum([
-    "Hip-Hop",
-    "Rock",
-    "Indie",
-    "Pop",
-    "Jazz",
-    "Classical",
-    "Electronic",
-    "Country",
-    "Reggae",
-    "Blues",
-    "Folk",
-    "Metal",
-    "R&B",
-    "Soul",
-    "Afrobeat",
-    "Punk",
-    "Disco",
-    "Funk",
-    "Gospel",
-    "Techno",
-    "House",
-    "Trance",
-    "Dubstep",
-    "Ambient",
-    "Alternative",
-    "Grunge",
-    "New Wave",
-    "Synthpop",
-    "Progressive Rock",
-    "Hard Rock",
-    "Soft Rock",
-    "Acoustic",
-    "Instrumental",
-  ]).optional(),
+  color: z
+    .enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"])
+    .optional(),
+  genre: z
+    .enum([
+      "Hip-Hop",
+      "Rock",
+      "Indie",
+      "Pop",
+      "Jazz",
+      "Classical",
+      "Electronic",
+      "Country",
+      "Reggae",
+      "Blues",
+      "Folk",
+      "Metal",
+      "R&B",
+      "Soul",
+      "Afrobeat",
+      "Punk",
+      "Disco",
+      "Funk",
+      "Gospel",
+      "Techno",
+      "House",
+      "Trance",
+      "Dubstep",
+      "Ambient",
+      "Alternative",
+      "Grunge",
+      "New Wave",
+      "Synthpop",
+      "Progressive Rock",
+      "Hard Rock",
+      "Soft Rock",
+      "Acoustic",
+      "Instrumental",
+    ])
+    .optional(),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
@@ -434,30 +448,27 @@ export const calendarEventSchema = eventSchema.extend({
 export const comment = pgTable("comment", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id")
-  .notNull()
-  .references(() => user.id, { onDelete: "cascade" }),
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   eventId: uuid("event_id")
-  .notNull()
-  .references(() => event.id, { onDelete: "cascade" }),
+    .notNull()
+    .references(() => event.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   createdAt: timestamp("created_at")
-  .$defaultFn(() => /* @__PURE__ */ new Date())
-  .notNull(),
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
   updatedAt: timestamp("updated_at")
-  .$defaultFn(() => /* @__PURE__ */ new Date())
-  .notNull(),
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const commentSchema = createSelectSchema(comment, {
   content: z.string().min(1, "Please enter your comment"),
 });
 
-
-export const commentInsertSchema = createInsertSchema(comment,
-  {
-    content: z.string().min(1, "Please enter your comment"),
-  }
-).omit({
+export const commentInsertSchema = createInsertSchema(comment, {
+  content: z.string().min(1, "Please enter your comment"),
+}).omit({
   id: true,
   eventId: true,
   userId: true,
@@ -475,37 +486,50 @@ export const eventWithCommentsSchema = eventSchema.extend({
   isStarred: z.boolean().optional(),
 });
 
-
 // Favorite events table -------------------------------------------------------------------------------------------------------------
-export const favoriteEvent = pgTable("favorite_event", {
-  userId: uuid("user_id")
-  .notNull()
-  .references(() => user.id, { onDelete: "cascade" }),
-  eventId: uuid("event_id")
-  .notNull()
-  .references(() => event.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-  .$defaultFn(() => /* @__PURE__ */ new Date())
-  .notNull(),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.userId, table.eventId] }),
-}));
+export const favoriteEvent = pgTable(
+  "favorite_event",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => event.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.eventId] }),
+  })
+);
 
 // Followers and Following Tables -------------------------------------------------------------------------------------------------------------
-export const followersTable = pgTable("followers",
+export const followersTable = pgTable(
+  "followers",
   {
-    userId: uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
-    followerId: uuid("follower_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    followerId: uuid("follower_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.followerId] }),
   })
 );
 
-export const followingTable = pgTable("following",
+export const followingTable = pgTable(
+  "following",
   {
-    userId: uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
-    followingId: uuid("following_id").notNull().references(() => user.id, { onDelete: "cascade" }), 
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    followingId: uuid("following_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.followingId] }),
@@ -514,30 +538,43 @@ export const followingTable = pgTable("following",
 
 // Additional Schemas without db tables -------------------------------------------------------------------------------------------------------------
 export const passwordChangeSchema = z
-.object({
-  currentPassword: z.string().min(1, "Please enter your current password"),
-  newPassword: z
-  .string()
-  .min(8, "Your new password must be at least 8 characters long"),
-  confirmPassword: z.string().min(1, "Please confirm your new password"),
-})
-.refine((data) => data.newPassword === data.confirmPassword, {
-  message: "The passwords you entered don't match. Please try again",
-  path: ["confirmPassword"],
-});
+  .object({
+    currentPassword: z.string().min(1, "Please enter your current password"),
+    newPassword: z
+      .string()
+      .min(8, "Your new password must be at least 8 characters long"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "The passwords you entered don't match. Please try again",
+    path: ["confirmPassword"],
+  });
 
 export const CurrentUserSchema = userSchema
-.extend({
-  image: z.string().url("Please enter a valid image URL").nullable().optional(),
-})
-.omit({
-  role: true,
-  bio: true,
-  location: true,
-  phone: true,
-  followers: true,
-  following: true,
-});
+  .extend({
+    image: z
+      .string()
+      .url("Please enter a valid image URL")
+      .nullable()
+      .optional(),
+  })
+  .omit({
+    role: true,
+    bio: true,
+    location: true,
+    phone: true,
+    followers: true,
+    following: true,
+  });
+
+// const expiredEvents = pgView("expired_events").as((qb) =>
+//   qb
+//     .select()
+//     .from(event)
+//     .where(sql`${event.endDate} < NOW()`)
+// );
+
+// const deleteExpiredEvents = sql`DELETE FROM ${event} WHERE ${event.id} IN (SELECT id FROM ${expiredEvents})`;
 
 export const schema = {
   user,
@@ -546,7 +583,6 @@ export const schema = {
   verification,
   event,
   comment,
-  // venue,
   favoriteEvent,
   followersTable,
   followingTable,

@@ -3,6 +3,9 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle"; // your drizzle instance
 import { reactStartCookies } from "better-auth/react-start";
 import { schema, session } from "../../drizzle/db/schema";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.VITE_PUBLIC_RESEND_API_KEY);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -25,14 +28,6 @@ export const auth = betterAuth({
     sessionModel: schema.session,
     changeEmail: {
       enabled: false,
-      // async sendVerification(data, request) {
-      //   // Send an email to the user with a link to verify their new email address
-      //   await sendEmail({
-      //     to: data.newEmail,
-      //     subject: "Verify your new email address",
-      //     text: `Click the link to verify your new email address: ${data.url}`,
-      //     html: `<p>Click the link to verify your new email address: <a href="${data.url}">${data.url}</a></p>`,
-      //   });
     },
     deleteUser: {
       enabled: true,
@@ -66,16 +61,25 @@ export const auth = betterAuth({
       },
     },
   },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      const { data, error } = await resend.emails.send({
+        from: "VibeSpot@resend.dev",
+        to: user.email,
+        subject: "Verify your email",
+        html: `Click the link to verify your email: ${url}`,
+      });
+
+      if (error) {
+        console.error("Error sending verification email:", error);
+      } else {
+        console.log("Verification email sent:", data);
+      }
+    },
+  },
   emailAndPassword: {
     enabled: true, // Enable email and password authentication
     autoSignIn: false, // Automatically sign in the user after sign up
-    async sendResetPassword(_data, _request) {
-      // Send an email to the user with a link to reset their password
-    },
-    onPasswordReset: async ({ user }, _request) => {
-      // logic here
-      console.log(`Password reset for user: ${user.email}`);
-    },
   },
   socialProviders: {
     facebook: {

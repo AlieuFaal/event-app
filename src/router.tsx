@@ -25,6 +25,20 @@ export const createRouter = () => {
         </div>
       )
     },
+
+    defaultErrorComponent: ({ error }) => {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+          <h1 className="text-4xl font-bold">Oops something went wrong! 🫠</h1>
+          <p className="mt-2 text-lg text-red-600">{error.message}</p>
+          <div className='mt-6'>
+            <Button className='hover:scale-110 hover:bg-secondary transition-transform rounded-2xl' variant='outline' >
+              <Link to={'/'}>Return home</Link>
+            </Button>
+          </div>
+        </div>
+      )
+    },
   })
 }
 

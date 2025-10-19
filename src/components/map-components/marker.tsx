@@ -41,7 +41,7 @@ export const Marker = ({ feature, map, isActive, events, onClick }: MarkerProps)
         <>
             {createPortal(
                 <div onClick={() => onClick(feature)} >
-                    <PiMapPinFill className={`${isActive ? 'text-foreground' : 'text-primary'} size-5 hover:scale-130 transition-all ${isActive ? "animate-pulse" : ""}`} />
+                    <PiMapPinFill className={`${isActive ? 'text-foreground' : 'text-primary'} cursor-pointer size-5 hover:scale-130 transition-all ${isActive ? "animate-pulse" : ""}`} />
 
                     {isActive && map && feature && (
                         <Popup activeFeature={feature} map={map} events={events}/>

@@ -10,7 +10,7 @@ import z from "zod";
 import { _encode } from "better-auth";
 import { schema } from "drizzle/db";
 import { db } from "drizzle";
-import { eq, and } from "drizzle-orm";
+import { eq, and, gte } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
 
@@ -21,6 +21,7 @@ export const getEventDataFn = createServerFn({
   const events = await db
     .select()
     .from(schema.event)
+    .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
 
   const eventsWithStringDates = events.map((event: Event) => ({
@@ -58,6 +59,7 @@ export const getEventsWithCommentsFn = createServerFn({
       createdAt: schema.event.createdAt,
     })
     .from(schema.event)
+    .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
   
   const comments = await db
@@ -139,6 +141,7 @@ export const getMapEventsFn = createServerFn({
       createdAt: schema.event.createdAt,
     })
     .from(schema.event)
+    .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
 
   return events;

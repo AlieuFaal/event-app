@@ -7,7 +7,7 @@ import { getSessionUserFn } from '@/services/user-service'
 import { getLocale } from "../paraglide/runtime.js";
 import { Header } from '@/components/Header.js'
 import { getThemeServerFn } from '@/services/ThemeService.js'
-import React, { use, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 
 
@@ -48,18 +48,18 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  errorComponent: ({ error }) => (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <h2 className="text-lg font-semibold text-red-800">Oops something went wrong! 🫠</h2>
-        <p className="text-red-600">{error.message}</p>
-        <details className="mt-2">
-          <summary className="cursor-pointer text-sm text-red-700">Stack trace</summary>
-          <pre className="mt-2 text-xs text-red-600 whitespace-pre-wrap">{error.stack}</pre>
-        </details>
-      </div>
-    </div>
-  ),
+  // errorComponent: ({ error }) => (
+  //   <div className="min-h-screen bg-gray-50 p-4">
+  //     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+  //       <h2 className="text-lg font-semibold text-red-800">Oops something went wrong! 🫠</h2>
+  //       <p className="text-red-600">{error.message}</p>
+  //       <details className="mt-2">
+  //         <summary className="cursor-pointer text-sm text-red-700">Stack trace</summary>
+  //         <pre className="mt-2 text-xs text-red-600 whitespace-pre-wrap">{error.stack}</pre>
+  //       </details>
+  //     </div>
+  //   </div>
+  // ),
   shellComponent: RootDocument,
 })
 
@@ -82,7 +82,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {ctx.IsAuthenticated && (
           <Header currentUser={ctx.currentUser} theme={theme} />
         )}
-        <main className="flex-1 max-w-350 min-w-3xl mx-auto">
+        <main className="flex-1 max-w-350 min-h--10 min-w-3xl mx-auto">
           {children}
         </main>
         {hideFooter && (

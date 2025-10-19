@@ -52,7 +52,7 @@ export default function CommentCard({ comment, users, currentUser }: CommentCard
                         <AvatarImage src={getCommentCreatorImage(comment)} alt="Profile"/>
                         <AvatarFallback className="text-2xl">{commentOwner?.name?.split(' ').map((n: string) => n[0]).join('').toLocaleUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <Button className="font-light text-md -mx-4" variant={"link"} onClick={() => visitUserProfile(comment)}>{getCommentCreatorName(comment)}</Button>
+                    <Button className="font-light text-md -mx-4 cursor-pointer" variant={"link"} onClick={() => visitUserProfile(comment)}>{getCommentCreatorName(comment)}</Button>
                 </div>
                 <div className="px-17 font-normal text-md -my-8 mb-1 flex flex-row justify-between">
                     <p>{comment.content}</p>
