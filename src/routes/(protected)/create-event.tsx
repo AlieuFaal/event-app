@@ -6,7 +6,7 @@ import { useRef } from 'react';
 export const Route = createFileRoute('/(protected)/create-event')({
   loader: async (ctx) => {
     const currentUser = ctx.context.currentUser;
-    console.log("Current User in Create Event Route:", currentUser?.name);
+    // console.log("Current User in Create Event Route:", currentUser?.name);
 
     return { currentUser }
   },

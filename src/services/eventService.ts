@@ -13,6 +13,7 @@ import { db } from "drizzle";
 import { eq, and, gte } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
+import { Repeat } from "lucide-react";
 
 export const getEventDataFn = createServerFn({
   method: "GET",
@@ -61,7 +62,7 @@ export const getEventsWithCommentsFn = createServerFn({
     .from(schema.event)
     .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
-  
+
   const comments = await db
     .select()
     .from(schema.comment)
@@ -93,6 +94,7 @@ export const getUserEventsWithCommentsFn = createServerFn({
         address: schema.event.address,
         color: schema.event.color,
         genre: schema.event.genre,
+        repeat: schema.event.repeat,
         startDate: schema.event.startDate,
         endDate: schema.event.endDate,
         latitude: schema.event.latitude,
@@ -133,6 +135,7 @@ export const getMapEventsFn = createServerFn({
       address: schema.event.address,
       color: schema.event.color,
       genre: schema.event.genre,
+      repeat: schema.event.repeat,
       startDate: schema.event.startDate,
       endDate: schema.event.endDate,
       latitude: schema.event.latitude,
@@ -170,6 +173,7 @@ export const postEventDataFn = createServerFn({ method: "POST" })
           address: data.address,
           color: data.color,
           genre: data.genre,
+          repeat: data.repeat,
           startDate: data.startDate,
           endDate: data.endDate,
           latitude: data.latitude,
@@ -186,10 +190,144 @@ export const postEventDataFn = createServerFn({ method: "POST" })
     }
   });
 
+export const repeatEventsFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(eventInsertSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      console.log("Received data for repeating events:", data);
+
+      const user = context.currentUser;
+      if (!user?.id || user.role === "user") {
+        throw new Error(
+          "User not authenticated or authorized to handle events"
+        );
+      }
+
+      const event = await db
+        .insert(schema.event)
+        .values({
+          title: data.title,
+          description: data.description,
+          venue: data.venue,
+          address: data.address,
+          color: data.color,
+          genre: data.genre,
+          repeat: data.repeat,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          userId: user.id,
+          createdAt: new Date(),
+        })
+        .returning();
+
+      if (data.repeat === "none") {
+        return event;
+      }
+
+      const addInterval = (date: Date, repeat: string) => {
+        const newDate = new Date(date);
+        switch (repeat) {
+          case "daily":
+            newDate.setDate(newDate.getDate() + 1);
+            break;
+          case "weekly":
+            newDate.setDate(newDate.getDate() + 7);
+            break;
+          case "monthly":
+            newDate.setMonth(newDate.getMonth() + 1);
+            break;
+          case "yearly":
+            newDate.setFullYear(newDate.getFullYear() + 1);
+            break;
+        }
+        return newDate;
+      };
+
+      const repeatedEventsArray = [];
+      let currentStartDate = new Date(data.startDate);
+      let currentEndDate = new Date(data.endDate);
+
+      switch (data.repeat) {
+        case "daily":
+          currentStartDate = addInterval(currentStartDate, data.repeat!);
+          currentEndDate = addInterval(currentEndDate, data.repeat!);
+          break;
+        case "weekly":
+          currentStartDate = addInterval(currentStartDate, data.repeat!);
+          currentEndDate = addInterval(currentEndDate, data.repeat!);
+          break;
+        case "monthly":
+          currentStartDate = addInterval(currentStartDate, data.repeat!);
+          currentEndDate = addInterval(currentEndDate, data.repeat!);
+          break;
+        case "yearly":
+          currentStartDate = addInterval(currentStartDate, data.repeat!);
+          currentEndDate = addInterval(currentEndDate, data.repeat!);
+          break;
+        default:
+          break;
+      }
+
+      const endDateLimit = new Date();
+
+      switch (data.repeat) {
+        case "daily":
+          endDateLimit.setDate(endDateLimit.getDate() + 1 * 365);
+          break;
+        case "weekly":
+          endDateLimit.setDate(endDateLimit.getDate() + 52 * 5);
+          break;
+        case "monthly":
+          endDateLimit.setMonth(endDateLimit.getMonth() + 12 * 5);
+          break;
+        case "yearly":
+          endDateLimit.setFullYear(endDateLimit.getFullYear() + 10);
+          break;
+        default:
+          break;
+      }
+
+      while (currentStartDate <= endDateLimit) {
+        const repeatedEvent = await db
+          .insert(schema.event)
+          .values({
+            title: data.title,
+            description: data.description,
+            venue: data.venue,
+            address: data.address,
+            color: data.color,
+            genre: data.genre,
+            repeat: data.repeat,
+            startDate: currentStartDate,
+            endDate: currentEndDate,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            userId: user.id,
+            createdAt: new Date(),
+          })
+          .returning();
+
+        repeatedEventsArray.push(repeatedEvent);
+
+        currentStartDate = addInterval(currentStartDate, data.repeat!);
+        currentEndDate = addInterval(currentEndDate, data.repeat!);
+      }
+
+      return { initialEvent: event, repeatedEvents: repeatedEventsArray };
+    } catch (error) {
+      console.error("Error inserting repeating events:", error);
+      throw error;
+    }
+  });
+
 export const putEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(calendarEventSchema)
   .handler(async ({ data, context }) => {
+
     const user = context.currentUser;
     if (!user?.id || user.role === "user") {
       throw new Error("User not authenticated or authorized to handle events");
@@ -208,9 +346,43 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         endDate: data.endDate,
         userId: user.id,
       })
-      .where(eq(schema.event.id, data.id));
+      .where(eq(schema.event.id, data.id || data.title));
     console.log("Updated event:", updatedEvent);
     return updatedEvent;
+  });
+
+  export const updateAllRepeatedEventsFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(calendarEventSchema)
+  .handler(async ({ data, context }) => {
+
+    const user = context.currentUser;
+    if (!user?.id || user.role === "user") {
+      throw new Error("User not authenticated or authorized to handle events");
+    }
+    
+    const updatedEvents = await db
+      .update(schema.event)
+      .set({
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        address: data.address,
+        color: data.color,
+        genre: data.genre,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        userId: user.id,
+      })
+      .where(
+        and(
+          eq(schema.event.title, data.title),
+          eq(schema.event.userId, user.id)
+        )
+      );
+    
+    console.log("Updated repeated events:", updatedEvents);
+    return updatedEvents;
   });
 
 export const deleteEventDataFn = createServerFn({ method: "POST" })

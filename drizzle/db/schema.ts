@@ -35,6 +35,7 @@ export type UpdateEvent = z.infer<typeof eventUpdateSchema>;
 export type CalendarEvent = z.infer<typeof calendarEventSchema>;
 export type EventColor = (typeof eventColors)[number];
 export type Genre = (typeof genres)[number];
+export type RepeatOption = (typeof repeatOptions)[number];
 
 export type Comment = z.infer<typeof commentSchema>;
 export type NewComment = z.infer<typeof commentInsertSchema>;
@@ -226,6 +227,8 @@ const genres = [
   "Instrumental",
 ] as const;
 
+const repeatOptions = ["none", "daily", "weekly", "monthly", "yearly"] as const;
+
 export const event = pgTable("event", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
@@ -234,6 +237,7 @@ export const event = pgTable("event", {
   address: text("address").notNull(),
   color: text("color").$type<EventColor>().notNull().default("Blue"),
   genre: text("genre").$type<Genre>().notNull().default("Indie"),
+  repeat: text("repeat").$type<RepeatOption>().notNull().default("none"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
@@ -313,6 +317,7 @@ export const eventInsertSchema = createInsertSchema(event, {
       "Please provide a description for your event (at least 2 characters)"
     ),
   venue: z.string().optional().nullable(),
+  repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   address: z
     .string()
     .min(2, "Please enter the event location address (at least 2 characters)"),
@@ -352,6 +357,8 @@ export const eventInsertSchema = createInsertSchema(event, {
     "Acoustic",
     "Instrumental",
   ]),
+  startDate: z.date(),
+  endDate: z.date(),
   latitude: z.string(),
   longitude: z.string(),
   createdAt: z.date().optional(),
@@ -386,6 +393,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   longitude: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
+  repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   updatedAt: z.date().optional(),
   color: z
     .enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"])
@@ -440,6 +448,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
 export const calendarEventSchema = eventSchema.extend({
   id: z.string().uuid(),
   userId: z.string().uuid().nullable().optional(),
+  repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   createdAt: z.date().optional(), // Optional for new events
 });
 

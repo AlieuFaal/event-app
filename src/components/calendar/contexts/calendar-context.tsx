@@ -164,6 +164,7 @@ export function CalendarProvider2({
 			...event,
 			userId: event.userId || null,
 			venue: event.venue || null,
+			repeat: event.repeat || "none",
 			createdAt: new Date(),
 		};
 
@@ -183,6 +184,7 @@ export function CalendarProvider2({
 			...event,
 			userId: event.userId || null,
 			venue: event.venue || null,
+			repeat: event.repeat || "none",
 			createdAt: new Date(),
 			startDate: new Date(event.startDate),
 			endDate: new Date(event.endDate),

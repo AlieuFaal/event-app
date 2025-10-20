@@ -13,7 +13,7 @@ import { Input } from "../shadcn/ui/input"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postEventDataFn } from "@/services/eventService";
+import { postEventDataFn, repeatEventsFn } from "@/services/eventService";
 import { eventInsertSchema, User } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
@@ -88,7 +88,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                 return;
             }
 
-            await postEventDataFn({
+            await repeatEventsFn({
                 data: dataToSend
             });
 
@@ -107,7 +107,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         form.setValue("address", e.target.value);
     }
-    
+
     return (
         <div className="flex flex-col max-w-7xl mx-auto my-4 md:my-8 lg:my-10 px-4">
             <Card className="p-4 md:p-8 lg:p-10 bg-primary-foreground">
@@ -267,6 +267,30 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         </FormControl>
                                         <FormDescription className="relative left-3">
                                             {m.form_end_date_description()}
+                                        </FormDescription>
+                                    </FormItem>
+                                )} >
+                                </FormField>
+
+                                <FormField control={form.control} name="repeat" render={({ field }) => (
+                                    <FormItem >
+                                        <FormLabel className="relative left-3">{m.form_repeat_label()}</FormLabel>
+                                        <FormControl>
+                                            <Select onValueChange={field.onChange} defaultValue={"none"}>
+                                                <SelectTrigger className="w-full h-9">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">{m.form_repeat_none()}</SelectItem>
+                                                    <SelectItem value="daily">{m.form_repeat_daily()}</SelectItem>
+                                                    <SelectItem value="weekly">{m.form_repeat_weekly()}</SelectItem>
+                                                    <SelectItem value="monthly">{m.form_repeat_monthly()}</SelectItem>
+                                                    <SelectItem value="yearly">{m.form_repeat_yearly()}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormDescription className="relative left-3">
+                                            {m.form_repeat_description()}
                                         </FormDescription>
                                     </FormItem>
                                 )} >

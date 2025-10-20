@@ -40,6 +40,10 @@ import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
 import { AddressAutofill, useAddressAutofillCore } from "@mapbox/search-js-react";
+import { updateAllRepeatedEventsFn } from "@/services/eventService";
+import { is } from "drizzle-orm";
+import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogFooter, DialogHeader } from "@/components/shadcn/ui/dialog";
 
 
 interface IProps {
@@ -58,6 +62,7 @@ export function AddEditEventDialog({
 	currentUser,
 }: IProps) {
 	const { isOpen, onClose, onToggle } = useDisclosure();
+	const [dialogOpen, setDialogOpen] = useState(false);
 	const { addEvent, updateEvent } = useCalendar();
 	const [autofillResponse, setAutofillResponse] = useState<{ suggestions: any[] }>({ suggestions: [] });
 	const isEditing = !!event;
@@ -118,6 +123,8 @@ export function AddEditEventDialog({
 
 	const { data: session } = authClient.useSession()
 
+	const isRepeatedEvent = event && ["daily", "weekly", "monthly", "yearly"].includes((event.repeat as string) || "");
+
 	const onSubmit = async (values: TEventFormData) => {
 		try {
 			const formattedEvent = {
@@ -127,14 +134,17 @@ export function AddEditEventDialog({
 				venue: values.venue || null,
 			};
 
-			if (isEditing) {
+			if (isEditing && isRepeatedEvent !== true) {
 				if (!session) {
 					toast.error("You must be logged in to edit an event.");
 					return;
 				}
 				await updateEvent(formattedEvent);
 				toast.success("Event updated successfully");
-			} else {
+			} else if (isEditing && isRepeatedEvent === true) {
+				await updateAllRepeatedEventsFn({ data: formattedEvent });
+			}
+			else {
 				if (!session) {
 					toast.error("You must be logged in to create an event.");
 					return;
@@ -183,7 +193,7 @@ export function AddEditEventDialog({
 				<Form {...form}>
 					<form
 						id="event-form"
-						onSubmit={form.handleSubmit(onSubmit)}
+						// onSubmit={form.handleSubmit(onSubmit)}
 						className="grid gap-4 py-4"
 						autoComplete="off"
 						autoSave="off"
@@ -295,6 +305,33 @@ export function AddEditEventDialog({
 								<DateTimePicker form={form} field={field} />
 							)}
 						/>
+						{!isEditing && (
+							<FormField
+								control={form.control}
+								name="repeat"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="required">{m.form_repeat_label()}</FormLabel>
+										<FormControl>
+											<Select onValueChange={field.onChange} defaultValue={"none"}>
+												<SelectTrigger className="w-full h-9">
+													<SelectValue />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="none">{m.form_repeat_none()}</SelectItem>
+													<SelectItem value="daily">{m.form_repeat_daily()}</SelectItem>
+													<SelectItem value="weekly">{m.form_repeat_weekly()}</SelectItem>
+													<SelectItem value="monthly">{m.form_repeat_monthly()}</SelectItem>
+													<SelectItem value="yearly">{m.form_repeat_yearly()}</SelectItem>
+												</SelectContent>
+											</Select>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
+
 						<FormField
 							control={form.control}
 							name="color"
@@ -380,13 +417,27 @@ export function AddEditEventDialog({
 							{m.button_cancel()}
 						</Button>
 					</ModalClose>
-					<Button
-						form="event-form"
-						type="submit"
-						onClick={form.handleSubmit(onSubmit)}
-					>
-						{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
-					</Button>
+					<Modal open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
+						<Button
+							form="event-form"
+							onClick={() => setDialogOpen(true)}
+						>
+							{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
+						</Button>
+						{isEditing &&  isRepeatedEvent === true && (
+							<ModalContent>
+								<ModalHeader>
+									<ModalTitle>Would you like to update all reoccuring events?</ModalTitle>
+								</ModalHeader>
+								<div className="flex justify-center mt-5">
+									<ModalFooter className="flex justify-between gap-5">
+										<Button variant="outline" className="hover:bg-green-400/10">Yes</Button>
+										<Button variant="outline">No</Button>
+									</ModalFooter>
+								</div>
+							</ModalContent>
+						)}
+					</Modal>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

@@ -16,8 +16,8 @@ export const Route = createRootRoute({
     const user = await getSessionUserFn()
     const isAuthenticated = !!user
 
-    console.log("Current User in Root Route:", user?.name);
-    console.log("Is Authenticated in Root Route:", isAuthenticated);
+    // console.log("Current User in Root Route:", user?.name);
+    // console.log("Is Authenticated in Root Route:", isAuthenticated);
 
     return { currentUser: user, IsAuthenticated: isAuthenticated }
   },
