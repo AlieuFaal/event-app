@@ -7,7 +7,6 @@ import {
   check,
   uuid,
   primaryKey,
-  pgView,
 } from "drizzle-orm/pg-core";
 import {
   createSelectSchema,

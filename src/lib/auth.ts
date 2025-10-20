@@ -64,7 +64,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
       const { data, error } = await resend.emails.send({
-        from: "VibeSpot@resend.dev",
+        from: "VibeSpot <onboarding@resend.dev",
         to: user.email,
         subject: "Verify your email",
         html: `Click the link to verify your email: ${url}`,
