@@ -39,11 +39,8 @@ import { calendarFormSchema, type TEventFormData } from "@/components/calendar/s
 import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
-import { AddressAutofill, useAddressAutofillCore } from "@mapbox/search-js-react";
+import { AddressAutofill } from "@mapbox/search-js-react";
 import { updateAllRepeatedEventsFn } from "@/services/eventService";
-import { is } from "drizzle-orm";
-import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
-import { DialogFooter, DialogHeader } from "@/components/shadcn/ui/dialog";
 
 
 interface IProps {
@@ -64,7 +61,6 @@ export function AddEditEventDialog({
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const { addEvent, updateEvent } = useCalendar();
-	const [autofillResponse, setAutofillResponse] = useState<{ suggestions: any[] }>({ suggestions: [] });
 	const isEditing = !!event;
 
 	const initialDates = useMemo(() => {
@@ -125,7 +121,22 @@ export function AddEditEventDialog({
 
 	const isRepeatedEvent = event && ["daily", "weekly", "monthly", "yearly"].includes((event.repeat as string) || "");
 
-	const onSubmit = async (values: TEventFormData) => {
+	const handleFormSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		
+		// Validate form first
+		form.handleSubmit((values) => {
+			// If editing a repeated event, show confirmation dialog
+			if (isEditing && isRepeatedEvent) {
+				setDialogOpen(true);
+			} else {
+				// Otherwise proceed with normal submission
+				onSubmit(values, false);
+			}
+		})();
+	};
+
+	const onSubmit = async (values: TEventFormData, updateAll: boolean) => {
 		try {
 			const formattedEvent = {
 				...values,
@@ -134,22 +145,26 @@ export function AddEditEventDialog({
 				venue: values.venue || null,
 			};
 
-			if (isEditing && isRepeatedEvent !== true) {
+			if (isEditing && isRepeatedEvent && updateAll) {
+				if (!session) {
+					toast.error("You must be logged in to edit an event.");
+					return;
+				}
+				await updateAllRepeatedEventsFn({ data: formattedEvent });
+				toast.success("All repeated events updated successfully");
+			} else if (isEditing && !updateAll) {
 				if (!session) {
 					toast.error("You must be logged in to edit an event.");
 					return;
 				}
 				await updateEvent(formattedEvent);
 				toast.success("Event updated successfully");
-			} else if (isEditing && isRepeatedEvent === true) {
-				await updateAllRepeatedEventsFn({ data: formattedEvent });
-			}
-			else {
+			} else {
 				if (!session) {
 					toast.error("You must be logged in to create an event.");
 					return;
 				}
-				else if (values.latitude === "" || values.longitude === "") {
+				if (values.latitude === "" || values.longitude === "") {
 					toast.error("Please select a valid address from the suggestions.");
 					console.log("Latitude or Longitude is empty:", values.latitude, values.longitude);
 					return;
@@ -158,6 +173,7 @@ export function AddEditEventDialog({
 				toast.success("Event created successfully");
 			}
 
+			setDialogOpen(false);
 			onClose();
 			form.reset();
 		} catch (error) {
@@ -193,7 +209,7 @@ export function AddEditEventDialog({
 				<Form {...form}>
 					<form
 						id="event-form"
-						// onSubmit={form.handleSubmit(onSubmit)}
+						onSubmit={handleFormSubmit}
 						className="grid gap-4 py-4"
 						autoComplete="off"
 						autoSave="off"
@@ -233,6 +249,7 @@ export function AddEditEventDialog({
 											id="venue"
 											placeholder={m.form_venue_placeholder()}
 											{...field}
+											value={field.value || ''}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -417,29 +434,45 @@ export function AddEditEventDialog({
 							{m.button_cancel()}
 						</Button>
 					</ModalClose>
-					<Modal open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
-						<Button
-							form="event-form"
-							onClick={() => setDialogOpen(true)}
-						>
-							{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
-						</Button>
-						{isEditing &&  isRepeatedEvent === true && (
-							<ModalContent>
-								<ModalHeader>
-									<ModalTitle>Would you like to update all reoccuring events?</ModalTitle>
-								</ModalHeader>
-								<div className="flex justify-center mt-5">
-									<ModalFooter className="flex justify-between gap-5">
-										<Button variant="outline" className="hover:bg-green-400/10">Yes</Button>
-										<Button variant="outline">No</Button>
-									</ModalFooter>
-								</div>
-							</ModalContent>
-						)}
-					</Modal>
+					<Button
+						type="submit"
+						form="event-form"
+					>
+						{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
+					</Button>
 				</ModalFooter>
 			</ModalContent>
+
+			{/* Confirmation dialog for updating repeated events */}
+			<Modal open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
+				<ModalContent>
+					<ModalHeader>
+						<ModalTitle>Update Repeated Events</ModalTitle>
+						<ModalDescription>
+							This is a repeating event. Would you like to update all occurrences or just this one?
+						</ModalDescription>
+					</ModalHeader>
+					<ModalFooter className="flex justify-center gap-4 mt-4">
+						<Button 
+							variant="outline" 
+							className="hover:bg-green-400/10"
+							onClick={() => {
+								form.handleSubmit((values) => onSubmit(values, true))();
+							}}
+						>
+							Update All Events
+						</Button>
+						<Button 
+							variant="outline"
+							onClick={() => {
+								form.handleSubmit((values) => onSubmit(values, false))();
+							}}
+						>
+							Update Only This Event
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</Modal>
 	);
 }

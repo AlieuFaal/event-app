@@ -13,7 +13,7 @@ import { Input } from "../shadcn/ui/input"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postEventDataFn, repeatEventsFn } from "@/services/eventService";
+import { repeatEventsFn } from "@/services/eventService";
 import { eventInsertSchema, User } from "drizzle/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { router } from "@/router";
@@ -31,12 +31,15 @@ import {
     SelectValue,
 } from "../shadcn/ui/select";
 import { GENRES } from "../calendar/constants";
+import { useState } from "react";
 
 interface EventCardProps {
     currentUser: User | null;
 }
 
 export default function EventCard({ currentUser: _currentUser }: EventCardProps) {
+
+    const [showRepeatEndDate, setShowRepeatEndDate] = useState(false);
 
     const getDefaultStartDate = () => {
         const tomorrow = new Date();
@@ -276,7 +279,13 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     <FormItem >
                                         <FormLabel className="relative left-3">{m.form_repeat_label()}</FormLabel>
                                         <FormControl>
-                                            <Select onValueChange={field.onChange} defaultValue={"none"}>
+                                            <Select 
+                                                onValueChange={(value) => {
+                                                    field.onChange(value);
+                                                    setShowRepeatEndDate(value !== "none");
+                                                }} 
+                                                defaultValue={"none"}
+                                            >
                                                 <SelectTrigger className="w-full h-9">
                                                     <SelectValue />
                                                 </SelectTrigger>
@@ -296,6 +305,24 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 )} >
                                 </FormField>
                             </div>
+
+                            {showRepeatEndDate && (
+                                <div className="flex justify-center mt-6">
+                                    <FormField control={form.control} name="repeatEndDate" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="relative left-3">End Repeat Date (Optional)</FormLabel>
+                                            <FormControl>
+                                                <Calendar24 value={field.value ?? undefined} onChange={field.onChange} />
+                                            </FormControl>
+                                            <FormDescription className="relative left-3">
+                                                Choose when to stop repeating this event. Leave empty for default duration.
+                                            </FormDescription>
+                                        </FormItem>
+                                    )} >
+                                    </FormField>
+                                </div>
+                            )}
+
                             <div className="flex justify-center">
                                 <Button type="submit">
                                     {m.button_submit_event()}

@@ -238,6 +238,8 @@ export const event = pgTable("event", {
   color: text("color").$type<EventColor>().notNull().default("Blue"),
   genre: text("genre").$type<Genre>().notNull().default("Indie"),
   repeat: text("repeat").$type<RepeatOption>().notNull().default("none"),
+  repeatGroupId: uuid("repeat_group_id"),
+  repeatEndDate: timestamp("repeat_end_date"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
@@ -318,6 +320,8 @@ export const eventInsertSchema = createInsertSchema(event, {
     ),
   venue: z.string().optional().nullable(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
+  repeatGroupId: z.string().uuid().optional().nullable(),
+  repeatEndDate: z.date().optional().nullable(),
   address: z
     .string()
     .min(2, "Please enter the event location address (at least 2 characters)"),
@@ -449,6 +453,8 @@ export const calendarEventSchema = eventSchema.extend({
   id: z.string().uuid(),
   userId: z.string().uuid().nullable().optional(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
+  repeatGroupId: z.string().uuid().optional().nullable(),
+  repeatEndDate: z.date().optional().nullable(),
   createdAt: z.date().optional(), // Optional for new events
 });
 

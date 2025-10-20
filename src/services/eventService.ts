@@ -13,7 +13,6 @@ import { db } from "drizzle";
 import { eq, and, gte } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import { toast } from "sonner";
-import { Repeat } from "lucide-react";
 
 export const getEventDataFn = createServerFn({
   method: "GET",
@@ -204,28 +203,58 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
         );
       }
 
-      const event = await db
-        .insert(schema.event)
-        .values({
-          title: data.title,
-          description: data.description,
-          venue: data.venue,
-          address: data.address,
-          color: data.color,
-          genre: data.genre,
-          repeat: data.repeat,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          latitude: data.latitude,
-          longitude: data.longitude,
-          userId: user.id,
-          createdAt: new Date(),
-        })
-        .returning();
+      // If no repeat, create single event
+      if (data.repeat === "none" || !data.repeat) {
+        const event = await db
+          .insert(schema.event)
+          .values({
+            title: data.title,
+            description: data.description,
+            venue: data.venue,
+            address: data.address,
+            color: data.color,
+            genre: data.genre,
+            repeat: "none",
+            repeatGroupId: null,
+            repeatEndDate: null,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            userId: user.id,
+            createdAt: new Date(),
+          })
+          .returning();
 
-      if (data.repeat === "none") {
-        return event;
+        return { initialEvent: event, repeatedEvents: [] };
       }
+
+      // Generate a unique group ID for all repeated events
+      const repeatGroupId = crypto.randomUUID();
+
+      // Calculate repeat end date based on user input or defaults
+      const customRepeatEndDate = (startDate: Date, repeat: string, customEndDate?: Date | null) => {
+        if (customEndDate) {
+          return customEndDate;
+        }
+
+        const endDate = new Date(startDate);
+        switch (repeat) {
+          case "daily":
+            endDate.setFullYear(endDate.getFullYear() + 1);
+            break;
+          case "weekly":
+            endDate.setFullYear(endDate.getFullYear() + 1);
+            break;
+          case "monthly":
+            endDate.setFullYear(endDate.getFullYear() + 2);
+            break;
+          case "yearly":
+            endDate.setFullYear(endDate.getFullYear() + 10);
+            break;
+        }
+        return endDate;
+      };
 
       const addInterval = (date: Date, repeat: string) => {
         const newDate = new Date(date);
@@ -246,51 +275,40 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
         return newDate;
       };
 
+      const repeatEndDate = customRepeatEndDate(data.startDate, data.repeat, data.repeatEndDate);
+
+      // Create initial event
+      const initialEvent = await db
+        .insert(schema.event)
+        .values({
+          title: data.title,
+          description: data.description,
+          venue: data.venue,
+          address: data.address,
+          color: data.color,
+          genre: data.genre,
+          repeat: data.repeat,
+          repeatGroupId: repeatGroupId,
+          repeatEndDate: repeatEndDate,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          userId: user.id,
+          createdAt: new Date(),
+        })
+        .returning();
+
+      // Generate repeated events
       const repeatedEventsArray = [];
-      let currentStartDate = new Date(data.startDate);
-      let currentEndDate = new Date(data.endDate);
+      let currentStartDate = addInterval(new Date(data.startDate), data.repeat);
+      let currentEndDate = addInterval(new Date(data.endDate), data.repeat);
 
-      switch (data.repeat) {
-        case "daily":
-          currentStartDate = addInterval(currentStartDate, data.repeat!);
-          currentEndDate = addInterval(currentEndDate, data.repeat!);
-          break;
-        case "weekly":
-          currentStartDate = addInterval(currentStartDate, data.repeat!);
-          currentEndDate = addInterval(currentEndDate, data.repeat!);
-          break;
-        case "monthly":
-          currentStartDate = addInterval(currentStartDate, data.repeat!);
-          currentEndDate = addInterval(currentEndDate, data.repeat!);
-          break;
-        case "yearly":
-          currentStartDate = addInterval(currentStartDate, data.repeat!);
-          currentEndDate = addInterval(currentEndDate, data.repeat!);
-          break;
-        default:
-          break;
-      }
+      // Limit to prevent infinite loops (max 500 occurrences)
+      let count = 0;
+      const maxOccurrences = 500;
 
-      const endDateLimit = new Date();
-
-      switch (data.repeat) {
-        case "daily":
-          endDateLimit.setDate(endDateLimit.getDate() + 1 * 365);
-          break;
-        case "weekly":
-          endDateLimit.setDate(endDateLimit.getDate() + 52 * 5);
-          break;
-        case "monthly":
-          endDateLimit.setMonth(endDateLimit.getMonth() + 12 * 5);
-          break;
-        case "yearly":
-          endDateLimit.setFullYear(endDateLimit.getFullYear() + 10);
-          break;
-        default:
-          break;
-      }
-
-      while (currentStartDate <= endDateLimit) {
+      while (currentStartDate <= repeatEndDate && count < maxOccurrences) {
         const repeatedEvent = await db
           .insert(schema.event)
           .values({
@@ -301,6 +319,8 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
             color: data.color,
             genre: data.genre,
             repeat: data.repeat,
+            repeatGroupId: repeatGroupId,
+            repeatEndDate: repeatEndDate,
             startDate: currentStartDate,
             endDate: currentEndDate,
             latitude: data.latitude,
@@ -312,11 +332,14 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
 
         repeatedEventsArray.push(repeatedEvent);
 
-        currentStartDate = addInterval(currentStartDate, data.repeat!);
-        currentEndDate = addInterval(currentEndDate, data.repeat!);
+        currentStartDate = addInterval(currentStartDate, data.repeat);
+        currentEndDate = addInterval(currentEndDate, data.repeat);
+        count++;
       }
 
-      return { initialEvent: event, repeatedEvents: repeatedEventsArray };
+      console.log(`Created ${count + 1} repeated events with group ID: ${repeatGroupId}`);
+
+      return { initialEvent, repeatedEvents: repeatedEventsArray };
     } catch (error) {
       console.error("Error inserting repeating events:", error);
       throw error;
@@ -360,7 +383,19 @@ export const putEventDataFn = createServerFn({ method: "POST" })
     if (!user?.id || user.role === "user") {
       throw new Error("User not authenticated or authorized to handle events");
     }
+
+    // First, get the event to find its repeatGroupId
+    const [currentEvent] = await db
+      .select()
+      .from(schema.event)
+      .where(eq(schema.event.id, data.id))
+      .limit(1);
+
+    if (!currentEvent || !currentEvent.repeatGroupId) {
+      throw new Error("Event not found or is not a repeated event");
+    }
     
+    // Update all events in the repeat group
     const updatedEvents = await db
       .update(schema.event)
       .set({
@@ -370,18 +405,16 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         address: data.address,
         color: data.color,
         genre: data.genre,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        userId: user.id,
       })
       .where(
         and(
-          eq(schema.event.title, data.title),
+          eq(schema.event.repeatGroupId, currentEvent.repeatGroupId),
           eq(schema.event.userId, user.id)
         )
-      );
+      )
+      .returning();
     
-    console.log("Updated repeated events:", updatedEvents);
+    console.log(`Updated ${updatedEvents.length} repeated events in group ${currentEvent.repeatGroupId}`);
     return updatedEvents;
   });
 
@@ -402,6 +435,97 @@ export const deleteEventDataFn = createServerFn({ method: "POST" })
 
     return { deletedCount };
   });
+
+export const deleteAllRepeatedEventsFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(calendarEventSchema.pick({ id: true }))
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user?.id || user.role === "user") {
+      throw new Error("User not authenticated or authorized to handle events");
+    }
+
+    // Get the event to find its repeatGroupId
+    const [currentEvent] = await db
+      .select()
+      .from(schema.event)
+      .where(eq(schema.event.id, data.id))
+      .limit(1);
+
+    if (!currentEvent || !currentEvent.repeatGroupId) {
+      throw new Error("Event not found or is not a repeated event");
+    }
+
+    // Delete all events in the repeat group
+    const deletedEvents = await db
+      .delete(schema.event)
+      .where(
+        and(
+          eq(schema.event.repeatGroupId, currentEvent.repeatGroupId),
+          eq(schema.event.userId, user.id)
+        )
+      )
+      .returning();
+
+    console.log(`Deleted ${deletedEvents.length} repeated events in group ${currentEvent.repeatGroupId}`);
+
+    return { deletedCount: deletedEvents.length };
+  });
+
+export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(z.object({ 
+    id: z.string().uuid(), 
+    repeatEndDate: z.date() 
+  }))
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user?.id || user.role === "user") {
+      throw new Error("User not authenticated or authorized to handle events");
+    }
+
+    // Get the event to find its repeatGroupId
+    const [currentEvent] = await db
+      .select()
+      .from(schema.event)
+      .where(eq(schema.event.id, data.id))
+      .limit(1);
+
+    if (!currentEvent || !currentEvent.repeatGroupId) {
+      throw new Error("Event not found or is not a repeated event");
+    }
+
+    // Delete events after the new end date
+    const deletedEvents = await db
+      .delete(schema.event)
+      .where(
+        and(
+          eq(schema.event.repeatGroupId, currentEvent.repeatGroupId),
+          eq(schema.event.userId, user.id),
+          gte(schema.event.startDate, data.repeatEndDate)
+        )
+      )
+      .returning();
+
+    // Update the repeatEndDate for remaining events
+    const updatedEvents = await db
+      .update(schema.event)
+      .set({
+        repeatEndDate: data.repeatEndDate,
+      })
+      .where(
+        and(
+          eq(schema.event.repeatGroupId, currentEvent.repeatGroupId),
+          eq(schema.event.userId, user.id)
+        )
+      )
+      .returning();
+
+    console.log(`Updated repeat end date for ${updatedEvents.length} events, deleted ${deletedEvents.length} future events`);
+
+    return { updatedCount: updatedEvents.length, deletedCount: deletedEvents.length };
+  });
+
 
 export const postCalendarEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
