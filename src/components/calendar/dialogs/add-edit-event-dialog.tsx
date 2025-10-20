@@ -443,7 +443,6 @@ export function AddEditEventDialog({
 				</ModalFooter>
 			</ModalContent>
 
-			{/* Confirmation dialog for updating repeated events */}
 			<Modal open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
 				<ModalContent>
 					<ModalHeader>

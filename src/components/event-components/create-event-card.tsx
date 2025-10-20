@@ -76,10 +76,6 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
 
     const onSubmit = async (values: z.infer<typeof eventInsertSchema>) => {
         try {
-            // if (currentUser.role !== "artist" && currentUser.role !== "admin") {
-            //     toast.error(m.toast_event_create_role());
-            //     return;
-            // }
             const dataToSend = {
                 ...values,
                 userId: session?.user.id,

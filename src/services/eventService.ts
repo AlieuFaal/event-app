@@ -203,7 +203,6 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
         );
       }
 
-      // If no repeat, create single event
       if (data.repeat === "none" || !data.repeat) {
         const event = await db
           .insert(schema.event)
@@ -229,10 +228,8 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
         return { initialEvent: event, repeatedEvents: [] };
       }
 
-      // Generate a unique group ID for all repeated events
       const repeatGroupId = crypto.randomUUID();
 
-      // Calculate repeat end date based on user input or defaults
       const customRepeatEndDate = (startDate: Date, repeat: string, customEndDate?: Date | null) => {
         if (customEndDate) {
           return customEndDate;
@@ -277,7 +274,6 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
 
       const repeatEndDate = customRepeatEndDate(data.startDate, data.repeat, data.repeatEndDate);
 
-      // Create initial event
       const initialEvent = await db
         .insert(schema.event)
         .values({
@@ -299,12 +295,10 @@ export const repeatEventsFn = createServerFn({ method: "POST" })
         })
         .returning();
 
-      // Generate repeated events
       const repeatedEventsArray = [];
       let currentStartDate = addInterval(new Date(data.startDate), data.repeat);
       let currentEndDate = addInterval(new Date(data.endDate), data.repeat);
 
-      // Limit to prevent infinite loops (max 500 occurrences)
       let count = 0;
       const maxOccurrences = 500;
 
@@ -384,7 +378,6 @@ export const putEventDataFn = createServerFn({ method: "POST" })
       throw new Error("User not authenticated or authorized to handle events");
     }
 
-    // First, get the event to find its repeatGroupId
     const [currentEvent] = await db
       .select()
       .from(schema.event)
@@ -395,7 +388,6 @@ export const putEventDataFn = createServerFn({ method: "POST" })
       throw new Error("Event not found or is not a repeated event");
     }
     
-    // Update all events in the repeat group
     const updatedEvents = await db
       .update(schema.event)
       .set({
@@ -445,7 +437,6 @@ export const deleteAllRepeatedEventsFn = createServerFn({ method: "POST" })
       throw new Error("User not authenticated or authorized to handle events");
     }
 
-    // Get the event to find its repeatGroupId
     const [currentEvent] = await db
       .select()
       .from(schema.event)
@@ -456,7 +447,6 @@ export const deleteAllRepeatedEventsFn = createServerFn({ method: "POST" })
       throw new Error("Event not found or is not a repeated event");
     }
 
-    // Delete all events in the repeat group
     const deletedEvents = await db
       .delete(schema.event)
       .where(
@@ -484,7 +474,6 @@ export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
       throw new Error("User not authenticated or authorized to handle events");
     }
 
-    // Get the event to find its repeatGroupId
     const [currentEvent] = await db
       .select()
       .from(schema.event)
@@ -495,7 +484,6 @@ export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
       throw new Error("Event not found or is not a repeated event");
     }
 
-    // Delete events after the new end date
     const deletedEvents = await db
       .delete(schema.event)
       .where(
@@ -507,7 +495,6 @@ export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
       )
       .returning();
 
-    // Update the repeatEndDate for remaining events
     const updatedEvents = await db
       .update(schema.event)
       .set({

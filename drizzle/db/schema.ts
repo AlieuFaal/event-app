@@ -455,7 +455,7 @@ export const calendarEventSchema = eventSchema.extend({
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   repeatGroupId: z.string().uuid().optional().nullable(),
   repeatEndDate: z.date().optional().nullable(),
-  createdAt: z.date().optional(), // Optional for new events
+  createdAt: z.date().optional(), 
 });
 
 // Comment table -------------------------------------------------------------------------------------------------------------
