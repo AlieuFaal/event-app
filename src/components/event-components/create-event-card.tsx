@@ -178,9 +178,9 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                         form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
                                     }}
                                     onSuggestError={(e: any) => console.log(e)}
-                                    browserAutofillEnabled={true}
-                                    confirmOnBrowserAutofill={true}
-                                    options={{ country: 'se', streets: true }}
+                                    browserAutofillEnabled={false}
+                                    confirmOnBrowserAutofill={false}
+                                    options={{ country: 'se', streets: true, proximity: 'ip', limit: 5}}
                                     theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
                                 >
                                     <FormField
@@ -190,7 +190,7 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                             <FormItem>
                                                 <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder={m.form_address_placeholder()} {...field} value={field.value} onChange={handleChange} autoComplete="address-line3" className="h-9" />
+                                                    <Input placeholder={m.form_address_placeholder()} {...field} value={field.value} onChange={handleChange} autoComplete="street-address" className="h-9" />
                                                 </FormControl>
                                                 <FormDescription className="relative left-3 text-xs">
                                                     {m.form_address_description()}

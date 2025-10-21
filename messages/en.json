@@ -248,5 +248,9 @@
   "add_edit_option_all": "Update All Events",
   "add_edit_option_single": "Update Only This Event",
   "end_repeat_date_label": "End Repeat Date (Optional):",
-  "end_repeat_date_description": "Choose when to stop repeating this event. Leave empty for default duration."
+  "end_repeat_date_description": "Choose when to stop repeating this event. Leave empty for default duration.",
+  "details_delete_modal_title": "Would you like to delete all occurrences of this event?",
+  "details_delete_modal_description": "This is a repeating event. Would you like to delete all occurrences or just this one?",
+  "details_delete_option_all": "Delete All Events",
+  "details_delete_option_single": "Delete This Event Only"
 }

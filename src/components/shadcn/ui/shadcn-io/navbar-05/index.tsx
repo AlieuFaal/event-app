@@ -96,8 +96,6 @@ const defaultNavigationLinks: Navbar05NavItem[] = [
   { href: '/events', label: m.nav_events() },
   { href: '/event-calendar', label: m.nav_calendar() },
   { href: '/event-map', label: m.nav_map() },
-  // { href: '/map', label: 'Map' },
-  // { href: '/about', label: 'About Us' },
 ];
 
 function onClickHandler(route: string) {
@@ -343,15 +341,9 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                     <NavigationMenuList className="flex-col items-start gap-0">
                       {filteredNavLinks.map((link, index) => (
                         <NavigationMenuItem key={index} className="w-full">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (onNavItemClick && link.href) onNavItemClick(link.href);
-                            }}
-                            className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline"
-                          >
-                            {link.label}
-                          </button>
+                          <NavigationMenuLink asChild className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline">
+                            <Link to={link.href}>{link.label}</Link>
+                          </NavigationMenuLink>
                         </NavigationMenuItem>
                       ))}
                     </NavigationMenuList>
@@ -377,7 +369,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                   <NavigationMenuList className="gap-1">
                     {filteredNavLinks.map((link, index) => (
                       <NavigationMenuItem key={index}>
-                        <NavigationMenuLink asChild className="text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                        <NavigationMenuLink asChild className="text-muted-foreground font-medium transition-colors cursor-pointer group inline-flex h-8 w-max items-center justify-center rounded-lg bg-transparent px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                           <Link to={link.href}>{link.label}</Link>
                         </NavigationMenuLink>
                       </NavigationMenuItem>

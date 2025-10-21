@@ -82,7 +82,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {ctx.IsAuthenticated && (
           <Header currentUser={ctx.currentUser} theme={theme} />
         )}
-        <main className="flex-1 max-w-350 min-h--10 min-w-3xl mx-auto">
+        <main className="flex-1 min-h--10 min-w-3xl mx-auto">
           {children}
         </main>
         {hideFooter && (

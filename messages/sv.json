@@ -247,5 +247,9 @@
   "add_edit_option_all": "Uppdatera Alla Evenemang",
   "add_edit_option_single": "Endast Detta Evenemang",
   "end_repeat_date_label": "Slutdatum för Upprepning (Valfritt):",
-  "end_repeat_date_description": "Välj när upprepningen av detta evenemang ska sluta. Lämna fältet tomt för standardvaraktighet."
+  "end_repeat_date_description": "Välj när upprepningen av detta evenemang ska sluta. Lämna fältet tomt för standardvaraktighet.",
+  "delete_modal_title_event": "Vill du radera alla förekomster av detta evenemang?",
+  "delete_modal_description_event": "Detta är ett upprepande evenemang. Vill du radera alla förekomster eller bara detta?",
+  "delete_event_option_all": "Radera Alla Evenemang",
+  "delete_event_option_single": "Endast Detta Evenemang"
 }

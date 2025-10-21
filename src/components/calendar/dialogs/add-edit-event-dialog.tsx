@@ -39,7 +39,7 @@ import { calendarFormSchema, type TEventFormData } from "@/components/calendar/s
 import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
-import { AddressAutofill } from "@mapbox/search-js-react";
+import { AddressAutofill, useAddressAutofillCore } from "@mapbox/search-js-react";
 import { updateAllRepeatedEventsFn } from "@/services/eventService";
 
 
@@ -60,6 +60,8 @@ export function AddEditEventDialog({
 }: IProps) {
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [autofillResponse, setAutofillResponse] = useState<{ suggestions: any[] }>({ suggestions: [] });
 	const { addEvent, updateEvent } = useCalendar();
 	const isEditing = !!event;
 
@@ -179,23 +181,23 @@ export function AddEditEventDialog({
 		}
 	};
 
-	// const addressAutofill = useAddressAutofillCore({ accessToken: import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN });
+	const addressAutofill = useAddressAutofillCore({ accessToken: import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN });
 
-	// const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	form.setValue("address", e.target.value);
+	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		form.setValue("address", e.target.value);
 
-	// 	const searchText = form.getValues("address");
-	// 	const autofillResponse = await addressAutofill.suggest(searchText, { sessionToken: currentUser?.id || '' });
-	// 	setAutofillResponse(autofillResponse);
-	// 	console.log(autofillResponse);
-	// };
+		const searchText = form.getValues("address");
+		const autofillResponse = await addressAutofill.suggest(searchText, { sessionToken: currentUser?.id || '' });
+		setAutofillResponse(autofillResponse);
+		console.log(autofillResponse);
+	};
 
 	return (
 		<Modal open={isOpen} onOpenChange={onToggle} modal={true}>
 			{currentUser?.role !== "user" && (
 				<ModalTrigger onChange={onToggle} asChild>{children}</ModalTrigger>
 			)}
-			<ModalContent>
+			<ModalContent >
 				<ModalHeader>
 					<ModalTitle>{isEditing ? `${m.edit_event_label()}` : `${m.create_event_title()}`}</ModalTitle>
 					<ModalDescription>
@@ -254,7 +256,7 @@ export function AddEditEventDialog({
 							)}
 						/>
 
-						<AddressAutofill
+						{/* <AddressAutofill
 							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
 							onRetrieve={(res: any) => {
 								form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
@@ -263,34 +265,34 @@ export function AddEditEventDialog({
 							onSuggestError={(e: any) => console.log(e)}
 							browserAutofillEnabled={false}
 							confirmOnBrowserAutofill={false}
-							options={{ country: 'se', streets: true }}
+							options={{ country: 'se', streets: true, proximity: 'ip', limit: 3}}
 							theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
-						>
-							<FormField
-								control={form.control}
-								name="address"
-								render={({ field, fieldState }) => (
-									<FormItem>
-										<FormLabel htmlFor="address" className="required">
-											{m.form_address_label()}
-										</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												id="address"
-												placeholder={m.form_address_placeholder()}
-												value={field.value}
-												// onChange={handleChange}
-												autoComplete="address-line3"
-												className={fieldState.invalid ? "border-red-500" : ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</AddressAutofill>
-						{/* {!form.getFieldState("address").isTouched && autofillResponse.suggestions.slice(0, 2).map((suggestion, index) => (
+						> */}
+						<FormField
+							control={form.control}
+							name="address"
+							render={({ field, fieldState }) => (
+								<FormItem>
+									<FormLabel htmlFor="address" className="required">
+										{m.form_address_label()}
+									</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											id="address"
+											placeholder={m.form_address_placeholder()}
+											value={field.value}
+											onChange={handleChange}
+											autoComplete="street-address"
+											className={fieldState.invalid ? "border-red-500" : ""}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{/* </AddressAutofill> */}
+						{!form.getFieldState("address").isTouched && autofillResponse.suggestions.slice(0, 2).map((suggestion, index) => (
 							<div
 								key={index}
 								className="w-full bg-muted p-1 rounded-2xl hover:scale-105 shadow-lg cursor-pointer "
@@ -303,7 +305,7 @@ export function AddEditEventDialog({
 							>
 								{suggestion.place_name}
 							</div>
-						))} */}
+						))}
 
 						<FormField
 							control={form.control}
