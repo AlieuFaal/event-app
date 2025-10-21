@@ -306,12 +306,12 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                 <div className="flex justify-center mt-6">
                                     <FormField control={form.control} name="repeatEndDate" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="relative left-3">End Repeat Date (Optional)</FormLabel>
+                                            <FormLabel className="relative left-3">{m.end_repeat_date_label()}</FormLabel>
                                             <FormControl>
                                                 <Calendar24 value={field.value ?? undefined} onChange={field.onChange} />
                                             </FormControl>
                                             <FormDescription className="relative left-3">
-                                                Choose when to stop repeating this event. Leave empty for default duration.
+                                                {m.end_repeat_date_description()}
                                             </FormDescription>
                                         </FormItem>
                                     )} >

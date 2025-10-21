@@ -123,14 +123,11 @@ export function AddEditEventDialog({
 
 	const handleFormSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		
-		// Validate form first
+
 		form.handleSubmit((values) => {
-			// If editing a repeated event, show confirmation dialog
 			if (isEditing && isRepeatedEvent) {
 				setDialogOpen(true);
 			} else {
-				// Otherwise proceed with normal submission
 				onSubmit(values, false);
 			}
 		})();
@@ -446,30 +443,33 @@ export function AddEditEventDialog({
 			<Modal open={dialogOpen} onOpenChange={setDialogOpen} modal={true}>
 				<ModalContent>
 					<ModalHeader>
-						<ModalTitle>Update Repeated Events</ModalTitle>
+						<ModalTitle>{m.add_edit_modal_title()}</ModalTitle>
 						<ModalDescription>
-							This is a repeating event. Would you like to update all occurrences or just this one?
+							{m.add_edit_modal_description()}
 						</ModalDescription>
 					</ModalHeader>
-					<ModalFooter className="flex justify-center gap-4 mt-4">
-						<Button 
-							variant="outline" 
-							className="hover:bg-green-400/10"
-							onClick={() => {
-								form.handleSubmit((values) => onSubmit(values, true))();
-							}}
-						>
-							Update All Events
-						</Button>
-						<Button 
-							variant="outline"
-							onClick={() => {
-								form.handleSubmit((values) => onSubmit(values, false))();
-							}}
-						>
-							Update Only This Event
-						</Button>
-					</ModalFooter>
+					<div className="flex w-fit">
+						<ModalFooter className="flex justify-center-safe gap-4 mt-4">
+							<Button
+								variant="outline"
+								className=""
+								onClick={() => {
+									form.handleSubmit((values) => onSubmit(values, true))();
+								}}
+							>
+								{m.add_edit_option_all()}
+							</Button>
+							<Button
+								variant="outline"
+								className=""
+								onClick={() => {
+									form.handleSubmit((values) => onSubmit(values, false))();
+								}}
+							>
+								{m.add_edit_option_single()}
+							</Button>
+						</ModalFooter>
+					</div>
 				</ModalContent>
 			</Modal>
 		</Modal>

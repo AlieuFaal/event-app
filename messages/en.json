@@ -242,5 +242,11 @@
   "edit_event_label": "Edit Event",
   "delete_event_description": "This action cannot be undone. This will permanently delete your event and remove event data from our servers.",
   "edit_event_button": "Edit",
-  "toast_event_create_role": "You must be an Artist to create events."
+  "toast_event_create_role": "You must be an Artist to create events.",
+  "add_edit_modal_title": "Update Repeated Events",
+  "add_edit_modal_description": "This is a repeating event. Would you like to update all occurrences or just this one?",
+  "add_edit_option_all": "Update All Events",
+  "add_edit_option_single": "Update Only This Event",
+  "end_repeat_date_label": "End Repeat Date (Optional):",
+  "end_repeat_date_description": "Choose when to stop repeating this event. Leave empty for default duration."
 }
