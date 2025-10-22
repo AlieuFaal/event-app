@@ -8,6 +8,7 @@ import { getLocale } from "../paraglide/runtime.js";
 import { Header } from '@/components/Header.js'
 import { getThemeServerFn } from '@/services/ThemeService.js'
 import React, { useEffect } from 'react'
+import { ThemeProvider } from '@/components/Themeprovider.js'
 
 
 
@@ -74,23 +75,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <html lang={getLocale()} className={`${theme}`} suppressHydrationWarning>
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {ctx.IsAuthenticated && (
-          <Header currentUser={ctx.currentUser} theme={theme} />
-        )}
-        <main className="flex-1 min-h--10 min-w-3xl mx-auto">
-          {children}
-        </main>
-        {hideFooter && (
-          <Footer />
-        )}
-        <Toaster position="top-center" richColors={true} duration={1500} />
-        <Scripts />
-      </body>
-    </html>
+    <ThemeProvider theme={theme}>
+      <html lang={getLocale()} className={`${theme}`} suppressHydrationWarning>
+        <head>
+          <HeadContent />
+        </head>
+        <body className="flex-1 min-h--10 mx-auto">
+          {ctx.IsAuthenticated && (
+            <Header currentUser={ctx.currentUser} />
+          )}
+          <main>
+            {children}
+          </main>
+          {hideFooter && (
+            <Footer />
+          )}
+          <Toaster position="top-center" richColors={true} duration={1500} />
+          <Scripts />
+        </body>
+      </html>
+    </ThemeProvider>
   )
 }

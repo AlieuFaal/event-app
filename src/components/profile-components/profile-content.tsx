@@ -121,7 +121,7 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
 
   return (
     <Tabs defaultValue="personal" className="space-y-6 mt-8">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-4 not-md:grid-cols-2 gap-2">
         <TabsTrigger value="personal">{m.tabs_personal()}</TabsTrigger>
         <TabsTrigger value="account">{m.tabs_account()}</TabsTrigger>
         <TabsTrigger value="security">{m.tabs_security()}</TabsTrigger>

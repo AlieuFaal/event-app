@@ -17,7 +17,7 @@ export default function EventList({ events, users, currentUser }: { events: Even
     });
 
     return (
-        <div className="flex flex-col p-4">
+        <div className="flex flex-col p-4 min-w-md">
             <div className="m-8">
                 {currentMonthEvents.length === 0 && nextMonthEvents.length === 0 && (
                     <p className="text-center text-lg">No events found...</p>

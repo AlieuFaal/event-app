@@ -85,7 +85,7 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
         <>
             <Card onClick={() => setDialogOpen(true)} className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative">
                 <CardContent className="flex flex-row space-x-16">
-                    <div>
+                    <div className="not-md:hidden">
                         <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={randomImage()} alt="" /> {/* Mock för tillfället */}
                     </div>
                     <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-160 relative">
@@ -95,7 +95,7 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                     </div>
                 </CardContent>
                 <Button
-                    className="absolute top-3 right-3"
+                    className="absolute top-3 right-3 not-md:hidden"
                     variant={"ghost"}
                     size={"icon"}
                     onClick={(e) => {
@@ -107,13 +107,13 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                 </Button>
                 <div className="flex justify-end">
                     <div className="flex items-center mx-55">
-                        <div className="border-1 h-fit w-30 bg-muted/70 p-3 rounded-sm shadow-lg flex justify-center">
+                        <div className="border-1 h-fit w-30 bg-muted/70 p-3 rounded-sm shadow-lg flex justify-center not-sm:hidden">
                             <CardDescription className="text-xl text-card-foreground">{event.genre}</CardDescription>
                         </div>
                     </div>
-                    <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-3" >
+                    <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-3 not-sm:flex not-sm:flex-col" >
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">{event.startDate.toUTCString()}</CardDescription>
-                        <div className="">
+                        <div className="not-md:hidden">
                             {<p className="text-gray-600 dark:text-amber-50">{m.event_created_by()} {getEventCreatorName(event)}</p>}
                             {/* <Avatar className="h-7 w-7">
                             <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />

@@ -3,13 +3,14 @@ import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-backgrou
 import { Button } from '@/components/shadcn/ui/button'
 import { getServerMessage } from '@/services/get-server-message'
 import { m } from '@/paraglide/messages'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIsVisible } from '@/hooks/useIsVisible'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/ui/card'
 import { PlaceholderImage2, PlaceholderImage3 } from '@/assets'
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react'
 import { ScrollToPlugin, ScrollSmoother, ScrollTrigger } from 'gsap/all'
+import { useTheme } from '@/components/Themeprovider'
 
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { ctx } = Route.useLoaderData()
+  const { theme } = useTheme()
 
   const ref1 = useRef<HTMLDivElement>(null);
   const isVisible1 = useIsVisible(ref1);
@@ -35,6 +37,35 @@ function App() {
 
   const ref4 = useRef<HTMLDivElement>(null);
   const isVisible4 = useIsVisible(ref4);
+
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
+
+  useEffect(() => {
+    const updateBackgroundColor = () => {
+      if (theme === 'dark') {
+        setBackgroundColor('#0f0f23')
+      } else if (theme === 'light') {
+        setBackgroundColor('#ffffff')
+      } else if (theme === 'system') {
+        const isDark = document.documentElement.classList.contains('dark')
+        setBackgroundColor(isDark ? '#0f0f23' : '#ffffff')
+      }
+    }
+
+    updateBackgroundColor()
+
+    const observer = new MutationObserver(updateBackgroundColor)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    return () => observer.disconnect()
+  }, [theme])
+
+  useEffect(() => {
+    document.body.style.backgroundColor = backgroundColor;
+  }, [backgroundColor])
 
   if (typeof window !== "undefined") {
     gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, ScrollSmoother);
@@ -58,8 +89,8 @@ function App() {
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <div id='section1' ref={ref1} className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} relative h-screen w-full overflow`}>
-          <WavyBackground
-            backgroundFill="#0f0f23"
+            <WavyBackground
+            backgroundFill={backgroundColor}
             colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9"]}
             waveWidth={30}
             blur={15}
@@ -68,27 +99,27 @@ function App() {
             containerClassName="h-full w-full"
             className="flex items-center justify-center">
             <div className="text-center text-white z-10 px-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                VibeSpot
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground">
+              VibeSpot
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl opacity-80">
-                Where music meets the moment
+              <p className="text-lg md:text-xl lg:text-2xl opacity-80 text-foreground">
+              Where music meets the moment
               </p>
               <div className='mt-8 md:mt-12 flex justify-center'>
-                {ctx.IsAuthenticated ? (
-                  <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
-                    <a href="/events">
-                      {m.Home_Button2()}
-                    </a>
-                  </Button>
-                ) : <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
-                  <a href="/signin">
-                    {m.Home_Button()}
-                  </a>
-                </Button>}
+              {ctx.IsAuthenticated ? (
+                <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+                <a href="/events">
+                  {m.Home_Button2()}
+                </a>
+                </Button>
+              ) : <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
+                <a href="/signin">
+                {m.Home_Button()}
+                </a>
+              </Button>}
               </div>
             </div>
-          </WavyBackground>
+            </WavyBackground>
         </div>
         <div id='section2' className="flex flex-col w-full text-center text-white border-t-1 border-b-1">
           <div ref={ref2} className={`transition-opacity ease-in duration-1300 ${isVisible2 ? "opacity-100" : "opacity-0"}`}>

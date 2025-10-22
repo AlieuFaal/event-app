@@ -23,7 +23,7 @@ function ProfileComponent() {
             <div className='flex flex-col justify-center items-center h-screen'>
                 <Spinner className='text-primary' variant='default' size={100} />
             </div>}>
-            <Card className='w-full max-w-full bg-card text-card-foreground shadow-lg border-1 my-5'>
+            <Card className='bg-card text-card-foreground shadow-lg border-1 my-5 w-5/6 mx-auto min-w-sm'>
                 <div className='mx-10 my-5'>
                     <ProfileHeader followersCount={followersCount} followingCount={followingCount} />
                     <ProfileContent currentUser={currentUser}/>

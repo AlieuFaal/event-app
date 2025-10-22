@@ -46,7 +46,7 @@ function EventsComponent() {
 
     return (
         <>
-            <div className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} max-w-350 min-w-3xl mx-auto`} ref={ref1} >
+            <div className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} mx-auto`} ref={ref1} >
                 <div className=''>
                     <EventPageHeader searchInput={searchInput} onSearchChange={setSearchInput} />
                 </div>
