@@ -16,7 +16,9 @@ app.get('/', (c) => {
 });
 
 // Register routes 
-const routes = app.route('/events', events);
+const routes = app
+.route('/events', events);
+// .route('/nånting, nånting);
 
 // Export the routes type 
 export type ApiType = typeof routes;
