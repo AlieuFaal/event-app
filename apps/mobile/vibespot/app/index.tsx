@@ -1,18 +1,30 @@
-import { useEffect } from "react";
-import { Text, View, Appearance, useColorScheme } from "react-native";
+import { useEffect, useState } from "react";
+import { Text, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getData } from "./api/get+api";
+import { apiClient } from "../lib/api-client";
+import { Event } from "@vibespot/database";
 
 export default function HomeScreen() {
+  const [events, setEvents] = useState<any[]>([]);
 
-  const colorScheme = useColorScheme();
-  
+  useEffect(() => {
+    apiClient.events.$get()
+      .then(res => res.json())
+      .then(data => setEvents(data));
+  }, []);
+
   return (
-    <SafeAreaView className="flex-1">
-      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
-        <Text className="text-3xl">asds</Text>
-        <Text className="bg-red-200">Edit app/index.tsx to edit this screen.</Text>
-      </View>
+    <SafeAreaView className="flex-1 bg-white p-4">
+      <Text className="text-2xl mb-4">Events ({events.length})</Text>
+      <FlatList
+        data={events}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View className="p-2 mb-2 border">
+            <Text>{item.name}</Text>
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 }
