@@ -17,10 +17,6 @@ import z from "zod";
 
 // User Types -----------------------------------------------------------------------------------------------------------------
 export type User = z.infer<typeof userSchema>;
-
-// export type UserSession = z.infer<typeof userSessionSchema>;
-
-// export type UserSocial = z.infer<typeof userSocialSchema>;
 export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
@@ -43,7 +39,6 @@ export type UpdateComment = z.infer<typeof commentUpdateSchema>;
 export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
 // Additional Types without db tables -----------------------------------------------------------------------------------------------------------------
-
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
@@ -124,16 +119,6 @@ export const onboardingSchema = userFormSchema.pick({
   id: true,
   role: true,
 });
-
-// export const userSessionSchema = userSchema.pick({
-//   id: true,
-//   name: true,
-//   email: true,
-//   emailVerified: true,
-//   image: true,
-//   createdAt: true,
-//   updatedAt: true,
-// });
 
 export const session = pgTable("session", {
   id: uuid("id").primaryKey(),
@@ -580,15 +565,6 @@ export const CurrentUserSchema = userSchema
     followers: true,
     following: true,
   });
-
-// const expiredEvents = pgView("expired_events").as((qb) =>
-//   qb
-//     .select()
-//     .from(event)
-//     .where(sql`${event.endDate} < NOW()`)
-// );
-
-// const deleteExpiredEvents = sql`DELETE FROM ${event} WHERE ${event.id} IN (SELECT id FROM ${expiredEvents})`;
 
 export const schema = {
   user,
