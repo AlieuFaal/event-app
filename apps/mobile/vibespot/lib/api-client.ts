@@ -1,5 +1,4 @@
-import { hc } from 'hono/client';
-import type { ApiType } from '../../../api/src/index';
+import { hc } from "hono/client";
+import type { AppType } from "../../../api/src/index";
 
-// Create typed client - Hono RPC will give us full type safety!
-export const apiClient = hc<ApiType>('http://localhost:3001');
+export const apiClient = hc<AppType>("http://localhost:3001");

@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
 import { createMiddleware } from "@tanstack/react-start";
+import { auth } from "@vibespot/database/src/auth";
 import { getWebRequest } from "@tanstack/react-start/server";
 
 export const authMiddleware = createMiddleware({ type: "function" })
