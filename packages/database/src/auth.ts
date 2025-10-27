@@ -108,8 +108,11 @@ export const auth = betterAuth({
     },
     cookies: {
       sessionToken: {
-        name: "event_app_session_token", // Custom cookie name
-        attributes: {},
+        name: "better-auth.session_token",
+        attributes: {
+          sameSite: "none", 
+          secure: false, // Set to true in production with HTTPS
+        },
       },
     },
     session: {

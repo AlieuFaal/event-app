@@ -10,17 +10,23 @@ const app = new Hono<{
   };
 }>();
 
+// CORSSSSS
 app.use(
   "/*",
   cors({
-    origin: "*", // Allow all origins in development
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
-    exposeHeaders: ["Content-Length"],
+    origin: (origin) => origin,
+    allowHeaders: ["Content-Type", "Authorization", "Cookie"],
+    allowMethods: ["POST", "GET", "DELETE", "PUT", "OPTIONS"], // Add OPTIONS
+    exposeHeaders: ["Content-Length", "Set-Cookie"],
     maxAge: 600,
     credentials: true,
   })
 );
+
+// Better Auth handler
+app.on(["POST", "GET"], "/api/auth/**", (c) => {
+  return auth.handler(c.req.raw);
+});
 
 // Middleware
 app.use("*", async (c, next) => {
@@ -38,28 +44,24 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-app.on(["POST", "GET"], "/api/auth/*", (c) => {
-  return auth.handler(c.req.raw);
-});
-
-app.get("/", (c) => {
-  return c.json({ message: "Welcome to the VibeSpot API!" });
-});
-
 app.get("/session", (c) => {
   const session = c.get("session");
   const user = c.get("user");
-
+  
   if (!session) return c.body(null, 401);
-
+  
   return c.json({
     session,
     user,
   });
 });
 
+app.get("/", (c) => {
+  return c.json({ message: "Welcome to the VibeSpot API!" });
+});
+
 // Register routes
-const routes = app.route("/events", events).route('/api/auth/sign-in/email', await import('./routes/signin').then(mod => mod.default));
+const routes = app.route("/events", events);
 
 // Export the routes type
 export type AppType = typeof routes;
