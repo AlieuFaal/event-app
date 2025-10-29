@@ -1,28 +1,30 @@
 import "../global.css"
 import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { PortalHost } from "@rn-primitives/portal";
+import { authClient } from "@/lib/auth-client";
 
 
 export default function RootLayout() {
+
+  const session = authClient.useSession();
+  console.log("Current session username in RootLayout:", session.data?.user.name);
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Protected guard={true}>
-          <Stack.Screen name="index" />
+    <SafeAreaView style={{ flex: 1, marginTop: 25 }} >
+      <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
+        <Stack.Screen name="index" />
+
+        <Stack.Screen name="signup" />
+
+        <Stack.Screen name="forgotpassword" />
+
+        <Stack.Protected guard={!session}>
+          <Stack.Screen name="(protected)" />
         </Stack.Protected>
 
-        <Stack.Protected guard={true}>
-          <Stack.Screen name="signin" />
-        </Stack.Protected>
-
-        <Stack.Protected guard={true}>
-          <Stack.Screen name="signup" />
-        </Stack.Protected>
-
-        <Stack.Protected guard={false}>
-          <Stack.Screen name="randomfuturescreen" />
-        </Stack.Protected>
       </Stack>
+      <PortalHost />
     </SafeAreaView>
   )
 }

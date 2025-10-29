@@ -19,10 +19,16 @@ export const auth = betterAuth({
   }),
   trustedOrigins: [
     "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:8081",
+    "http://10.0.2.2:3001",
+    "http://192.168.50.251:3001",
+    "http://10.245.20.253:8081",
+    "exp://10.245.20.253:8081",
+    "vibespot://",
     ...(process.env.BETTER_AUTH_URL
       ? [`https://${process.env.BETTER_AUTH_URL}`]
       : []),
-      "vibespot://"
   ],
   user: {
     model: schema.user,
@@ -110,7 +116,7 @@ export const auth = betterAuth({
       sessionToken: {
         name: "better-auth.session_token",
         attributes: {
-          sameSite: "none", 
+          sameSite: "none",
           secure: false, // Set to true in production with HTTPS
         },
       },

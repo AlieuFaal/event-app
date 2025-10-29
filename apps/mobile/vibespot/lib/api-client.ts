@@ -4,11 +4,11 @@ import { Platform } from "react-native";
 
 const getApiUrl = () => {
   if (Platform.OS === 'ios') {
-    return 'http://localhost:3001';
+    return "http://10.245.20.253:3001";
   } else if (Platform.OS === 'android') {
     return 'http://10.0.2.2:3001';
   }
-  return 'http://192.168.50.251:3001';
+  return 'http://localhost:3001';
 };
 
 const API_URL = getApiUrl();

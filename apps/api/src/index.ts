@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import events from "./routes/events";
+import users from "./routes/users";
 import { auth } from "@vibespot/database/src/auth";
-
 const app = new Hono<{
   Variables: {
     user: typeof auth.$Infer.Session.user | null;
@@ -47,9 +47,9 @@ app.use("*", async (c, next) => {
 app.get("/session", (c) => {
   const session = c.get("session");
   const user = c.get("user");
-  
+
   if (!session) return c.body(null, 401);
-  
+
   return c.json({
     session,
     user,
@@ -61,7 +61,7 @@ app.get("/", (c) => {
 });
 
 // Register routes
-const routes = app.route("/events", events);
+const routes = app.route("/events", events).route("/users", users);
 
 // Export the routes type
 export type AppType = typeof routes;

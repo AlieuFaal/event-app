@@ -111,7 +111,7 @@ function View1({ isSelected, setIsSelected, setView1, setView2, setView3 }: { is
                                 toast.error("Please select an account type to proceed.");
                             }
                         }}>
-                            {m.onb_Continue_Button()} <ArrowRight />
+         ()                   {m.onb_Continue_Button()} <ArrowRight />
                         </Button>
                     </div>
                 </CardContent>
