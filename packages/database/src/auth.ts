@@ -25,6 +25,7 @@ export const auth = betterAuth({
     "http://192.168.50.251:3001",
     "http://10.245.20.253:8081",
     "exp://10.245.20.253:8081",
+    "exp://192.168.50.251:8081",
     "vibespot://",
     ...(process.env.BETTER_AUTH_URL
       ? [`https://${process.env.BETTER_AUTH_URL}`]

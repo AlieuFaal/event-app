@@ -9,26 +9,38 @@ import { Label } from "../ui/label";
 import { useRouter } from "expo-router";
 import { Input } from "../ui/input";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { Controller, useForm } from "react-hook-form";
-import { onbFormUpdateSchema, OnboardingUpdate } from "@vibespot/database";
 
 export default function OnboardingScreenComponent3() {
+    const session = authClient.useSession();
+    const router = useRouter();
     const [phone, setPhone] = useState("");
     const [location, setLocation] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const session = authClient.useSession();
+    const hasContent = phone.trim() !== "" || location.trim() !== "";
 
-    const router = useRouter();
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            await apiClient
+                .users
+                .updateonboardinginfo[":id"]
+                .$put({
+                    param: { id: session.data?.user.id! },
+                    json: { phone, location }
+                });
 
-    const form = useForm<OnboardingUpdate>({
-        mode: "onChange",
-        // resolver: zodResolver(onbFormUpdateSchema),
+            console.log("Phone number:", phone);
+            console.log("Location:", location);
+            console.log("Additional info submitted, onboarding complete.");
 
-        defaultValues: {
-            phone: "",
-            location: "",
-        },
-    });
+            router.replace("/(protected)/onboarding/onboardingScreen4");
+        } catch (error) {
+            console.error("Error updating user info:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <View>
@@ -39,45 +51,34 @@ export default function OnboardingScreenComponent3() {
                 </CardHeader>
                 <KeyboardAwareScrollView disableScrollOnKeyboardHide={true} keyboardDismissMode='interactive' contentContainerStyle={{ flexGrow: 1 }} >
                     <CardContent>
-                        <Label>Phone number</Label>
-                        <View>
-                            <Controller name="phone" control={form.control} render={({ field: { onChange, onBlur, value } }) => (
-                                <Input
-                                    placeholder="Enter your phone number"
-                                    value={phone}
-                                    onChangeText={(text) => setPhone(text)}
-                                    keyboardType="phone-pad"
-                                />
-                            )} />
-
+                        <Label nativeID="phone">Phone number</Label>
+                        <View className="mt-2">
+                            <Input
+                                placeholder="Enter your phone number"
+                                value={phone}
+                                onChangeText={setPhone}
+                                keyboardType="phone-pad"
+                                aria-labelledby="phone"
+                                className="w-full h-12 border-2"
+                            />
                         </View>
-                        <Label className="mt-4">Location</Label>
-                        <View>
-                            <Controller name="location" control={form.control} render={({ field: { onChange, onBlur, value } }) => (
-                                <Input
-                                    placeholder="Enter your phone number"
-                                    value={location}
-                                    onChangeText={(text) => setLocation(text)}
-                                />
-                            )} />
+                        <Label nativeID="location" className="mt-4">Location</Label>
+                        <View className="mt-2">
+                            <Input
+                                placeholder="Enter your location"
+                                value={location}
+                                onChangeText={setLocation}
+                                aria-labelledby="location"
+                                className="w-full h-12 border-2"
+                            />
                         </View>
-                        <Button className="mt-6 p-4 h-fit bg-primary rounded-3xl" onPress={async () => {
-                            apiClient.
-                                users.
-                                updateonboardinginfo[":id"].
-                                $put({
-                                    param: { id: session.data?.user.id! },
-                                    json: { id: session.data?.user.id!, phone, location }
-                                });
-
-                            console.log("Phone number:", phone);
-                            console.log("Location:", location);
-                            console.log("Additional info submitted, onboarding complete.");
-
-                            router.replace("/(protected)/onboarding/onboardingScreen4");
-                        }}>
+                        <Button
+                            className="mt-6 p-4 h-fit bg-primary rounded-3xl"
+                            onPress={handleSubmit}
+                            disabled={isSubmitting}
+                        >
                             <Text>
-                                {form.formState?.isDirty ? "Submit" : "Skip"}
+                                {isSubmitting ? "Submitting..." : hasContent ? "Continue" : "Skip"}
                             </Text>
                         </Button>
                     </CardContent>

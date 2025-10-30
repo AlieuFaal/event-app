@@ -11,3 +11,5 @@ const client = postgres(process.env.DATABASE_URL);
 export const db = drizzle(client, { schema });
 
 export * from './schema';
+
+export { eq, and, or, sql, count, sum, avg, min, max } from 'drizzle-orm';

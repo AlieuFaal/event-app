@@ -120,6 +120,10 @@ export const onboardingSchema = userFormSchema.pick({
   role: true,
 });
 
+export const roleUpdateSchema = z.object({
+  role: z.enum(["user", "artist"]),
+});
+
 export const session = pgTable("session", {
   id: uuid("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
