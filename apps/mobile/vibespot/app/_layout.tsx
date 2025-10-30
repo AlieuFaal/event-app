@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PortalHost } from "@rn-primitives/portal";
 import { authClient } from "@/lib/auth-client";
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 
 export default function RootLayout() {
@@ -11,20 +12,23 @@ export default function RootLayout() {
   console.log("Current session username in RootLayout:", session.data?.user.name);
 
   return (
-    <SafeAreaView style={{ flex: 1, marginTop: 25 }} >
-      <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
-        <Stack.Screen name="index" />
+    <KeyboardProvider>
+      <SafeAreaView style={{ flex: 1, marginTop: 25 }} >
+        <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
+          
+          <Stack.Screen name="index" />
 
-        <Stack.Screen name="signup" />
+          <Stack.Screen name="signup" />
 
-        <Stack.Screen name="forgotpassword" />
+          <Stack.Screen name="forgotpassword" />
 
-        <Stack.Protected guard={!session}>
-          <Stack.Screen name="(protected)" />
-        </Stack.Protected>
+          <Stack.Protected guard={!session}>
+            <Stack.Screen name="(protected)" />
+          </Stack.Protected>
 
-      </Stack>
-      <PortalHost />
-    </SafeAreaView>
+        </Stack>
+        <PortalHost />
+      </SafeAreaView>
+    </KeyboardProvider>
   )
 }

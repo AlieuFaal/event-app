@@ -1,12 +1,11 @@
-import OnboardingCards from "@/components/onboarding-components/onboardingCards";
-import { Button } from "@/components/ui/button";
+import OnboardingScreenComponent1 from "@/components/onboarding-components/onboardingScreen1";
 import { View } from "@rn-primitives/slot";
 
 export default function Onboarding() {
 
   return (
     <View>
-      <OnboardingCards />
+      <OnboardingScreenComponent1 />
     </View>
   );
 }

@@ -9,7 +9,7 @@ import {
 } from "@vibespot/database";
 import { auth } from "@vibespot/database/src/auth";
 import { count, eq, and } from "drizzle-orm";
-
+import { zValidator } from "@hono/zod-validator";
 // const app = new Hono<{
 //   Variables: {
 //     user: typeof auth.$Infer.Session.user | null;
@@ -84,7 +84,26 @@ const app = new Hono<{
       .returning();
 
     return c.json(result[0]);
-  });
+  })
+  .put(
+    "/updateonboardinginfo/:id",
+    zValidator("json", userFormSchema),
+    async (c) => {
+      const userId = c.req.param("id");
+      const data = c.req.valid("json");
+
+      const result = await db
+        .update(schema.user)
+        .set({
+          phone: data.phone,
+          location: data.location,
+        })
+        .where(eq(schema.user.id, userId!))
+        .returning();
+
+      return c.json(result[0]);
+    }
+  );
 
 //   .get("/navigate/:id", async (c) => {
 //     const userId = c.req.param("id");
