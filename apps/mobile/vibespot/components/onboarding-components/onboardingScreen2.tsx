@@ -1,4 +1,4 @@
-import React, {  } from "react";
+import React, { } from "react";
 import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/api-client";
 import { View } from "@rn-primitives/slot";
@@ -42,7 +42,7 @@ export function OnboardingScreenComponent2() {
                 <CardContent className="flex flex-row items-center justify-center gap-3 mx-auto mt-5">
                     <View>
                         <Button className="h-fit w-40 p-6 rounded-3xl" onPress={() => {
-                            // updateRoleToUser();
+                            updateRoleToUser();
                             router.replace("/(protected)/onboarding/onboardingScreen3");
                             console.log("Selected account type: Enthusiast, proceeding to next step.");
                         }}>
@@ -54,7 +54,7 @@ export function OnboardingScreenComponent2() {
                     <Text>or</Text>
                     <View>
                         <Button className="h-fit w-40 p-8 rounded-3xl" onPress={() => {
-                            // updateRoleToArtist();
+                            updateRoleToArtist();
                             router.replace("/(protected)/onboarding/onboardingScreen3");
                             console.log("Selected account type: Artist, proceeding to next step.");
                         }}>

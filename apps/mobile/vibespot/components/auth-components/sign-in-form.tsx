@@ -49,19 +49,24 @@ export function SignInForm() {
                 },
                 onSuccess: async (ctx) => {
 
-                    const session = await authClient.getSession();
+                    // // const session = await authClient.getSession();
 
-                    const userId = session?.data?.user.id;
+                    // const session = await authClient.getSession();
 
-                    const res = await apiClient.users[':id'].$get({ param: { id: userId! } });
+                    // const userId = session?.data?.user.id;
 
-                    const user = await res.json();
+                    // const res = await apiClient.users[':id'].$get({ param: { id: userId! } });
 
-                    if (user.role === "New User") {
-                        console.log("Navigating to onboarding...");
-                        router.push("/(protected)/onboarding");
-                    }
-                    console.log("Login successful! User:", user.name);
+                    // const user = await res.json();
+
+                    // if (user.role === "New User") {
+                    //     console.log("Navigating to onboarding...");
+                    //     setTimeout(() => {
+                    //         router.push("/(protected)/onboarding");
+                    //     }, 500);
+
+                    // }
+                    // console.log("Login successful! User:", user.name);
                 }
             });
     };

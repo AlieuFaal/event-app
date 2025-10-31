@@ -1,5 +1,5 @@
 export {
-  // User Types
+  // User 
   type User,
   type NewUser,
   type UpdateUser,
@@ -10,7 +10,7 @@ export {
   type CurrentUser,
   type PasswordChangeForm,
   
-  // Event Types
+  // Event 
   type Event,
   type NewEvent,
   type UpdateEvent,
@@ -19,7 +19,7 @@ export {
   type Genre,
   type RepeatOption,
   
-  // Comment Types
+  // Comment 
   type Comment,
   type NewComment,
   type UpdateComment,

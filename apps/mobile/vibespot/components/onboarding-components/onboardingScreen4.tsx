@@ -23,7 +23,7 @@ export default function OnboardingScreenComponent4() {
                         Thank you for completing the onboarding process. We&apos;re excited to have you on board!
                     </Text>
                     <Button className="mt-4" onPress={() => {
-
+                        router.navigate("/(protected)/(tabs)")
                     }}>
                         <Text className="h-fit">
                             Go to VibeSpot

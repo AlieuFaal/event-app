@@ -3,6 +3,8 @@ import { expoClient } from "@better-auth/expo/client";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import Constants from 'expo-constants';
+import { inferAdditionalFields } from "better-auth/client/plugins";
+import { auth } from "@vibespot/database/src/auth";
 
 const getBaseUrl = () => {
   // For physical devices, use the debuggerHost to get your computer's IP
@@ -32,11 +34,12 @@ console.log('Auth Client Base URL:', baseURL);
 
 export const authClient = createAuthClient({
   baseURL: baseURL,
-  plugins: [
+  plugins: [ inferAdditionalFields<typeof auth>() ,
     expoClient({
       scheme: "vibespot",
       storagePrefix: "vibespot-auth",
       storage: SecureStore,
-    })
-  ]
+    }),
+    
+  ],
 });

@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { View } from "react-native";
 import { SignInForm } from "@/components/auth-components/sign-in-form";
-import { authClient } from "@/lib/auth-client";
 
 export default function HomeScreen() {
-
   return (
     <View>
       <SignInForm />

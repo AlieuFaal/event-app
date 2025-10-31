@@ -50,6 +50,11 @@ export function SignUpForm() {
                 onSuccess: async () => {
                     setLoading(false);
                     console.log("Account created successfully!");
+                    const session = authClient.useSession()
+
+                    if (session.data?.user.role === 'New User') {
+                        return;
+                    }
                     router.navigate("/");
                 },
             }

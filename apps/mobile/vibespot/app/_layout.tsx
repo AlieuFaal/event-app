@@ -15,14 +15,15 @@ export default function RootLayout() {
     <KeyboardProvider>
       <SafeAreaView style={{ flex: 1, marginTop: 25 }} >
         <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
-          
-          <Stack.Screen name="index" />
 
-          <Stack.Screen name="signup" />
+          <Stack.Protected guard={!session.data}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="signup" />
+            <Stack.Screen name="forgotpassword" />
+          </Stack.Protected>
 
-          <Stack.Screen name="forgotpassword" />
-
-          <Stack.Protected guard={!session}>
+          {/* Protected routes - only show if logged in */}
+          <Stack.Protected guard={!!session.data}>
             <Stack.Screen name="(protected)" />
           </Stack.Protected>
 
