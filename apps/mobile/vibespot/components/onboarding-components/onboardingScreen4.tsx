@@ -18,12 +18,12 @@ export default function OnboardingScreenComponent4() {
                         You&apos;re all set! Tap the button below to explore VibeSpot.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="mt-48 gap-6">
+                <CardContent className="mt-5 gap-6">
                     <Text className={cn("text-center")}>
                         Thank you for completing the onboarding process. We&apos;re excited to have you on board!
                     </Text>
                     <Button className="mt-4" onPress={() => {
-                        // Navigate to main app screen
+
                     }}>
                         <Text className="h-fit">
                             Go to VibeSpot

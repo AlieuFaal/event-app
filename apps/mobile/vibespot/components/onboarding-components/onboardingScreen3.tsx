@@ -22,6 +22,11 @@ export default function OnboardingScreenComponent3() {
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
+            if (!hasContent) {
+                router.replace("/(protected)/onboarding/onboardingScreen4");
+                console.log("No additional info provided, will not update. skipping to next step.");
+                return;
+            }
             await apiClient
                 .users
                 .updateonboardinginfo[":id"]

@@ -59,9 +59,9 @@ export function SignInForm() {
 
                     if (user.role === "New User") {
                         console.log("Navigating to onboarding...");
-                        router.push("/onboarding");
+                        router.push("/(protected)/onboarding");
                     }
-                    console.log("Login successful! User:", user);
+                    console.log("Login successful! User:", user.name);
                 }
             });
     };
