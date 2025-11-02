@@ -64,7 +64,7 @@ export function SignUpForm() {
     return (
         <View className="gap-6">
             <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
-                <CardHeader className='flex flex-col justify-center items-center'>
+                <CardHeader className='flex flex-col justify-center items-center mt-24'>
                     <CardTitle className="text-center text-4xl sm:text-left">Create account!</CardTitle>
                     <CardDescription className="text-center sm:text-left">
                         Welcome! Please fill in the details to get started.
@@ -78,6 +78,7 @@ export function SignUpForm() {
                                 <Input
                                     id="first-name"
                                     placeholder="First Name"
+                                    placeholderTextColor={"black"}
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
                                     className='h-fit p-4'
@@ -89,6 +90,7 @@ export function SignUpForm() {
                                 <Input
                                     id="last-name"
                                     placeholder="Last Name"
+                                    placeholderTextColor={"black"}
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
                                     className='h-fit p-4'
@@ -100,6 +102,7 @@ export function SignUpForm() {
                                 <Input
                                     id="email"
                                     placeholder="E-mail"
+                                    placeholderTextColor={"black"}
                                     keyboardType="email-address"
                                     autoComplete="email"
                                     autoCapitalize="none"
@@ -115,6 +118,7 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
+                                    placeholderTextColor={"black"}
                                     className='h-fit p-4'
                                     value={password}
                                     onChangeText={setPassword}
@@ -126,6 +130,7 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Confirm Password'
+                                    placeholderTextColor={"black"}
                                     className='h-fit p-4'
                                     value={passwordConfirmation}
                                     onChangeText={setPasswordConfirmation}

@@ -15,7 +15,6 @@ import { Pressable, View } from 'react-native';
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'expo-router';
-import { apiClient } from '@/lib/api-client';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export function SignInForm() {
@@ -49,33 +48,18 @@ export function SignInForm() {
                 },
                 onSuccess: async (ctx) => {
 
-                    // // const session = await authClient.getSession();
+                    const user = await authClient.getSession();
 
-                    // const session = await authClient.getSession();
-
-                    // const userId = session?.data?.user.id;
-
-                    // const res = await apiClient.users[':id'].$get({ param: { id: userId! } });
-
-                    // const user = await res.json();
-
-                    // if (user.role === "New User") {
-                    //     console.log("Navigating to onboarding...");
-                    //     setTimeout(() => {
-                    //         router.push("/(protected)/onboarding");
-                    //     }, 500);
-
-                    // }
-                    // console.log("Login successful! User:", user.name);
+                    console.log("Login successful! User:", user.data?.user.name);
                 }
             });
     };
 
     return (
         <View className="gap-6">
-            <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
-                <CardHeader className='flex flex-col justify-center items-center mt-5'>
-                    <CardTitle className="text-center text-6xl sm:text-left">VibeSpot</CardTitle>
+            <Card className="border-border/0 bg-white/80 dark:bg-card/80 backdrop-blur-xl sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
+                <CardHeader className='flex flex-col justify-center items-center mt-24'>
+                    <CardTitle className="text-center text-6xl sm:text-left text-purple-700 dark:text-purple-500">VibeSpot</CardTitle>
                     <CardDescription className="text-center sm:text-left">
                         Welcome! Sign in to continue!
                     </CardDescription>
@@ -87,6 +71,7 @@ export function SignInForm() {
                                 <Input
                                     id="email"
                                     placeholder="E-mail"
+                                    placeholderTextColor={"black"}
                                     keyboardType="email-address"
                                     autoComplete="email"
                                     autoCapitalize="none"
@@ -103,6 +88,7 @@ export function SignInForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
+                                    placeholderTextColor={"black"}
                                     className='p-7 h-fit rounded-3xl'
                                     value={password}
                                     onChangeText={setPassword}
@@ -134,9 +120,9 @@ export function SignInForm() {
                             </View>
                         </View>
                         <View className="flex-row items-center">
-                            <Separator className="flex-1" />
+                            <Separator className="flex-1 bg-black" />
                             <Text className="text-muted-foreground px-4 text-sm">or</Text>
-                            <Separator className="flex-1" />
+                            <Separator className="flex-1 bg-black" />
                         </View>
                         <SocialConnections />
                     </CardContent>
