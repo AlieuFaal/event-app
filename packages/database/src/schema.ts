@@ -288,6 +288,14 @@ export const eventSchema = createSelectSchema(event, {
     "Instrumental",
   ]),
   venue: z.string().nullable(),
+  repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
+  repeatGroupId: z.string().uuid().optional().nullable(),
+  repeatEndDate: z.date().optional().nullable(),
+  startDate: z.date(),
+  endDate: z.date(),
+  latitude: z.string(),
+  longitude: z.string(),
+  createdAt: z.date().optional(),
 });
 
 export const geocodingSchema = eventSchema.pick({
@@ -444,7 +452,7 @@ export const calendarEventSchema = eventSchema.extend({
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   repeatGroupId: z.string().uuid().optional().nullable(),
   repeatEndDate: z.date().optional().nullable(),
-  createdAt: z.date().optional(), 
+  createdAt: z.date().optional(),
 });
 
 // Comment table -------------------------------------------------------------------------------------------------------------

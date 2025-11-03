@@ -1,12 +1,13 @@
-import { hairlineWidth } from 'nativewind/theme';
+const { hairlineWidth } = require('nativewind/theme');
 
 /** @type {import('tailwindcss').Config} */
-export const darkMode = 'class';
-export const content = ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'];
-export const presets = [require('nativewind/preset')];
-export const theme = {
-  extend: {
-    colors: {
+module.exports = {
+  darkMode: 'class',
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  presets: [require('nativewind/preset')],
+  theme: {
+    extend: {
+      colors: {
       border: 'oklch(var(--border))',
       input: 'oklch(var(--input))',
       ring: 'oklch(var(--ring))',
@@ -64,8 +65,9 @@ export const theme = {
       'accordion-up': 'accordion-up 0.2s ease-out',
     },
   },
-};
-export const future = {
+},
+future: {
   hoverOnlyWhenSupported: true,
+},
+plugins: [require('tailwindcss-animate')],
 };
-export const plugins = [require('tailwindcss-animate')];
