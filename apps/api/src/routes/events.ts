@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { db, eventSchema, schema } from "@vibespot/database";
+import { db, eventSchema, schema, eq } from "@vibespot/database";
 import { auth } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 
@@ -16,6 +16,20 @@ const app = new Hono<{
   //   }
   const events = await db.select().from(schema.event);
   return c.json(events);
+}).get("/:id", async (c) => {
+  const eventId = c.req.param("id");
+  //   const userId = c.var.user?.id;
+  //   if (!userId) {
+  //     console.log("No user in session.");
+  //     throw new Error("User not authenticated");
+  //   }
+  const eventById = await db
+  .select()
+  .from(schema.event)
+  .where(eq(schema.event.id, eventId!))
+  .limit(1)
+  .then((res) => res[0]);
+  return c.json(eventById);
 });
 
 export default app;

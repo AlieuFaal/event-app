@@ -4,7 +4,7 @@ import { CircleUser, House, ListMusic, MapPinned, Plus } from 'lucide-react-nati
 
 export default function EventDetailsLayout() {
     return (
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="[id]" />
         </Stack>
     )
