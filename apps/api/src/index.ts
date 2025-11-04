@@ -2,13 +2,13 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import events from "./routes/events";
 import users from "./routes/users";
-import { auth } from "@vibespot/database/src/auth";
-const app = new Hono<{
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
-  };
-}>();
+import { auth, AuthType } from "@vibespot/database/src/auth";
+
+const app = new Hono<{ Variables: AuthType }>({ strict: false });
+
+const router = new Hono<{ Bindings: AuthType }>({
+  strict: false,
+});
 
 // CORSSSSS
 app.use(
@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: (origin) => origin,
     allowHeaders: ["Content-Type", "Authorization", "Cookie"],
-    allowMethods: ["POST", "GET", "DELETE", "PUT", "OPTIONS"], 
+    allowMethods: ["POST", "GET", "DELETE", "PUT", "OPTIONS"],
     exposeHeaders: ["Content-Length", "Set-Cookie"],
     maxAge: 600,
     credentials: true,

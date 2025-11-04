@@ -26,6 +26,7 @@ export const auth = betterAuth({
     "http://10.245.20.253:8081",
     "exp://172.20.10.2:8081",
     "exp://10.245.20.253:8081",
+    "exp://10.245.20.221:8081",
     "exp://192.168.50.251:8081",
     "vibespot://",
     ...(process.env.BETTER_AUTH_URL
@@ -133,3 +134,8 @@ export const auth = betterAuth({
   },
   plugins: [reactStartCookies(), expo()], // make sure this is the last plugin in the array
 });
+
+export type AuthType = {
+  user: typeof auth.$Infer.Session.user | null;
+  session: typeof auth.$Infer.Session.session | null;
+};

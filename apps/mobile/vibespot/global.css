@@ -67,7 +67,6 @@ body {
   @apply bg-background text-foreground;
 }
 
-/* Additional purple gradient utilities */
 .gradient-purple {
   background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 33%, #c4b5fd 66%, #e9d5ff 100%);
 }
