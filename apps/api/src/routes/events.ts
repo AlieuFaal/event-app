@@ -7,27 +7,26 @@ import {
   and,
   eventInsertSchema,
 } from "@vibespot/database";
-import { auth, AuthType } from "@vibespot/database/src/auth";
+import { AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
 
 const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
     const userId = c.var.user?.id;
+    
     // if (!userId) {
     //   console.log("No user in session.");
-    //   throw new Error("User not authenticated");
+    //   return c.json({ error: "User not authenticated" }, 401);
     // }
+   
     const events = await db.select().from(schema.event);
+    
     return c.json(events);
   })
   .get("/:id", async (c) => {
     const eventId = c.req.param("id");
-    const userId = c.var.user?.id;
-    // if (!userId) {
-    //   console.log("No user in session.");
-    //   throw new Error("User not authenticated");
-    // }
+   
     const eventById = await db
       .select()
       .from(schema.event)
@@ -38,18 +37,22 @@ const app = new Hono<{ Variables: AuthType }>()
   })
   .post(
     "/favorites/:eventId",
-    zValidator("param", z.object({ eventId: z.uuidv4() })),
-    zValidator("json", eventInsertSchema),
+    zValidator("param", z.object({ eventId: z.uuid() })),
     async (c) => {
       const { eventId } = c.req.valid("param");
-      const eventData = c.req.valid("json");
+     
+      const userId = c.var.user?.id;
+
+      // if (!userId) {
+      //   return c.json({ error: "User not authenticated" }, 401);
+      // }
 
       const [isFavoriteExisting] = await db
         .select()
         .from(schema.favoriteEvent)
         .where(
           and(
-            eq(schema.favoriteEvent.userId, eventData.userId),
+            eq(schema.favoriteEvent.userId, userId),
             eq(schema.favoriteEvent.eventId, eventId)
           )
         )
@@ -63,7 +66,7 @@ const app = new Hono<{ Variables: AuthType }>()
       const newFavorite = await db
         .insert(schema.favoriteEvent)
         .values({
-          userId: eventData.userId,
+          userId: userId,
           eventId: eventId,
           createdAt: new Date(),
         })
@@ -75,22 +78,21 @@ const app = new Hono<{ Variables: AuthType }>()
   )
   .delete(
     "/favorites/:eventId",
-    zValidator("param", z.object({ eventId: z.uuidv4() })),
-    zValidator("json", eventInsertSchema),
+    zValidator("param", z.object({ eventId: z.uuid() })),
     async (c) => {
       const { eventId } = c.req.valid("param");
+     
       const userId = c.var.user?.id;
 
       // if (!userId) {
-      //   console.log("No user in session.");
-      //   throw new Error("User not authenticated");
+      //   return c.json({ error: "User not authenticated" }, 401);
       // }
 
       const deleteResult = await db
         .delete(schema.favoriteEvent)
         .where(
           and(
-            eq(schema.favoriteEvent.userId, userId!),
+            eq(schema.favoriteEvent.userId, userId),
             eq(schema.favoriteEvent.eventId, eventId)
           )
         )
@@ -100,47 +102,5 @@ const app = new Hono<{ Variables: AuthType }>()
       return c.json(deleteResult);
     }
   );
-
-// .post("/:favoriteeventid", zValidator("json", eventSchema), async (c) => {
-//   const favoriteEventId = c.req.param("favoriteeventid");
-//   const userId = c.var.user?.id;
-
-//   if (!userId) {
-//     console.log("No user in session.");
-//     throw new Error("User not authenticated");
-//   }
-
-//   const [existingFavorite] = await db
-//     .select({
-//       userId: schema.favoriteEvent.userId,
-//       eventId: schema.favoriteEvent.eventId,
-//       createdAt: schema.favoriteEvent.createdAt,
-//     })
-//     .from(schema.favoriteEvent)
-//     .where(
-//       and(
-//         eq(schema.favoriteEvent.userId, userId!),
-//         eq(schema.favoriteEvent.eventId, favoriteEventId.id)
-//       )
-//     )
-//     .limit(1);
-
-//   if (existingFavorite) {
-//     console.error("Event already exists in favorites for this user.");
-//     return existingFavorite;
-//   }
-
-//   const newFavorite = await db
-//     .insert(schema.favoriteEvent)
-//     .values({
-//       userId: userId!,
-//       eventId: favoriteEventId.id,
-//       createdAt: new Date(),
-//     })
-//     .returning();
-
-//   console.log("Added event to users favorites:", newFavorite);
-//   return c.json(newFavorite);
-// });
 
 export default app;

@@ -11,15 +11,10 @@ import {
   and,
   count,
 } from "@vibespot/database";
-import { auth } from "@vibespot/database/src/auth";
+import { auth, AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 
-const app = new Hono<{
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
-  };
-}>()
+const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
     const userId = c.req.param("id");
     //   if (!userId) {

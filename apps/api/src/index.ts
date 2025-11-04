@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import events from "./routes/events";
 import users from "./routes/users";
 import { auth, AuthType } from "@vibespot/database/src/auth";
+import { authClient } from "../../mobile/vibespot/lib/auth-client";
 
 const app = new Hono<{ Variables: AuthType }>({ strict: false });
 

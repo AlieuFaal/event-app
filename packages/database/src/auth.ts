@@ -23,6 +23,7 @@ export const auth = betterAuth({
     "http://localhost:8081",
     "http://10.0.2.2:3001",
     "http://192.168.50.251:3001",
+    "http://192.168.50.251:8081",
     "http://10.245.20.253:8081",
     "exp://172.20.10.2:8081",
     "exp://10.245.20.253:8081",
@@ -30,7 +31,7 @@ export const auth = betterAuth({
     "exp://192.168.50.251:8081",
     "vibespot://",
     ...(process.env.BETTER_AUTH_URL
-      ? [`https://${process.env.BETTER_AUTH_URL}`]
+      ? [process.env.BETTER_AUTH_URL]
       : []),
   ],
   user: {
@@ -119,8 +120,9 @@ export const auth = betterAuth({
       sessionToken: {
         name: "better-auth.session_token",
         attributes: {
-          sameSite: "none",
-          secure: false, // Set to true in production with HTTPS
+          sameSite: "lax", 
+          secure: false, // HTTP localhost doesn't support secure cookies
+          maxAge: 60 * 60 * 24 * 10, // 10 days
         },
       },
     },

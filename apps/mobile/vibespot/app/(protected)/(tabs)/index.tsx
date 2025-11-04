@@ -24,14 +24,14 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const snapPoints = useMemo(() => ["50%", "90%"], []);
 
   const router = useRouter();
 
   const openSheet = (event: Event) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelectedEvent(event);
-    bottomSheetRef.current?.snapToIndex(2);
+    bottomSheetRef.current?.snapToIndex(1);
   };
 
   const handleSheetChange = useCallback((index: number) => {
