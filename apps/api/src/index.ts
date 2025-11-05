@@ -7,10 +7,6 @@ import { authClient } from "../../mobile/vibespot/lib/auth-client";
 
 const app = new Hono<{ Variables: AuthType }>({ strict: false });
 
-const router = new Hono<{ Bindings: AuthType }>({
-  strict: false,
-});
-
 // CORSSSSS
 app.use(
   "/*",
@@ -25,8 +21,12 @@ app.use(
 );
 
 // Better Auth handler
-app.on(["POST", "GET"], "/api/auth/**", (c) => {
+app.on(["POST", "GET"], "/api/auth/*", (c) => {
   return auth.handler(c.req.raw);
+});
+
+app.get("/cookie", (c) => {
+  return c.json({ cookie: c.req.raw.headers.get("cookie") });
 });
 
 // Middleware
@@ -36,12 +36,16 @@ app.use("*", async (c, next) => {
   if (!session) {
     c.set("user", null);
     c.set("session", null);
+    console.log(
+      "No session found in middleware. FAAAAAAAANNNNNNNN!!!!!!!!!!!!"
+    );
     await next();
     return;
   }
 
   c.set("user", session.user);
   c.set("session", session.session);
+  console.log("Session found in middleware for user:", session.user.id);
   await next();
 });
 

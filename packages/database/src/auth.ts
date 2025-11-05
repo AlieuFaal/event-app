@@ -18,21 +18,23 @@ export const auth = betterAuth({
     },
   }),
   trustedOrigins: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:8081",
-    "http://10.0.2.2:3001",
-    "http://192.168.50.251:3001",
-    "http://192.168.50.251:8081",
-    "http://10.245.20.253:8081",
-    "exp://172.20.10.2:8081",
-    "exp://10.245.20.253:8081",
-    "exp://10.245.20.221:8081",
-    "exp://192.168.50.251:8081",
-    "vibespot://",
-    ...(process.env.BETTER_AUTH_URL
-      ? [process.env.BETTER_AUTH_URL]
-      : []),
+    // "http://localhost:3000",
+    // "http://localhost:3001",
+    // "http://localhost:8081",
+    // "http://10.0.2.2:3001",
+    // "http://192.168.50.251:3001",
+    // "http://192.168.50.251:8081",
+    // "http://10.245.20.253:8081",
+    // "http://10.245.20.253:3001"
+    // "exp://172.20.10.2:8081",
+    // "exp://10.245.20.253:8081",
+    // "exp://10.245.20.221:8081",
+    // "exp://192.168.50.251:8081",
+    // "exp://"
+    // "vibespot://",
+    // ...(process.env.BETTER_AUTH_URL
+    //   ? [`https://${process.env.BETTER_AUTH_URL}`]
+    //   : []),
   ],
   user: {
     model: schema.user,
@@ -116,18 +118,27 @@ export const auth = betterAuth({
     database: {
       generateId: () => crypto.randomUUID(),
     },
+    useSecureCookies: true,
+    disableOriginCheck: true, // Temporary, glöm ej!
+  },
+  crossSubDomainCookies: {
+    enabled: true,
+  },
+  cookies: {
     cookies: {
       sessionToken: {
         name: "better-auth.session_token",
         attributes: {
-          sameSite: "lax", 
-          secure: false, // HTTP localhost doesn't support secure cookies
+          sameSite: "lax",
+          secure: false, // Set to true in production with HTTPS
           maxAge: 60 * 60 * 24 * 10, // 10 days
         },
       },
     },
     session: {
       model: session,
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      updateAge: 60 * 60 * 24, // 1 day
       cookieCache: {
         enabled: true,
         maxAge: 10 * 60,

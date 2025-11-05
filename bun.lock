@@ -4,10 +4,10 @@
     "": {
       "name": "vibespot-monorepo",
       "dependencies": {
-        "@better-auth/expo": "^1.3.32",
+        "@better-auth/expo": "^1.3.34",
         "@rn-primitives/portal": "^1.3.0",
         "@tanstack/react-query": "^5.90.6",
-        "better-auth": "^1.3.32",
+        "better-auth": "^1.3.34",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "expo-constants": "^18.0.10",
@@ -30,8 +30,10 @@
       "name": "@vibespot/api",
       "version": "0.0.0",
       "dependencies": {
+        "@better-auth/expo": "^1.3.34",
         "@hono/zod-validator": "^0.7.4",
         "@vibespot/database": "*",
+        "better-auth": "^1.3.34",
         "expo-constants": "^18.0.10",
         "expo-linking": "^8.0.8",
         "expo-web-browser": "^15.0.8",
@@ -141,6 +143,8 @@
       "name": "@vibespot/database",
       "version": "0.0.0",
       "dependencies": {
+        "@better-auth/expo": "^1.3.34",
+        "better-auth": "^1.3.34",
         "drizzle-orm": "^0.44.7",
         "drizzle-zod": "^0.8.3",
         "postgres": "^3.4.7",

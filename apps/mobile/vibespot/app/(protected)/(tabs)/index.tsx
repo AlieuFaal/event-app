@@ -1,21 +1,16 @@
 import {
   useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
 } from '@tanstack/react-query'
 import { EventCard1 } from "@/components/event-components/event-card-1";
 import { apiClient } from "@/lib/api-client";
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Event } from "../../../../../../packages/database/src/schema";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Animated from "react-native-reanimated";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Calendar, Flag, Heart, MapPin, ReceiptText, Share } from "lucide-react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
 import * as Haptics from 'expo-haptics';
-import { useRouter } from "expo-router";
+import { EventActionsSheet } from '@/components/bottomsheet-component/eventactions-sheet';
 
 
 const AnimatedScrollView = Animated.ScrollView;
@@ -26,30 +21,11 @@ export default function Home() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["50%", "90%"], []);
 
-  const router = useRouter();
-
   const openSheet = (event: Event) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelectedEvent(event);
     bottomSheetRef.current?.snapToIndex(1);
   };
-
-  const handleSheetChange = useCallback((index: number) => {
-    console.log("handleSheetChange", index);
-  }, []);
-
-  const handleClosePress = useCallback(() => {
-    bottomSheetRef.current?.close();
-  }, []);
-
-  const handleViewDetails = useCallback(() => {
-    if (selectedEvent) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-      router.push(`/event-details/${selectedEvent.id}`);
-      console.log("Navigating to details for event ID:", selectedEvent.id);
-      bottomSheetRef.current?.close();
-    }
-  }, [router, selectedEvent]);
 
   const { isPending, error, data } = useQuery<Event[]>({
     queryKey: ['events'],
@@ -119,48 +95,7 @@ export default function Home() {
             <EventCard1 key={event.id} event={event} onLongPress={() => openSheet(event)} />
           ))}
         </AnimatedScrollView>
-        <BottomSheet ref={bottomSheetRef} onChange={handleSheetChange} index={-1} snapPoints={snapPoints} enablePanDownToClose={true} onClose={handleClosePress} >
-          <BottomSheetView className="flex-1">
-
-            <View className="items-center">
-              <Text className="text-lg font-semibold mt-1">Event Actions</Text>
-            </View>
-
-            <View className="">
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleViewDetails}>
-                <ReceiptText size={24} />
-                <Text className="text-center p-5">View Details</Text>
-              </Pressable>
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Heart size={24} />
-                <Text className="text-center p-5">Save Event</Text>
-              </Pressable>
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Calendar size={24} />
-                <Text className="text-center p-5">Add To Calendar</Text>
-              </Pressable>
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <MapPin size={24} />
-                <Text className="text-center p-5">View On Map</Text>
-              </Pressable>
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Share size={24} />
-                <Text className="text-center p-5">Share Event</Text>
-              </Pressable>
-
-              <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-lg transition-all duration-200 mb-5" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Flag size={24} fill={"red"} fillOpacity={80} />
-                <Text className="text-center text-red-500 p-5">Report Event</Text>
-              </Pressable>
-
-            </View>
-          </BottomSheetView>
-        </BottomSheet>
+        <EventActionsSheet selectedEvent={selectedEvent} bottomSheetRef={bottomSheetRef} snapPoints={snapPoints} />
       </View>
     </SafeAreaView>
   );

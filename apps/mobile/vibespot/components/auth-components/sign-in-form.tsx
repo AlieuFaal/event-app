@@ -47,7 +47,6 @@ export function SignInForm() {
                     console.error(ctx.error.message);
                 },
                 onSuccess: async (ctx) => {
-
                     const user = await authClient.getSession();
 
                     console.log("Login successful! User:", user.data?.user.name);
