@@ -1,15 +1,15 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { Calendar, Flag, Heart, MapPin, ReceiptText, Share } from "lucide-react-native";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
 import { Event } from "../../../../../packages/database/src/schema";
 import * as Haptics from 'expo-haptics';
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
-import { set } from "zod";
 import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/app/_layout";
 
 interface EventDetailsSheetProps {
     selectedEvent: Event | null;
@@ -18,8 +18,6 @@ interface EventDetailsSheetProps {
 }
 
 export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }: EventDetailsSheetProps) {
-    const [isHearted, setIsHearted] = useState(false);
-    const [isEventFavorited, setIsEventFavorited] = useState(false);
     const router = useRouter();
     const session = authClient.useSession();
 
@@ -42,47 +40,41 @@ export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }:
 
     const mutation = useMutation({
         mutationFn: async (eventId: string) => {
-            apiClient.events.favorites[":eventId"].$post({ param: { eventId, } });
+            return apiClient.events.favorites[":eventId"].$post({ param: { eventId } });
         },
-        onError: (error) => {
-            console.error('Error saving/deleting event:', error);
-        },
-        onSuccess: (data) => {
-            console.log('Event saved or deleted successfully:', data);
+        onSuccess: () => {
+            console.log('Event saved or deleted successfully');
+            queryClient.invalidateQueries({ queryKey: ['favoriteEvent', selectedEvent?.id, session.data?.user?.id] });
+            queryClient.invalidateQueries({ queryKey: ['favoriteEvents', session.data?.user?.id] });
         },
     });
 
-    const { isPending, error, data } = useQuery<Event[]>({
-        queryKey: ['favoriteEvents', session.data?.user?.id],
+    const { data: isFavorited = false } = useQuery({
+        queryKey: ['favoriteEvent', selectedEvent?.id, session.data?.user?.id],
         queryFn: async () => {
-            if (!session.data?.user?.id) return [];
+            if (!selectedEvent?.id || !session.data?.user?.id) return false;
 
-            const res = await apiClient.events.favorites[':userid'].$get({ param: { userid: session.data.user.id } });
+            const res = await apiClient.events.favorites[':userid'].$get({
+                param: { userid: session.data.user.id }
+            });
 
             if (res.ok) {
-                const eventResponseData = await res.json();
-
-                return eventResponseData.map((item: any) => item.event);
-            } else {
-                throw new Error('Failed to fetch favorite events');
+                const events = await res.json();
+                return events.some((item: any) => item.event.id === selectedEvent.id);
             }
-        }
+            return false;
+        },
+        enabled: !!selectedEvent?.id && !!session.data?.user?.id,
     });
 
     const handleSaveEvent = useCallback(() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
         console.log("Save Event pressed");
 
-        if (isHearted) {
-            setIsHearted(false);
-        } else {
-            setIsHearted(true);
-        }
-
         if (selectedEvent) {
             mutation.mutate(selectedEvent.id);
         }
-    }, [isHearted, selectedEvent, mutation]);
+    }, [selectedEvent, mutation]);
 
     return (
         <BottomSheet ref={bottomSheetRef} onChange={handleSheetChange} index={-1} snapPoints={snapPoints} enablePanDownToClose={true} onClose={handleClosePress} >
@@ -100,7 +92,7 @@ export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }:
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleSaveEvent}>
-                        <Heart size={24} fill={`${isHearted ? "#C51104" : null}`} />
+                        <Heart size={24} fill={isFavorited ? "#C51104" : "none"} />
                         <Text className="text-center p-5">Save Event</Text>
                     </Pressable>
 

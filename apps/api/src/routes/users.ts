@@ -17,20 +17,22 @@ import { zValidator } from "@hono/zod-validator";
 const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
     const userId = c.req.param("id");
-    //   if (!userId) {
-    //     console.log("No user in session.");
-    //     throw new Error("User not authenticated");
-    //   }
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const users = await db.select().from(schema.user);
     return c.json(users);
   })
   .get("/:id", async (c) => {
     const userId = c.req.param("id");
-    //   if (!userId) {
-    //     console.log("No user in session.");
-    //     throw new Error("User not authenticated");
-    //   }
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const userById = await db
       .select()
@@ -43,6 +45,11 @@ const app = new Hono<{ Variables: AuthType }>()
   })
   .put("/updateroletouser/:id", async (c) => {
     const userId = c.req.param("id");
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const result = await db
       .update(schema.user)
@@ -57,6 +64,11 @@ const app = new Hono<{ Variables: AuthType }>()
   .put("/updateroletoartist/:id", async (c) => {
     const userId = c.req.param("id");
 
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
     const result = await db
       .update(schema.user)
       .set({
@@ -70,6 +82,11 @@ const app = new Hono<{ Variables: AuthType }>()
   .put("/updaterole/:id", zValidator("json", roleUpdateSchema), async (c) => {
     const userId = c.req.param("id");
     const data = c.req.valid("json");
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const result = await db
       .update(schema.user)
@@ -87,6 +104,11 @@ const app = new Hono<{ Variables: AuthType }>()
     async (c) => {
       const userId = c.req.param("id");
       const data = c.req.valid("json");
+
+      if (!userId) {
+        console.log("No user in session.");
+        return c.json({ error: "User not authenticated" }, 401);
+      }
 
       const result = await db
         .update(schema.user)

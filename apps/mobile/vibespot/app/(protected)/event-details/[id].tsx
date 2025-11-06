@@ -1,42 +1,82 @@
 import { View, Text, ScrollView, Pressable, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { ArrowLeft, Calendar, MapPin, Clock, Star } from "lucide-react-native";
 import { Button } from "@/components/ui/button";
 import { Event } from "../../../../../../packages/database/src/schema";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
+import { queryClient } from "@/app/_layout";
+import * as Haptics from 'expo-haptics';
+import { authClient } from "@/lib/auth-client";
 
 export default function EventDetails() {
-    const { id } = useLocalSearchParams();
-    const [isFilled, setIsFilled] = useState(false);
+    const params = useLocalSearchParams();
+    const eventId = typeof params.id === 'string' ? params.id : params.id?.[0];
     const router = useRouter();
+    const session = authClient.useSession();
 
     const { isPending, error, data } = useQuery<Event, Error>({
-        queryKey: ['event', id],
+        queryKey: ['event', eventId],
         queryFn: async () => {
-            const res = await apiClient.events[':id'].$get({ param: { id: id as string } });
+            const res = await apiClient.events[':id'].$get({ param: { id: eventId as string } });
 
             if (res.ok) {
-
-                const data = await res.json();
+                const events = await res.json();
 
                 return {
-                    ...data,
-                    startDate: new Date(data.startDate),
-                    endDate: new Date(data.endDate),
-                    repeatEndDate: data.repeatEndDate ? new Date(data.repeatEndDate) : null,
-                    createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
+                    ...events,
+                    startDate: new Date(events.startDate),
+                    endDate: new Date(events.endDate),
+                    repeatEndDate: events.repeatEndDate ? new Date(events.repeatEndDate) : null,
+                    createdAt: events.createdAt ? new Date(events.createdAt) : undefined,
                 } as Event;
             } else {
                 throw new Error('Failed to fetch event');
             }
-        }
+        },
+        enabled: !!eventId,
     });
 
-    
+    const mutation = useMutation({
+        mutationFn: async (eventId: string) => {
+            return apiClient.events.favorites[":eventId"].$post({ param: { eventId } });
+        },
+        onSuccess: () => {
+            console.log('Event saved or deleted successfully');
+            queryClient.invalidateQueries({ queryKey: ['favoriteEvent', eventId, session.data?.user?.id] });
+            queryClient.invalidateQueries({ queryKey: ['favoriteEvents', session.data?.user?.id] });
+        },
+    });
+
+    const { data: isFavorited = false } = useQuery({
+        queryKey: ['favoriteEvent', eventId, session.data?.user?.id],
+        queryFn: async () => {
+            if (!session.data?.user?.id) return false;
+
+            const res = await apiClient.events.favorites[':userid'].$get({
+                param: { userid: session.data.user.id }
+            });
+
+            if (res.ok) {
+                const events = await res.json();
+                return events.some((item: any) => item.event.id === eventId);
+            }
+            return false;
+        },
+        enabled: !!eventId && !!session.data?.user?.id,
+    });
+
+    const handleSaveEvent = useCallback(() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("Save Event pressed");
+
+        if (eventId) {
+            mutation.mutate(eventId);
+        }
+    }, [eventId, mutation]);
 
     function randomImage() {
         let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
@@ -80,8 +120,8 @@ export default function EventDetails() {
                     <ArrowLeft size={24} color="#000" />
                 </Pressable>
                 <Text className="text-xl font-semibold flex-1 text-black">Event Details</Text>
-                <Pressable onPress={() => setIsFilled(!isFilled)} className="active:scale-110">
-                    <Star fill={`${isFilled ? "#FFFF00" : "#ffffff"}`} />
+                <Pressable onPress={handleSaveEvent} className="active:scale-110">
+                    <Star fill={isFavorited ? "#FFFF00" : "#ffffff"} />
                 </Pressable>
             </View>
 

@@ -15,10 +15,10 @@ const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
     const userId = c.var.user?.id;
 
-    // if (!userId) {
-    //   console.log("No user in session.");
-    //   return c.json({ error: "User not authenticated" }, 401);
-    // }
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const events = await db.select().from(schema.event);
 
@@ -26,6 +26,12 @@ const app = new Hono<{ Variables: AuthType }>()
   })
   .get("/:id", async (c) => {
     const eventId = c.req.param("id");
+    const userId = c.var.user?.id;
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const eventById = await db
       .select()
@@ -37,6 +43,11 @@ const app = new Hono<{ Variables: AuthType }>()
   })
   .get("/favorites/:userid", async (c) => {
     const userId = c.req.param("userid");
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
 
     const favoriteEvents = await db
       .select()
@@ -57,9 +68,10 @@ const app = new Hono<{ Variables: AuthType }>()
 
       const userId = c.var.user?.id;
 
-      // if (!userId) {
-      //   return c.json({ error: "User not authenticated" }, 401);
-      // }
+      if (!userId) {
+        console.log("No user in session.");
+        return c.json({ error: "User not authenticated" }, 401);
+      }
 
       const [isFavoriteExisting] = await db
         .select()
@@ -83,7 +95,10 @@ const app = new Hono<{ Variables: AuthType }>()
           )
           .returning();
 
-        console.log("Event is already a favorite. Removing event from users favorites:", savedEvent);
+        console.log(
+          "Event is already a favorite. Removing event from users favorites:",
+          savedEvent
+        );
         return c.json(savedEvent);
       }
 
