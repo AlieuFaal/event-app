@@ -1,44 +1,37 @@
-import { View, Text, ScrollView, Pressable, Image } from "react-native";
+import { View, Text, ScrollView, Pressable, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback } from "react";
-import { apiClient } from "@/lib/api-client";
+import { useCallback, useState } from "react";
 import { ArrowLeft, Calendar, MapPin, Clock, Star } from "lucide-react-native";
 import { Button } from "@/components/ui/button";
-import { Event } from "../../../../../../packages/database/src/schema";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
 import { queryClient } from "@/app/_layout";
-import * as Haptics from 'expo-haptics';
+import { RefreshControl } from "react-native-gesture-handler";
+import { useEventId } from "@/hooks/useEventId";
 import { authClient } from "@/lib/auth-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api-client";
+import * as Haptics from 'expo-haptics';
 
 export default function EventDetails() {
     const params = useLocalSearchParams();
     const eventId = typeof params.id === 'string' ? params.id : params.id?.[0];
+    const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
     const session = authClient.useSession();
 
-    const { isPending, error, data } = useQuery<Event, Error>({
-        queryKey: ['event', eventId],
-        queryFn: async () => {
-            const res = await apiClient.events[':id'].$get({ param: { id: eventId as string } });
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await queryClient.invalidateQueries();
+        setRefreshing(false);
+    }, []);
 
-            if (res.ok) {
-                const events = await res.json();
+    const { isPending, error, data } = useEventId(eventId);
 
-                return {
-                    ...events,
-                    startDate: new Date(events.startDate),
-                    endDate: new Date(events.endDate),
-                    repeatEndDate: events.repeatEndDate ? new Date(events.repeatEndDate) : null,
-                    createdAt: events.createdAt ? new Date(events.createdAt) : undefined,
-                } as Event;
-            } else {
-                throw new Error('Failed to fetch event');
-            }
-        },
-        enabled: !!eventId,
-    });
+    function randomImage() {
+        let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
+        return images[Math.floor(Math.random() * images.length)];
+    }
 
     const mutation = useMutation({
         mutationFn: async (eventId: string) => {
@@ -78,16 +71,12 @@ export default function EventDetails() {
         }
     }, [eventId, mutation]);
 
-    function randomImage() {
-        let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
-        return images[Math.floor(Math.random() * images.length)];
-    }
-
     if (isPending) {
         return (
-            <SafeAreaView className="flex-1 bg-white" edges={['top']} style={{ backgroundColor: '#ffffff' }}>
+            <SafeAreaView className="flex-1" edges={['top']}>
                 <View className="flex-1 justify-center items-center">
-                    <Text className="text-gray-500">Loading...</Text>
+                    <ActivityIndicator size="large" color="fuchsia" />
+                    <Text className="text-gray-500">Loading events...</Text>
                 </View>
             </SafeAreaView>
         );
@@ -125,7 +114,9 @@ export default function EventDetails() {
                 </Pressable>
             </View>
 
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
 
                 <Image
                     source={randomImage()}

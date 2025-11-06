@@ -27,17 +27,17 @@ export function EventCard1({ event, onLongPress }: { event: Event, onLongPress: 
     }
 
     return (
-        <Pressable className="active:scale-110 transition-transform duration-200"
+        <Pressable className="active:scale-90 transition-transform duration-200"
             onPress={onPress}
             onLongPress={handleLongPress}
             delayLongPress={500}>
-            <Card className="bg-gray-100 w-80 items-center rounded-3xl mx-auto h-96 mt-4 shadow drop-shadow-lg border-1">
+            <Card className="bg-gray-100 w-80 items-center rounded-3xl mx-auto h-96 mt-2 shadow drop-shadow-lg border-primary">
                 <CardContent className="w-full bg-gray-200 mx-auto rounded-t-3xl -top-6 h-4/5 justify-center items-center border-b-1 overflow-hidden">
-                    <Image className="text-3xl text-center rounded-3xl w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
+                    <Image className="rounded-3xl w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
                 </CardContent>
                 <CardContent className="w-full h-fit justify-center items-center -top-12">
                     <CardTitle className="text-xl mt-6">{event.title}</CardTitle>
-                    <CardDescription className="text-lg">{event.description}</CardDescription>
+                    <CardDescription className="text-lg line-clamp-1">{event.description}</CardDescription>
                 </CardContent>
             </Card>
         </Pressable>
