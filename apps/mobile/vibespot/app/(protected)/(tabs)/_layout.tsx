@@ -9,9 +9,22 @@ export default function TabsLayout() {
     return (
         <Tabs screenOptions={{ 
             headerShown: false,
-            sceneStyle: { backgroundColor: 'transparent' }
+            sceneStyle: { backgroundColor: 'transparent' },
+            tabBarStyle: { 
+                position: 'absolute',
+                backgroundColor: 'transparent',
+                borderTopWidth: 0,
+                elevation: 0,
+            }
         }} tabBar={({ state, navigation }) => (
-            <View className={`flex-row items-center justify-around p-2 rounded-full shadow drop-shadow-xl w-screen mx-auto scale-90 mb-4 border ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-gray-50 border-primary'}`}>
+            <View style={{ 
+                position: 'absolute', 
+                bottom: 0, 
+                left: 0, 
+                right: 0, 
+                backgroundColor: 'transparent',
+            }}>
+                <View className={`flex-row items-center justify-around p-2 rounded-full shadow drop-shadow-xl w-screen mx-auto scale-90 mb-4 border ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-gray-50 border-primary'}`}>
                 {state.routes.map((route, index) => {
                     const isFocused = state.index === index;
 
@@ -96,8 +109,8 @@ export default function TabsLayout() {
                     return null;
                 })}
             </View>
-        )}
-        >
+            </View>
+        )}>
             <Tabs.Screen name="index" />
             <Tabs.Screen name="events" />
             <Tabs.Screen name="create-event" />
