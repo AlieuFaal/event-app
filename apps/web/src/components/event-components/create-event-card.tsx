@@ -20,7 +20,6 @@ import { router } from "@/router";
 import { Calendar24 } from "../shadcn/ui/date-time-picker";
 import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
-import { AddressAutofill } from "@mapbox/search-js-react";
 import { ColorPicker } from "../color-picker-component/color-picker";
 import { Textarea } from "../shadcn/ui/textarea";
 import {
@@ -31,7 +30,12 @@ import {
     SelectValue,
 } from "../shadcn/ui/select";
 import { GENRES } from "../calendar/constants";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+
+// Lazy load Mapbox component to avoid SSR issues
+const AddressAutofill = lazy(() =>
+  import("@mapbox/search-js-react").then((mod) => ({ default: mod.AddressAutofill }))
+);
 
 interface EventCardProps {
     currentUser: User | null;
@@ -171,35 +175,37 @@ export default function EventCard({ currentUser: _currentUser }: EventCardProps)
                                     )}
                                 />
 
-                                <AddressAutofill
-                                    accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
-                                    onRetrieve={(res: any) => {
-                                        form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
-                                        form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
-                                    }}
-                                    onSuggestError={(e: any) => console.log(e)}
-                                    browserAutofillEnabled={false}
-                                    confirmOnBrowserAutofill={false}
-                                    options={{ country: 'se', streets: true, proximity: 'ip', limit: 5}}
-                                    theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
-                                >
-                                    <FormField
-                                        control={form.control}
-                                        name="address"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder={m.form_address_placeholder()} {...field} value={field.value} onChange={handleChange} autoComplete="street-address" className="h-9" />
-                                                </FormControl>
-                                                <FormDescription className="relative left-3 text-xs">
-                                                    {m.form_address_description()}
-                                                </FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </AddressAutofill>
+                                <Suspense fallback={<div className="h-20 animate-pulse bg-gray-100 rounded-xl" />}>
+                                    <AddressAutofill
+                                        accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
+                                        onRetrieve={(res: any) => {
+                                            form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
+                                            form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
+                                        }}
+                                        onSuggestError={(e: any) => console.log(e)}
+                                        browserAutofillEnabled={false}
+                                        confirmOnBrowserAutofill={false}
+                                        options={{ country: 'se', streets: true, proximity: 'ip', limit: 5}}
+                                        theme={{ variables: { borderRadius: '1.3rem', padding: "0.7rem" } }}
+                                    >
+                                        <FormField
+                                            control={form.control}
+                                            name="address"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="relative left-3">{m.form_address_label()}</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder={m.form_address_placeholder()} {...field} value={field.value} onChange={handleChange} autoComplete="street-address" className="h-9" />
+                                                    </FormControl>
+                                                    <FormDescription className="relative left-3 text-xs">
+                                                        {m.form_address_description()}
+                                                    </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </AddressAutofill>
+                                </Suspense>
 
                                 <FormField
                                     control={form.control}

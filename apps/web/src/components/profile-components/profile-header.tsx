@@ -67,7 +67,7 @@ export default function ProfileHeader({ followersCount, followingCount }: Profil
       <CardContent className="p-6">
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           <div className="relative">
-            <Avatar className="relative h-34 w-48">
+            <Avatar className="h-32 w-32">
               <AvatarImage src={currentUser?.image!} alt="Profile" />
               <AvatarFallback className="text-2xl">{currentUser?.name?.split(' ').map((n: string) => n[0]).join('').toLocaleUpperCase()}</AvatarFallback>
             </Avatar>

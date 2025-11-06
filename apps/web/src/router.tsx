@@ -5,12 +5,21 @@ import { routeTree } from './routeTree.gen'
 import { Button } from './components/shadcn/ui/button'
 
 // Create a new router instance
-export const createRouter = () => {
-  return createTanstackRouter({
+export const createRouter = () =>
+  createTanstackRouter({
     routeTree,
     scrollRestoration: true,
     scrollRestorationBehavior: "smooth",
+    defaultPreload: false, // Disabled to prevent auth issues with server functions
+    defaultPreloadDelay: 100,
     defaultPreloadStaleTime: 0,
+    defaultPendingMs: 100,
+    defaultPendingMinMs: 500,
+    context: {
+      IsAuthenticated: false,
+      currentUser: null,
+    },
+    defaultStaleTime: 0,
 
     defaultNotFoundComponent: () => {
       return (
@@ -40,7 +49,6 @@ export const createRouter = () => {
       )
     },
   })
-}
 
 export const router = createRouter()
 

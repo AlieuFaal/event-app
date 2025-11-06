@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
 import { m } from '@/paraglide/messages';
-import { setLocale } from '@/paraglide/runtime';
+import { setLocaleServerFn } from '@/services/ThemeService';
 import { User } from 'drizzle/db';
 
 // Simple logo component for the navbar
@@ -89,8 +89,8 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
   </svg>
 );
 
-// Default navigation links
-const defaultNavigationLinks: Navbar05NavItem[] = [
+// Navigation links function - called inside component to use current locale
+const getNavigationLinks = (): Navbar05NavItem[] => [
   { href: '/', label: m.nav_home() },
   { href: '/create-event', label: m.nav_create_event() },
   { href: '/events', label: m.nav_events() },
@@ -117,26 +117,45 @@ async function onLogout() {
 }
 
 // Language menu Component
-const LanguageMenu = () => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="outline" size="icon" className="h-9 w-9">
-        <LanguagesIcon className="h-4 w-4" />
-        <span className="sr-only">Select language</span>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => setLocale('en')}>
-        {m.language_english()}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => setLocale('sv')}>
-        {m.language_swedish()}
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+const LanguageMenu = () => {
+  const handleLocaleChange = async (newLocale: 'en' | 'sv') => {
+    try {
+      console.log('[LanguageMenu] Starting locale change to:', newLocale);
+      
+      // Save to cookie on server
+      await setLocaleServerFn({ data: newLocale });
+      console.log('[LanguageMenu] Locale saved to server cookie');
+      
+      // Force a full page reload to apply translations immediately
+      // Use location.href to force a hard reload (bypasses cache)
+      console.log('[LanguageMenu] About to hard reload page');
+      window.location.href = window.location.href;
+    } catch (error) {
+      console.error('[LanguageMenu] Failed to change locale:', error);
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon" className="h-9 w-9">
+          <LanguagesIcon className="h-4 w-4" />
+          <span className="sr-only">Select language</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleLocaleChange('en')}>
+          {m.language_english()}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleLocaleChange('sv')}>
+          {m.language_swedish()}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 // // Notification Menu Component
 // const NotificationMenu = ({
@@ -262,7 +281,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       className,
       logo = <Logo />,
       logoHref = '/',
-      navigationLinks = defaultNavigationLinks,
+      navigationLinks, // Don't provide default here - will be generated in component body
       userName = 'John Doe',
       userEmail = 'john@example.com',
       userAvatar,
@@ -279,6 +298,9 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const user = currentUser;
+    
+    // Generate navigation links inside component to use current locale
+    const navLinks = navigationLinks || getNavigationLinks();
 
     useEffect(() => {
       const checkWidth = () => {
@@ -310,7 +332,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       }
     }, [ref]);
 
-    const filteredNavLinks = user?.role === 'user' ? navigationLinks.filter(link => link.href !== '/create-event') : navigationLinks;
+    const filteredNavLinks = user?.role === 'user' ? navLinks.filter(link => link.href !== '/create-event') : navLinks;
 
     return (
       <header

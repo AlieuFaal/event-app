@@ -22,7 +22,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [paraglideVitePlugin({ project: './project.inlang', outdir: './src/paraglide',outputStructure: "message-modules",
       cookieName: "PARAGLIDE_LOCALE",
-      strategy: ["localStorage", "preferredLanguage", "url", "baseLocale"],
+      strategy: ["cookie", "localStorage", "preferredLanguage", "baseLocale"],
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
@@ -33,6 +33,24 @@ export default defineConfig({
       customViteReactPlugin: true,
     }),
     viteReact()],
+    build: {
+      target: 'esnext',
+      minify: 'esbuild',
+      cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-tanstack': ['@tanstack/react-router', '@tanstack/react-start', '@tanstack/react-query'],
+            'vendor-gsap': ['gsap', '@gsap/react'],
+            'vendor-ui': ['framer-motion', 'lucide-react'],
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', '@tanstack/react-router', 'gsap'],
+    },
     }
 )
 

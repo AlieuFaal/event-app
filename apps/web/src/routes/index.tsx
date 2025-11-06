@@ -3,28 +3,28 @@ import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-backgrou
 import { Button } from '@/components/shadcn/ui/button'
 import { getServerMessage } from '@/services/get-server-message'
 import { m } from '@/paraglide/messages'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useIsVisible } from '@/hooks/useIsVisible'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/ui/card'
 import { PlaceholderImage2, PlaceholderImage3 } from '@/assets'
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react'
-import { ScrollToPlugin, ScrollSmoother, ScrollTrigger } from 'gsap/all'
-import { useTheme } from '@/components/Themeprovider'
+import { ScrollToPlugin, ScrollTrigger } from 'gsap/all'
+import { getThemeServerFn } from '@/services/ThemeService'
 
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
     getServerMessage({ data: '🎉' })
     const ctx = context
+    const theme = await getThemeServerFn()
 
-    return { ctx }
+    return { ctx, theme }
   },
   component: App,
 })
 
 function App() {
-  const { ctx } = Route.useLoaderData()
-  const { theme } = useTheme()
+  const { ctx, theme } = Route.useLoaderData()
 
   const ref1 = useRef<HTMLDivElement>(null);
   const isVisible1 = useIsVisible(ref1);
@@ -38,56 +38,28 @@ function App() {
   const ref4 = useRef<HTMLDivElement>(null);
   const isVisible4 = useIsVisible(ref4);
 
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
-
-  useEffect(() => {
-    const updateBackgroundColor = () => {
-      if (theme === 'dark') {
-        setBackgroundColor('#0f0f23')
-      } else if (theme === 'light') {
-        setBackgroundColor('#ffffff')
-      } else if (theme === 'system') {
-        const isDark = document.documentElement.classList.contains('dark')
-        setBackgroundColor(isDark ? '#0f0f23' : '#ffffff')
-      }
-    }
-
-    updateBackgroundColor()
-
-    const observer = new MutationObserver(updateBackgroundColor)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    })
-
-    return () => observer.disconnect()
-  }, [theme])
+  // Calculate background color safely (no document access during SSR)
+  const backgroundColor = useMemo(() => {
+    if (theme === 'dark') return '#0f0f23';
+    if (theme === 'light') return '#ffffff';
+    // Default to light for SSR
+    return '#ffffff';
+  }, [theme]);
 
   useEffect(() => {
     document.body.style.backgroundColor = backgroundColor;
   }, [backgroundColor])
 
-  if (typeof window !== "undefined") {
-    gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, ScrollSmoother);
-  }
-  
-  useGSAP(() => {
-    let smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.2,
-      effects: false,
-      normalizeScroll: true,
-    });
-
-    return () => {
-      smoother.kill();
-    };
+  // Only register GSAP plugins on client side, once
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger);
+    }
   }, []);
 
   return (
-    <div id="smooth-wrapper">
-      <div id="smooth-content">
+    <div className="relative">
+      <div>
         <div id='section1' ref={ref1} className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} relative h-screen w-full overflow`}>
             <WavyBackground
             backgroundFill={backgroundColor}

@@ -12,8 +12,10 @@ import { postCommentForEventFn } from "@/services/eventService";
 import { useForm } from "react-hook-form";
 import { EventWithComments } from "drizzle/db";
 import { m } from "@/paraglide/messages";
+import { useRouter } from "@tanstack/react-router";
 
 export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null}) {
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof commentInsertSchema>>({
         mode: "onBlur",
@@ -40,6 +42,8 @@ export default function CommentSection({ event, users, currentUser }: { event: E
             if (response) {
                 toast.success(m.toast_comment_success());
                 form.reset();
+                // Invalidate router to refetch event data with new comment
+                await router.invalidate();
             } else {
                 toast.error(m.toast_comment_failed());
             }

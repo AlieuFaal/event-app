@@ -70,8 +70,8 @@ export default function AccountHeader({ user, followersCount, followingCount, is
         <Card>
             <CardContent className="p-6">
                 <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                    <Avatar className="relative h-34 w-48 rounded-full">
-                        <AvatarImage src={user.image!} alt="Profile" className="border rounded-full" />
+                    <Avatar className="h-32 w-32 rounded-full">
+                        <AvatarImage src={user.image!} alt="Profile" className="rounded-full object-cover" />
                         <AvatarFallback className="text-2xl">{user?.name?.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-4">

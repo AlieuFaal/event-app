@@ -141,6 +141,8 @@ export const getMapEventsFn = createServerFn({
       longitude: schema.event.longitude,
       userId: schema.event.userId,
       createdAt: schema.event.createdAt,
+      repeatGroupId: schema.event.repeatGroupId,
+      repeatEndDate: schema.event.repeatEndDate,
     })
     .from(schema.event)
     .where(gte(schema.event.endDate, new Date()))
