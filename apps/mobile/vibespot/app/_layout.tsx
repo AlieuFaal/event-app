@@ -11,10 +11,10 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+export const queryClient = new QueryClient();
 
 export default function RootLayout() {
 
-  const queryClient = new QueryClient();
 
   queryClient.setDefaultOptions({
     queries: {

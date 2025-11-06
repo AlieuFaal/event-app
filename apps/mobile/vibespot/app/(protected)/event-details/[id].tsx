@@ -1,57 +1,46 @@
-import { View, Text, ScrollView, Pressable, Image } from "react-native";
+import { View, Text, ScrollView, Pressable, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { ArrowLeft, Calendar, MapPin, Clock, Star } from "lucide-react-native";
 import { Button } from "@/components/ui/button";
 import { Event } from "../../../../../../packages/database/src/schema";
 import { useQuery } from "@tanstack/react-query";
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
+import { queryClient } from "@/app/_layout";
+import { RefreshControl } from "react-native-gesture-handler";
+import { useEventId } from "@/hooks/useEventId";
 
 export default function EventDetails() {
     const { id } = useLocalSearchParams();
     const [isFilled, setIsFilled] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
 
-    const { isPending, error, data } = useQuery<Event, Error>({
-        queryKey: ['event', id],
-        queryFn: async () => {
-            const res = await apiClient.events[':id'].$get({ param: { id: id as string } });
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await queryClient.invalidateQueries();
+        setRefreshing(false);
+    }, []);
 
-            if (res.ok) {
-
-                const data = await res.json();
-
-                return {
-                    ...data,
-                    startDate: new Date(data.startDate),
-                    endDate: new Date(data.endDate),
-                    repeatEndDate: data.repeatEndDate ? new Date(data.repeatEndDate) : null,
-                    createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
-                } as Event;
-            } else {
-                throw new Error('Failed to fetch event');
-            }
-        }
-    });
-
-    
+    const { isPending, error, data } = useEventId(id as string);
 
     function randomImage() {
         let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
         return images[Math.floor(Math.random() * images.length)];
     }
 
-    if (isPending) {
-        return (
-            <SafeAreaView className="flex-1 bg-white" edges={['top']} style={{ backgroundColor: '#ffffff' }}>
-                <View className="flex-1 justify-center items-center">
-                    <Text className="text-gray-500">Loading...</Text>
-                </View>
-            </SafeAreaView>
-        );
-    }
+  if (isPending) {
+    return (
+      <SafeAreaView className="flex-1" edges={['top']}>
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="fuchsia" />
+          <Text className="text-gray-500">Loading events...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
     if (!data) {
         return (
@@ -85,7 +74,9 @@ export default function EventDetails() {
                 </Pressable>
             </View>
 
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
 
                 <Image
                     source={randomImage()}

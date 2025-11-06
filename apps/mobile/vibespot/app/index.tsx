@@ -4,9 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function HomeScreen() {
   return (
     <LinearGradient
-      colors={['#8b5cf6', '#a78bfa', '#c4b5fd', '#e9d5ff']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+      colors={[ 'blue', 'fuchsia']}
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1.2, y: 0.5 }}
       className="flex-1"
     >
       <SignInForm />
