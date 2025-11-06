@@ -2,7 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Card, CardContent } from "../shadcn/ui/card";
 import { Calendar, Mail, MapPin, Users, UserPlus } from "lucide-react";
 import { Badge } from "../shadcn/ui/badge";
-import { UserSocial } from "drizzle/db";
+import { User } from "drizzle/db";
 import { Button } from "../shadcn/ui/button";
 import React from "react";
 import { followUserFn, unfollowUserFn } from "@/services/user-service";
@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 
 interface AccountHeaderProps {
-    user: UserSocial;
+    user: User;
     followersCount: number;
     followingCount: number;
     isFollowing?: boolean;
