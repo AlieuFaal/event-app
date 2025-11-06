@@ -10,11 +10,11 @@ export default function Profile() {
   };
 
   return (
-    <SafeAreaView className="flex-1" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1 p-4">
-        <Text className="text-3xl text-center mt-4">Profile</Text>
-        <Button className="h-20 mt-4" onPress={handleSignoout}>
-          <Text className="text-center text-white">
+        <Text className="text-3xl text-center mt-4 text-gray-900 dark:text-white">Profile</Text>
+        <Button className="h-20 mt-4 bg-primary" onPress={handleSignoout}>
+          <Text className="text-center text-primary-foreground">
             Sign Out
           </Text>
         </Button>

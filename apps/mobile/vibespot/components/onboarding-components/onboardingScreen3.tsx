@@ -51,14 +51,14 @@ export default function OnboardingScreenComponent3() {
     return (
         <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
             <View className="flex-1">
-                <Card className="rounded-none flex-1">
+                <Card className="rounded-none flex-1 bg-background dark:bg-gray-900">
                     <CardHeader className="flex flex-col items-center mt-14 gap-2">
-                        <CardTitle className="text-5xl text-primary text-center">Almost there!</CardTitle>
+                        <CardTitle className="text-5xl text-primary dark:text-purple-400 text-center">Almost there!</CardTitle>
                         <CardDescription className="text-xl text-center mt-5">We just need a bit more info to set up your profile.</CardDescription>
                     </CardHeader>
                     <KeyboardAwareScrollView disableScrollOnKeyboardHide={true} keyboardDismissMode='interactive' contentContainerStyle={{ flexGrow: 1 }} >
                         <CardContent>
-                            <Label nativeID="phone">Phone number</Label>
+                            <Label nativeID="phone" className="text-gray-900 dark:text-white">Phone number</Label>
                             <View className="mt-2">
                                 <Input
                                     placeholder="Enter your phone number"
@@ -66,17 +66,19 @@ export default function OnboardingScreenComponent3() {
                                     onChangeText={setPhone}
                                     keyboardType="phone-pad"
                                     aria-labelledby="phone"
-                                    className="w-full h-12 border-2"
+                                    className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+                                    placeholderTextColor="#6b7280"
                                 />
                             </View>
-                            <Label nativeID="location" className="mt-4">Location</Label>
+                            <Label nativeID="location" className="mt-4 text-gray-900 dark:text-white">Location</Label>
                             <View className="mt-2">
                                 <Input
                                     placeholder="Enter your location"
                                     value={location}
                                     onChangeText={setLocation}
                                     aria-labelledby="location"
-                                    className="w-full h-12 border-2"
+                                    className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+                                    placeholderTextColor="#6b7280"
                                 />
                             </View>
                             <Button

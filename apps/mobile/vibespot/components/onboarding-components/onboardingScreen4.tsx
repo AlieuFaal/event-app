@@ -13,9 +13,9 @@ export default function OnboardingScreenComponent4() {
     return (
         <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
             <View className="flex-1">
-                <Card className="flex-1">
+                <Card className="flex-1 bg-background dark:bg-gray-900">
                     <CardHeader className='mt-10'>
-                        <CardTitle className="text-center text-3xl sm:text-left">Onboarding Complete!</CardTitle>
+                        <CardTitle className="text-center text-3xl sm:text-left text-gray-900 dark:text-white">Onboarding Complete!</CardTitle>
                         <CardDescription className="text-center sm:text-left">
                             You&apos;re all set! Tap the button below to explore VibeSpot.
                         </CardDescription>

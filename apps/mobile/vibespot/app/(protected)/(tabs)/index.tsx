@@ -32,10 +32,10 @@ export default function Home() {
 
   if (isPending) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="fuchsia" />
-          <Text className="text-gray-500">Loading events...</Text>
+          <Text className="text-gray-600 dark:text-gray-300">Loading events...</Text>
         </View>
       </SafeAreaView>
     );
@@ -43,9 +43,9 @@ export default function Home() {
 
   if (!data) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
-          <Text className="text-gray-500">No events available.</Text>
+          <Text className="text-gray-600 dark:text-gray-300">No events available.</Text>
         </View>
       </SafeAreaView>
     );
@@ -53,25 +53,25 @@ export default function Home() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
-          <Text className="text-red-500">Error fetching events: {(error as Error).message}</Text>
+          <Text className="text-red-500 dark:text-red-400">Error fetching events: {(error as Error).message}</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1">
         <View className='h-fit'>
-          <Text className="text-left mx-11 text-2xl font-semibold">Upcoming Event</Text>
+          <Text className="text-left mx-11 text-2xl font-semibold text-gray-900 dark:text-white">Upcoming Event</Text>
         </View>
         {data.slice(0, 1).map(event => (
           <UpcomingeventCard key={event.id} event={event} onLongPress={() => openSheet(event)} />
         ))}
         <View className="flex flex-row mt-10 w-11/12 mx-auto ml-11 h-fit">
-          <Text className="text-2xl font-semibold text-center items-start justify-start">Happening Now</Text>
+          <Text className="text-2xl font-semibold text-center items-start justify-start text-gray-900 dark:text-white">Happening Now</Text>
         </View>
         <AnimatedScrollView horizontal={true} showsHorizontalScrollIndicator={false} className={"px-9 py-3"} contentContainerStyle={{ columnGap: 25 }} >
           {data.slice(0, 5).map((event) => (

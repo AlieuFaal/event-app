@@ -19,10 +19,10 @@ export default function Events() {
 
   if (isPending) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="fuchsia" />
-          <Text className="text-gray-500">Loading events...</Text>
+          <Text className="text-gray-600 dark:text-gray-300">Loading events...</Text>
         </View>
       </SafeAreaView>
     );
@@ -30,9 +30,9 @@ export default function Events() {
 
   if (!data) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
-          <Text className="text-gray-500">No events available.</Text>
+          <Text className="text-gray-600 dark:text-gray-300">No events available.</Text>
         </View>
       </SafeAreaView>
     );
@@ -40,21 +40,21 @@ export default function Events() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
         <View className="flex-1 justify-center items-center">
-          <Text className="text-red-500">Error fetching events: {(error as Error).message}</Text>
+          <Text className="text-red-500 dark:text-red-400">Error fetching events: {(error as Error).message}</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1 p-4">
 
         <View>
-          <Text className="text-2xl font-bold mb-1">All Events</Text>
-          <Separator className="bg-black mb-5 h-1" />
+          <Text className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">All Events</Text>
+          <Separator className="bg-gray-300 dark:bg-gray-700 mb-5 h-1" />
         </View>
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false} refreshControl={

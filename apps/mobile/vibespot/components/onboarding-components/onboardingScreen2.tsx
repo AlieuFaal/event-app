@@ -35,9 +35,9 @@ export function OnboardingScreenComponent2() {
     return (
         <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
             <View className="flex-1">
-                <Card className="flex-1 rounded-none">
+                <Card className="flex-1 rounded-none bg-background dark:bg-gray-900">
                     <CardHeader className="flex flex-col items-center mt-8 gap-2">
-                        <CardTitle className="text-5xl text-primary text-center">Which of these fits you best?</CardTitle>
+                        <CardTitle className="text-5xl text-primary dark:text-purple-400 text-center">Which of these fits you best?</CardTitle>
                         <CardDescription className="text-xl text-center mt-5">Only Artists will be able to create events.</CardDescription>
                         <CardDescription className="text-xl">You can change this later in settings.</CardDescription>
                     </CardHeader>

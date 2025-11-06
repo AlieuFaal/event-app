@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Calendar, Flag, Heart, MapPin, ReceiptText, Share } from "lucide-react-native";
 import { useCallback } from "react";
 import { View, Text, Pressable } from "react-native";
+import { useColorScheme } from "nativewind";
 import { Event } from "../../../../../packages/database/src/schema";
 import * as Haptics from 'expo-haptics';
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -20,6 +21,7 @@ interface EventDetailsSheetProps {
 export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }: EventDetailsSheetProps) {
     const router = useRouter();
     const session = authClient.useSession();
+    const { colorScheme } = useColorScheme();
 
     const handleSheetChange = useCallback((index: number) => {
         console.log("handleSheetChange", index);
@@ -77,43 +79,56 @@ export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }:
     }, [selectedEvent, mutation]);
 
     return (
-        <BottomSheet ref={bottomSheetRef} onChange={handleSheetChange} index={-1} snapPoints={snapPoints} enablePanDownToClose={true} onClose={handleClosePress} >
-            <BottomSheetView className="flex-1">
+        <BottomSheet 
+            ref={bottomSheetRef} 
+            onChange={handleSheetChange} 
+            index={-1} 
+            snapPoints={snapPoints} 
+            enablePanDownToClose={true} 
+            onClose={handleClosePress}
+            backgroundStyle={{
+                backgroundColor: colorScheme === 'dark' ? '#111827' : '#ffffff',
+            }}
+            handleIndicatorStyle={{
+                backgroundColor: colorScheme === 'dark' ? '#6b7280' : '#d1d5db',
+            }}
+        >
+            <BottomSheetView className="flex-1 bg-white dark:bg-gray-900">
 
                 <View className="items-center">
-                    <Text className="text-lg font-semibold mt-1">Event Actions</Text>
+                    <Text className="text-lg font-semibold mt-1 text-gray-900 dark:text-white">Event Actions</Text>
                 </View>
 
                 <View className="">
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleViewDetails}>
-                        <ReceiptText size={24} />
-                        <Text className="text-center p-5">View Details</Text>
+                        <ReceiptText size={24} className="text-gray-900 dark:text-white" />
+                        <Text className="text-center p-5 text-gray-900 dark:text-white">View Details</Text>
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleSaveEvent}>
-                        <Heart size={24} fill={isFavorited ? "#C51104" : "none"} />
-                        <Text className="text-center p-5">Save Event</Text>
+                        <Heart size={24} fill={isFavorited ? "#C51104" : "none"} className="text-gray-900 dark:text-white" />
+                        <Text className="text-center p-5 text-gray-900 dark:text-white">Save Event</Text>
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                        <Calendar size={24} />
-                        <Text className="text-center p-5">Add To Calendar</Text>
+                        <Calendar size={24} className="text-gray-900 dark:text-white" />
+                        <Text className="text-center p-5 text-gray-900 dark:text-white">Add To Calendar</Text>
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                        <MapPin size={24} />
-                        <Text className="text-center p-5">View On Map</Text>
+                        <MapPin size={24} className="text-gray-900 dark:text-white" />
+                        <Text className="text-center p-5 text-gray-900 dark:text-white">View On Map</Text>
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                        <Share size={24} />
-                        <Text className="text-center p-5">Share Event</Text>
+                        <Share size={24} className="text-gray-900 dark:text-white" />
+                        <Text className="text-center p-5 text-gray-900 dark:text-white">Share Event</Text>
                     </Pressable>
 
                     <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-lg transition-all duration-200 mb-5" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                         <Flag size={24} fill={"red"} fillOpacity={80} />
-                        <Text className="text-center text-red-500 p-5">Report Event</Text>
+                        <Text className="text-center text-red-500 dark:text-red-400 p-5">Report Event</Text>
                     </Pressable>
 
                 </View>

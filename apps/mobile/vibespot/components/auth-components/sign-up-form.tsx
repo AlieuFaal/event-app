@@ -63,9 +63,9 @@ export function SignUpForm() {
 
     return (
         <View className="gap-6">
-            <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
+            <Card className="border-border/0 bg-white/90 dark:bg-gray-900/95 backdrop-blur-xl sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
                 <CardHeader className='flex flex-col justify-center items-center mt-24'>
-                    <CardTitle className="text-center text-4xl sm:text-left">Create account!</CardTitle>
+                    <CardTitle className="text-center text-4xl sm:text-left text-gray-900 dark:text-white">Create account!</CardTitle>
                     <CardDescription className="text-center sm:text-left">
                         Welcome! Please fill in the details to get started.
                     </CardDescription>
@@ -78,10 +78,10 @@ export function SignUpForm() {
                                 <Input
                                     id="first-name"
                                     placeholder="First Name"
-                                    placeholderTextColor={"black"}
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
-                                    className='h-fit p-4'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={firstName}
                                     onChangeText={setFirstName}
                                 />
@@ -90,10 +90,10 @@ export function SignUpForm() {
                                 <Input
                                     id="last-name"
                                     placeholder="Last Name"
-                                    placeholderTextColor={"black"}
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
-                                    className='h-fit p-4'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={lastName}
                                     onChangeText={setLastName}
                                 />
@@ -102,12 +102,12 @@ export function SignUpForm() {
                                 <Input
                                     id="email"
                                     placeholder="E-mail"
-                                    placeholderTextColor={"black"}
                                     keyboardType="email-address"
                                     autoComplete="email"
                                     autoCapitalize="none"
                                     returnKeyType="next"
-                                    className='h-fit p-4'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={email}
                                     onChangeText={setEmail}
                                 />
@@ -118,8 +118,8 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
-                                    placeholderTextColor={"black"}
-                                    className='h-fit p-4'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={password}
                                     onChangeText={setPassword}
                                 />
@@ -130,8 +130,8 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Confirm Password'
-                                    placeholderTextColor={"black"}
-                                    className='h-fit p-4'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={passwordConfirmation}
                                     onChangeText={setPasswordConfirmation}
                                 />
@@ -141,14 +141,14 @@ export function SignUpForm() {
                             </Button>
                         </View>
                         <View className='mt-5'>
-                            <Text className="text-center text-sm">
+                            <Text className="text-center text-sm text-gray-700 dark:text-white">
                                 Already have an account?{' '}
                             </Text>
                             <Pressable
                                 onPress={() => {
                                     router.navigate('/');
                                 }}>
-                                <Text className="text-sm underline underline-offset-4 text-center">Sign in</Text>
+                                <Text className="text-sm underline underline-offset-4 text-center text-gray-700 dark:text-white">Sign in</Text>
                             </Pressable>
                         </View>
                     </CardContent>

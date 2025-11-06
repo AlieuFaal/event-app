@@ -5,7 +5,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { authClient } from "@/lib/auth-client";
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -15,6 +15,7 @@ export const queryClient = new QueryClient();
 
 export default function RootLayout() {
 
+  const colorScheme = useColorScheme();
 
   queryClient.setDefaultOptions({
     queries: {
@@ -29,19 +30,19 @@ export default function RootLayout() {
   console.log("Current session username in RootLayout:", session.data?.user.name);
 
   useEffect(() => {
-    SystemUI.setBackgroundColorAsync('#ffffff');
+    SystemUI.setBackgroundColorAsync('transparent');
   }, []);
 
   return (
     <QueryClientProvider client={queryClient} >
       <SafeAreaProvider>
-        <GestureHandlerRootView>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <KeyboardProvider>
-            <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-              <StatusBar style="dark" translucent backgroundColor="transparent" />
+            <View style={{ flex: 1 }}>
+              <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} translucent backgroundColor="transparent" />
               <Stack screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: '#ffffff' },
+                contentStyle: { backgroundColor: 'transparent' },
                 animation: 'default',
                 freezeOnBlur: true,
               }}>

@@ -1,11 +1,17 @@
 import { Tabs } from 'expo-router';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, useColorScheme } from 'react-native';
 import { CircleUser, House, ListMusic, MapPinned, Plus } from 'lucide-react-native';
 
 export default function TabsLayout() {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
+    
     return (
-        <Tabs screenOptions={{ headerShown: false, }} tabBar={({ state, navigation }) => (
-            <View className='flex-row items-center justify-around bg-gray-50 p-2 rounded-full shadow drop-shadow-xl w-screen mx-auto scale-90 mb-4 border-primary border'>
+        <Tabs screenOptions={{ 
+            headerShown: false,
+            sceneStyle: { backgroundColor: 'transparent' }
+        }} tabBar={({ state, navigation }) => (
+            <View className={`flex-row items-center justify-around p-2 rounded-full shadow drop-shadow-xl w-screen mx-auto scale-90 mb-4 border ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-gray-50 border-primary'}`}>
                 {state.routes.map((route, index) => {
                     const isFocused = state.index === index;
 
@@ -28,8 +34,8 @@ export default function TabsLayout() {
                                 onPress={onPress}
                                 className='items-center active:scale-110'
                             >
-                                <House color={isFocused ? '#8b5cf6' : '#6b7280'} />
-                                <Text className='text-xs mt-1'>Home</Text>
+                                <House color={isFocused ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
+                                <Text className={`text-xs mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Home</Text>
                             </Pressable>
                         );
                     }
@@ -41,8 +47,8 @@ export default function TabsLayout() {
                                 onPress={onPress}
                                 className='items-center active:scale-110'
                             >
-                                <ListMusic color={isFocused ? '#8b5cf6' : '#6b7280'} />
-                                <Text className='text-xs mt-1'>Events</Text>
+                                <ListMusic color={isFocused ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
+                                <Text className={`text-xs mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Events</Text>
                             </Pressable>
                         );
                     }
@@ -52,7 +58,7 @@ export default function TabsLayout() {
                             <Pressable
                                 key={route.key}
                                 onPress={onPress}
-                                className='items-center bg-gray-100 p-4 rounded-full shadow drop-shadow-xl scale-90 active:scale-110 transition-transform duration-200'
+                                className='items-center bg-white p-4 rounded-full shadow drop-shadow-xl scale-90 active:scale-110 transition-transform duration-200'
                             >
                                 <View className='bg-gray-100 rounded-full shadow-lg drop-shadow-xl scale-150 p-2'>
                                     <Plus color={isFocused ? '#8b5cf6' : '#000000'} strokeWidth={"2.5"} />
@@ -68,8 +74,8 @@ export default function TabsLayout() {
                                 onPress={onPress}
                                 className='items-center active:scale-110'
                             >
-                                <MapPinned color={isFocused ? '#8b5cf6' : '#6b7280'} />
-                                <Text className='text-xs mt-1'>Map</Text>
+                                <MapPinned color={isFocused ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
+                                <Text className={`text-xs mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Map</Text>
                             </Pressable>
                         );
                     }
@@ -81,8 +87,8 @@ export default function TabsLayout() {
                                 onPress={onPress}
                                 className='items-center active:scale-110'
                             >
-                                <CircleUser color={isFocused ? '#8b5cf6' : '#6b7280'} />
-                                <Text className='text-xs mt-1'>Profile</Text>
+                                <CircleUser color={isFocused ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
+                                <Text className={`text-xs mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>Profile</Text>
                             </Pressable>
                         );
                     }

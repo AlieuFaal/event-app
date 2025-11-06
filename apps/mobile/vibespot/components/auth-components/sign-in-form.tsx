@@ -56,9 +56,9 @@ export function SignInForm() {
 
     return (
         <View className="gap-6">
-            <Card className="border-border/0 bg-white/80 dark:bg-card/80 backdrop-blur-xl sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
+            <Card className="border-border/0 bg-white/90 dark:bg-gray-900/95 backdrop-blur-xl sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
                 <CardHeader className='flex flex-col justify-center items-center mt-24'>
-                    <CardTitle className="text-center text-6xl sm:text-left text-purple-700 dark:text-purple-500">VibeSpot</CardTitle>
+                    <CardTitle className="text-center text-6xl sm:text-left text-purple-700 dark:text-purple-400">VibeSpot</CardTitle>
                     <CardDescription className="text-center sm:text-left">
                         Welcome! Sign in to continue!
                     </CardDescription>
@@ -70,13 +70,13 @@ export function SignInForm() {
                                 <Input
                                     id="email"
                                     placeholder="E-mail"
-                                    placeholderTextColor={"black"}
                                     keyboardType="email-address"
                                     autoComplete="email"
                                     autoCapitalize="none"
                                     returnKeyType="next"
                                     submitBehavior="submit"
-                                    className='p-7 h-fit rounded-3xl'
+                                    className='p-7 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={email}
                                     onChangeText={setEmail}
                                 />
@@ -87,8 +87,8 @@ export function SignInForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
-                                    placeholderTextColor={"black"}
-                                    className='p-7 h-fit rounded-3xl'
+                                    className='p-7 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    placeholderTextColor="#6b7280"
                                     value={password}
                                     onChangeText={setPassword}
                                 />
@@ -102,26 +102,26 @@ export function SignInForm() {
                                         onPress={() => {
                                             router.navigate('/forgotpassword');
                                         }}>
-                                        <Text className="text-sm font-normal leading-4 underline">Forgot your password?</Text>
+                                        <Text className="text-sm font-normal leading-4 underline text-gray-700 dark:text-white">Forgot your password?</Text>
                                     </Pressable>
                                 </View>
                             </View>
                             <View>
-                                <Text className="text-center text-sm">
+                                <Text className="text-center text-sm text-gray-700 dark:text-white">
                                     Don&apos;t have an account?{' '}
                                 </Text>
                                 <Pressable
                                     onPress={() => {
                                         router.navigate('/signup');
                                     }}>
-                                    <Text className="text-sm underline underline-offset-4 text-center">Sign up</Text>
+                                    <Text className="text-sm underline underline-offset-4 text-center text-gray-700 dark:text-white">Sign up</Text>
                                 </Pressable>
                             </View>
                         </View>
                         <View className="flex-row items-center">
-                            <Separator className="flex-1 bg-black" />
+                            <Separator className="flex-1" />
                             <Text className="text-muted-foreground px-4 text-sm">or</Text>
-                            <Separator className="flex-1 bg-black" />
+                            <Separator className="flex-1" />
                         </View>
                         <SocialConnections />
                     </CardContent>

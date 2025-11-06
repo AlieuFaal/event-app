@@ -12,9 +12,9 @@ export default function OnboardingScreenComponent1() {
     return (
         <SafeAreaView className="flex-1" edges={['top', 'bottom']}>
             <View className="flex-1">
-                <Card className="flex-1 items-center justify-center rounded-none">
+                <Card className="flex-1 items-center justify-center rounded-none bg-background dark:bg-gray-900">
                     <CardHeader className="flex flex-col items-center -mt-64">
-                        <CardTitle className="text-3xl text-primary">Welcome to VibeSpot!</CardTitle>
+                        <CardTitle className="text-3xl text-primary dark:text-purple-400">Welcome to VibeSpot!</CardTitle>
                         <CardDescription className="text-xl">Let&apos;s setup your account!</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">

@@ -73,10 +73,10 @@ export default function EventDetails() {
 
     if (isPending) {
         return (
-            <SafeAreaView className="flex-1" edges={['top']}>
+            <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={['top']}>
                 <View className="flex-1 justify-center items-center">
-                    <ActivityIndicator size="large" color="fuchsia" />
-                    <Text className="text-gray-500">Loading events...</Text>
+                    <ActivityIndicator size="large" color="#8b5cf6" />
+                    <Text className="text-gray-600 dark:text-gray-300 mt-4">Loading events...</Text>
                 </View>
             </SafeAreaView>
         );
@@ -84,9 +84,9 @@ export default function EventDetails() {
 
     if (!data) {
         return (
-            <SafeAreaView className="flex-1 bg-white" edges={['top']} style={{ backgroundColor: '#ffffff' }}>
+            <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={['top']}>
                 <View className="flex-1 justify-center items-center">
-                    <Text className="text-gray-500">Event not found</Text>
+                    <Text className="text-gray-600 dark:text-gray-300">Event not found</Text>
                 </View>
             </SafeAreaView>
         );
@@ -94,23 +94,23 @@ export default function EventDetails() {
 
     if (error) {
         return (
-            <SafeAreaView className="flex-1 bg-white" edges={['top']} style={{ backgroundColor: '#ffffff' }}>
+            <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={['top']}>
                 <View className="flex-1 justify-center items-center">
-                    <Text className="text-red-500">Error loading event: {(error as Error).message}</Text>
+                    <Text className="text-red-500 dark:text-red-400">Error loading event: {(error as Error).message}</Text>
                 </View>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-white" edges={['top']} style={{ backgroundColor: '#ffffff' }}>
-            <View className="flex-row items-center px-4 py-3 border-b border-gray-200">
+        <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={['top']}>
+            <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
                 <Pressable onPress={() => router.back()} className="mr-3">
-                    <ArrowLeft size={24} color="#000" />
+                    <ArrowLeft size={24} color="#8b5cf6" />
                 </Pressable>
-                <Text className="text-xl font-semibold flex-1 text-black">Event Details</Text>
+                <Text className="text-xl font-semibold flex-1 text-gray-900 dark:text-white">Event Details</Text>
                 <Pressable onPress={handleSaveEvent} className="active:scale-110">
-                    <Star fill={isFavorited ? "#FFFF00" : "#ffffff"} />
+                    <Star fill={isFavorited ? "#FFFF00" : "transparent"} stroke={isFavorited ? "#FFFF00" : "#8b5cf6"} />
                 </Pressable>
             </View>
 
@@ -124,16 +124,16 @@ export default function EventDetails() {
                     resizeMode="cover"
                 />
 
-                <View className="p-6">
-                    <Text className="text-3xl font-bold mb-2 text-black">{data.title}</Text>
+                <View className="p-6 bg-white dark:bg-gray-900">
+                    <Text className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">{data.title}</Text>
 
-                    <View className="bg-purple-100 self-start px-3 py-1 rounded-full mb-4">
-                        <Text className="text-purple-700 font-medium">{data.genre}</Text>
+                    <View className="bg-purple-100 dark:bg-purple-900/30 self-start px-3 py-1 rounded-full mb-4">
+                        <Text className="text-purple-700 dark:text-purple-400 font-medium">{data.genre}</Text>
                     </View>
 
                     <View className="flex-row items-center mb-3">
-                        <Calendar size={20} color="#6b7280" />
-                        <Text className="ml-2 text-gray-700">
+                        <Calendar size={20} color="#8b5cf6" />
+                        <Text className="ml-2 text-gray-700 dark:text-gray-300">
                             {new Date(data.startDate).toLocaleDateString('en-US', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -144,8 +144,8 @@ export default function EventDetails() {
                     </View>
 
                     <View className="flex-row items-center mb-3">
-                        <Clock size={20} color="#6b7280" />
-                        <Text className="ml-2 text-gray-700">
+                        <Clock size={20} color="#8b5cf6" />
+                        <Text className="ml-2 text-gray-700 dark:text-gray-300">
                             {new Date(data.endDate).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -154,30 +154,30 @@ export default function EventDetails() {
                     </View>
 
                     <View className="flex-row items-center mb-3">
-                        <MapPin size={20} color="#6b7280" />
-                        <Text className="ml-2 text-gray-700">{data.address}</Text>
+                        <MapPin size={20} color="#8b5cf6" />
+                        <Text className="ml-2 text-gray-700 dark:text-gray-300">{data.address}</Text>
                     </View>
 
-                    <Text className="text-lg font-semibold mb-2 text-black">About This Event</Text>
-                    <Text className="text-gray-700 leading-6 mb-6">
+                    <Text className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">About This Event</Text>
+                    <Text className="text-gray-700 dark:text-gray-300 leading-6 mb-6">
                         {data.description || "No description available."}
                     </Text>
 
                     {/* {event.price && (
                         <View className="mb-6">
-                            <Text className="text-lg font-semibold mb-2 text-black">Ticket Price</Text>
-                            <Text className="text-2xl font-bold text-purple-600">
+                            <Text className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Ticket Price</Text>
+                            <Text className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                                 ${event.price}
                             </Text>
                         </View>
                     )} */}
 
                     <View className="flex-row gap-3 mt-4">
-                        <Button className="flex-1 bg-purple-600 p-4 rounded-xl h-fit">
+                        <Button className="flex-1 bg-purple-600 dark:bg-purple-700 p-4 rounded-xl h-fit">
                             <Text className="text-white font-semibold">Add To Calendar</Text>
                         </Button>
-                        <Button variant="outline" className="px-6 py-4 rounded-xl border-purple-600 h-fit">
-                            <Text className="text-purple-600 font-semibold">Share</Text>
+                        <Button variant="outline" className="px-6 py-4 rounded-xl border-purple-600 dark:border-purple-500 dark:bg-card-foreground h-fit">
+                            <Text className="text-purple-600 dark:text-purple-400 font-semibold">Share</Text>
                         </Button>
                     </View>
 
