@@ -113,7 +113,7 @@
     "@parcel/watcher",
     "@tailwindcss/oxide"
   ],
-  "overrides": {
-    "@noble/ciphers": "^0.5.3"
+  "resolutions": {
+    "@noble/ciphers": "0.5.3"
   }
 }
