@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@better-auth/expo": "latest",
+    "@noble/ciphers": "1.0.0",
     "better-auth": "latest",
     "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.8.3",
