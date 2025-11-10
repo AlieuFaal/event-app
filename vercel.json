@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/web && bun run build",
-  "outputDirectory": "apps/web/.output/public",
-  "installCommand": "bun install --frozen-lockfile",
+  "buildCommand": "bun run build",
+  "outputDirectory": ".output/public",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
   "framework": null,
+  "rootDirectory": "apps/web",
   "functions": {
-    "apps/web/.output/server/index.mjs": {
+    ".output/server/index.mjs": {
       "runtime": "nodejs20.x",
       "maxDuration": 60
     }
@@ -13,7 +14,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/apps/web/.output/server/index.mjs"
+      "dest": "/.output/server/index.mjs"
     }
   ]
 }
