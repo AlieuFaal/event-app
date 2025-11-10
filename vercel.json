@@ -1,19 +1,19 @@
 {
   "version": 2,
-  "buildCommand": "bun install && cd apps/web && timeout 300 bun run build || (echo 'Build may have timed out but continuing...' && exit 0)",
-  "outputDirectory": "apps/web/.tanstack/start/build/client-dist",
+  "buildCommand": "cd apps/web && bun run build",
+  "outputDirectory": "apps/web/.output/public",
   "installCommand": "bun install --frozen-lockfile",
   "framework": null,
   "functions": {
     "apps/web/.output/server/index.mjs": {
-      "runtime": "nodejs18.x",
+      "runtime": "nodejs20.x",
       "maxDuration": 60
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/start"
+      "dest": "/apps/web/.output/server/index.mjs"
     }
   ]
 }

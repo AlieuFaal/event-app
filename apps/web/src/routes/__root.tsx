@@ -9,9 +9,10 @@ import { getThemeServerFn, getLocaleServerFn } from '@/services/ThemeService.js'
 import React, { useEffect } from 'react'
 import { ThemeProvider } from '@/components/Themeprovider.js'
 import { setLocale } from '@/paraglide/runtime'
+import { User } from '@vibespot/database'
 
 // Cache the last successful auth check to prevent flickering
-let lastAuthState: { user: any; timestamp: number } | null = null;
+let lastAuthState: { user: User | null; timestamp: number } | null = null;
 const AUTH_CACHE_DURATION = 1000; // Cache for 1 second
 
 export const Route = createRootRoute({
@@ -49,8 +50,8 @@ export const Route = createRootRoute({
   loader: async ({ context }) => {
     const ctx = context
 
-    return { 
-      ctx, 
+    return {
+      ctx,
       theme: await getThemeServerFn(),
       locale: await getLocaleServerFn()
     }
@@ -98,9 +99,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("[Root] useEffect triggered - Setting locale from server:", locale);
     console.log("[Root] Current performance.navigation.type:", performance.navigation?.type);
-    console.log("[Root] Current window.performance.getEntriesByType('navigation'):", 
+    console.log("[Root] Current window.performance.getEntriesByType('navigation'):",
       window.performance.getEntriesByType('navigation'));
-    
+
     // IMPORTANT: Pass { reload: false } to prevent setLocale from reloading the page again
     // (setLocale has reload: true by default which would cause infinite loop)
     setLocale(locale as 'en' | 'sv', { reload: false });
