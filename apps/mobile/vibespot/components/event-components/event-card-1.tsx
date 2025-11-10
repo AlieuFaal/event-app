@@ -31,7 +31,7 @@ export function EventCard1({ event, onLongPress }: { event: Event, onLongPress: 
             onPress={onPress}
             onLongPress={handleLongPress}
             delayLongPress={500}>
-            <Card className="bg-gray-100 dark:bg-gray-900 w-80 items-center rounded-3xl mx-auto h-96 mt-2 shadow drop-shadow-lg border-primary">
+            <Card className="bg-gray-100 dark:bg-gray-900 dark:border-0 w-80 items-center rounded-3xl mx-auto h-96 mt-2 shadow drop-shadow-lg border-primary">
                 <CardContent className="w-full bg-gray-200 dark:bg-gray-800 mx-auto rounded-t-3xl -top-6 h-4/5 justify-center items-center border-b-1 overflow-hidden">
                     <Image className="rounded-3xl w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
                 </CardContent>

@@ -2,7 +2,7 @@ import { hc } from "hono/client";
 import type { AppType } from "../../../api/src/index";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
-import { authClient } from "./auth-client"; // Import authClient to get cookies
+import { authClient } from "./auth-client"; 
 
 const getApiUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri?.split(":").shift();

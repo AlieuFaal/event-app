@@ -2,7 +2,7 @@ import { apiClient } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { Event } from "../../../../packages/database/src/schema";
 
-export const useEvent = () => {
+export const useGetEvent = () => {
   const { isPending, error, data } = useQuery<Event[]>({
     queryKey: ["events"],
     queryFn: async () => {

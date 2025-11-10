@@ -21,7 +21,7 @@ export default function EventCard2({ event }: { event: Event }) {
 
     return (
         <Pressable className="active:scale-90 transition-transform duration-200" onPress={onPress}>
-            <View className="flex flex-row border border-primary bg-white dark:bg-gray-900 rounded-lg p-4 mb-5">
+            <View className="flex flex-row border border-primary bg-white dark:bg-secondary-foreground dark:border-0 rounded-lg p-4 mb-5 shadow-sm">
                 <View className="w-24 h-24 justify-center items-center overflow-hidden rounded-sm border-1">
                     <Image className="w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
                 </View>

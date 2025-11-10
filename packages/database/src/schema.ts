@@ -77,7 +77,10 @@ const roles = ["user", "artist", "admin", "New User"] as const;
 export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Please enter your name"),
   email: z.string().email("Please enter a valid email address"),
-  image: z.string().url("Please enter a valid image URL").optional().nullable(),
+  phone: z.string().nullish(),
+  image: z.string().url("Please enter a valid image URL").nullish(),
+  location: z.string().nullish(),
+  bio: z.string().nullish(),
 });
 
 export const userSocialSchema = userSchema.extend({
@@ -287,10 +290,10 @@ export const eventSchema = createSelectSchema(event, {
     "Acoustic",
     "Instrumental",
   ]),
-  venue: z.string().nullable(),
+  venue: z.string().nullish(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
-  repeatGroupId: z.string().uuid().optional().nullable(),
-  repeatEndDate: z.date().optional().nullable(),
+  repeatGroupId: z.string().uuid().nullish(),
+  repeatEndDate: z.date().nullish(),
   startDate: z.date(),
   endDate: z.date(),
   latitude: z.string(),
@@ -304,7 +307,7 @@ export const geocodingSchema = eventSchema.pick({
 
 export const eventInsertSchema = createInsertSchema(event, {
   id: z.string().uuid().optional(),
-  userId: z.string().uuid().nullable().optional(),
+  userId: z.string().uuid().nullish(),
   title: z
     .string()
     .min(2, "Please enter an event title (at least 2 characters)")
@@ -315,10 +318,10 @@ export const eventInsertSchema = createInsertSchema(event, {
       2,
       "Please provide a description for your event (at least 2 characters)"
     ),
-  venue: z.string().optional().nullable(),
+  venue: z.string().nullish(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
-  repeatGroupId: z.string().uuid().optional().nullable(),
-  repeatEndDate: z.date().optional().nullable(),
+  repeatGroupId: z.string().uuid().nullish(),
+  repeatEndDate: z.date().nullish(),
   address: z
     .string()
     .min(2, "Please enter the event location address (at least 2 characters)"),
@@ -389,7 +392,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   address: z
     .string()
     .min(2, "Please enter the event location address (at least 2 characters)"),
-  venue: z.string().nullable(),
+  venue: z.string().nullish(),
   latitude: z.string().optional(),
   longitude: z.string().optional(),
   startDate: z.date().optional(),
@@ -448,10 +451,10 @@ export const eventUpdateSchema = createUpdateSchema(event, {
 
 export const calendarEventSchema = eventSchema.extend({
   id: z.string().uuid(),
-  userId: z.string().uuid().nullable().optional(),
+  userId: z.string().uuid().nullish(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
-  repeatGroupId: z.string().uuid().optional().nullable(),
-  repeatEndDate: z.date().optional().nullable(),
+  repeatGroupId: z.string().uuid().nullish(),
+  repeatEndDate: z.date().nullish(),
   createdAt: z.date().optional(),
 });
 

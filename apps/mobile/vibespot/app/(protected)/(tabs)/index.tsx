@@ -11,8 +11,8 @@ import Animated from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
 import * as Haptics from 'expo-haptics';
 import { EventActionsSheet } from '@/components/bottomsheet-component/eventactions-sheet';
-import UpcomingeventCard from '@/components/event-components/upcoming-event-card';
-import { useEvent } from '@/hooks/useEvent';
+import UpcomingEventCard from '@/components/event-components/upcoming-event-card';
+import { useGetEvent } from '@/hooks/useGetEvent';
 
 const AnimatedScrollView = Animated.ScrollView;
 
@@ -20,7 +20,7 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["50%", "90%"], []);
+  const snapPoints = useMemo(() => ["82%"], []);
 
   const openSheet = (event: Event) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -28,7 +28,7 @@ export default function Home() {
     bottomSheetRef.current?.snapToIndex(1);
   };
 
-  const { isPending, error, data } = useEvent();
+  const { isPending, error, data } = useGetEvent();
 
   if (isPending) {
     return (
@@ -64,11 +64,11 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1">
-        <View className='h-fit'>
+        <View className='h-fit mt-4'>
           <Text className="text-left mx-11 text-2xl font-semibold text-gray-900 dark:text-white">Upcoming Event</Text>
         </View>
         {data.slice(0, 1).map(event => (
-          <UpcomingeventCard key={event.id} event={event} onLongPress={() => openSheet(event)} />
+          <UpcomingEventCard key={event.id} event={event} onLongPress={() => openSheet(event)} />
         ))}
         <View className="flex flex-row mt-10 w-11/12 mx-auto ml-11 h-fit">
           <Text className="text-2xl font-semibold text-center items-start justify-start text-gray-900 dark:text-white">Happening Now</Text>

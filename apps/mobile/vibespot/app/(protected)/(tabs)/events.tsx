@@ -3,13 +3,13 @@ import { useCallback, useState, } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Event } from "../../../../../../packages/database/src/schema";
-import { useEvent } from "@/hooks/useEvent";
+import { useGetEvent } from "@/hooks/useGetEvent";
 import { Separator } from "@/components/ui/separator";
 import EventCard2 from "@/components/event-components/event-card-2";
 
 export default function Events() {
   const [refreshing, setRefreshing] = useState(false);
-  const { isPending, error, data } = useEvent();
+  const { isPending, error, data } = useGetEvent();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

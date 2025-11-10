@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
 import { queryClient } from "@/app/_layout";
 import { RefreshControl } from "react-native-gesture-handler";
-import { useEventId } from "@/hooks/useEventId";
+import { useGetEventById } from "@/hooks/useGetEventById";
 import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
@@ -26,7 +26,7 @@ export default function EventDetails() {
         setRefreshing(false);
     }, []);
 
-    const { isPending, error, data } = useEventId(eventId);
+    const { isPending, error, data } = useGetEventById(eventId);
 
     function randomImage() {
         let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];

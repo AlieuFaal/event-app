@@ -5,7 +5,7 @@ import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderIma
 import { useRouter } from "expo-router";
 import * as Haptics from 'expo-haptics';
 
-export default function UpcomingeventCard({ event, onLongPress }: { event: Event, onLongPress: (event: Event) => void }) {
+export default function UpcomingEventCard({ event, onLongPress }: { event: Event, onLongPress: (event: Event) => void }) {
     const router = useRouter();
 
     function randomImage() {
@@ -28,7 +28,7 @@ export default function UpcomingeventCard({ event, onLongPress }: { event: Event
             onPress={onPress}
             onLongPress={handleLongPress}
             delayLongPress={500}>
-            <Card className="bg-gray-100 dark:bg-gray-900 w-10/12 min-h-36 max-h-36 justify-center items-center rounded-3xl mx-auto mt-5 shadow drop-shadow-lg border-primary">
+            <Card className="bg-gray-100 dark:bg-secondary-foreground w-10/12 min-h-36 max-h-36 justify-center items-center rounded-3xl mx-auto mt-5 shadow drop-shadow-lg border-primary">
                 <CardContent className='w-full flex flex-row justify-around items-center p-1 gap-2 rounded-xl'>
                     <View className="w-32 h-28 justify-center items-center overflow-hidden rounded-sm border-1">
                         <Image className="w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
