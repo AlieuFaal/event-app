@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "buildCommand": "cd apps/web && bun run build",
+  "outputDirectory": "apps/web/.tanstack/start/build/client-dist",
+  "installCommand": "bun install",
+  "framework": null,
+  "functions": {
+    "apps/web/.tanstack/start/build/server/index.mjs": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}

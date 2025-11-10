@@ -1,0 +1,14 @@
+node_modules
+.git
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.next
+.vite
+.tanstack/start/build/client-dist
+apps/mobile
+packages
+*.log
+.expo
+.vscode
