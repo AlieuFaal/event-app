@@ -14,5 +14,8 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.91.2"
   },
-  "packageManager": "bun@1.3.2"
+  "packageManager": "bun@1.3.2",
+  "overrides": {
+    "@noble/ciphers": "^0.5.3"
+  }
 }
