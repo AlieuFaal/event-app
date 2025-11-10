@@ -1,20 +1,5 @@
 {
-  "version": 2,
-  "buildCommand": "bun run build",
-  "outputDirectory": ".output/public",
-  "installCommand": "cd ../.. && bun install --frozen-lockfile",
-  "framework": null,
-  "rootDirectory": "apps/web",
-  "functions": {
-    ".output/server/index.mjs": {
-      "runtime": "nodejs20.x",
-      "maxDuration": 60
-    }
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/.output/server/index.mjs"
-    }
-  ]
+  "buildCommand": "cd apps/web && bun run build:vercel",
+  "installCommand": "bun install",
+  "outputDirectory": "apps/web/.output/public"
 }
