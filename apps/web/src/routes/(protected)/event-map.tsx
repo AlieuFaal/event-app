@@ -22,10 +22,9 @@ export const Route = createFileRoute('/(protected)/event-map')({
     }
 });
 
-const accessToken = import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN;
-
 function RouteComponent() {
     const events = Route.useLoaderData();
+    const accessToken = import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
     const ref1 = useRef<HTMLDivElement>(null);
     const isVisible1 = useIsVisible(ref1);

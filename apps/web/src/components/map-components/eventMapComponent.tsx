@@ -7,8 +7,13 @@ import { Event } from 'drizzle/db';
 import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
 import { Button } from '../shadcn/ui/button';
 import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
-import { Geocoder } from '@mapbox/search-js-react';
 import { useSearch } from '@tanstack/react-router';
+import { lazy, Suspense } from 'react';
+
+// Lazy load Mapbox component to avoid SSR issues
+const Geocoder = lazy(() =>
+  import('@mapbox/search-js-react').then((mod) => ({ default: mod.Geocoder }))
+);
 
 interface EventMapViewProps {
     events: Event[];
@@ -120,25 +125,27 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                 </div>
             )}
             <div className="relative top-10 md:top-15 left-4 md:left-10 z-1 w-[calc(100%-2rem)] md:w-50 max-w-md">
-                <Geocoder
-                    accessToken={accessToken}
-                    placeholder={getLocale() === 'sv' ? 'Sök plats' : 'Search location'}
-                    value={inputValue}
-                    onChange={(value: any) => {
-                        setInputValue(value);
-                    }}
-                    onRetrieve={(result: any) => {
-                        if (mapRef.current && result.geometry?.coordinates) {
-                            const coordinates = result.geometry.coordinates;
-                            mapRef.current.flyTo({
-                                center: coordinates.slice() as [number, number],
-                                zoom: 14.5,
+                <Suspense fallback={<div className="h-12 bg-gray-100 rounded animate-pulse" />}>
+                    <Geocoder
+                        accessToken={accessToken}
+                        placeholder={getLocale() === 'sv' ? 'Sök plats' : 'Search location'}
+                        value={inputValue}
+                        onChange={(value: any) => {
+                            setInputValue(value);
+                        }}
+                        onRetrieve={(result: any) => {
+                            if (mapRef.current && result.geometry?.coordinates) {
+                                const coordinates = result.geometry.coordinates;
+                                mapRef.current.flyTo({
+                                    center: coordinates.slice() as [number, number],
+                                    zoom: 14.5,
                                 essential: true,
                                 animate: true,
                             });
                         }
                     }}
                 />
+                </Suspense>
             </div>
             <div className="p-2 md:p-4 h-full relative">
                 <div id="map-container" className="w-full h-[105vh] sm:h-[70vh] md:h-180 lg:h-125 xl:h-190 2xl:h-220" ref={mapContainerRef} />

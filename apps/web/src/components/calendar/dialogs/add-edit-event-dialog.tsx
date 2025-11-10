@@ -39,8 +39,13 @@ import { calendarFormSchema, type TEventFormData } from "@/components/calendar/s
 import { authClient } from "@/lib/auth-client";
 import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
-import { AddressAutofill, useAddressAutofillCore } from "@mapbox/search-js-react";
 import { updateAllRepeatedEventsFn } from "@/services/eventService";
+import { lazy, Suspense } from "react";
+
+// Lazy load Mapbox components to avoid SSR issues
+const AddressAutofill = lazy(() =>
+  import("@mapbox/search-js-react").then((mod) => ({ default: mod.AddressAutofill }))
+);
 
 
 interface IProps {
@@ -61,7 +66,6 @@ export function AddEditEventDialog({
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-	const [autofillResponse, setAutofillResponse] = useState<{ suggestions: any[] }>({ suggestions: [] });
 	const { addEvent, updateEvent } = useCalendar();
 	const isEditing = !!event;
 
@@ -181,15 +185,8 @@ export function AddEditEventDialog({
 		}
 	};
 
-	const addressAutofill = useAddressAutofillCore({ accessToken: import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN });
-
 	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		form.setValue("address", e.target.value);
-
-		const searchText = form.getValues("address");
-		const autofillResponse = await addressAutofill.suggest(searchText, { sessionToken: currentUser?.id || '' });
-		setAutofillResponse(autofillResponse);
-		console.log(autofillResponse);
 	};
 
 	return (
@@ -292,20 +289,6 @@ export function AddEditEventDialog({
 							)}
 						/>
 						{/* </AddressAutofill> */}
-						{!form.getFieldState("address").isTouched && autofillResponse.suggestions.slice(0, 2).map((suggestion, index) => (
-							<div
-								key={index}
-								className="w-full bg-muted p-1 rounded-2xl hover:scale-105 shadow-lg cursor-pointer "
-								onClick={() => {
-									form.setValue("address", suggestion.place_name);
-									form.setValue("latitude", suggestion.geometry.coordinates[1].toString());
-									form.setValue("longitude", suggestion.geometry.coordinates[0].toString());
-									setAutofillResponse({ suggestions: [] });
-								}}
-							>
-								{suggestion.place_name}
-							</div>
-						))}
 
 						<FormField
 							control={form.control}

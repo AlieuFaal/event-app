@@ -15,7 +15,7 @@ export default function EventCards({ events, users, currentUser }: { events: Eve
             <div className={`transition-opacity ease-in duration-400 ${isVisible1 ? "opacity-100" : "opacity-0"}`} ref={ref1}>
                 <div className="space-y-6">
                     {events.map((e) => (
-                        <EventCard key={e.title} event={e} users={users} currentUser={currentUser}/>
+                        <EventCard key={e.id} event={e} users={users} currentUser={currentUser}/>
                     ))}
                 </div>
             </div>

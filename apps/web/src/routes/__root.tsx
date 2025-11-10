@@ -10,20 +10,39 @@ import React, { useEffect } from 'react'
 import { ThemeProvider } from '@/components/Themeprovider.js'
 import { setLocale } from '@/paraglide/runtime'
 
-
+// Cache the last successful auth check to prevent flickering
+let lastAuthState: { user: any; timestamp: number } | null = null;
+const AUTH_CACHE_DURATION = 1000; // Cache for 1 second
 
 export const Route = createRootRoute({
   beforeLoad: async ({ cause }) => {
     try {
+      // If we have a recent cached auth state and this is a "stay" navigation, use it
+      if (lastAuthState && cause === 'stay' && Date.now() - lastAuthState.timestamp < AUTH_CACHE_DURATION) {
+        const isAuthenticated = !!lastAuthState.user;
+        console.log("Root beforeLoad - User:", lastAuthState.user?.name, "IsAuthenticated:", isAuthenticated, "cause:", cause, "(cached)");
+        return { currentUser: lastAuthState.user, IsAuthenticated: isAuthenticated };
+      }
+
       const user = await getSessionUserFn()
       const isAuthenticated = !!user
+
+      // Update cache with successful result
+      lastAuthState = { user, timestamp: Date.now() };
 
       console.log("Root beforeLoad - User:", user?.name, "IsAuthenticated:", isAuthenticated, "cause:", cause);
 
       return { currentUser: user, IsAuthenticated: isAuthenticated }
     } catch (error) {
       console.error("Error in root beforeLoad:", error);
-      // Return unauthenticated state if there's an error
+      // On error, don't immediately clear the cache - this prevents flickering
+      // Only return unauthenticated if we don't have a valid cache
+      if (lastAuthState && Date.now() - lastAuthState.timestamp < AUTH_CACHE_DURATION * 2) {
+        console.log("Using cached auth state due to error");
+        return { currentUser: lastAuthState.user, IsAuthenticated: !!lastAuthState.user };
+      }
+      // Clear cache and return unauthenticated state
+      lastAuthState = null;
       return { currentUser: null, IsAuthenticated: false }
     }
   },

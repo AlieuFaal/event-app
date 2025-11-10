@@ -1,9 +1,15 @@
 import SignIn from '@/components/auth-components/sign-in'
-import { getServerMessage } from '@/services/get-server-message'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/signin')({
     component: SignInComponent,
+    beforeLoad: async ({ context, search }) => {
+        // If user is already authenticated, redirect them away from signin
+        if (context.IsAuthenticated && context.currentUser) {
+            const redirectTo = (search as any)?.redirect || '/';
+            throw redirect({ to: redirectTo });
+        }
+    },
 })
 
 function SignInComponent() {

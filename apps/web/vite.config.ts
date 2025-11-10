@@ -20,11 +20,14 @@ import tailwindcss from '@tailwindcss/vite'
 // })
 
 export default defineConfig({
-  plugins: [paraglideVitePlugin({ project: './project.inlang', outdir: './src/paraglide',outputStructure: "message-modules",
+  plugins: [
+    paraglideVitePlugin({ 
+      project: './project.inlang', 
+      outdir: './src/paraglide',
+      outputStructure: "message-modules",
       cookieName: "PARAGLIDE_LOCALE",
       strategy: ["cookie", "localStorage", "preferredLanguage", "baseLocale"],
     }),
-    // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
@@ -32,26 +35,19 @@ export default defineConfig({
     tanstackStart({
       customViteReactPlugin: true,
     }),
-    viteReact()],
-    build: {
-      target: 'esnext',
-      minify: 'esbuild',
-      cssMinify: true,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom'],
-            'vendor-tanstack': ['@tanstack/react-router', '@tanstack/react-start', '@tanstack/react-query'],
-            'vendor-gsap': ['gsap', '@gsap/react'],
-            'vendor-ui': ['framer-motion', 'lucide-react'],
-          },
-        },
-      },
-    },
-    optimizeDeps: {
-      include: ['react', 'react-dom', '@tanstack/react-router', 'gsap'],
-    },
-    }
-)
+    viteReact()
+  ],
+  ssr: {
+    noExternal: ['@vibespot/database'],
+    external: [
+      '@mapbox/search-js-web', 
+      '@mapbox/search-js-react', 
+      'mapbox-gl',
+      'mapbox-gl-geocoder',
+      '@mapbox/search-js-core',
+      'subtag'
+    ],
+  },
+})
 
 // export default config
