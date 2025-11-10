@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd apps/web && bun run build:vercel",
-  "installCommand": "bun install",
-  "outputDirectory": "apps/web/.output/public"
+  "installCommand": "cd ../.. && bun install",
+  "buildCommand": "bun run build:vercel",
+  "outputDirectory": ".output/public"
 }

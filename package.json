@@ -8,7 +8,7 @@
   "scripts": {
     "build": "bun run --filter=event-app build",
     "dev": "bun run --filter=event-app dev",
-    "build:web": "cd apps/web && bun run build",
+    "build:web": "cd apps/web && bun run build:vercel",
     "dev:web": "cd apps/web && bun run dev"
   },
   "devDependencies": {
