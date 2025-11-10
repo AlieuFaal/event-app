@@ -111,8 +111,5 @@
   "trustedDependencies": [
     "@parcel/watcher",
     "@tailwindcss/oxide"
-  ],
-  "resolutions": {
-    "@noble/ciphers": "0.5.3"
-  }
+  ]
 }
