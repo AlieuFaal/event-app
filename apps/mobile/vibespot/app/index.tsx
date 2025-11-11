@@ -7,7 +7,7 @@ export default function HomeScreen() {
       colors={[ 'blue', 'fuchsia']}
       start={{ x: 0, y: 0.5 }}
       end={{ x: 1.2, y: 0.5 }}
-      className="flex-1"
+      style={{ flex: 1 }}
     >
       <SignInForm />
     </LinearGradient>
