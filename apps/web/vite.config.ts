@@ -39,14 +39,6 @@ export default defineConfig({
   ],
   ssr: {
     noExternal: ['@vibespot/database'],
-    external: [
-      '@mapbox/search-js-web', 
-      '@mapbox/search-js-react', 
-      'mapbox-gl',
-      'mapbox-gl-geocoder',
-      '@mapbox/search-js-core',
-      'subtag'
-    ],
   },
 })
 
