@@ -60,7 +60,7 @@ export function EventDetails(form: Props) {
                             name="venue"
                             render={({ field }) => (
                                 <Input
-                                    placeholder="Lounge Bar"
+                                    placeholder="The Blue Note"
                                     className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                                     placeholderTextColor="#6b7280"
                                     value={field.value || ""}

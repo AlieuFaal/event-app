@@ -12,6 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { NavigationButtons } from "@/components/event-creation-components/NavigationButtons";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
+import { LocationPicker } from "./steps/LocationPicker";
 
 export default function CreateEvents() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -151,8 +152,8 @@ export default function CreateEvents() {
         <ScrollView>
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
-          {/* {currentStep === 3 && <LocationPicker form={form} />}
-        {currentStep === 4 && <DateTimePicker form={form} />}
+          {currentStep === 3 && <LocationPicker form={form} />}
+        {/* {currentStep === 4 && <DateTimePicker form={form} />}
         {currentStep === 5 && <ImageUpload form={form} />} */}
         </ScrollView>
       </View>
