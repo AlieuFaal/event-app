@@ -32,7 +32,6 @@ import {
 import { GENRES } from "../calendar/constants";
 import { useState, lazy, Suspense } from "react";
 
-// Lazy load Mapbox component to avoid SSR issues
 const AddressAutofill = lazy(() =>
   import("@mapbox/search-js-react").then((mod) => ({ default: mod.AddressAutofill }))
 );
