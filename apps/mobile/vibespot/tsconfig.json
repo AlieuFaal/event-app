@@ -7,6 +7,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@vibespot/validation": [
+        "../../../packages/validation/src/index.ts"
       ]
     }
   },
@@ -16,6 +19,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts",
-    "assets/types/**/*.d.ts"
+    "assets/types/**/*.d.ts",
+    "../../../packages/validation/src/**/*.ts"
   ]
 }

@@ -1,5 +1,5 @@
-import z from "zod";
-import { eventInsertSchema } from "@/schemas/ZodSchemas";
+import { z } from "zod";
+import { eventInsertSchema } from "@vibespot/validation";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { View, Text } from "react-native";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,7 +60,7 @@ export function EventDetails(form: Props) {
                             name="venue"
                             render={({ field }) => (
                                 <Input
-                                    placeholder="Kungsportsavenyen 34, Gothenburg, Sweden"
+                                    placeholder="Lounge Bar"
                                     className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                                     placeholderTextColor="#6b7280"
                                     value={field.value || ""}

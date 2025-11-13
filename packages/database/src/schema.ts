@@ -13,32 +13,37 @@ import {
   createInsertSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import z from "zod";
+import { z } from "zod";
+import {
+  roles,
+  eventColors,
+  genres,
+  repeatOptions,
+  type Role,
+  type EventColor,
+  type Genre,
+  type RepeatOption,
+} from "@vibespot/validation";
 
-// User Types -----------------------------------------------------------------------------------------------------------------
+export * from "@vibespot/validation";
+
 export type User = z.infer<typeof userSchema>;
 export type NewUser = z.infer<typeof userInsertSchema>;
 export type UpdateUser = z.infer<typeof userUpdateSchema>;
 export type UserForm = z.infer<typeof userFormSchema>;
 export type Session = z.infer<typeof sessionSchema>;
 export type OnboardingUpdate = z.infer<typeof onbFormUpdateSchema>;
-export type Role = (typeof roles)[number];
 
-// Event and Comment Types -----------------------------------------------------------------------------------------------------------------
 export type Event = z.infer<typeof eventSchema>;
 export type NewEvent = z.infer<typeof eventInsertSchema>;
 export type UpdateEvent = z.infer<typeof eventUpdateSchema>;
 export type CalendarEvent = z.infer<typeof calendarEventSchema>;
-export type EventColor = (typeof eventColors)[number];
-export type Genre = (typeof genres)[number];
-export type RepeatOption = (typeof repeatOptions)[number];
 
 export type Comment = z.infer<typeof commentSchema>;
 export type NewComment = z.infer<typeof commentInsertSchema>;
 export type UpdateComment = z.infer<typeof commentUpdateSchema>;
 export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 
-// Additional Types without db tables -----------------------------------------------------------------------------------------------------------------
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
@@ -67,12 +72,10 @@ export const user = pgTable(
   (table) => [
     check(
       "role_check",
-      sql`${table.role} in (${sql.raw(roles.map((r) => `'${r}'`).join(","))})`
+      sql`${table.role} in (${sql.raw(roles.map((r: string) => `'${r}'`).join(","))})`
     ),
   ]
 );
-
-const roles = ["user", "artist", "admin", "New User"] as const;
 
 export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Please enter your name"),
@@ -174,53 +177,6 @@ export const verification = pgTable("verification", {
 });
 
 // Event Table -------------------------------------------------------------------------------------------------------------
-const eventColors = [
-  "Blue",
-  "Green",
-  "Red",
-  "Yellow",
-  "Purple",
-  "Orange",
-] as const;
-
-const genres = [
-  "Hip-Hop",
-  "Rock",
-  "Indie",
-  "Pop",
-  "Jazz",
-  "Classical",
-  "Electronic",
-  "Country",
-  "Reggae",
-  "Blues",
-  "Folk",
-  "Metal",
-  "R&B",
-  "Soul",
-  "Afrobeat",
-  "Punk",
-  "Disco",
-  "Funk",
-  "Gospel",
-  "Techno",
-  "House",
-  "Trance",
-  "Dubstep",
-  "Ambient",
-  "Alternative",
-  "Grunge",
-  "New Wave",
-  "Synthpop",
-  "Progressive Rock",
-  "Hard Rock",
-  "Soft Rock",
-  "Acoustic",
-  "Instrumental",
-] as const;
-
-const repeatOptions = ["none", "daily", "weekly", "monthly", "yearly"] as const;
-
 export const event = pgTable("event", {
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),

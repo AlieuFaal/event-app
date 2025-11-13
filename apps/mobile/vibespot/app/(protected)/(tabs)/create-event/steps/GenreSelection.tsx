@@ -1,6 +1,6 @@
 import { UseFormReturn, Controller } from 'react-hook-form';
 import { View } from 'react-native';
-import { eventInsertSchema, genres } from '@/schemas/ZodSchemas';
+import { eventInsertSchema, genres } from '@vibespot/validation';
 import { GenreCard } from '@/components/event-creation-components/GenreCard';
 import z from 'zod';
 

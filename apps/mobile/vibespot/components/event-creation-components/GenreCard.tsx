@@ -1,5 +1,5 @@
-import { Genre } from "@/schemas/ZodSchemas";
-import { View, Text, Pressable } from "react-native";
+import { Genre } from "@vibespot/validation";
+import { View, Text } from "react-native";
 
 
 interface Props {

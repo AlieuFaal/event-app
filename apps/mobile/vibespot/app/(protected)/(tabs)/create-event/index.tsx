@@ -1,11 +1,11 @@
 import * as React from "react"
-import z from "zod";
+import { z } from "zod";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { eventInsertSchema } from "@/schemas/ZodSchemas";
+import { eventInsertSchema } from "@vibespot/validation";
 import { GenreSelection } from "./steps/GenreSelection";
 import { EventDetails } from "./steps/EventDetails";
 import { ScrollView } from "react-native-gesture-handler";
@@ -81,51 +81,73 @@ export default function CreateEvents() {
     }
   }
 
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case 1: return "Select Genre";
+      case 2: return "Event Details";
+      case 3: return "Location";
+      case 4: return "Date & Time";
+      case 5: return "Event Image";
+      default: return "";
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1 p-4">
-        <View className="flex flex-row justify-between mb-5">
+        <View className="flex-row items-center justify-between mb-6">
           {currentStep === 1 ? (
-            <Text className="text-3xl text-gray-900 dark:text-white">Create Event</Text>
-          ) : (
             <>
+              <Text className="text-3xl font-bold text-gray-900 dark:text-white">
+                Create Event
+              </Text>
+              <NavigationButtons
+                currentStep={currentStep}
+                totalSteps={5}
+                onNext={() => {
+                  form.trigger('genre').then(isValid => {
+                    if (isValid) {
+                      setCurrentStep(s => s + 1);
+                      console.log("Current form values:", form.getValues());
+                      console.log("Step:", currentStep + 1);
+                    } else {
+                      console.log("Validation failed. Cannot proceed to next step.");
+                    }
+                  });
+                }}
+                onBack={() => setCurrentStep(s => s - 1)}
+                onSubmit={form.handleSubmit(onSubmit)}
+              />
             </>
+          ) : (
+            <NavigationButtons
+              currentStep={currentStep}
+              totalSteps={5}
+              onNext={() => {
+                if (currentStep === 2) {
+                  form.trigger(['title', 'description', 'venue']).then(isValid => {
+                    if (isValid) {
+                      setCurrentStep(s => s + 1);
+                      console.log("Current form values:", form.getValues());
+                      console.log("Step:", currentStep + 1);
+                    } else {
+                      console.log("Validation failed. Cannot proceed to next step.");
+                    }
+                  });
+                } else {
+                  setCurrentStep(s => s + 1);
+                }
+              }}
+              onBack={() => {
+                setCurrentStep(s => s - 1);
+                console.log("Step:", currentStep - 1);
+              }}
+              onSubmit={form.handleSubmit(onSubmit)}
+              stepTitle={getStepTitle()}
+            />
           )}
-          <NavigationButtons
-            currentStep={currentStep}
-            totalSteps={5}
-            onNext={() => {
-              if (currentStep === 1) {
-                form.trigger('genre').then(isValid => {
-                  if (isValid) {
-                    setCurrentStep(s => s + 1);
-                    console.log("Current form values:", form.getValues());
-                    console.log("Step:", currentStep + 1);
-                  } else {
-                    console.log("Validation failed. Cannot proceed to next step.");
-                  }
-                });
-                return;
-              } else if (currentStep === 2) {
-                form.trigger(['title', 'description', 'venue']).then(isValid => {
-                  if (isValid) {
-                    setCurrentStep(s => s + 1);
-                    console.log("Current form values:", form.getValues());
-                    console.log("Step:", currentStep + 1);
-                  } else {
-                    console.log("Validation failed. Cannot proceed to next step.");
-                  }
-                });
-                return;
-              }
-            }}
-            onBack={() => {
-              setCurrentStep(s => s - 1);
-              console.log("Step:", currentStep - 1);
-            }}
-            onSubmit={form.handleSubmit(onSubmit)}
-          />
         </View>
+
         <ScrollView>
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
