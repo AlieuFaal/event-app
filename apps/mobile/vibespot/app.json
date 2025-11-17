@@ -15,7 +15,10 @@
     "ios": {
       "supportsTablet": true,
       "backgroundColor": "#8b5cf6",
-      "bundleIdentifier": "com.anonymous.vibespot"
+      "bundleIdentifier": "com.anonymous.vibespot",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -65,6 +68,14 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://vibespot.expo.app"
+      },
+      "eas": {
+        "projectId": "50b28dab-3f92-4977-ab18-1d124e33669f"
+      }
     }
   }
 }

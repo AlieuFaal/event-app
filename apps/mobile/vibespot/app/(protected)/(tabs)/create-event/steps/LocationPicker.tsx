@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
 import { UseFormReturn } from "react-hook-form";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useGoogleAutocomplete } from '@appandflow/react-native-google-autocomplete';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import MapView, { Marker } from 'react-native-maps';
 
 
 interface Props {
@@ -12,21 +13,16 @@ interface Props {
 }
 
 export function LocationPicker({ form }: Props) {
-    const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number }>({
+        lat: 59.3293, // Stockholm default
+        lng: 18.0686
+    });
     const { locationResults, setTerm, clearSearch, searchDetails, term } =
         useGoogleAutocomplete(`${process.env.GOOGLE_MAPS_API_KEY}`, {
             language: "sv",
             debounce: 200,
             queryTypes: 'geocode|establishment',
         });
-
-    // Generate static map URL
-    const getStaticMapUrl = () => {
-        if (!selectedLocation) {
-            return `https://maps.googleapis.com/maps/api/staticmap?center=59.3293,18.0686&zoom=12&size=600x300&maptype=roadmap&key=${process.env.GOOGLE_MAPS_API_KEY}`;
-        }
-        return `https://maps.googleapis.com/maps/api/staticmap?center=${selectedLocation.lat},${selectedLocation.lng}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C${selectedLocation.lat},${selectedLocation.lng}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
-    };
 
     // const GooglePlacesInput = () => {
     //     const [place, setPlace] = React.useState(' ')
@@ -116,17 +112,24 @@ export function LocationPicker({ form }: Props) {
                         </View>
                     )}
                 </View>
-                <View className="w-11/12 h-48 items-center justify-center mx-auto border rounded-2xl shadow overflow-hidden bg-gray-100">
-                    <Image
-                        source={{ uri: getStaticMapUrl() }}
+                <View className="w-11/12 h-48 mx-auto border rounded-2xl shadow overflow-hidden">
+                    <MapView
                         style={styles.map}
-                        resizeMode="cover"
-                    />
-                    {!selectedLocation && (
-                        <View className="absolute inset-0 items-center justify-center bg-black/10">
-                            <Text className="text-gray-600 font-semibold">Select a location to preview</Text>
-                        </View>
-                    )}
+                        region={{
+                            latitude: selectedLocation.lat,
+                            longitude: selectedLocation.lng,
+                            latitudeDelta: 0.01,
+                            longitudeDelta: 0.01,
+                        }}
+                    >
+                        <Marker
+                            coordinate={{
+                                latitude: selectedLocation.lat,
+                                longitude: selectedLocation.lng,
+                            }}
+                            title="Event Location"
+                        />
+                    </MapView>
                 </View>
             </Card>
         </View>
