@@ -28,7 +28,7 @@
     "@rn-primitives/switch": "^1.2.0",
     "@rn-primitives/tabs": "^1.2.0",
     "@tanstack/react-query": "^5.90.6",
-    "@vibespot/validation": "file:../../../packages/validation",
+    "@vibespot/validation": "link:../../../packages/validation",
     "babel-plugin-inline-dotenv": "^1.7.0",
     "better-auth": "^1.3.34",
     "class-variance-authority": "^0.7.1",

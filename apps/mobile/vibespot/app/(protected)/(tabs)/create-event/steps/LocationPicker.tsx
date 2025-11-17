@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
 import { UseFormReturn } from "react-hook-form";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useGoogleAutocomplete } from '@appandflow/react-native-google-autocomplete';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import MapView from 'react-native-maps';
 
 
 interface Props {
@@ -13,12 +12,21 @@ interface Props {
 }
 
 export function LocationPicker({ form }: Props) {
+    const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const { locationResults, setTerm, clearSearch, searchDetails, term } =
         useGoogleAutocomplete(`${process.env.GOOGLE_MAPS_API_KEY}`, {
             language: "sv",
             debounce: 200,
             queryTypes: 'geocode|establishment',
         });
+
+    // Generate static map URL
+    const getStaticMapUrl = () => {
+        if (!selectedLocation) {
+            return `https://maps.googleapis.com/maps/api/staticmap?center=59.3293,18.0686&zoom=12&size=600x300&maptype=roadmap&key=${process.env.GOOGLE_MAPS_API_KEY}`;
+        }
+        return `https://maps.googleapis.com/maps/api/staticmap?center=${selectedLocation.lat},${selectedLocation.lng}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C${selectedLocation.lat},${selectedLocation.lng}&key=${process.env.GOOGLE_MAPS_API_KEY}`;
+    };
 
     // const GooglePlacesInput = () => {
     //     const [place, setPlace] = React.useState(' ')
@@ -95,6 +103,7 @@ export function LocationPicker({ form }: Props) {
                                             const coordinates = details.geometry.location;
                                             form.setValue("latitude", coordinates.lat.toString());
                                             form.setValue("longitude", coordinates.lng.toString());
+                                            setSelectedLocation({ lat: coordinates.lat, lng: coordinates.lng });
                                             console.log(form.getValues());
                                         }
                                         clearSearch();
@@ -107,17 +116,17 @@ export function LocationPicker({ form }: Props) {
                         </View>
                     )}
                 </View>
-                <View className="w-11/12 h-48 items-center justify-center mx-auto border rounded-2xl shadow">
-                    <MapView
-                        className="w-11/12 h-48 items-center justify-center mx-auto rounded-2xl"
-                        initialRegion={{
-                            latitude: 37.78825,
-                            longitude: -122.4324,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        }}
+                <View className="w-11/12 h-48 items-center justify-center mx-auto border rounded-2xl shadow overflow-hidden bg-gray-100">
+                    <Image
+                        source={{ uri: getStaticMapUrl() }}
                         style={styles.map}
+                        resizeMode="cover"
                     />
+                    {!selectedLocation && (
+                        <View className="absolute inset-0 items-center justify-center bg-black/10">
+                            <Text className="text-gray-600 font-semibold">Select a location to preview</Text>
+                        </View>
+                    )}
                 </View>
             </Card>
         </View>
