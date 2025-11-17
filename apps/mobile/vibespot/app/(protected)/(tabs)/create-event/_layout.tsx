@@ -6,8 +6,13 @@ import { View } from "react-native";
 export default function CreateEventLayout() {
 
     return (
-        <View style={{ flex: 1 }} >
-            <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
+        <View className="flex-1 bg-transparent" >
+            <Stack screenOptions={{ 
+                headerTransparent: true, 
+                headerTitle: "", 
+                headerShadowVisible: false,
+                contentStyle: { backgroundColor: 'transparent' }
+            }}>
                 <Stack.Screen name="index" />
             </Stack>
             <PortalHost />

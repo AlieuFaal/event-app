@@ -95,7 +95,7 @@ export default function CreateEvents() {
 
   return (
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
-      <View className="flex-1 p-4">
+      <View className="flex-1 p-4 bg-transparent">
         <View className="flex-row items-center justify-between mb-6">
           {currentStep === 1 ? (
             <>
@@ -149,7 +149,7 @@ export default function CreateEvents() {
           )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent' }}>
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}

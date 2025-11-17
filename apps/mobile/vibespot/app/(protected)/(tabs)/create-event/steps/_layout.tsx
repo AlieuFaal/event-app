@@ -6,8 +6,14 @@ import { View } from "react-native";
 export default function CreateEventStepsLayout() {
 
     return (
-        <View style={{ flex: 1 }} >
-            <Stack screenOptions={{ headerTransparent: true, headerTitle: "", headerShadowVisible: false }}>
+        <View className="flex-1 bg-transparent" >
+            <Stack screenOptions={{ 
+                headerTransparent: true, 
+                headerTitle: "", 
+                headerShadowVisible: false, 
+                headerBackVisible: false,
+                contentStyle: { backgroundColor: 'transparent' }
+            }}>
                 <Stack.Screen name="GenreSelection" />
                 <Stack.Screen name="EventDetails" />
                 <Stack.Screen name="LocationPicker" />

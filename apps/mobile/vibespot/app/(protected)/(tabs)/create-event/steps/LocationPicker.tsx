@@ -68,9 +68,9 @@ export function LocationPicker({ form }: Props) {
 
     return (
         <View className="flex-1">
-            <Card className="rounded-3xl flex-1 h-full bg-primary dark:bg-gray-900/30 shadow mt-2 pb-16">
+            <Card className="rounded-3xl flex-1 h-full bg-purple-600/80 dark:bg-purple-900/80 shadow mt-2 pb-16">
                 <CardHeader className="flex flex-col items-center mt-5 gap-2">
-                    <CardTitle className="text-4xl text-white dark:text-purple-400 text-center">Where&apos;s the spot?</CardTitle>
+                    <CardTitle className="text-4xl text-white text-center">Where&apos;s the spot?</CardTitle>
                     <CardDescription className="text-gray-100 text-xl text-center mt-2">
                         Pick a location for your event.
                     </CardDescription>
@@ -86,8 +86,8 @@ export function LocationPicker({ form }: Props) {
                 </View>
                 <View className="px-10">
                     {locationResults.length > 0 && (
-                        <View className="bg-white/40 dark:bg-gray-800/20 border rounded-xl p-1 shadow">
-                            <Text className="text-black dark:text-white m-3">Please pick a suggestion:</Text>
+                        <View className="bg-white/90 dark:bg-gray-800/80 border rounded-xl p-1 shadow">
+                            <Text className="text-gray-900 dark:text-white m-3">Please pick a suggestion:</Text>
                             {locationResults.slice(0, 3).map((place, i) => (
                                 <TouchableOpacity
                                     key={String(i)}
@@ -104,9 +104,9 @@ export function LocationPicker({ form }: Props) {
                                         }
                                         clearSearch();
                                     }}
-                                    className="border rounded-xl p-3 bg-white/90 dark:bg-secondary-foreground m-2 shadow"
+                                    className="border rounded-xl p-3 bg-white dark:bg-gray-700 m-2 shadow"
                                 >
-                                    <Text className="dark:text-white">{place.structured_formatting.main_text.concat(", ", place.structured_formatting.secondary_text)}</Text>
+                                    <Text className="text-gray-900 dark:text-white">{place.structured_formatting.main_text.concat(", ", place.structured_formatting.secondary_text)}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
