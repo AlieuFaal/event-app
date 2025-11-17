@@ -1,18 +1,21 @@
 // https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
+const path = require('path');
 
 module.exports = defineConfig([
   expoConfig,
   {
-    ignores: ['dist/*'],
+    ignores: ['dist/*', 'node_modules/*', '.expo/*', 'ios/*', 'android/*'],
   },
   {
     languageOptions: {
       parser: require('@typescript-eslint/parser'),
       parserOptions: {
-        project: './tsconfig.json',
+        project: path.resolve(__dirname, './tsconfig.json'),
         tsconfigRootDir: __dirname,
+        ecmaVersion: 2022,
+        sourceType: 'module',
       },
     },
   },

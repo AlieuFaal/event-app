@@ -1,4 +1,5 @@
-import { UseFormReturn, Controller } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
 import { View } from 'react-native';
 import { eventInsertSchema, genres } from '@vibespot/validation';
 import { GenreCard } from '@/components/event-creation-components/GenreCard';

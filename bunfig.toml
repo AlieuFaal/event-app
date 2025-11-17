@@ -1,0 +1,20 @@
+# Bun configuration for monorepo
+[install]
+# Use exact versions for better reproducibility
+exact = false
+
+# Auto-install peer dependencies
+auto = true
+
+# Freeze lockfile in CI
+frozen-lockfile = false
+
+# Hoist dependencies to root node_modules
+# This ensures all workspaces use the same versions
+[install.scopes]
+"@vibespot" = { }
+
+# Workspace configuration
+[install.workspace]
+# Enable workspace protocol support
+enabled = true

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
-import { UseFormReturn } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useGoogleAutocomplete } from '@appandflow/react-native-google-autocomplete';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

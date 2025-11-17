@@ -82,14 +82,9 @@
     "@tanstack/eslint-plugin-query": "^5.91.2",
     "@types/pg": "^8.15.5",
     "@types/react": "~19.1.10",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
-    "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
-    "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.20.6",
-    "typescript": "~5.9.2"
+    "tsx": "^4.20.6"
   },
   "private": true
 }
