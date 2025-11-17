@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
 import { Button } from "../ui/button";
 import { ArrowLeft, ArrowRight, CircleCheck } from "lucide-react-native";
+import { use } from "react";
 
 interface Props {
     currentStep: number;
@@ -12,6 +13,9 @@ interface Props {
 }
 
 export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onSubmit, stepTitle }: Props) {
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
+
     if (currentStep === 1) {
         return (
             <Button onPress={onNext} className="px-6">
@@ -26,7 +30,7 @@ export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onS
     return (
         <View className="flex-row items-center justify-between flex-1">
             <TouchableOpacity onPress={onBack} className="p-2">
-                <ArrowLeft size={24} className="text-gray-900 dark:text-white" />
+                <ArrowLeft size={24} className="" color={isDark ? "white" : "black"} />
             </TouchableOpacity>
 
             {stepTitle && (
@@ -37,7 +41,7 @@ export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onS
 
             {currentStep < totalSteps ? (
                 <TouchableOpacity onPress={onNext} className="p-2">
-                    <ArrowRight size={24} className="text-gray-900 dark:text-white" />
+                    <ArrowRight size={24} className="" color={isDark ? "white" : "black"} />
                 </TouchableOpacity>
             ) : (
                 <Button onPress={onSubmit} className="px-4">

@@ -12,7 +12,7 @@ interface Props {
 
 export function EventDetails(form: Props) {
     return (
-        <Card className="rounded-xl flex-1 bg-primary dark:bg-gray-900/30 shadow mt-5 pb-16">
+        <Card className="rounded-3xl flex-1 bg-primary dark:bg-gray-900/30 shadow mt-5 pb-16">
             <CardHeader className="flex flex-col items-center mt-5 gap-2">
                 <CardTitle className="text-5xl text-white dark:text-purple-400 text-center">Event Details</CardTitle>
                 <CardDescription className="text-gray-100 text-xl text-center mt-5">

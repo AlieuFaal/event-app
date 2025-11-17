@@ -37,6 +37,13 @@
     },
     "plugins": [
       [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "AIzaSyDIfMmh2V9_WfSBetHAq0qI8E5-TvCAYgs",
+          "androidGoogleMapsApiKey": "AIzaSyDIfMmh2V9_WfSBetHAq0qI8E5-TvCAYgs"
+        }
+      ],
+      [
         "expo-router",
         {
           "origin": "https://vibespot.expo.app"

@@ -1,56 +1,135 @@
+import React from "react";
+import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
 import { UseFormReturn } from "react-hook-form";
-import { View, Text } from "react-native";
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useGoogleAutocomplete } from '@appandflow/react-native-google-autocomplete';
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import MapView from 'react-native-maps';
 
-import { z } from "zod";
 
 interface Props {
     form: UseFormReturn<z.infer<typeof eventInsertSchema>>;
 }
 
+export function LocationPicker({ form }: Props) {
+    const { locationResults, setTerm, clearSearch, searchDetails, term } =
+        useGoogleAutocomplete(`${process.env.GOOGLE_MAPS_API_KEY}`, {
+            language: "sv",
+            debounce: 200,
+            queryTypes: 'geocode|establishment',
+        });
 
-export function LocationPicker(form: Props) {
     // const GooglePlacesInput = () => {
+    //     const [place, setPlace] = React.useState(' ')
     //     return (
     //         <GooglePlacesAutocomplete
-    //             placeholder='Search'
-    //             onPress={(data, details = null) => {
-    //                 // 'details' is provided when fetchDetails = true
-    //                 console.log(data, details);
-    //             }}
+    //             placeholder="Search"
     //             query={{
-    //                 key: 'YOUR API KEY',
-    //                 language: 'en',
+    //                 key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    //                 language: 'sv',
+    //                 components: 'country:se',
+    //             }}
+    //             keyboardShouldPersistTaps='handled'
+    //             fetchDetails={true}
+    //             onPress={(data, details = null) => {
+    //                 if (details?.geometry?.location) {
+    //                     const coordinates = details.geometry.location;
+    //                     form.setValue("address", details.formatted_address || "");
+    //                     form.setValue("latitude", coordinates.lat.toString());
+    //                     form.setValue("longitude", coordinates.lng.toString());
+    //                 }
+    //             }}
+    //             onFail={(error) => console.error(error)}
+    //             onNotFound={() => console.log('no results')}
+    //             nearbyPlacesAPI="GooglePlacesSearch"
+    //             GooglePlacesSearchQuery={{
+    //                 rankby: "distance",
+    //                 type: "bar",
+    //             }}
+    //             filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
+    //             debounce={200}
+    //             styles={{
+    //                 container: {
+    //                     flex: 0,
+    //                 },
+    //                 textInput: {
+    //                     height: 44,
+    //                     fontSize: 16,
+    //                 },
     //             }}
     //         />
     //     );
     // };
 
     return (
-        <View className="flex-1 px-4 pt-6 bg-primary dark:bg-gray-900/30">
-            <GooglePlacesAutocomplete
-                placeholder="Search"
-                query={{
-                    key: "GOOGLE_PLACES_API_KEY",
-                    language: 'sv', // language of the results
-                    components: 'country:se',
-                }}
-                onPress={(data, details = null) => {
-                    let coordinates = details?.geometry.location;
-                    form.form.setValue("address", details?.formattedAddress || "");
-                    form.form.setValue("latitude", coordinates?.lat.toString() || "");
-                    form.form.setValue("longitude", coordinates?.lng.toString() || "");
-                }}
-                onFail={(error) => console.error(error)}
-                nearbyPlacesAPI="GooglePlacesSearch"
-                GooglePlacesSearchQuery={{
-                    rankby: "distance",
-                    type: "bar",
-                }}
-                filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
-                debounce={200}
-            />
+        <View className="flex-1">
+            <Card className="rounded-3xl flex-1 h-full bg-primary dark:bg-gray-900/30 shadow mt-2 pb-16">
+                <CardHeader className="flex flex-col items-center mt-5 gap-2">
+                    <CardTitle className="text-4xl text-white dark:text-purple-400 text-center">Where&apos;s the spot?</CardTitle>
+                    <CardDescription className="text-gray-100 text-xl text-center mt-2">
+                        Pick a location for your event.
+                    </CardDescription>
+                </CardHeader>
+                <View className="px-10">
+                    <TextInput
+                        value={term}
+                        onChangeText={setTerm}
+                        placeholder="Enter a Location"
+                        className="border rounded-xl p-5 bg-white text-gray-900 dark:text-black shadow"
+                    >
+                    </TextInput>
+                </View>
+                <View className="px-10">
+                    {locationResults.length > 0 && (
+                        <View className="bg-white/40 dark:bg-gray-800/20 border rounded-xl p-1 shadow">
+                            <Text className="text-black dark:text-white m-3">Please pick a suggestion:</Text>
+                            {locationResults.slice(0, 3).map((place, i) => (
+                                <TouchableOpacity
+                                    key={String(i)}
+                                    onPress={async () => {
+                                        const details = await searchDetails(place.place_id);
+                                        console.log(JSON.stringify(details, null, 2));
+                                        form.setValue("address", details.formatted_address || "");
+                                        if (details.geometry?.location) {
+                                            const coordinates = details.geometry.location;
+                                            form.setValue("latitude", coordinates.lat.toString());
+                                            form.setValue("longitude", coordinates.lng.toString());
+                                            console.log(form.getValues());
+                                        }
+                                        clearSearch();
+                                    }}
+                                    className="border rounded-xl p-3 bg-white/90 dark:bg-secondary-foreground m-2 shadow"
+                                >
+                                    <Text className="dark:text-white">{place.structured_formatting.main_text.concat(", ", place.structured_formatting.secondary_text)}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                </View>
+                <View className="w-11/12 h-48 items-center justify-center mx-auto border rounded-2xl shadow">
+                    <MapView
+                        className="w-11/12 h-48 items-center justify-center mx-auto rounded-2xl"
+                        initialRegion={{
+                            latitude: 37.78825,
+                            longitude: -122.4324,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                        style={styles.map}
+                    />
+                </View>
+            </Card>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    map: {
+        width: '100%',
+        height: '100%',
+    },
+});
