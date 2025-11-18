@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { LocationPicker } from "./steps/LocationPicker";
 
 export default function CreateEvents() {
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(4);
 
   const router = useRouter();
 
@@ -149,7 +149,7 @@ export default function CreateEvents() {
           )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent' }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent' }} keyboardDismissMode="interactive">
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}

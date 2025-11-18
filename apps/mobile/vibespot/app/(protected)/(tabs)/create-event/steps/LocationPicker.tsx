@@ -13,8 +13,9 @@ interface Props {
 }
 
 export function LocationPicker({ form }: Props) {
+    const [suggestionPicked, setSuggestionPicked] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number }>({
-        lat: 59.3293, // Stockholm default
+        lat: 59.3293,
         lng: 18.0686
     });
     const { locationResults, setTerm, clearSearch, searchDetails, term } =
@@ -24,58 +25,16 @@ export function LocationPicker({ form }: Props) {
             queryTypes: 'geocode|establishment',
         });
 
-    // const GooglePlacesInput = () => {
-    //     const [place, setPlace] = React.useState(' ')
-    //     return (
-    //         <GooglePlacesAutocomplete
-    //             placeholder="Search"
-    //             query={{
-    //                 key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    //                 language: 'sv',
-    //                 components: 'country:se',
-    //             }}
-    //             keyboardShouldPersistTaps='handled'
-    //             fetchDetails={true}
-    //             onPress={(data, details = null) => {
-    //                 if (details?.geometry?.location) {
-    //                     const coordinates = details.geometry.location;
-    //                     form.setValue("address", details.formatted_address || "");
-    //                     form.setValue("latitude", coordinates.lat.toString());
-    //                     form.setValue("longitude", coordinates.lng.toString());
-    //                 }
-    //             }}
-    //             onFail={(error) => console.error(error)}
-    //             onNotFound={() => console.log('no results')}
-    //             nearbyPlacesAPI="GooglePlacesSearch"
-    //             GooglePlacesSearchQuery={{
-    //                 rankby: "distance",
-    //                 type: "bar",
-    //             }}
-    //             filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
-    //             debounce={200}
-    //             styles={{
-    //                 container: {
-    //                     flex: 0,
-    //                 },
-    //                 textInput: {
-    //                     height: 44,
-    //                     fontSize: 16,
-    //                 },
-    //             }}
-    //         />
-    //     );
-    // };
-
     return (
         <View className="flex-1">
-            <Card className="rounded-3xl flex-1 h-full bg-purple-600/80 dark:bg-purple-900/80 shadow mt-2 pb-16">
+            <View className="flex-1">
                 <CardHeader className="flex flex-col items-center mt-5 gap-2">
-                    <CardTitle className="text-4xl text-white text-center">Where&apos;s the spot?</CardTitle>
-                    <CardDescription className="text-gray-100 text-xl text-center mt-2">
+                    <CardTitle className="text-5xl text-primary text-center">Where&apos;s the spot?</CardTitle>
+                    <CardDescription className="text-primary text-xl text-center mt-2">
                         Pick a location for your event.
                     </CardDescription>
                 </CardHeader>
-                <View className="px-10">
+                <View className="p-10">
                     <TextInput
                         value={term}
                         onChangeText={setTerm}
@@ -84,7 +43,7 @@ export function LocationPicker({ form }: Props) {
                     >
                     </TextInput>
                 </View>
-                <View className="px-10">
+                <View className="px-3 -mt-5 mb-3">
                     {locationResults.length > 0 && (
                         <View className="bg-white/90 dark:bg-gray-800/80 border rounded-xl p-1 shadow">
                             <Text className="text-gray-900 dark:text-white m-3">Please pick a suggestion:</Text>
@@ -103,6 +62,7 @@ export function LocationPicker({ form }: Props) {
                                             console.log(form.getValues());
                                         }
                                         clearSearch();
+                                        setSuggestionPicked(true);
                                     }}
                                     className="border rounded-xl p-3 bg-white dark:bg-gray-700 m-2 shadow"
                                 >
@@ -112,26 +72,40 @@ export function LocationPicker({ form }: Props) {
                         </View>
                     )}
                 </View>
-                <View className="w-11/12 h-48 mx-auto border rounded-2xl shadow overflow-hidden">
-                    <MapView
-                        style={styles.map}
-                        region={{
-                            latitude: selectedLocation.lat,
-                            longitude: selectedLocation.lng,
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01,
-                        }}
-                    >
-                        <Marker
-                            coordinate={{
-                                latitude: selectedLocation.lat,
-                                longitude: selectedLocation.lng,
-                            }}
-                            title="Event Location"
-                        />
-                    </MapView>
-                </View>
-            </Card>
+                {suggestionPicked && (
+                    <>
+                        <View className="w-full h-64 mx-auto border rounded-2xl shadow overflow-hidden -mt-3">
+                            <MapView
+                                style={styles.map}
+                                region={{
+                                    latitude: selectedLocation.lat,
+                                    longitude: selectedLocation.lng,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01,
+                                }}
+                            >
+                                <Marker
+                                    titleVisibility="adaptive"
+                                    onDragEnd={async (e) => {
+                                        const { latitude, longitude } = e.nativeEvent.coordinate;
+                                        setSelectedLocation({ lat: latitude, lng: longitude });
+                                        form.setValue("latitude", latitude.toString());
+                                        form.setValue("longitude", longitude.toString());
+                                        console.log("Marker dragged to:", latitude, longitude);
+                                    }}
+                                    draggable
+                                    coordinate={{
+                                        latitude: selectedLocation.lat,
+                                        longitude: selectedLocation.lng,
+                                    }} />
+                            </MapView>
+                        </View>
+                        <View>
+                            <Text className="mx-5 my-3 text-white">Note: If the position is incorrect, drag the marker to adjust its position.</Text>
+                        </View>
+                    </>
+                )}
+            </View>
         </View>
     );
 }

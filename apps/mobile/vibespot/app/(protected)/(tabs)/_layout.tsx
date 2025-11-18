@@ -32,7 +32,7 @@ export default function TabsLayout() {
                         <View className={`flex-row items-center justify-around p-3 rounded-full shadow drop-shadow-xl w-screen mx-auto scale-90 mb-4 border ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-gray-50 border-primary'}`}>
                             {/* Home Tab */}
                             <Pressable
-                                onPress={() => router.push('/(protected)/(tabs)')}
+                                onPress={() => router.navigate('/(protected)/(tabs)')}
                                 className='items-center py-2 px-5 active:scale-95'
                             >
                                 <House color={isHome ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
@@ -41,7 +41,7 @@ export default function TabsLayout() {
 
                             {/* Events Tab */}
                             <Pressable
-                                onPress={() => router.push('/(protected)/(tabs)/events')}
+                                onPress={() => router.navigate('/(protected)/(tabs)/events')}
                                 className='items-center py-2 px-5 active:scale-95'
                             >
                                 <ListMusic color={pathname.includes('/events') ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
@@ -50,7 +50,7 @@ export default function TabsLayout() {
 
                             {/* Create Event Tab */}
                             <Pressable
-                                onPress={() => router.push('/(protected)/(tabs)/create-event')}
+                                onPress={() => router.navigate('/(protected)/(tabs)/create-event')}
                                 className='items-center bg-white p-4 rounded-full shadow drop-shadow-xl scale-90 active:scale-[0.85]'
                             >
                                 <View className='bg-gray-100 rounded-full shadow-lg drop-shadow-xl scale-150 p-2'>
@@ -60,7 +60,7 @@ export default function TabsLayout() {
 
                             {/* Map Tab */}
                             <Pressable
-                                onPress={() => router.push('/(protected)/(tabs)/map')}
+                                onPress={() => router.navigate('/(protected)/(tabs)/map')}
                                 className='items-center py-2 px-5 active:scale-95'
                             >
                                 <MapPinned color={pathname.includes('/map') ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
@@ -69,7 +69,7 @@ export default function TabsLayout() {
 
                             {/* Profile Tab */}
                             <Pressable
-                                onPress={() => router.push('/(protected)/(tabs)/profile')}
+                                onPress={() => router.navigate('/(protected)/(tabs)/profile')}
                                 className='items-center py-2 px-5 active:scale-95'
                             >
                                 <CircleUser color={pathname.includes('/profile') ? '#8b5cf6' : (isDark ? '#ffffff' : '#6b7280')} />
