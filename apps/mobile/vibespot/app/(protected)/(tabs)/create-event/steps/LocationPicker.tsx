@@ -29,8 +29,8 @@ export function LocationPicker({ form }: Props) {
         <View className="flex-1">
             <View className="flex-1">
                 <CardHeader className="flex flex-col items-center mt-5 gap-2">
-                    <CardTitle className="text-5xl text-primary text-center">Where&apos;s the spot?</CardTitle>
-                    <CardDescription className="text-primary text-xl text-center mt-2">
+                    <CardTitle className="text-5xl text-secondary-foreground dark:text-white text-center">Where&apos;s the spot?</CardTitle>
+                    <CardDescription className="text-secondary-foreground dark:text-white text-xl text-center mt-2">
                         Pick a location for your event.
                     </CardDescription>
                 </CardHeader>

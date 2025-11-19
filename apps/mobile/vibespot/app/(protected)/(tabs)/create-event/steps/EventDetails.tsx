@@ -13,16 +13,16 @@ interface Props {
 
 export function EventDetails(form: Props) {
     return (
-        <Card className="rounded-3xl flex-1 bg-purple-600/80 dark:bg-purple-900/80 shadow mt-5 pb-16">
+        <View className="rounded-3xl flex-1 mt-5 pb-16">
             <CardHeader className="flex flex-col items-center mt-5 gap-2">
-                <CardTitle className="text-5xl text-white text-center">Event Details</CardTitle>
-                <CardDescription className="text-gray-100 text-xl text-center mt-5">
+                <CardTitle className="text-5xl text-secondary-foreground text-center">Event Details</CardTitle>
+                <CardDescription className="text-secondary-foreground text-xl text-center mt-5">
                     Provide additional information about your event.
                 </CardDescription>
             </CardHeader>
             <KeyboardAwareScrollView keyboardDismissMode='interactive' contentContainerStyle={{ flexGrow: 1 }} >
                 <CardContent className="mt-10">
-                    <Text nativeID="title" className="text-white">Event Title:</Text>
+                    <Text nativeID="title" className="text-secondary-foreground">Event Title:</Text>
                     <View className="mt-2">
                         <Controller
                             control={form.form.control}
@@ -30,7 +30,7 @@ export function EventDetails(form: Props) {
                             render={({ field }) => (
                                 <Input
                                     placeholder="Jazz Night at The Blue Note"
-                                    className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+                                    className="w-full h-20 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                                     placeholderTextColor="#6b7280"
                                     value={field.value}
                                     onChangeText={field.onChange}
@@ -38,7 +38,7 @@ export function EventDetails(form: Props) {
                             )}
                         />
                     </View>
-                    <Text nativeID="description" className="mt-4 text-white">Event Description:</Text>
+                    <Text nativeID="description" className="mt-4 text-secondary-foreground">Event Description:</Text>
                     <View className="mt-2">
                         <Controller
                             control={form.form.control}
@@ -46,7 +46,7 @@ export function EventDetails(form: Props) {
                             render={({ field }) => (
                                 <Input
                                     placeholder="Brief description of your event"
-                                    className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+                                    className="w-full h-20 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                                     placeholderTextColor="#6b7280"
                                     value={field.value}
                                     onChangeText={field.onChange}
@@ -54,7 +54,7 @@ export function EventDetails(form: Props) {
                             )}
                         />
                     </View>
-                    <Text className="mt-4 text-white">Venue (optional):</Text>
+                    <Text className="mt-4 text-secondary-foreground">Venue (optional):</Text>
                     <View className="mt-2">
                         <Controller
                             control={form.form.control}
@@ -62,7 +62,7 @@ export function EventDetails(form: Props) {
                             render={({ field }) => (
                                 <Input
                                     placeholder="The Blue Note"
-                                    className="w-full h-12 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
+                                    className="w-full h-20 border-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                                     placeholderTextColor="#6b7280"
                                     value={field.value || ""}
                                     onChangeText={field.onChange}
@@ -72,6 +72,6 @@ export function EventDetails(form: Props) {
                     </View>
                 </CardContent>
             </KeyboardAwareScrollView>
-        </Card>
+        </View>
     );
 }
