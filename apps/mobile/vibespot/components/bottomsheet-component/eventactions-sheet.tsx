@@ -101,32 +101,32 @@ export function EventActionsSheet({ selectedEvent, bottomSheetRef, snapPoints }:
 
                 <View className="">
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleViewDetails}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200" onPress={handleViewDetails}>
                         <ReceiptText size={24} className="text-gray-900 dark:text-white" />
                         <Text className="text-center p-5 text-gray-900 dark:text-white">View Details</Text>
                     </Pressable>
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={handleSaveEvent}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200" onPress={handleSaveEvent}>
                         <Heart size={24} fill={isFavorited ? "#C51104" : "none"} className="text-gray-900 dark:text-white" />
                         <Text className="text-center p-5 text-gray-900 dark:text-white">Save Event</Text>
                     </Pressable>
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                         <Calendar size={24} className="text-gray-900 dark:text-white" />
                         <Text className="text-center p-5 text-gray-900 dark:text-white">Add To Calendar</Text>
                     </Pressable>
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                         <MapPin size={24} className="text-gray-900 dark:text-white" />
                         <Text className="text-center p-5 text-gray-900 dark:text-white">View On Map</Text>
                     </Pressable>
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-sm transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                         <Share size={24} className="text-gray-900 dark:text-white" />
                         <Text className="text-center p-5 text-gray-900 dark:text-white">Share Event</Text>
                     </Pressable>
 
-                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 shadow-sm drop-shadow-lg transition-all duration-200 mb-5" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                    <Pressable className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200 mb-5" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
                         <Flag size={24} fill={"red"} fillOpacity={80} />
                         <Text className="text-center text-red-500 dark:text-red-400 p-5">Report Event</Text>
                     </Pressable>

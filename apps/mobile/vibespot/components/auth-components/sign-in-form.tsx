@@ -59,13 +59,13 @@ export function SignInForm() {
             <Card className="border-border/0 bg-white/90 dark:bg-gray-900/95 backdrop-blur-xl sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 h-screen rounded-none">
                 <CardHeader className='flex flex-col justify-center items-center mt-24'>
                     <CardTitle className="text-center text-6xl sm:text-left text-purple-700 dark:text-purple-400">VibeSpot</CardTitle>
-                    <CardDescription className="text-center sm:text-left">
+                    <CardDescription className="text-center text-lg sm:text-left">
                         Welcome! Sign in to continue!
                     </CardDescription>
                 </CardHeader>
                 <KeyboardAwareScrollView disableScrollOnKeyboardHide={true} keyboardDismissMode='interactive' contentContainerStyle={{ flexGrow: 1 }} >
                     <CardContent className="gap-6">
-                        <View className="gap-7 mt-5">
+                        <View className="gap-6 mt-5">
                             <View className="gap-1.5">
                                 <Input
                                     id="email"
@@ -75,7 +75,7 @@ export function SignInForm() {
                                     autoCapitalize="none"
                                     returnKeyType="next"
                                     submitBehavior="submit"
-                                    className='p-7 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='p-6 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
                                     placeholderTextColor="#6b7280"
                                     value={email}
                                     onChangeText={setEmail}
@@ -87,13 +87,13 @@ export function SignInForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
-                                    className='p-7 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='p-6 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
                                     placeholderTextColor="#6b7280"
                                     value={password}
                                     onChangeText={setPassword}
                                 />
                             </View>
-                            <Button className="p-4 h-fit bg-primary rounded-3xl mt-3" onPress={handleSignIn} disabled={loading}>
+                            <Button className="p-6 h-fit bg-primary rounded-3xl mt-3" onPress={handleSignIn} disabled={loading}>
                                 <Text>Log In</Text>
                             </Button>
                             <View className="mt-5">
@@ -114,7 +114,7 @@ export function SignInForm() {
                                     onPress={() => {
                                         router.navigate('/signup');
                                     }}>
-                                    <Text className="text-sm underline underline-offset-4 text-center text-gray-700 dark:text-white">Sign up</Text>
+                                    <Text className="text-sm underline underline-offset-4 text-center text-gray-700 dark:text-white">Sign up!</Text>
                                 </Pressable>
                             </View>
                         </View>

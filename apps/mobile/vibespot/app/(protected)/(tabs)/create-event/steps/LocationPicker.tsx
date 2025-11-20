@@ -101,7 +101,7 @@ export function LocationPicker({ form }: Props) {
                             </MapView>
                         </View>
                         <View>
-                            <Text className="mx-5 my-3 text-white">Note: If the position is incorrect, drag the marker to adjust its position.</Text>
+                            <Text className="mx-5 my-3 text-black dark:text-white">Note: If the position is incorrect, drag the marker to adjust its position.</Text>
                         </View>
                     </>
                 )}

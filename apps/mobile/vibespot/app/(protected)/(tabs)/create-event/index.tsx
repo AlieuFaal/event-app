@@ -14,9 +14,10 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
 import { LocationPicker } from "./steps/LocationPicker";
 import { DateTimePicker } from "./steps/DateTimePicker";
+import { ImageUpload } from "./steps/ImageUpload";
 
 export default function CreateEvents() {
-  const [currentStep, setCurrentStep] = useState(4);
+  const [currentStep, setCurrentStep] = useState(5);
 
   const router = useRouter();
 
@@ -155,7 +156,7 @@ export default function CreateEvents() {
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}
           {currentStep === 4 && <DateTimePicker form={form} />}
-        {/* {currentStep === 5 && <ImageUpload form={form} />} */}
+          {currentStep === 5 && <ImageUpload form={form} />}
         </ScrollView>
       </View>
     </SafeAreaView>

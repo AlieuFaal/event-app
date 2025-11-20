@@ -762,6 +762,323 @@ Navigate to Events List / Event Detail
 
 ---
 
+## 📸 Image Storage Strategy
+
+**Don't store images in PostgreSQL** - Store image **URLs** in your DB, actual images in blob storage.
+
+**Recommended Solution for Your Stack**: **Vercel Blob Storage**
+- ✅ Vercel-native (you're deploying web to Vercel)
+- ✅ Simple SDK (`@vercel/blob`)
+- ✅ Free tier: 1GB storage, 100GB bandwidth/month
+- ✅ Works from both web (server actions) and mobile (API endpoint)
+- ✅ Automatic CDN distribution
+- ✅ No AWS complexity
+
+## 🗄️ Schema Updates
+
+````typescript
+import { pgTable, text, timestamp, uuid, real } from "drizzle-orm/pg-core";
+
+export const events = pgTable("events", {
+  // ...existing code...
+  venue: text("venue"),
+  address: text("address").notNull(),
+  latitude: real("latitude").notNull(),
+  longitude: real("longitude").notNull(),
+  
+  // Add this field (nullable - won't break existing web app)
+  imageUrl: text("image_url"), // Stores Vercel Blob URL
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  // ...existing code...
+});
+````
+
+````typescript
+import { z } from "zod";
+
+// ...existing code...
+
+export const eventInsertSchema = z.object({
+  // ...existing code...
+  longitude: z.number(),
+  
+  // Add optional image URL field
+  imageUrl: z.string().url().optional().nullable(),
+  
+  createdAt: z.date().default(() => new Date()),
+  // ...existing code...
+});
+````
+
+## 🚀 Implementation Plan
+
+### **Step 1: Install Dependencies**
+
+```bash
+# In mobile app
+cd apps/mobile/vibespot
+bun add expo-image-picker @vercel/blob
+
+# In web app (for future use)
+cd apps/web
+bun add @vercel/blob
+```
+
+### **Step 2: Update ImageUpload Component**
+
+````typescript
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { eventInsertSchema } from "@vibespot/validation";
+import { LucideImagePlus, X } from "lucide-react-native";
+import * as ImagePicker from 'expo-image-picker';
+import type { UseFormReturn } from "react-hook-form";
+import { View, Text, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
+import type z from "zod";
+import { useState } from "react";
+
+interface Props {
+    form: UseFormReturn<z.infer<typeof eventInsertSchema>>;
+}
+
+export function ImageUpload({ form }: Props) {
+    const [isUploading, setIsUploading] = useState(false);
+    const imageUrl = form.watch("imageUrl");
+
+    const pickImage = async (source: 'camera' | 'library') => {
+        try {
+            // Request permissions
+            const permissionResult = source === 'camera' 
+                ? await ImagePicker.requestCameraPermissionsAsync()
+                : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (!permissionResult.granted) {
+                Alert.alert(
+                    "Permission Required",
+                    `We need ${source} access to upload an event image.`,
+                    [{ text: "OK" }]
+                );
+                return;
+            }
+
+            // Launch picker
+            const result = source === 'camera'
+                ? await ImagePicker.launchCameraAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [16, 9], // Event card aspect ratio
+                    quality: 0.8, // Compress to reduce file size
+                })
+                : await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [16, 9],
+                    quality: 0.8,
+                });
+
+            if (!result.canceled && result.assets[0]) {
+                await uploadImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error("Error picking image:", error);
+            Alert.alert("Error", "Failed to select image. Please try again.");
+        }
+    };
+
+    const uploadImage = async (localUri: string) => {
+        setIsUploading(true);
+        try {
+            // Create FormData for upload
+            const formData = new FormData();
+            const filename = localUri.split('/').pop() || 'event-image.jpg';
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+            formData.append('file', {
+                uri: localUri,
+                name: filename,
+                type,
+            } as any);
+
+            // Upload to your API endpoint (which uses Vercel Blob)
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/upload/event-image`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const { url } = await response.json();
+            form.setValue("imageUrl", url);
+            
+        } catch (error) {
+            console.error("Upload error:", error);
+            Alert.alert("Upload Failed", "Could not upload image. Please try again.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const removeImage = () => {
+        form.setValue("imageUrl", null);
+    };
+
+    return (
+        <View className="flex-1">
+            <CardHeader className="flex flex-col items-center mt-5 gap-2">
+                <CardTitle className="text-5xl text-secondary-foreground dark:text-white text-center">
+                    Add Event Image
+                </CardTitle>
+                <CardDescription className="text-secondary-foreground dark:text-white text-base text-center mt-2">
+                    Select an image that fits the vibe of your event.
+                </CardDescription>
+            </CardHeader>
+
+            <View className="w-10/12 mx-auto mt-10">
+                {imageUrl ? (
+                    // Show selected image
+                    <View className="relative">
+                        <Image 
+                            source={{ uri: imageUrl }}
+                            className="w-full h-72 rounded-2xl"
+                            resizeMode="cover"
+                        />
+                        <TouchableOpacity
+                            onPress={removeImage}
+                            className="absolute top-2 right-2 bg-black/50 rounded-full p-2"
+                        >
+                            <X size={24} color="white" />
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    // Show upload options
+                    <View className="bg-secondary-foreground/20 dark:bg-secondary-foreground/80 rounded-2xl h-72 flex items-center justify-center">
+                        {isUploading ? (
+                            <ActivityIndicator size="large" color="#8b5cf6" />
+                        ) : (
+                            <View className="items-center gap-4">
+                                <LucideImagePlus size={48} color="#9ca3af" />
+                                <View className="flex-row gap-3">
+                                    <TouchableOpacity
+                                        onPress={() => pickImage('camera')}
+                                        className="bg-primary px-6 py-3 rounded-full"
+                                    >
+                                        <Text className="text-primary-foreground font-semibold">
+                                            📷 Camera
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => pickImage('library')}
+                                        className="bg-primary px-6 py-3 rounded-full"
+                                    >
+                                        <Text className="text-primary-foreground font-semibold">
+                                            🖼️ Gallery
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text className="text-muted-foreground text-sm">
+                                    or skip to use default
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+            </View>
+        </View>
+    );
+}
+````
+
+### **Step 3: Create API Upload Endpoint**
+
+````typescript
+import { put } from '@vercel/blob';
+import { Hono } from 'hono';
+
+const upload = new Hono();
+
+upload.post('/event-image', async (c) => {
+  try {
+    const body = await c.req.parseBody();
+    const file = body.file as File;
+
+    if (!file) {
+      return c.json({ error: 'No file provided' }, 400);
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      return c.json({ error: 'File must be an image' }, 400);
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      return c.json({ error: 'File too large (max 5MB)' }, 400);
+    }
+
+    // Upload to Vercel Blob
+    const blob = await put(file.name, file, {
+      access: 'public',
+      addRandomSuffix: true, // Prevents filename collisions
+    });
+
+    return c.json({ url: blob.url });
+  } catch (error) {
+    console.error('Upload error:', error);
+    return c.json({ error: 'Upload failed' }, 500);
+  }
+});
+
+export default upload;
+````
+
+### **Step 4: Add Permissions to app.json**
+
+````json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow VibeSpot to access your photos to select event images.",
+          "cameraPermission": "Allow VibeSpot to use your camera to take event photos."
+        }
+      ]
+    ]
+  }
+}
+````
+
+### **Step 5: Migration**
+
+```bash
+cd packages/database
+bun run generate  # Creates migration for imageUrl column
+bun run migrate   # Applies migration
+```
+
+## 🔄 After Implementation
+
+1. **Rebuild native app** (since expo-image-picker needs native code):
+   ```bash
+   cd apps/mobile/vibespot
+   npx expo prebuild --clean
+   bun run ios  # or bun run android
+   ```
+
+2. **Set Vercel Blob token** in your API environment:
+   ```bash
+   BLOB_READ_WRITE_TOKEN=your_token_here
+   ```
+
+3. **Web app remains unaffected** - `imageUrl` is optional, so existing events without images work fine.
+
+This approach keeps your database lean, images optimized via CDN, and maintains compatibility across both platforms! 🎉
+
 **Last Updated**: November 11, 2025  
 **Document Owner**: Development Team  
 **Status**: ✅ Ready for Implementation

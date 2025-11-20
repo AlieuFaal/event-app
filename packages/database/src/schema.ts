@@ -194,6 +194,7 @@ export const event = pgTable("event", {
   createdAt: timestamp("created_at").notNull(),
   latitude: text("latitude").notNull(),
   longitude: text("longitude").notNull(),
+  imageUrl: text("image_url"),
 });
 
 export const eventSchema = createSelectSchema(event, {
@@ -255,6 +256,7 @@ export const eventSchema = createSelectSchema(event, {
   latitude: z.string(),
   longitude: z.string(),
   createdAt: z.date().optional(),
+  imageUrl: z.string().url().nullish(),
 });
 
 export const geocodingSchema = eventSchema.pick({
@@ -322,6 +324,7 @@ export const eventInsertSchema = createInsertSchema(event, {
   latitude: z.string(),
   longitude: z.string(),
   createdAt: z.date().optional(),
+  imageUrl: z.string().url().nullish(),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
@@ -355,6 +358,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   endDate: z.date().optional(),
   repeat: z.enum(["none", "daily", "weekly", "monthly", "yearly"]).optional(),
   updatedAt: z.date().optional(),
+  imageUrl: z.string().url().nullish(),
   color: z
     .enum(["Blue", "Green", "Red", "Yellow", "Purple", "Orange"])
     .optional(),

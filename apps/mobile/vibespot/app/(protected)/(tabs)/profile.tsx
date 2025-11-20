@@ -23,7 +23,7 @@ export default function Profile() {
         <ProfileCard key={user?.id} user={user} />
 
         <View>
-          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:bg-gray-900 dark:border-gray-600">
+          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600">
             <View className="absolute left-4">
               <SquareUserRound color={`${isDark ? "white" : "black"}`} />
             </View>
@@ -37,7 +37,7 @@ export default function Profile() {
         </View>
 
         <View>
-          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:bg-gray-900 dark:border-gray-600">
+          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600">
             <View className="absolute left-4">
               <Star color={`${isDark ? "white" : "black"}`} />
             </View>
@@ -51,7 +51,7 @@ export default function Profile() {
         </View>
 
         <View>
-          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:bg-gray-900 dark:border-gray-600">
+          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600">
             <View className="absolute left-4">
               <SquareChartGantt color={`${isDark ? "white" : "black"}`} />
             </View>
@@ -65,7 +65,7 @@ export default function Profile() {
         </View>
 
         <View>
-          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:bg-gray-900 dark:border-gray-600">
+          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600">
             <View className="absolute left-4">
               <Settings color={`${isDark ? "white" : "black"}`} />
             </View>
@@ -79,7 +79,7 @@ export default function Profile() {
         </View>
 
         <View>
-          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:bg-gray-900 dark:border-gray-600">
+          <Button variant={"outline"} className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600">
             <View className="absolute left-4">
               <BadgeQuestionMark color={`${isDark ? "white" : "black"}`} />
             </View>
@@ -92,7 +92,7 @@ export default function Profile() {
           </Button>
         </View>
 
-        <Button variant={"default"} className="h-16 mt-4 w-11/12 mx-auto border-primary shadow drop-shadow-lg dark:border-0" onPress={handleSignoout}>
+        <Button variant={"default"} className="h-14 mt-4 w-11/12 mx-auto border-primary dark:border-0" onPress={handleSignoout}>
           <Text className="text-center font-bold text-black dark:text-white">
             Sign Out
           </Text>

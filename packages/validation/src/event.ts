@@ -46,7 +46,13 @@ export const genres = [
   "Instrumental",
 ] as const;
 
-export const repeatOptions = ["none", "daily", "weekly", "monthly", "yearly"] as const;
+export const repeatOptions = [
+  "none",
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+] as const;
 
 // Types
 export type EventColor = (typeof eventColors)[number];
@@ -66,7 +72,10 @@ export const eventSchema = z.object({
     .max(100, "Event title cannot be longer than 100 characters"),
   description: z
     .string()
-    .min(2, "Please provide a description for your event (at least 2 characters)"),
+    .min(
+      2,
+      "Please provide a description for your event (at least 2 characters)"
+    ),
   venue: z.string().nullish(),
   address: z
     .string()
@@ -82,6 +91,7 @@ export const eventSchema = z.object({
   createdAt: z.date(),
   latitude: z.string(),
   longitude: z.string(),
+  imageUrl: z.string().url().nullish(),
 });
 
 export const geocodingSchema = eventSchema.pick({
@@ -98,14 +108,20 @@ export const eventInsertSchema = z
       .max(100, "Event title cannot be longer than 100 characters"),
     description: z
       .string()
-      .min(2, "Please provide a description for your event (at least 2 characters)"),
+      .min(
+        2,
+        "Please provide a description for your event (at least 2 characters)"
+      ),
     venue: z.string().nullish(),
     repeat: z.enum(repeatOptions).optional(),
     repeatGroupId: z.string().uuid().nullish(),
     repeatEndDate: z.date().nullish(),
     address: z
       .string()
-      .min(2, "Please enter the event location address (at least 2 characters)"),
+      .min(
+        2,
+        "Please enter the event location address (at least 2 characters)"
+      ),
     color: z.enum(eventColors),
     genre: z.enum(genres),
     startDate: z.date(),
@@ -113,6 +129,7 @@ export const eventInsertSchema = z
     latitude: z.string(),
     longitude: z.string(),
     createdAt: z.date().optional(),
+    imageUrl: z.string().url().nullish(),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
@@ -133,7 +150,10 @@ export const eventUpdateSchema = z
       .optional(),
     description: z
       .string()
-      .min(2, "Please provide a description for your event (at least 2 characters)")
+      .min(
+        2,
+        "Please provide a description for your event (at least 2 characters)"
+      )
       .optional(),
     address: z
       .string()
@@ -150,6 +170,7 @@ export const eventUpdateSchema = z
     updatedAt: z.date().optional(),
     color: z.enum(eventColors).optional(),
     genre: z.enum(genres).optional(),
+    imageUrl: z.string().url().nullish(),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
