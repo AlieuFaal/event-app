@@ -2,7 +2,7 @@ import { queryClient } from "@/app/_layout";
 import { useCallback, useState, } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Event } from "../../../../../../packages/database/src/schema";
+import { type Event } from "@vibespot/database/schema";
 import { useGetEvent } from "@/hooks/useGetEvent";
 import { Separator } from "@/components/ui/separator";
 import EventCard2 from "@/components/event-components/event-card-2";

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { User } from "@vibespot/database";
+import { type User } from "@vibespot/validation/user";
 import { Mail } from "lucide-react-native";
 import { View, Text, Pressable } from "react-native";
 

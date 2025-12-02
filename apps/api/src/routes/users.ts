@@ -11,7 +11,7 @@ import {
   and,
   count,
 } from "@vibespot/database";
-import { auth, AuthType } from "@vibespot/database/src/auth";
+import { auth, type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 
 const app = new Hono<{ Variables: AuthType }>()

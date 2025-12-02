@@ -88,10 +88,10 @@ export const eventSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
   userId: z.string().uuid().nullish(),
-  createdAt: z.date(),
   latitude: z.string(),
   longitude: z.string(),
   imageUrl: z.string().url().nullish(),
+  createdAt: z.date(),
 });
 
 export const geocodingSchema = eventSchema.pick({

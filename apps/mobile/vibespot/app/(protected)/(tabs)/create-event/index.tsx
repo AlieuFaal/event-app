@@ -15,9 +15,13 @@ import { useRouter } from "expo-router";
 import { LocationPicker } from "./steps/LocationPicker";
 import { DateTimePicker } from "./steps/DateTimePicker";
 import { ImageUpload } from "./steps/ImageUpload";
+import { apiClient } from "@/lib/api-client";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/app/_layout";
+import { EventCreationsSuccessful } from "./steps/EventCreationSuccessful";
 
 export default function CreateEvents() {
-  const [currentStep, setCurrentStep] = useState(5);
+  const [currentStep, setCurrentStep] = useState(6);
 
   const router = useRouter();
 
@@ -52,6 +56,21 @@ export default function CreateEvents() {
       genre: "Indie",
       startDate: getDefaultStartDate(),
       endDate: getDefaultEndDate(),
+      imageUrl: null,
+    }
+  })
+
+
+  const mutation = useMutation({
+    mutationFn: async (data: z.infer<typeof eventInsertSchema>) => {
+      return apiClient.events.$post({ json: data });
+    },
+    onSuccess: () => {
+      console.log('Event created successfully');
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      console.error('Error creating event:', error);
     }
   })
 
@@ -67,13 +86,12 @@ export default function CreateEvents() {
         console.error("Please select a valid address from the suggestions.");
         return;
       }
+      console.log("Submitting event with data:", dataToSend);
 
-      // await repeatEventsFn({
-      //   data: dataToSend
-      // });
+      await mutation.mutateAsync(dataToSend);
 
       console.log("Event created successfully:", dataToSend);
-      router.navigate({ pathname: '/(protected)/(tabs)/events' });
+      router.navigate({ pathname: '/(protected)/(tabs)/create-event/steps/EventCreationSuccessful' });
     } catch (error) {
       console.error("Error submitting event:", error);
       if (!session) {
@@ -99,7 +117,7 @@ export default function CreateEvents() {
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1 p-4 bg-transparent">
         <View className="flex-row items-center justify-between mb-6">
-          {currentStep === 1 ? (
+          {currentStep !== 6 && currentStep === 1 ? (
             <>
               <Text className="text-3xl font-bold text-gray-900 dark:text-white">
                 Create Event
@@ -137,7 +155,30 @@ export default function CreateEvents() {
                       console.log("Validation failed. Cannot proceed to next step.");
                     }
                   });
-                } else {
+                }
+                else if (currentStep === 3) {
+                  form.trigger(['address', 'latitude', 'longitude']).then(isValid => {
+                    if (isValid) {
+                      setCurrentStep(s => s + 1);
+                      console.log("Current form values:", form.getValues());
+                      console.log("Step:", currentStep + 1);
+                    } else {
+                      console.log("Validation failed. Cannot proceed to next step.");
+                    }
+                  });
+                }
+                else if (currentStep === 4) {
+                  form.trigger(['startDate', 'endDate']).then(isValid => {
+                    if (isValid) {
+                      setCurrentStep(s => s + 1);
+                      console.log("Current form values:", form.getValues());
+                      console.log("Step:", currentStep + 1);
+                    } else {
+                      console.log("Validation failed. Cannot proceed to next step.");
+                    }
+                  });
+                }
+                else {
                   setCurrentStep(s => s + 1);
                 }
               }}
@@ -157,6 +198,7 @@ export default function CreateEvents() {
           {currentStep === 3 && <LocationPicker form={form} />}
           {currentStep === 4 && <DateTimePicker form={form} />}
           {currentStep === 5 && <ImageUpload form={form} />}
+          {currentStep === 6 && <EventCreationsSuccessful />}
         </ScrollView>
       </View>
     </SafeAreaView>

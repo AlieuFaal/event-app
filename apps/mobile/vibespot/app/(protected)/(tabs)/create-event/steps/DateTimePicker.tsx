@@ -227,9 +227,6 @@ export function DateTimePicker({ form }: Props) {
                                         onValueChange={(value) => {
                                             setRepeatOption(value as RepeatOption);
                                             form.setValue("repeat", value as RepeatOption);
-                                            if (value === 'none') {
-                                                form.setValue("repeatEndDate", undefined);
-                                            }
                                             console.log("Form values:", form.getValues());
                                         }}
                                         style={{ color: isDarkMode ? '#ffffff' : '#000000', height: 150 }}
@@ -246,7 +243,7 @@ export function DateTimePicker({ form }: Props) {
 
                                 {repeatOption !== 'none' && (
                                     <View className="mt-6">
-                                        <Text className="text-white/70 text-center mb-4">
+                                        <Text className="text-black dark:text-white/70 text-center mb-4">
                                             When should the repetition end?
                                         </Text>
                                         <RNDateTimePicker
@@ -256,6 +253,7 @@ export function DateTimePicker({ form }: Props) {
                                             themeVariant={isDarkMode ? "dark" : "light"}
                                             display="inline"
                                             minimumDate={endDate ? new Date(endDate) : new Date()}
+                                            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() + 10))}
                                             onChange={(event, selectedDate) => {
                                                 if (selectedDate) {
                                                     setRepeatEndDate(selectedDate);
@@ -269,7 +267,13 @@ export function DateTimePicker({ form }: Props) {
                                     className="mt-6"
                                     onPress={() => {
                                         setRepeatModalVisible(false)
-                                        form.setValue("repeatEndDate", repeatEndDate);
+                                        if (form.getValues('repeat') === 'none') {
+                                            form.setValue("repeatEndDate", null);
+                                            console.log(form.getValues());
+                                        }
+                                        else {
+                                            form.setValue("repeatEndDate", repeatEndDate);
+                                        }
                                         console.log("Selected repeat end date:", repeatEndDate);
                                         console.log("Form values:", form.getValues());
                                     }}

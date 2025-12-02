@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
-import { Event } from "../../../../packages/database/src/schema";
+import { type Event } from "@vibespot/database/schema";
 
 export const useGetEvent = () => {
   const { isPending, error, data } = useQuery<Event[]>({

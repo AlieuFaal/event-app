@@ -21,6 +21,7 @@
         "@better-auth/expo": "^1.3.34",
         "@hono/zod-validator": "^0.7.4",
         "@vibespot/database": "*",
+        "@vibespot/validation": "workspace:*",
         "better-auth": "^1.3.34",
         "expo-constants": "^18.0.10",
         "expo-linking": "^8.0.8",
@@ -41,6 +42,7 @@
         "@expo/vector-icons": "^15.0.2",
         "@gorhom/bottom-sheet": "^5",
         "@hookform/resolvers": "^5.2.2",
+        "@lottiefiles/dotlottie-react": "^0.17.8",
         "@react-native-community/datetimepicker": "^8.5.0",
         "@react-native-picker/picker": "^2.11.4",
         "@react-navigation/bottom-tabs": "^7.4.0",
@@ -57,6 +59,7 @@
         "@rn-primitives/tabs": "^1.2.0",
         "@tanstack/react-query": "^5.90.6",
         "@vercel/blob": "^2.0.0",
+        "@vibespot/database": "workspace:*",
         "@vibespot/validation": "workspace:*",
         "babel-plugin-inline-dotenv": "^1.7.0",
         "better-auth": "^1.3.34",
@@ -163,6 +166,7 @@
         "@types/mapbox-gl": "^3.4.1",
         "@vercel/blob": "^2.0.0",
         "@vibespot/database": "workspace:*",
+        "@vibespot/validation": "workspace:*",
         "better-auth": "^1.3.7",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -722,6 +726,10 @@
     "@lix-js/sdk": ["@lix-js/sdk@0.4.7", "", { "dependencies": { "@lix-js/server-protocol-schema": "0.1.1", "dedent": "1.5.1", "human-id": "^4.1.1", "js-sha256": "^0.11.0", "kysely": "^0.27.4", "sqlite-wasm-kysely": "0.3.0", "uuid": "^10.0.0" } }, "sha512-pRbW+joG12L0ULfMiWYosIW0plmW4AsUdiPCp+Z8rAsElJ+wJ6in58zhD3UwUcd4BNcpldEGjg6PdA7e0RgsDQ=="],
 
     "@lix-js/server-protocol-schema": ["@lix-js/server-protocol-schema@0.1.1", "", {}, "sha512-jBeALB6prAbtr5q4vTuxnRZZv1M2rKe8iNqRQhFJ4Tv7150unEa0vKyz0hs8Gl3fUGsWaNJBh3J8++fpbrpRBQ=="],
+
+    "@lottiefiles/dotlottie-react": ["@lottiefiles/dotlottie-react@0.17.8", "", { "dependencies": { "@lottiefiles/dotlottie-web": "0.57.0" }, "peerDependencies": { "react": "^17 || ^18 || ^19" } }, "sha512-Hk0bISNURSqL7t+H7S5lW2NQVa1hiibnqRRg6kOWZpswBxfQk+/6WBPc9EfuetdoZmiMoDsmcI0HR4I20oTBRg=="],
+
+    "@lottiefiles/dotlottie-web": ["@lottiefiles/dotlottie-web@0.57.0", "", {}, "sha512-gcgvu9T21YzeY3JjHCZrxftucsxzMH6e9h+8NMv8mbfo1y1M9/jdcsdu40S+pnSLz9/OyiSBQ/EjDsbSOHZy0w=="],
 
     "@mapbox/jsonlint-lines-primitives": ["@mapbox/jsonlint-lines-primitives@2.0.2", "", {}, "sha512-rY0o9A5ECsTQRVhv7tL/OyDpGAoUB4tTvLiW1DSzQGq4bvTPhNw1VpSNjDJc5GFZ2XuyOtSWSVN05qOtcD71qQ=="],
 

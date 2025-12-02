@@ -48,6 +48,19 @@
         }
       ],
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow VibeSpot to access your photos to select event images.",
+          "cameraPermission": "Allow VibeSpot to use your camera to take photos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
         "expo-router",
         {
           "origin": "https://vibespot.expo.app"

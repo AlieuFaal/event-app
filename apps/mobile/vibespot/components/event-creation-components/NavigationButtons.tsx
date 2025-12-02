@@ -30,7 +30,7 @@ export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onS
     return (
         <View className="flex-row items-center justify-between flex-1">
             <TouchableOpacity onPress={onBack} className="p-2">
-                <ArrowLeft size={24} className="" color={isDark ? "white" : "black"} />
+                <ArrowLeft size={32} className="" color={isDark ? "white" : "black"} />
             </TouchableOpacity>
 
             {stepTitle && (
@@ -41,7 +41,7 @@ export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onS
 
             {currentStep < totalSteps ? (
                 <TouchableOpacity onPress={onNext} className="p-2">
-                    <ArrowRight size={24} className="" color={isDark ? "white" : "black"} />
+                    <ArrowRight size={32} className="" color={isDark ? "white" : "black"} />
                 </TouchableOpacity>
             ) : (
                 <Button onPress={onSubmit} className="px-4">

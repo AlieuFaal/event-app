@@ -7,9 +7,13 @@ import {
   and,
   eventInsertSchema,
 } from "@vibespot/database";
-import { AuthType } from "@vibespot/database/src/auth";
+import { type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
+import {
+  addInterval,
+  customRepeatEndDate,
+} from "../helpers/repeatedEventHelpers";
 
 const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
@@ -114,6 +118,117 @@ const app = new Hono<{ Variables: AuthType }>()
       console.log("Added event to users favorites:", newFavorite);
       return c.json(newFavorite);
     }
-  );
+  )
+  .post("/", zValidator("json", eventInsertSchema), async (c) => {
+    const eventData = c.req.valid("json");
+
+    const userId = c.var.user?.id;
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    try {
+      if (eventData.repeat === "none" || !eventData.repeat) {
+        const newEvent = await db
+          .insert(schema.event)
+          .values({
+            title: eventData.title,
+            description: eventData.description,
+            venue: eventData.venue,
+            address: eventData.address,
+            color: eventData.color,
+            genre: eventData.genre,
+            repeat: "none",
+            repeatGroupId: null,
+            repeatEndDate: null,
+            startDate: eventData.startDate,
+            endDate: eventData.endDate,
+            latitude: eventData.latitude,
+            longitude: eventData.longitude,
+            userId: userId,
+            createdAt: new Date(),
+          })
+          .returning();
+
+        console.log("Inserted new event:", newEvent);
+
+        return c.json(newEvent);
+      }
+
+      const repeatGroupId = crypto.randomUUID();
+
+      addInterval(eventData.startDate, eventData.repeat);
+
+      const repeatEndDate = customRepeatEndDate(
+        eventData.startDate,
+        eventData.repeat,
+        eventData.repeatEndDate
+      );
+
+      const initialEvent = await db
+        .insert(schema.event)
+        .values({
+          title: eventData.title,
+          description: eventData.description,
+          venue: eventData.venue,
+          address: eventData.address,
+          color: eventData.color,
+          genre: eventData.genre,
+          repeat: eventData.repeat,
+          repeatGroupId: repeatGroupId,
+          repeatEndDate: repeatEndDate,
+          startDate: eventData.startDate,
+          endDate: eventData.endDate,
+          latitude: eventData.latitude,
+          longitude: eventData.longitude,
+          userId: userId,
+          createdAt: new Date(),
+        })
+        .returning();
+
+      console.log("Inserted initial repeated event:", initialEvent);
+      let nextStartDate = addInterval(eventData.startDate, eventData.repeat);
+      let nextEndDate = addInterval(eventData.endDate, eventData.repeat);
+
+      const repeatedEvents = [];
+
+      while (nextStartDate <= repeatEndDate) {
+        const repeatedEvent = await db
+          .insert(schema.event)
+          .values({
+            title: eventData.title,
+            description: eventData.description,
+            venue: eventData.venue,
+            address: eventData.address,
+            color: eventData.color,
+            genre: eventData.genre,
+            repeat: eventData.repeat,
+            repeatGroupId: repeatGroupId,
+            repeatEndDate: repeatEndDate,
+            startDate: nextStartDate,
+            endDate: nextEndDate,
+            latitude: eventData.latitude,
+            longitude: eventData.longitude,
+            userId: userId,
+            createdAt: new Date(),
+          })
+          .returning();
+
+        repeatedEvents.push(repeatedEvent);
+
+        nextStartDate = addInterval(nextStartDate, eventData.repeat);
+        nextEndDate = addInterval(nextEndDate, eventData.repeat);
+      }
+
+      console.log("Inserted repeated events:", repeatedEvents);
+
+      return c.json([initialEvent, ...repeatedEvents]);
+    } catch (error) {
+      console.error("Error inserting event:", error);
+      return c.json({ error: "Failed to create event" }, 500);
+    }
+  });
 
 export default app;
