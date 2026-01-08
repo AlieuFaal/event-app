@@ -1,9 +1,9 @@
 import { View, Image, Pressable } from "react-native";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Event } from "../../../../../packages/database/src/schema";
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
 import { useRouter } from "expo-router";
 import * as Haptics from 'expo-haptics';
+import type { Event } from "@vibespot/validation";
 
 export default function UpcomingEventCard({ event, onLongPress }: { event: Event, onLongPress: (event: Event) => void }) {
     const router = useRouter();
@@ -31,7 +31,7 @@ export default function UpcomingEventCard({ event, onLongPress }: { event: Event
             <Card className="bg-gray-100 dark:bg-secondary-foreground w-10/12 min-h-36 max-h-36 justify-center items-center rounded-3xl mx-auto mt-5 shadow drop-shadow-lg border-primary">
                 <CardContent className='w-full flex flex-row justify-around items-center p-1 gap-2 rounded-xl'>
                     <View className="w-32 h-28 justify-center items-center overflow-hidden rounded-sm border-1">
-                        <Image className="w-full h-full aspect-video" source={randomImage()} resizeMode="cover" />
+                        <Image className="w-full h-full aspect-video" source={event.imageUrl ? { uri: event.imageUrl } : randomImage()} resizeMode="cover" />
                     </View>
                     <View className=' w-40 h-28 items-center rounded-2xl p-2 -left-2'>
                         <CardHeader className=''>

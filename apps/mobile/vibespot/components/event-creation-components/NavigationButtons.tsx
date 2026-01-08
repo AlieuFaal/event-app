@@ -10,9 +10,10 @@ interface Props {
     onBack: () => void;
     onSubmit: () => void;
     stepTitle?: string;
+    isLoading?: boolean;
 }
 
-export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onSubmit, stepTitle }: Props) {
+export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onSubmit, stepTitle, isLoading }: Props) {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
 
@@ -44,7 +45,7 @@ export function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onS
                     <ArrowRight size={32} className="" color={isDark ? "white" : "black"} />
                 </TouchableOpacity>
             ) : (
-                <Button onPress={onSubmit} className="px-4">
+                <Button onPress={onSubmit} className="px-4" disabled={isLoading}>
                     <View className="flex-row items-center gap-2">
                         <Text className="text-white font-semibold">Submit</Text>
                         <CircleCheck size={18} color="white" />

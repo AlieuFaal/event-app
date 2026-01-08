@@ -1,11 +1,22 @@
 import { useGetEvent } from "@/hooks/useGetEvent";
-import type { Event } from "@vibespot/validation/event";
+import type { Event } from "@vibespot/database";
+import { useRef } from "react";
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Map() {
   const { isPending, error, data } = useGetEvent();
+  const mapRef = useRef<MapView>(null);
+
+  const zoomToLocation = (lat: number, lng: number) => {
+    mapRef.current?.animateToRegion({
+      latitude: lng,
+      longitude: lat,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    }, 1000);
+  };
 
   if (isPending) {
     return (
@@ -41,25 +52,27 @@ export default function Map() {
   return (
     <View className="flex-1 w-full h-64 mx-auto border rounded-2xl shadow overflow-hidden -mt-3">
       <MapView
+        ref={mapRef}
         style={styles.map}
-      // region={{
-      //   latitude: selectedLocation.lat,
-      //   longitude: selectedLocation.lng,
-      //   latitudeDelta: 0.01,
-      //   longitudeDelta: 0.01,
-      // }}
-      >
+        initialRegion={{
+          latitude: 57.7089,
+          longitude: 11.9746,
+          latitudeDelta: 0.3,
+          longitudeDelta: 0.3,
+        }}>
         {data?.map((event: Event) => (
           <Marker
             key={event.id}
             title={event.title}
-            description={event.description}
+            description={event.startDate.toUTCString()}
             titleVisibility="adaptive"
             coordinate={{
-              latitude: parseFloat(event.latitude),
-              longitude: parseFloat(event.longitude),
+              latitude: parseFloat(event.longitude),
+              longitude: parseFloat(event.latitude),
             }}
+            onPress={() => zoomToLocation(parseFloat(event.latitude), parseFloat(event.longitude))}
             pinColor="purple"
+            stopPropagation={true}
           />
         ))}
       </MapView>

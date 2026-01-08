@@ -5,7 +5,6 @@ import { EventCard1 } from "@/components/event-components/event-card-1";
 import { apiClient } from "@/lib/api-client";
 import { View, Text, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Event } from "../../../../../../packages/database/src/schema";
 import { useMemo, useRef, useState } from "react";
 import Animated from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -13,6 +12,7 @@ import * as Haptics from 'expo-haptics';
 import { EventActionsSheet } from '@/components/bottomsheet-component/eventactions-sheet';
 import UpcomingEventCard from '@/components/event-components/upcoming-event-card';
 import { useGetEvent } from '@/hooks/useGetEvent';
+import type { Event } from '@vibespot/validation';
 
 const AnimatedScrollView = Animated.ScrollView;
 
@@ -20,7 +20,7 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["82%"], []);
+  const snapPoints = useMemo(() => ["92%"], []);
 
   const openSheet = (event: Event) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

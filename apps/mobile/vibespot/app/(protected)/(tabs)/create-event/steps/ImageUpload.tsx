@@ -24,11 +24,13 @@ export function ImageUpload({ form }: Props) {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
-            form.setValue('imageUrl', image);
+            const selectedUri = result.assets[0].uri;
+            setImage(selectedUri);
+            form.setValue('imageUrl', selectedUri);
+            console.log("Image has been selected")
         }
-
         console.log(form.getValues());
+
     };
 
     const removeImage = () => {

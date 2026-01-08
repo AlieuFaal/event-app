@@ -247,17 +247,17 @@ export const eventInsertSchema = createInsertSchema(event, {
   venue: z.string().nullish(),
   repeat: z.enum(repeatOptions).optional(),
   repeatGroupId: z.string().uuid().nullish(),
-  repeatEndDate: z.date().nullish(),
+  repeatEndDate: z.coerce.date().nullish(),
   address: z
     .string()
     .min(2, "Please enter the event location address (at least 2 characters)"),
   color: z.enum(eventColors),
   genre: z.enum(genres),
-  startDate: z.date(),
-  endDate: z.date(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
   latitude: z.string(),
   longitude: z.string(),
-  createdAt: z.date().optional(),
+  createdAt: z.coerce.date().optional(),
   imageUrl: z.string().url().nullish(),
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {

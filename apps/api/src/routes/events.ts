@@ -1,12 +1,6 @@
 import { Hono } from "hono";
-import {
-  db,
-  eventSchema,
-  schema,
-  eq,
-  and,
-  eventInsertSchema,
-} from "@vibespot/database";
+import { db, schema, eq, and } from "@vibespot/database";
+import { eventInsertSchema } from "@vibespot/validation";
 import { type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
@@ -119,7 +113,7 @@ const app = new Hono<{ Variables: AuthType }>()
       return c.json(newFavorite);
     }
   )
-  .post("/", zValidator("json", eventInsertSchema), async (c) => {
+  .post("/events", zValidator("json", eventInsertSchema), async (c) => {
     const eventData = c.req.valid("json");
 
     const userId = c.var.user?.id;
@@ -128,6 +122,12 @@ const app = new Hono<{ Variables: AuthType }>()
       console.log("No user in session.");
       return c.json({ error: "User not authenticated" }, 401);
     }
+
+    const startDate = new Date(eventData.startDate);
+    const endDate = new Date(eventData.endDate);
+    const repeatEndDate = eventData.repeatEndDate
+      ? new Date(eventData.repeatEndDate)
+      : null;
 
     try {
       if (eventData.repeat === "none" || !eventData.repeat) {
@@ -143,12 +143,13 @@ const app = new Hono<{ Variables: AuthType }>()
             repeat: "none",
             repeatGroupId: null,
             repeatEndDate: null,
-            startDate: eventData.startDate,
-            endDate: eventData.endDate,
+            startDate: startDate,
+            endDate: endDate,
             latitude: eventData.latitude,
             longitude: eventData.longitude,
             userId: userId,
             createdAt: new Date(),
+            imageUrl: eventData.imageUrl,
           })
           .returning();
 
@@ -159,15 +160,15 @@ const app = new Hono<{ Variables: AuthType }>()
 
       const repeatGroupId = crypto.randomUUID();
 
-      addInterval(eventData.startDate, eventData.repeat);
+      addInterval(startDate, eventData.repeat);
 
-      const repeatEndDate = customRepeatEndDate(
-        eventData.startDate,
+      const calculatedRepeatEndDate = customRepeatEndDate(
+        startDate,
         eventData.repeat,
-        eventData.repeatEndDate
+        repeatEndDate
       );
 
-      const initialEvent = await db
+      const initialRepeatedEvent = await db
         .insert(schema.event)
         .values({
           title: eventData.title,
@@ -178,23 +179,24 @@ const app = new Hono<{ Variables: AuthType }>()
           genre: eventData.genre,
           repeat: eventData.repeat,
           repeatGroupId: repeatGroupId,
-          repeatEndDate: repeatEndDate,
-          startDate: eventData.startDate,
-          endDate: eventData.endDate,
+          repeatEndDate: calculatedRepeatEndDate,
+          startDate: startDate,
+          endDate: endDate,
           latitude: eventData.latitude,
           longitude: eventData.longitude,
           userId: userId,
           createdAt: new Date(),
+          imageUrl: eventData.imageUrl,
         })
         .returning();
 
-      console.log("Inserted initial repeated event:", initialEvent);
-      let nextStartDate = addInterval(eventData.startDate, eventData.repeat);
-      let nextEndDate = addInterval(eventData.endDate, eventData.repeat);
+      console.log("Inserted initial repeated event:", initialRepeatedEvent);
+      let nextStartDate = addInterval(startDate, eventData.repeat);
+      let nextEndDate = addInterval(endDate, eventData.repeat);
 
       const repeatedEvents = [];
 
-      while (nextStartDate <= repeatEndDate) {
+      while (nextStartDate <= calculatedRepeatEndDate) {
         const repeatedEvent = await db
           .insert(schema.event)
           .values({
@@ -206,13 +208,14 @@ const app = new Hono<{ Variables: AuthType }>()
             genre: eventData.genre,
             repeat: eventData.repeat,
             repeatGroupId: repeatGroupId,
-            repeatEndDate: repeatEndDate,
+            repeatEndDate: calculatedRepeatEndDate,
             startDate: nextStartDate,
             endDate: nextEndDate,
             latitude: eventData.latitude,
             longitude: eventData.longitude,
             userId: userId,
             createdAt: new Date(),
+            imageUrl: eventData.imageUrl,
           })
           .returning();
 
@@ -224,10 +227,34 @@ const app = new Hono<{ Variables: AuthType }>()
 
       console.log("Inserted repeated events:", repeatedEvents);
 
-      return c.json([initialEvent, ...repeatedEvents]);
+      return c.json([initialRepeatedEvent, ...repeatedEvents]);
     } catch (error) {
       console.error("Error inserting event:", error);
       return c.json({ error: "Failed to create event" }, 500);
+    }
+  })
+  .delete("/:id", async (c) => {
+    const eventId = c.req.param("id");
+    const userId = c.var.user?.id;
+
+    if (!userId) {
+      console.log("No user in session.");
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    try {
+      const deletedEvent = await db
+        .delete(schema.event)
+        .where(
+          and(eq(schema.event.id, eventId!), eq(schema.event.userId, userId))
+        )
+        .returning();
+
+      console.log("Deleted event:", deletedEvent);
+      return c.json(deletedEvent);
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      return c.json({ error: "Failed to delete event" }, 500);
     }
   });
 

@@ -12,6 +12,8 @@ import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import * as Haptics from 'expo-haptics';
+import { useAddEventToCalendar } from "@/hooks/useAddEventToCalendar";
+import type { Event } from "@vibespot/validation";
 
 export default function EventDetails() {
     const params = useLocalSearchParams();
@@ -20,6 +22,7 @@ export default function EventDetails() {
     const router = useRouter();
     const session = authClient.useSession();
 
+
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await queryClient.invalidateQueries();
@@ -27,6 +30,8 @@ export default function EventDetails() {
     }, []);
 
     const { isPending, error, data } = useGetEventById(eventId);
+
+    const addToCalendar = useAddEventToCalendar(data ?? null);
 
     function randomImage() {
         let images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
@@ -119,7 +124,7 @@ export default function EventDetails() {
             }>
 
                 <Image
-                    source={randomImage()}
+                    source={data.imageUrl ? { uri: data.imageUrl } : randomImage()}
                     className="w-full h-64 aspect-auto"
                     resizeMode="cover"
                 />
@@ -173,7 +178,7 @@ export default function EventDetails() {
                     )} */}
 
                     <View className="flex-row gap-3 mt-4">
-                        <Button className="flex-1 bg-purple-600 dark:bg-purple-700 p-4 rounded-xl h-fit">
+                        <Button className="flex-1 bg-purple-600 dark:bg-purple-700 p-4 rounded-xl h-fit" onPress={addToCalendar}>
                             <Text className="text-white font-semibold">Add To Calendar</Text>
                         </Button>
                         <Button variant="outline" className="px-6 py-4 rounded-xl border-purple-600 dark:border-purple-500 dark:bg-card-foreground h-fit">

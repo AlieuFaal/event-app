@@ -1,20 +1,36 @@
 import { View, Text } from "react-native";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-// DotLottieReact is breaking the app for now.
+import LottieView from 'lottie-react-native';
+import { useRef } from "react";
+
 export function EventCreationsSuccessful() {
+
+    const animationRef = useRef<LottieView>(null);
+
+    // function playAnimation() {
+    //     animationRef.current?.play();
+    // }
+
     return (
-        <View className="flex-1 justify-center items-center px-6">
+        <View className="justify-center items-center">
+            <View className="mb-6">
+                <LottieView
+                    ref={animationRef}
+                    source={require('../../../../../assets/animations/success.json')}
+                    autoPlay={true}
+                    loop={false}
+                    style={{
+                        width: 350,
+                        height: 300,
+                    }}
+                    resizeMode="cover"
+                />
+            </View>
             <Text className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
                 Event Created Successfully!
             </Text>
             <Text className="text-base text-center text-gray-700 dark:text-gray-300">
                 Your event has been created and is now live. You can view it on the map and share it with others.
             </Text>
-            {/* <DotLottieReact
-                src="https://lottie.host/9097a671-7cc4-443a-bbd4-db09cff949a2/F8jdNF0bg8.lottie"
-                loop
-                autoplay
-            /> */}
         </View>
     );
-}   
+}

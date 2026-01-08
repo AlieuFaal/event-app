@@ -84,14 +84,14 @@ export const eventSchema = z.object({
   genre: z.enum(genres),
   repeat: z.enum(repeatOptions).optional(),
   repeatGroupId: z.string().uuid().nullish(),
-  repeatEndDate: z.date().nullish(),
-  startDate: z.date(),
-  endDate: z.date(),
+  repeatEndDate: z.string().nullish(),
+  startDate: z.string(),
+  endDate: z.string(),
   userId: z.string().uuid().nullish(),
   latitude: z.string(),
   longitude: z.string(),
-  imageUrl: z.string().url().nullish(),
-  createdAt: z.date(),
+  imageUrl: z.string().nullish(),
+  createdAt: z.string(),
 });
 
 export const geocodingSchema = eventSchema.pick({
@@ -115,7 +115,7 @@ export const eventInsertSchema = z
     venue: z.string().nullish(),
     repeat: z.enum(repeatOptions).optional(),
     repeatGroupId: z.string().uuid().nullish(),
-    repeatEndDate: z.date().nullish(),
+    repeatEndDate: z.string().datetime().nullish(),
     address: z
       .string()
       .min(
@@ -124,12 +124,12 @@ export const eventInsertSchema = z
       ),
     color: z.enum(eventColors),
     genre: z.enum(genres),
-    startDate: z.date(),
-    endDate: z.date(),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime(),
     latitude: z.string(),
     longitude: z.string(),
-    createdAt: z.date().optional(),
-    imageUrl: z.string().url().nullish(),
+    createdAt: z.string().datetime().optional(),
+    imageUrl: z.string().nullish(),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
@@ -162,15 +162,15 @@ export const eventUpdateSchema = z
     venue: z.string().nullish(),
     latitude: z.string().optional(),
     longitude: z.string().optional(),
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
     repeat: z.enum(repeatOptions).optional(),
     repeatGroupId: z.string().uuid().nullish(),
-    repeatEndDate: z.date().nullish(),
-    updatedAt: z.date().optional(),
+    repeatEndDate: z.string().nullish(),
+    updatedAt: z.string().optional(),
     color: z.enum(eventColors).optional(),
     genre: z.enum(genres).optional(),
-    imageUrl: z.string().url().nullish(),
+    imageUrl: z.string().nullish(),
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
@@ -187,6 +187,6 @@ export const calendarEventSchema = eventSchema.extend({
   userId: z.string().uuid().nullish(),
   repeat: z.enum(repeatOptions).optional(),
   repeatGroupId: z.string().uuid().nullish(),
-  repeatEndDate: z.date().nullish(),
-  createdAt: z.date().optional(),
+  repeatEndDate: z.string().nullish(),
+  createdAt: z.string().optional(),
 });

@@ -77,6 +77,12 @@
             "backgroundColor": "#6d28d9"
           }
         }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "The app needs to access your calendar."
+        }
       ]
     ],
     "experiments": {

@@ -56,10 +56,10 @@ export function DateTimePicker({ form }: Props) {
 
     const handleConfirmDate = () => {
         if (modalVisible === 'start') {
-            form.setValue("startDate", tempDate);
+            form.setValue("startDate", tempDate.toISOString());
             console.log("Updated start date:", tempDate);
         } else if (modalVisible === 'end') {
-            form.setValue("endDate", tempDate);
+            form.setValue("endDate", tempDate.toISOString());
             console.log("Updated end date:", tempDate);
         }
         setModalVisible(null);
@@ -89,7 +89,7 @@ export function DateTimePicker({ form }: Props) {
                         <View>
                             <Text className="text-secondary font-semibold text-sm">Start Date</Text>
                             <Text className="text-white text-lg font-medium mt-1">
-                                {formatDateTime(startDate)}
+                                {formatDateTime(startDate.toString() ? new Date(startDate) : null)}
                             </Text>
                         </View>
                     </View>
@@ -105,7 +105,7 @@ export function DateTimePicker({ form }: Props) {
                         <View>
                             <Text className="text-secondary font-semibold text-sm">End Date</Text>
                             <Text className="text-white text-lg font-medium mt-1">
-                                {formatDateTime(endDate)}
+                                {formatDateTime(endDate.toString() ? new Date(endDate) : null)}
                             </Text>
                         </View>
                     </View>
@@ -272,7 +272,7 @@ export function DateTimePicker({ form }: Props) {
                                             console.log(form.getValues());
                                         }
                                         else {
-                                            form.setValue("repeatEndDate", repeatEndDate);
+                                            form.setValue("repeatEndDate", repeatEndDate.toISOString());
                                         }
                                         console.log("Selected repeat end date:", repeatEndDate);
                                         console.log("Form values:", form.getValues());

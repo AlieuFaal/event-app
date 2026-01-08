@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { reactStartCookies } from "better-auth/react-start";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { Resend } from "resend";
 import { db, schema, session } from ".";
 import { expo } from "@better-auth/expo";
@@ -145,7 +145,7 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [reactStartCookies(), expo()], // make sure this is the last plugin in the array
+  plugins: [tanstackStartCookies(), expo()], // make sure this is the last plugin in the array
 });
 
 export type AuthType = {

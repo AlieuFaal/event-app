@@ -19,7 +19,7 @@
     "@better-auth/expo": "latest",
     "@noble/ciphers": "1.0.0",
     "@vibespot/validation": "workspace:*",
-    "better-auth": "latest",
+    "better-auth": "^1.4.5",
     "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.8.3",
     "postgres": "^3.4.7",
