@@ -3,7 +3,7 @@ import type { eventInsertSchema } from "@vibespot/validation";
 import { LucideImagePlus, X } from "lucide-react-native";
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import type z from "zod";
 import { Button } from "@/components/ui/button";

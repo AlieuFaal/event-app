@@ -3,7 +3,7 @@
 import * as React from 'react';
 // import { Session } from '@/lib/auth-client';
 import { useEffect, useState, useRef } from 'react';
-import { HelpCircleIcon, ChevronDownIcon, LanguagesIcon } from 'lucide-react';
+import { ChevronDownIcon, LanguagesIcon } from 'lucide-react';
 import { Button } from "@/components/shadcn/ui/button"
 import {
   NavigationMenu,
@@ -27,11 +27,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/ui/avatar';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { authClient } from '@/lib/auth-client';
 import { m } from '@/paraglide/messages';
+import { setLocale } from '@/paraglide/runtime';
 import { setLocaleServerFn } from '@/services/ThemeService';
-import { User } from 'drizzle/db';
+import { User } from '@vibespot/database/schema';
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -98,38 +99,15 @@ const getNavigationLinks = (): Navbar05NavItem[] => [
   { href: '/event-map', label: m.nav_map() },
 ];
 
-function onClickHandler(route: string) {
-  if (typeof window !== 'undefined') {
-    window.location.href = route;
-  }
-}
-
-async function onLogout() {
-  await authClient.signOut({
-    fetchOptions: {
-      onSuccess: () => {
-        if (typeof window !== 'undefined') {
-          window.location.href = '/';
-        }
-      }
-    }
-  });
-}
-
 // Language menu Component
 const LanguageMenu = () => {
+  const router = useRouter();
+
   const handleLocaleChange = async (newLocale: 'en' | 'sv') => {
     try {
-      console.log('[LanguageMenu] Starting locale change to:', newLocale);
-      
-      // Save to cookie on server
       await setLocaleServerFn({ data: newLocale });
-      console.log('[LanguageMenu] Locale saved to server cookie');
-      
-      // Force a full page reload to apply translations immediately
-      // Use location.href to force a hard reload (bypasses cache)
-      console.log('[LanguageMenu] About to hard reload page');
-      window.location.href = window.location.href;
+      setLocale(newLocale, { reload: false });
+      await router.invalidate();
     } catch (error) {
       console.error('[LanguageMenu] Failed to change locale:', error);
     }
@@ -218,41 +196,58 @@ const UserMenu = ({
   userEmail?: string;
   userAvatar?: string | null | undefined;
   onItemClick?: (item: string) => void;
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground">
-        <Avatar className="h-7 w-7">
-          <AvatarImage src={userAvatar ?? undefined} alt={userName} />
-          <AvatarFallback className="text-xs">
-            {userName.split(' ').map(n => n[0]).join('').toLocaleUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <ChevronDownIcon className="h-3 w-3 ml-1" />
-        <span className="sr-only">User menu</span>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuLabel>
-        <div className="flex flex-col space-y-1">
-          <p className="text-sm font-medium leading-none">{userName}</p>
-          <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
-        </div>
-      </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onClickHandler('/profile')}>
-        {m.nav_profile()}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => onClickHandler('/favorites')}>
-        {m.nav_favorites()}
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => onLogout()}>
-        {m.nav_logout()}
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+}) => {
+  const router = useRouter();
+  const navigateToRoute = (route: string) => {
+    router.history.push(route);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+      await router.invalidate();
+      await router.navigate({ to: "/signin", replace: true });
+    } catch (error) {
+      console.error("Failed to sign out:", error);
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground">
+          <Avatar className="h-7 w-7">
+            <AvatarImage src={userAvatar ?? undefined} alt={userName} />
+            <AvatarFallback className="text-xs">
+              {userName.split(' ').map(n => n[0]).join('').toLocaleUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <ChevronDownIcon className="h-3 w-3 ml-1" />
+          <span className="sr-only">User menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{userName}</p>
+            <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => navigateToRoute('/profile')}>
+          {m.nav_profile()}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigateToRoute('/favorites')}>
+          {m.nav_favorites()}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleLogout()}>
+          {m.nav_logout()}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 // Types
 export interface Navbar05NavItem {
@@ -264,7 +259,7 @@ export interface Navbar05Props extends React.HTMLAttributes<HTMLElement> {
   logo?: React.ReactNode;
   logoHref?: string;
   navigationLinks?: Navbar05NavItem[];
-  currentUser?: User | null;
+  currentUser: User | null;
   userName?: string;
   userEmail?: string;
   userAvatar?: string;
@@ -295,6 +290,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
     },
     ref
   ) => {
+    const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const user = currentUser;
@@ -376,7 +372,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
             {/* Main nav */}
             <div className="flex items-center gap-6">
               <button
-                onClick={() => onClickHandler(logoHref)}
+                onClick={() => router.history.push(logoHref)}
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
 
               >
@@ -424,7 +420,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               />
             )}
             {!user && (
-              <Button variant={'outline'} onClick={() => onClickHandler('/signin')}>{m.signin_card_title()}</Button>
+              <Button variant={'outline'} onClick={() => router.history.push('/signin')}>{m.signin_card_title()}</Button>
             )}
           </div>
         </div>

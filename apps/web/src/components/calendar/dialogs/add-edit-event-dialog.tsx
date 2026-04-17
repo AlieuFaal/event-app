@@ -1,8 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addMinutes, set } from "date-fns";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import type { Event, User } from "@vibespot/database/schema";
+import { lazy, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { COLORS, GENRES } from "@/components/calendar/constants";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { useDisclosure } from "@/components/calendar/hooks";
+import {
+	calendarFormSchema,
+	type TEventFormData,
+} from "@/components/calendar/schemas";
 import { Button } from "@/components/shadcn/ui/button";
 import { DateTimePicker } from "@/components/shadcn/ui/date-time-picker2";
 import {
@@ -32,21 +40,16 @@ import {
 	SelectValue,
 } from "@/components/shadcn/ui/select";
 import { Textarea } from "@/components/shadcn/ui/textarea";
-import { COLORS, GENRES } from "@/components/calendar/constants";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import { useDisclosure } from "@/components/calendar/hooks";
-import { calendarFormSchema, type TEventFormData } from "@/components/calendar/schemas";
 import { authClient } from "@/lib/auth-client";
-import { Event, User } from "drizzle/db";
 import { m } from "@/paraglide/messages";
 import { updateAllRepeatedEventsFn } from "@/services/eventService";
-import { lazy, Suspense } from "react";
 
 // Lazy load Mapbox components to avoid SSR issues
-const AddressAutofill = lazy(() =>
-  import("@mapbox/search-js-react").then((mod) => ({ default: mod.AddressAutofill }))
+const _AddressAutofill = lazy(() =>
+	import("@mapbox/search-js-react").then((mod) => ({
+		default: mod.AddressAutofill,
+	})),
 );
-
 
 interface IProps {
 	children: ReactNode;
@@ -65,7 +68,7 @@ export function AddEditEventDialog({
 }: IProps) {
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [_deleteDialogOpen, _setDeleteDialogOpen] = useState(false);
 	const { addEvent, updateEvent } = useCalendar();
 	const isEditing = !!event;
 
@@ -77,10 +80,10 @@ export function AddEditEventDialog({
 			}
 			const start = startTime
 				? set(new Date(startDate), {
-					hours: startTime.hour,
-					minutes: startTime.minute,
-					seconds: 0,
-				})
+						hours: startTime.hour,
+						minutes: startTime.minute,
+						seconds: 0,
+					})
 				: new Date(startDate);
 			const end = addMinutes(start, 30);
 			return { startDate: start, endDate: end };
@@ -123,9 +126,13 @@ export function AddEditEventDialog({
 		});
 	}, [event, initialDates, form]);
 
-	const { data: session } = authClient.useSession()
+	const { data: session } = authClient.useSession();
 
-	const isRepeatedEvent = event && ["daily", "weekly", "monthly", "yearly"].includes((event.repeat as string) || "");
+	const isRepeatedEvent =
+		event &&
+		["daily", "weekly", "monthly", "yearly"].includes(
+			(event.repeat as string) || "",
+		);
 
 	const handleFormSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -169,7 +176,11 @@ export function AddEditEventDialog({
 				}
 				if (values.latitude === "" || values.longitude === "") {
 					toast.error("Please select a valid address from the suggestions.");
-					console.log("Latitude or Longitude is empty:", values.latitude, values.longitude);
+					console.log(
+						"Latitude or Longitude is empty:",
+						values.latitude,
+						values.longitude,
+					);
 					return;
 				}
 				await addEvent(formattedEvent);
@@ -192,13 +203,21 @@ export function AddEditEventDialog({
 	return (
 		<Modal open={isOpen} onOpenChange={onToggle} modal={true}>
 			{currentUser?.role !== "user" && (
-				<ModalTrigger onChange={onToggle} asChild>{children}</ModalTrigger>
+				<ModalTrigger onChange={onToggle} asChild>
+					{children}
+				</ModalTrigger>
 			)}
-			<ModalContent >
+			<ModalContent>
 				<ModalHeader>
-					<ModalTitle>{isEditing ? `${m.edit_event_label()}` : `${m.create_event_title()}`}</ModalTitle>
+					<ModalTitle>
+						{isEditing
+							? `${m.edit_event_label()}`
+							: `${m.create_event_title()}`}
+					</ModalTitle>
 					<ModalDescription>
-						{isEditing ? `${m.edit_event_description()}` : `${m.create_event_description()}`}
+						{isEditing
+							? `${m.edit_event_description()}`
+							: `${m.create_event_description()}`}
 					</ModalDescription>
 				</ModalHeader>
 
@@ -209,7 +228,6 @@ export function AddEditEventDialog({
 						className="grid gap-4 py-4"
 						autoComplete="off"
 						autoSave="off"
-						aria-autocomplete="none"
 					>
 						<FormField
 							control={form.control}
@@ -237,15 +255,13 @@ export function AddEditEventDialog({
 							name="venue"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel htmlFor="venue">
-										{m.form_venue_label()}
-									</FormLabel>
+									<FormLabel htmlFor="venue">{m.form_venue_label()}</FormLabel>
 									<FormControl>
 										<Input
 											id="venue"
 											placeholder={m.form_venue_placeholder()}
 											{...field}
-											value={field.value || ''}
+											value={field.value || ""}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -255,11 +271,11 @@ export function AddEditEventDialog({
 
 						{/* <AddressAutofill
 							accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
-							onRetrieve={(res: any) => {
-								form.setValue("latitude", res.features[0]?.geometry.coordinates[0].toString() || "");
-								form.setValue("longitude", res.features[0]?.geometry.coordinates[1].toString() || "");
+							onRetrieve={(res: unknown) => {
+								form.setValue("latitude", res.features[0]?.geometry.coordinates[1].toString() || "");
+								form.setValue("longitude", res.features[0]?.geometry.coordinates[0].toString() || "");
 							}}
-							onSuggestError={(e: any) => console.log(e)}
+							onSuggestError={(e: unknown) => console.log(e)}
 							browserAutofillEnabled={false}
 							confirmOnBrowserAutofill={false}
 							options={{ country: 'se', streets: true, proximity: 'ip', limit: 3}}
@@ -310,18 +326,33 @@ export function AddEditEventDialog({
 								name="repeat"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="required">{m.form_repeat_label()}</FormLabel>
+										<FormLabel className="required">
+											{m.form_repeat_label()}
+										</FormLabel>
 										<FormControl>
-											<Select onValueChange={field.onChange} defaultValue={"none"}>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={"none"}
+											>
 												<SelectTrigger className="w-full h-9">
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
-													<SelectItem value="none">{m.form_repeat_none()}</SelectItem>
-													<SelectItem value="daily">{m.form_repeat_daily()}</SelectItem>
-													<SelectItem value="weekly">{m.form_repeat_weekly()}</SelectItem>
-													<SelectItem value="monthly">{m.form_repeat_monthly()}</SelectItem>
-													<SelectItem value="yearly">{m.form_repeat_yearly()}</SelectItem>
+													<SelectItem value="none">
+														{m.form_repeat_none()}
+													</SelectItem>
+													<SelectItem value="daily">
+														{m.form_repeat_daily()}
+													</SelectItem>
+													<SelectItem value="weekly">
+														{m.form_repeat_weekly()}
+													</SelectItem>
+													<SelectItem value="monthly">
+														{m.form_repeat_monthly()}
+													</SelectItem>
+													<SelectItem value="yearly">
+														{m.form_repeat_yearly()}
+													</SelectItem>
 												</SelectContent>
 											</Select>
 										</FormControl>
@@ -336,12 +367,15 @@ export function AddEditEventDialog({
 							name="color"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">{m.form_color_label()}</FormLabel>
+									<FormLabel className="required">
+										{m.form_color_label()}
+									</FormLabel>
 									<FormControl>
 										<Select value={field.value} onValueChange={field.onChange}>
 											<SelectTrigger
-												className={`w-full ${fieldState.invalid ? "border-red-500" : ""
-													}`}
+												className={`w-full ${
+													fieldState.invalid ? "border-red-500" : ""
+												}`}
 											>
 												<SelectValue placeholder="Select a variant" />
 											</SelectTrigger>
@@ -372,8 +406,9 @@ export function AddEditEventDialog({
 									<FormControl>
 										<Select value={field.value} onValueChange={field.onChange}>
 											<SelectTrigger
-												className={`w-full ${fieldState.invalid ? "border-red-500" : ""
-													}`}
+												className={`w-full ${
+													fieldState.invalid ? "border-red-500" : ""
+												}`}
 											>
 												<SelectValue placeholder="Select a genre" />
 											</SelectTrigger>
@@ -395,7 +430,9 @@ export function AddEditEventDialog({
 							name="description"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">{m.form_description_label()}</FormLabel>
+									<FormLabel className="required">
+										{m.form_description_label()}
+									</FormLabel>
 									<FormControl>
 										<Textarea
 											{...field}
@@ -416,10 +453,7 @@ export function AddEditEventDialog({
 							{m.button_cancel()}
 						</Button>
 					</ModalClose>
-					<Button
-						type="submit"
-						form="event-form"
-					>
+					<Button type="submit" form="event-form">
 						{isEditing ? `${m.save_changes()}` : `${m.calendar_add_event()}`}
 					</Button>
 				</ModalFooter>

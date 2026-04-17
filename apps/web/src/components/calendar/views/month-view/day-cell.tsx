@@ -21,7 +21,7 @@ import { MonthEventBadge } from "@/components/calendar/views/month-view/month-ev
 import { AddEditEventDialog } from "../../dialogs/add-edit-event-dialog";
 import { Button } from "@/components/shadcn/ui/button";
 import { Plus } from "lucide-react";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {

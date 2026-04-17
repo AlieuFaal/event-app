@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardTitle } from "../ui/card";
 import { Pressable, Text, Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as Haptics from 'expo-haptics';
-import type { Event } from "@vibespot/validation";
+import type { Event } from "@vibespot/database/schema";
 
 
 export function EventCard1({ event, onLongPress }: { event: Event, onLongPress: (event: Event) => void }) {

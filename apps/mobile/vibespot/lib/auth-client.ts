@@ -4,10 +4,11 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 import { inferAdditionalFields } from "better-auth/client/plugins";
-import { auth } from "@vibespot/database/src/auth";
+import type { auth as authInstance } from "@vibespot/database/src/auth";
 
 const getBaseUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri?.split(":").shift();
+  const productionApiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   if (__DEV__) {
     if (Platform.OS === "android") {
@@ -17,19 +18,21 @@ const getBaseUrl = () => {
     } else {
       return "http://localhost:3001";
     }
-  } else {
-    return "http://localhost:3001";
   }
+
+  if (!productionApiUrl) {
+    throw new Error("EXPO_PUBLIC_API_URL environment variable is not set");
+  }
+
+  return productionApiUrl;
 };
 
 const baseURL = getBaseUrl();
 
-console.log("Auth Client Base URL:", baseURL);
-
 export const authClient = createAuthClient({
   baseURL: baseURL,
   plugins: [
-    inferAdditionalFields<typeof auth>(),
+    inferAdditionalFields<typeof authInstance>(),
     expoClient({
       scheme: "vibespot",
       storagePrefix: "vibespot-auth",

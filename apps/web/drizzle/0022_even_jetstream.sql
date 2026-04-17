@@ -1,1 +1,0 @@
-ALTER TABLE "event" ADD COLUMN "repeat" text DEFAULT 'none' NOT NULL;

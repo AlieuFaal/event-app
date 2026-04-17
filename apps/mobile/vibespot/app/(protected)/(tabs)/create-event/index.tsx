@@ -1,5 +1,4 @@
-import * as React from "react"
-import { set, z } from "zod";
+import { z } from "zod";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +10,6 @@ import { EventDetails } from "./steps/EventDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import { NavigationButtons } from "@/components/event-creation-components/NavigationButtons";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "expo-router";
 import { LocationPicker } from "./steps/LocationPicker";
 import { DateTimePicker } from "./steps/DateTimePicker";
 import { ImageUpload } from "./steps/ImageUpload";
@@ -24,8 +22,6 @@ import * as Crypto from 'expo-crypto';
 export default function CreateEvents() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
 
   const { data: session } = authClient.useSession();
 

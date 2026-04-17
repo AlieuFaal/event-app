@@ -1,24 +1,26 @@
 {
-  "name": "@vibespot/api",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "bun --watch src/index.ts"
-  },
-  "dependencies": {
-    "@better-auth/expo": "^1.3.34",
-    "@hono/zod-validator": "^0.7.4",
-    "@vibespot/database": "*",
-    "@vibespot/validation": "workspace:*",
-    "better-auth": "^1.3.34",
-    "expo-constants": "^18.0.10",
-    "expo-linking": "^8.0.8",
-    "expo-web-browser": "^15.0.8",
-    "hono": "^4.7.11",
-    "zod": "^4.1.12"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  }
+	"name": "@vibespot/api",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bun --watch src/index.ts",
+		"lint": "biome check .",
+		"typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.json"
+	},
+	"dependencies": {
+		"@better-auth/expo": "^1.3.34",
+		"@hono/zod-validator": "^0.7.4",
+		"@vibespot/database": "*",
+		"@vibespot/validation": "workspace:*",
+		"better-auth": "^1.3.34",
+		"expo-constants": "^18.0.10",
+		"expo-linking": "^8.0.8",
+		"expo-web-browser": "^15.0.8",
+		"hono": "^4.7.11",
+		"zod": "^4.1.12"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	}
 }

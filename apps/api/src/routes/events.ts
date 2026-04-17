@@ -14,7 +14,6 @@ const app = new Hono<{ Variables: AuthType }>()
     const userId = c.var.user?.id;
 
     if (!userId) {
-      console.log("No user in session.");
       return c.json({ error: "User not authenticated" }, 401);
     }
 
@@ -22,42 +21,49 @@ const app = new Hono<{ Variables: AuthType }>()
 
     return c.json(events);
   })
-  .get("/:id", async (c) => {
-    const eventId = c.req.param("id");
+  .get("/:id", zValidator("param", z.object({ id: z.uuid() })), async (c) => {
+    const { id: eventId } = c.req.valid("param");
     const userId = c.var.user?.id;
 
     if (!userId) {
-      console.log("No user in session.");
       return c.json({ error: "User not authenticated" }, 401);
     }
 
     const eventById = await db
       .select()
       .from(schema.event)
-      .where(eq(schema.event.id, eventId!))
+      .where(eq(schema.event.id, eventId))
       .limit(1)
       .then((res) => res[0]);
     return c.json(eventById);
   })
-  .get("/favorites/:userid", async (c) => {
-    const userId = c.req.param("userid");
+  .get(
+    "/favorites/:userid",
+    zValidator("param", z.object({ userid: z.uuid() })),
+    async (c) => {
+      const sessionUserId = c.var.user?.id;
+      const { userid } = c.req.valid("param");
 
-    if (!userId) {
-      console.log("No user in session.");
-      return c.json({ error: "User not authenticated" }, 401);
+      if (!sessionUserId) {
+        return c.json({ error: "User not authenticated" }, 401);
+      }
+
+      if (sessionUserId !== userid) {
+        return c.json({ error: "Forbidden" }, 403);
+      }
+
+      const favoriteEvents = await db
+        .select()
+        .from(schema.event)
+        .innerJoin(
+          schema.favoriteEvent,
+          eq(schema.event.id, schema.favoriteEvent.eventId)
+        )
+        .where(eq(schema.favoriteEvent.userId, sessionUserId));
+
+      return c.json(favoriteEvents);
     }
-
-    const favoriteEvents = await db
-      .select()
-      .from(schema.event)
-      .innerJoin(
-        schema.favoriteEvent,
-        eq(schema.event.id, schema.favoriteEvent.eventId)
-      )
-      .where(eq(schema.favoriteEvent.userId, userId!));
-
-    return c.json(favoriteEvents);
-  })
+  )
   .post(
     "/favorites/:eventId",
     zValidator("param", z.object({ eventId: z.uuid() })),
@@ -67,7 +73,6 @@ const app = new Hono<{ Variables: AuthType }>()
       const userId = c.var.user?.id;
 
       if (!userId) {
-        console.log("No user in session.");
         return c.json({ error: "User not authenticated" }, 401);
       }
 
@@ -93,10 +98,6 @@ const app = new Hono<{ Variables: AuthType }>()
           )
           .returning();
 
-        console.log(
-          "Event is already a favorite. Removing event from users favorites:",
-          savedEvent
-        );
         return c.json(savedEvent);
       }
 
@@ -109,17 +110,16 @@ const app = new Hono<{ Variables: AuthType }>()
         })
         .returning();
 
-      console.log("Added event to users favorites:", newFavorite);
       return c.json(newFavorite);
     }
   )
   .post("/events", zValidator("json", eventInsertSchema), async (c) => {
     const eventData = c.req.valid("json");
+    const repeat = eventData.repeat;
 
     const userId = c.var.user?.id;
 
     if (!userId) {
-      console.log("No user in session.");
       return c.json({ error: "User not authenticated" }, 401);
     }
 
@@ -130,7 +130,7 @@ const app = new Hono<{ Variables: AuthType }>()
       : null;
 
     try {
-      if (eventData.repeat === "none" || !eventData.repeat) {
+      if (repeat === "none" || !repeat) {
         const newEvent = await db
           .insert(schema.event)
           .values({
@@ -153,51 +153,20 @@ const app = new Hono<{ Variables: AuthType }>()
           })
           .returning();
 
-        console.log("Inserted new event:", newEvent);
-
         return c.json(newEvent);
       }
 
       const repeatGroupId = crypto.randomUUID();
-
-      addInterval(startDate, eventData.repeat);
-
       const calculatedRepeatEndDate = customRepeatEndDate(
         startDate,
-        eventData.repeat,
+        repeat,
         repeatEndDate
       );
+      const maxOccurrences = 500;
+      const repeatedEvents: Array<typeof schema.event.$inferSelect[]> = [];
 
-      const initialRepeatedEvent = await db
-        .insert(schema.event)
-        .values({
-          title: eventData.title,
-          description: eventData.description,
-          venue: eventData.venue,
-          address: eventData.address,
-          color: eventData.color,
-          genre: eventData.genre,
-          repeat: eventData.repeat,
-          repeatGroupId: repeatGroupId,
-          repeatEndDate: calculatedRepeatEndDate,
-          startDate: startDate,
-          endDate: endDate,
-          latitude: eventData.latitude,
-          longitude: eventData.longitude,
-          userId: userId,
-          createdAt: new Date(),
-          imageUrl: eventData.imageUrl,
-        })
-        .returning();
-
-      console.log("Inserted initial repeated event:", initialRepeatedEvent);
-      let nextStartDate = addInterval(startDate, eventData.repeat);
-      let nextEndDate = addInterval(endDate, eventData.repeat);
-
-      const repeatedEvents = [];
-
-      while (nextStartDate <= calculatedRepeatEndDate) {
-        const repeatedEvent = await db
+      const result = await db.transaction(async (tx) => {
+        const initialRepeatedEvent = await tx
           .insert(schema.event)
           .values({
             title: eventData.title,
@@ -209,8 +178,8 @@ const app = new Hono<{ Variables: AuthType }>()
             repeat: eventData.repeat,
             repeatGroupId: repeatGroupId,
             repeatEndDate: calculatedRepeatEndDate,
-            startDate: nextStartDate,
-            endDate: nextEndDate,
+            startDate: startDate,
+            endDate: endDate,
             latitude: eventData.latitude,
             longitude: eventData.longitude,
             userId: userId,
@@ -219,26 +188,53 @@ const app = new Hono<{ Variables: AuthType }>()
           })
           .returning();
 
-        repeatedEvents.push(repeatedEvent);
+        let nextStartDate = addInterval(startDate, repeat);
+        let nextEndDate = addInterval(endDate, repeat);
+        let count = 0;
 
-        nextStartDate = addInterval(nextStartDate, eventData.repeat);
-        nextEndDate = addInterval(nextEndDate, eventData.repeat);
-      }
+        while (nextStartDate <= calculatedRepeatEndDate && count < maxOccurrences) {
+          const repeatedEvent = await tx
+            .insert(schema.event)
+            .values({
+              title: eventData.title,
+              description: eventData.description,
+              venue: eventData.venue,
+              address: eventData.address,
+              color: eventData.color,
+              genre: eventData.genre,
+              repeat: repeat,
+              repeatGroupId: repeatGroupId,
+              repeatEndDate: calculatedRepeatEndDate,
+              startDate: nextStartDate,
+              endDate: nextEndDate,
+              latitude: eventData.latitude,
+              longitude: eventData.longitude,
+              userId: userId,
+              createdAt: new Date(),
+              imageUrl: eventData.imageUrl,
+            })
+            .returning();
 
-      console.log("Inserted repeated events:", repeatedEvents);
+          repeatedEvents.push(repeatedEvent);
+          nextStartDate = addInterval(nextStartDate, repeat);
+          nextEndDate = addInterval(nextEndDate, repeat);
+          count++;
+        }
 
-      return c.json([initialRepeatedEvent, ...repeatedEvents]);
+        return [initialRepeatedEvent, ...repeatedEvents];
+      });
+
+      return c.json(result);
     } catch (error) {
       console.error("Error inserting event:", error);
       return c.json({ error: "Failed to create event" }, 500);
     }
   })
-  .delete("/:id", async (c) => {
-    const eventId = c.req.param("id");
+  .delete("/:id", zValidator("param", z.object({ id: z.uuid() })), async (c) => {
+    const { id: eventId } = c.req.valid("param");
     const userId = c.var.user?.id;
 
     if (!userId) {
-      console.log("No user in session.");
       return c.json({ error: "User not authenticated" }, 401);
     }
 
@@ -246,11 +242,10 @@ const app = new Hono<{ Variables: AuthType }>()
       const deletedEvent = await db
         .delete(schema.event)
         .where(
-          and(eq(schema.event.id, eventId!), eq(schema.event.userId, userId))
+          and(eq(schema.event.id, eventId), eq(schema.event.userId, userId))
         )
         .returning();
 
-      console.log("Deleted event:", deletedEvent);
       return c.json(deletedEvent);
     } catch (error) {
       console.error("Error deleting event:", error);

@@ -27,7 +27,6 @@ export default function RootLayout() {
   // queryClient.invalidateQueries();
 
   const session = authClient.useSession();
-  console.log("Current session username in RootLayout:", session.data?.user.name);
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync('transparent');

@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from "@/components/shadcn/ui/dialog"
 import { Label } from "../shadcn/ui/label";
-import { EventWithComments, User } from "drizzle/db";
+import { EventWithComments, User } from "@vibespot/database/schema";
 import { Button } from "../shadcn/ui/button";
 import { Star } from "lucide-react";
 import CommentSection from "../event-components/event-comment-section";
@@ -136,7 +136,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                             <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(favoriteEvent)}</Label>
                         </div>
                     </div>
-                    <CommentSection users={users} event={favoriteEvent} />
+                    <CommentSection users={users} event={favoriteEvent} currentUser={null} />
                 </DialogContent>
             </Dialog>
         </>

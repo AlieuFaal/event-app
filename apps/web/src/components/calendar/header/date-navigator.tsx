@@ -17,7 +17,7 @@ import {
 } from "@/components/calendar/helpers";
 
 import type { TCalendarView } from "@/components/calendar/types";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 
 interface IProps {
 	view: TCalendarView;

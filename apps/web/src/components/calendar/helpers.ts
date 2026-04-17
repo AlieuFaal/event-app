@@ -33,7 +33,7 @@ import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 
 const FORMAT_STRING = "MMM d, yyyy";
 

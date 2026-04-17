@@ -12,7 +12,7 @@ import React, {
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { DndConfirmationDialog } from "@/components/calendar/dialogs/dnd-confirmation-dialog";
-import { Event, User } from "drizzle/db";
+import { Event, User, CalendarEvent } from "@vibespot/database/schema";
 
 interface PendingDropData {
 	event: Event;
@@ -172,8 +172,15 @@ export function DndProvider({
 	const handleEventUpdate = useCallback(
 		(event: Event, newStartDate: Date, newEndDate: Date) => {
 			try {
-				const updatedEvent = {
+				const updatedEvent: CalendarEvent = {
 					...event,
+					userId: event.userId ?? null,
+					venue: event.venue ?? null,
+					repeat: event.repeat ?? "none",
+					repeatGroupId: event.repeatGroupId ?? null,
+					repeatEndDate: event.repeatEndDate ?? null,
+					imageUrl: event.imageUrl ?? null,
+					createdAt: event.createdAt ?? new Date(),
 					startDate: newStartDate,
 					endDate: newEndDate,
 				};

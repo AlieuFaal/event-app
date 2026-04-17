@@ -11,10 +11,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { onbUpdateUserDataFn, updateRoleFn } from "@/services/user-service";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
-import { onbFormUpdateSchema, OnboardingUpdate } from "drizzle/db";
+import { onbFormUpdateSchema, OnboardingUpdate } from "@vibespot/database/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { m } from "@/paraglide/messages";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function OnboardingCard() {
     const [isSelected, setIsSelected] = React.useState<string | null>(null);
@@ -141,7 +142,7 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
             console.log("Form data submitted:", data);
             if (user.data) {
                 console.log("User session found:", user.data);
-                await updateUserData({ data: { id: user.data.user.id, phone: data.phone, location: data.location } });
+                await updateUserData({ data: { phone: data.phone, location: data.location } });
                 console.log("User data updated in the database:", data);
                 toast.success("Additional info saved!");
                 setView1(false);
@@ -245,6 +246,8 @@ function View2({ isSelected, setView1, setView2, setView3 }: { isSelected: strin
 }
 
 function View3({ setView1, setView2, setView3 }: { setView1: React.Dispatch<React.SetStateAction<boolean>>, setView2: React.Dispatch<React.SetStateAction<boolean>>, setView3: React.Dispatch<React.SetStateAction<boolean>> }) {
+    const navigate = useNavigate();
+
     return (
         <div>
             <Card className="w-[1000px] mx-auto mt-25 bg-card border-1 shadow-lg mb-25">
@@ -271,7 +274,7 @@ function View3({ setView1, setView2, setView3 }: { setView1: React.Dispatch<Reac
 
                         <Button className="hover:scale-105 transition-transform" onClick={() => {
                             toast.success("Onboarding complete! Welcome aboard!");
-                            window.location.href = "/";
+                            navigate({ to: "/" });
                         }
                         }>
                             {m.onb_card3_button()} <ArrowRight />

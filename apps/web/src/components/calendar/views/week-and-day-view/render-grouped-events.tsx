@@ -1,7 +1,7 @@
 import { areIntervalsOverlapping } from "date-fns";
 import { getEventBlockStyle } from "@/components/calendar/helpers";
 import { EventBlock } from "@/components/calendar/views/week-and-day-view/event-block";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 
 interface RenderGroupedEventsProps {
 	groupedEvents: Event[][];

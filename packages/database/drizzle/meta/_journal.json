@@ -176,6 +176,13 @@
       "when": 1763654114824,
       "tag": "0024_grey_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1776419734211,
+      "tag": "0025_bouncy_marvel_zombies",
+      "breakpoints": true
     }
   ]
 }

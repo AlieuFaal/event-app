@@ -13,7 +13,14 @@ export function ThemeProvider({ children, theme }: Props) {
     const router = useRouter()
 
     function setTheme (val: Theme) {
-        setThemeServerFn({data: val}).then(() => router.invalidate())
+        void (async () => {
+            try {
+                await setThemeServerFn({ data: val })
+                await router.invalidate()
+            } catch (error) {
+                console.error("Failed to update theme:", error)
+            }
+        })()
     }
 
     return <ThemeContext value={{ theme, setTheme }}>{children}</ThemeContext>;

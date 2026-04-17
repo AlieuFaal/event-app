@@ -15,7 +15,7 @@ import {RenderGroupedEvents} from "@/components/calendar/views/week-and-day-view
 import {
     WeekViewMultiDayEventsRow
 } from "@/components/calendar/views/week-and-day-view/week-view-multi-day-events-row";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {

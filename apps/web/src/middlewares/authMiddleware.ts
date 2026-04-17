@@ -1,10 +1,10 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { auth } from "@vibespot/database/src/auth";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 export const authMiddleware = createMiddleware({ type: "function" })
   .server(async ({ next }) => {
-    const request = getWebRequest();
+    const request = getRequest();
 
     const session = await auth.api.getSession({ headers: request.headers });
 

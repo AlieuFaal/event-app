@@ -2,7 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Card, CardContent } from "../shadcn/ui/card";
 import { Calendar, Mail, MapPin, Users, UserPlus } from "lucide-react";
 import { Badge } from "../shadcn/ui/badge";
-import { User } from "drizzle/db";
+import { User } from "@vibespot/database/schema";
 import { Button } from "../shadcn/ui/button";
 import React from "react";
 import { followUserFn, unfollowUserFn } from "@/services/user-service";
@@ -20,29 +20,21 @@ interface AccountHeaderProps {
 export default function AccountHeader({ user, followersCount, followingCount, isFollowing }: AccountHeaderProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [isOwnProfileState, setIsOwnProfileState] = React.useState(false);
 
     const currentUser = authClient.useSession();
-
-    if (currentUser?.data?.user?.id === user.id && !isOwnProfileState) {
-        setIsOwnProfileState(true)
-        console.log("isOwnProfileState set to true")
-    }
-    else if (currentUser?.data?.user?.id !== user.id && isOwnProfileState) {
-        setIsOwnProfileState(false)
-        console.log("isOwnProfileState set to false")
-    }
+    const isOwnProfile = currentUser?.data?.user?.id === user.id;
 
     const handleToggleFollow = async () => {
         setIsLoading(true);
+        let didMutate = false;
 
         try {
-            if (!isOwnProfileState && isFollowing) {
-                unfollowUserFn({ data: { id: user.id } });
-                router.invalidate()
-            } else if (!isOwnProfileState && !isFollowing) {
-                followUserFn({ data: { id: user.id } });
-                router.invalidate()
+            if (!isOwnProfile && isFollowing) {
+                await unfollowUserFn({ data: { id: user.id } });
+                didMutate = true;
+            } else if (!isOwnProfile && !isFollowing) {
+                await followUserFn({ data: { id: user.id } });
+                didMutate = true;
             } else {
                 toast.error('You cannot follow yourself.');
             }
@@ -52,7 +44,10 @@ export default function AccountHeader({ user, followersCount, followingCount, is
         } finally {
             setIsLoading(false);
         }
-        await router.invalidate();
+
+        if (didMutate) {
+            await router.invalidate();
+        }
     };
 
     const formatJoinDate = (date: Date) => {
@@ -80,7 +75,7 @@ export default function AccountHeader({ user, followersCount, followingCount, is
                                 <h1 className="text-2xl font-bold">{user?.name}</h1>
                                 <Badge variant="secondary">{user?.role || "user"}</Badge>
                             </div>
-                            {!isOwnProfileState && (
+                            {!isOwnProfile && (
                                 <Button
                                     variant={isFollowing ? "secondary" : "default"}
                                     onClick={handleToggleFollow}

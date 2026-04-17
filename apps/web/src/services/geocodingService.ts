@@ -1,11 +1,11 @@
 // import { createServerFn } from "@tanstack/react-start";
-// import { geocodingSchema } from "drizzle/db";
+// import { geocodingSchema } from "@vibespot/database/schema";
 // import z from "zod";
 
 // export const geocodeAddress = createServerFn({
 //   method: "POST",
 // })
-//   .validator(geocodingSchema)
+//   .inputValidator(geocodingSchema)
 //   .handler(async ({ data }) => {
 //     const accessToken = process.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN;
 

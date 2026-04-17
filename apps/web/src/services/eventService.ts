@@ -2,35 +2,80 @@ import {
   eventInsertSchema,
   calendarEventSchema,
   commentSchema,
-  commentUpdateSchema,
-  Event,
-} from "drizzle/db/schema";
+} from "@vibespot/database/schema";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { _encode } from "better-auth";
-import { schema } from "drizzle/db";
-import { db } from "drizzle";
-import { eq, and, gte } from "drizzle-orm";
+import { schema } from "@vibespot/database/schema";
+import { db } from "@vibespot/database";
+import { eq, and, gte, inArray } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
-import { toast } from "sonner";
+
+const eventSelect = {
+  id: schema.event.id,
+  title: schema.event.title,
+  description: schema.event.description,
+  venue: schema.event.venue,
+  address: schema.event.address,
+  color: schema.event.color,
+  genre: schema.event.genre,
+  repeat: schema.event.repeat,
+  repeatGroupId: schema.event.repeatGroupId,
+  repeatEndDate: schema.event.repeatEndDate,
+  startDate: schema.event.startDate,
+  endDate: schema.event.endDate,
+  latitude: schema.event.latitude,
+  longitude: schema.event.longitude,
+  userId: schema.event.userId,
+  createdAt: schema.event.createdAt,
+  imageUrl: schema.event.imageUrl,
+};
+
+const canManageEvents = (role: string | undefined) =>
+  role === "artist" || role === "admin";
+
+const getCommentsByEventIds = async (eventIds: string[]) => {
+  if (eventIds.length === 0) {
+    return [];
+  }
+
+  return db
+    .select()
+    .from(schema.comment)
+    .where(inArray(schema.comment.eventId, eventIds))
+    .orderBy(schema.comment.createdAt);
+};
+
+const attachComments = async <T extends { id: string }>(events: T[]) => {
+  if (events.length === 0) {
+    return [] as Array<T & { comments: Array<typeof schema.comment.$inferSelect> }>;
+  }
+
+  const comments = await getCommentsByEventIds(events.map((event) => event.id));
+  const commentsByEventId = new Map<string, Array<typeof schema.comment.$inferSelect>>();
+
+  for (const comment of comments) {
+    const existing = commentsByEventId.get(comment.eventId);
+    if (existing) {
+      existing.push(comment);
+    } else {
+      commentsByEventId.set(comment.eventId, [comment]);
+    }
+  }
+
+  return events.map((event) => ({
+    ...event,
+    comments: commentsByEventId.get(event.id) ?? [],
+  }));
+};
 
 export const getEventDataFn = createServerFn({
   method: "GET",
-  response: "data",
 }).handler(async () => {
-  const events = await db
+  return db
     .select()
     .from(schema.event)
     .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
-
-  const eventsWithStringDates = events.map((event: Event) => ({
-    ...event,
-    startDate: event.startDate,
-    endDate: event.endDate,
-  }));
-
-  return eventsWithStringDates;
 });
 
 export const isEventExpired = (endDate: Date): boolean => {
@@ -40,131 +85,82 @@ export const isEventExpired = (endDate: Date): boolean => {
 
 export const getEventsWithCommentsFn = createServerFn({
   method: "GET",
-  response: "data",
 }).handler(async () => {
   const events = await db
-    .select({
-      id: schema.event.id,
-      title: schema.event.title,
-      description: schema.event.description,
-      venue: schema.event.venue,
-      address: schema.event.address,
-      color: schema.event.color,
-      genre: schema.event.genre,
-      startDate: schema.event.startDate,
-      endDate: schema.event.endDate,
-      latitude: schema.event.latitude,
-      longitude: schema.event.longitude,
-      userId: schema.event.userId,
-      createdAt: schema.event.createdAt,
-    })
+    .select(eventSelect)
     .from(schema.event)
     .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
 
-  const comments = await db
-    .select()
-    .from(schema.comment)
-    .orderBy(schema.comment.createdAt);
-
-  return events.map((events) => {
-    const commentsForEvent = comments.filter(
-      (comment) => comment.eventId === events.id
-    );
-    return {
-      ...events,
-      comments: commentsForEvent,
-    };
-  });
+  return attachComments(events);
 });
 
 export const getUserEventsWithCommentsFn = createServerFn({
   method: "GET",
-  response: "data",
 })
-  .validator(z.object({ userId: z.uuid() }))
-  .handler(async (data) => {
+  .inputValidator(z.object({ userId: z.uuid() }))
+  .handler(async ({ data }) => {
     const events = await db
-      .select({
-        id: schema.event.id,
-        title: schema.event.title,
-        description: schema.event.description,
-        venue: schema.event.venue,
-        address: schema.event.address,
-        color: schema.event.color,
-        genre: schema.event.genre,
-        repeat: schema.event.repeat,
-        startDate: schema.event.startDate,
-        endDate: schema.event.endDate,
-        latitude: schema.event.latitude,
-        longitude: schema.event.longitude,
-        userId: schema.event.userId,
-        createdAt: schema.event.createdAt,
-      })
+      .select(eventSelect)
       .from(schema.event)
-      .where(eq(schema.event.userId, data.data.userId))
+      .where(eq(schema.event.userId, data.userId))
       .orderBy(schema.event.startDate);
 
-    const comments = await db
-      .select()
-      .from(schema.comment)
-      .orderBy(schema.comment.createdAt);
-
-    return events.map((events) => {
-      const commentsForEvent = comments.filter(
-        (comment) => comment.eventId === events.id
-      );
-      return {
-        ...events,
-        comments: commentsForEvent,
-      };
-    });
+    return attachComments(events);
   });
 
 export const getMapEventsFn = createServerFn({
   method: "GET",
-  response: "data",
 }).handler(async () => {
-  const events = await db
-    .select({
-      id: schema.event.id,
-      title: schema.event.title,
-      description: schema.event.description,
-      venue: schema.event.venue,
-      address: schema.event.address,
-      color: schema.event.color,
-      genre: schema.event.genre,
-      repeat: schema.event.repeat,
-      startDate: schema.event.startDate,
-      endDate: schema.event.endDate,
-      latitude: schema.event.latitude,
-      longitude: schema.event.longitude,
-      userId: schema.event.userId,
-      createdAt: schema.event.createdAt,
-      repeatGroupId: schema.event.repeatGroupId,
-      repeatEndDate: schema.event.repeatEndDate,
-    })
+  return db
+    .select(eventSelect)
     .from(schema.event)
     .where(gte(schema.event.endDate, new Date()))
     .orderBy(schema.event.startDate);
-
-  return events;
 });
 
 export const postEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(eventInsertSchema)
+  .inputValidator(eventInsertSchema)
   .handler(async ({ data, context }) => {
-    try {
-      console.log("Received data:", data);
+    const user = context.currentUser;
+    if (!user?.id || !canManageEvents(user.role)) {
+      throw new Error("User not authenticated or authorized to handle events");
+    }
 
-      const user = context.currentUser;
-      if (!user?.id || user.role === "user") {
-        throw new Error(
-          "User not authenticated or authorized to handle events"
-        );
-      }
+    const event = await db
+      .insert(schema.event)
+      .values({
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        address: data.address,
+        color: data.color,
+        genre: data.genre,
+        repeat: data.repeat,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        userId: user.id,
+        createdAt: new Date(),
+        imageUrl: data.imageUrl,
+      })
+      .returning();
 
+    return event;
+  });
+
+export const repeatEventsFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .inputValidator(eventInsertSchema)
+  .handler(async ({ data, context }) => {
+    const user = context.currentUser;
+    if (!user?.id || !canManageEvents(user.role)) {
+      throw new Error("User not authenticated or authorized to handle events");
+    }
+
+    if (data.repeat === "none" || !data.repeat) {
       const event = await db
         .insert(schema.event)
         .values({
@@ -174,181 +170,140 @@ export const postEventDataFn = createServerFn({ method: "POST" })
           address: data.address,
           color: data.color,
           genre: data.genre,
-          repeat: data.repeat,
+          repeat: "none",
+          repeatGroupId: null,
+          repeatEndDate: null,
           startDate: data.startDate,
           endDate: data.endDate,
           latitude: data.latitude,
           longitude: data.longitude,
           userId: user.id,
           createdAt: new Date(),
+          imageUrl: data.imageUrl,
         })
         .returning();
 
-      return event;
-    } catch (error) {
-      console.error("Error inserting event:", error);
-      throw error;
+      return { initialEvent: event, repeatedEvents: [] };
     }
-  });
 
-export const repeatEventsFn = createServerFn({ method: "POST" })
-  .middleware([authMiddleware])
-  .validator(eventInsertSchema)
-  .handler(async ({ data, context }) => {
-    try {
-      console.log("Received data for repeating events:", data);
+    const repeatGroupId = crypto.randomUUID();
 
-      const user = context.currentUser;
-      if (!user?.id || user.role === "user") {
-        throw new Error(
-          "User not authenticated or authorized to handle events"
-        );
+    const customRepeatEndDate = (
+      startDate: Date,
+      repeat: string,
+      customEndDate?: Date | null
+    ) => {
+      if (customEndDate) {
+        return customEndDate;
       }
 
-      if (data.repeat === "none" || !data.repeat) {
-        const event = await db
-          .insert(schema.event)
-          .values({
-            title: data.title,
-            description: data.description,
-            venue: data.venue,
-            address: data.address,
-            color: data.color,
-            genre: data.genre,
-            repeat: "none",
-            repeatGroupId: null,
-            repeatEndDate: null,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            userId: user.id,
-            createdAt: new Date(),
-          })
-          .returning();
-
-        return { initialEvent: event, repeatedEvents: [] };
+      const endDate = new Date(startDate);
+      switch (repeat) {
+        case "daily":
+        case "weekly":
+          endDate.setFullYear(endDate.getFullYear() + 1);
+          break;
+        case "monthly":
+          endDate.setFullYear(endDate.getFullYear() + 2);
+          break;
+        case "yearly":
+          endDate.setFullYear(endDate.getFullYear() + 10);
+          break;
       }
+      return endDate;
+    };
 
-      const repeatGroupId = crypto.randomUUID();
-
-      const customRepeatEndDate = (startDate: Date, repeat: string, customEndDate?: Date | null) => {
-        if (customEndDate) {
-          return customEndDate;
-        }
-
-        const endDate = new Date(startDate);
-        switch (repeat) {
-          case "daily":
-            endDate.setFullYear(endDate.getFullYear() + 1);
-            break;
-          case "weekly":
-            endDate.setFullYear(endDate.getFullYear() + 1);
-            break;
-          case "monthly":
-            endDate.setFullYear(endDate.getFullYear() + 2);
-            break;
-          case "yearly":
-            endDate.setFullYear(endDate.getFullYear() + 10);
-            break;
-        }
-        return endDate;
-      };
-
-      const addInterval = (date: Date, repeat: string) => {
-        const newDate = new Date(date);
-        switch (repeat) {
-          case "daily":
-            newDate.setDate(newDate.getDate() + 1);
-            break;
-          case "weekly":
-            newDate.setDate(newDate.getDate() + 7);
-            break;
-          case "monthly":
-            newDate.setMonth(newDate.getMonth() + 1);
-            break;
-          case "yearly":
-            newDate.setFullYear(newDate.getFullYear() + 1);
-            break;
-        }
-        return newDate;
-      };
-
-      const repeatEndDate = customRepeatEndDate(data.startDate, data.repeat, data.repeatEndDate);
-
-      const initialEvent = await db
-        .insert(schema.event)
-        .values({
-          title: data.title,
-          description: data.description,
-          venue: data.venue,
-          address: data.address,
-          color: data.color,
-          genre: data.genre,
-          repeat: data.repeat,
-          repeatGroupId: repeatGroupId,
-          repeatEndDate: repeatEndDate,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          latitude: data.latitude,
-          longitude: data.longitude,
-          userId: user.id,
-          createdAt: new Date(),
-        })
-        .returning();
-
-      const repeatedEventsArray = [];
-      let currentStartDate = addInterval(new Date(data.startDate), data.repeat);
-      let currentEndDate = addInterval(new Date(data.endDate), data.repeat);
-
-      let count = 0;
-      const maxOccurrences = 500;
-
-      while (currentStartDate <= repeatEndDate && count < maxOccurrences) {
-        const repeatedEvent = await db
-          .insert(schema.event)
-          .values({
-            title: data.title,
-            description: data.description,
-            venue: data.venue,
-            address: data.address,
-            color: data.color,
-            genre: data.genre,
-            repeat: data.repeat,
-            repeatGroupId: repeatGroupId,
-            repeatEndDate: repeatEndDate,
-            startDate: currentStartDate,
-            endDate: currentEndDate,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            userId: user.id,
-            createdAt: new Date(),
-          })
-          .returning();
-
-        repeatedEventsArray.push(repeatedEvent);
-
-        currentStartDate = addInterval(currentStartDate, data.repeat);
-        currentEndDate = addInterval(currentEndDate, data.repeat);
-        count++;
+    const addInterval = (date: Date, repeat: string) => {
+      const newDate = new Date(date);
+      switch (repeat) {
+        case "daily":
+          newDate.setDate(newDate.getDate() + 1);
+          break;
+        case "weekly":
+          newDate.setDate(newDate.getDate() + 7);
+          break;
+        case "monthly":
+          newDate.setMonth(newDate.getMonth() + 1);
+          break;
+        case "yearly":
+          newDate.setFullYear(newDate.getFullYear() + 1);
+          break;
       }
+      return newDate;
+    };
 
-      console.log(`Created ${count + 1} repeated events with group ID: ${repeatGroupId}`);
+    const repeatEndDate = customRepeatEndDate(
+      data.startDate,
+      data.repeat,
+      data.repeatEndDate
+    );
 
-      return { initialEvent, repeatedEvents: repeatedEventsArray };
-    } catch (error) {
-      console.error("Error inserting repeating events:", error);
-      throw error;
+    const repeatedEventsValues: Array<typeof schema.event.$inferInsert> = [];
+    const maxOccurrences = 500;
+
+    const initialEvent = await db
+      .insert(schema.event)
+      .values({
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        address: data.address,
+        color: data.color,
+        genre: data.genre,
+        repeat: data.repeat,
+        repeatGroupId,
+        repeatEndDate,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        userId: user.id,
+        createdAt: new Date(),
+        imageUrl: data.imageUrl,
+      })
+      .returning();
+
+    let currentStartDate = addInterval(new Date(data.startDate), data.repeat);
+    let currentEndDate = addInterval(new Date(data.endDate), data.repeat);
+    let count = 0;
+
+    while (currentStartDate <= repeatEndDate && count < maxOccurrences) {
+      repeatedEventsValues.push({
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        address: data.address,
+        color: data.color,
+        genre: data.genre,
+        repeat: data.repeat,
+        repeatGroupId,
+        repeatEndDate,
+        startDate: new Date(currentStartDate),
+        endDate: new Date(currentEndDate),
+        latitude: data.latitude,
+        longitude: data.longitude,
+        userId: user.id,
+        createdAt: new Date(),
+        imageUrl: data.imageUrl,
+      });
+      currentStartDate = addInterval(currentStartDate, data.repeat);
+      currentEndDate = addInterval(currentEndDate, data.repeat);
+      count++;
     }
+
+    const repeatedEvents = repeatedEventsValues.length
+      ? await db.insert(schema.event).values(repeatedEventsValues).returning()
+      : [];
+
+    return { initialEvent, repeatedEvents };
   });
 
 export const putEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(calendarEventSchema)
+  .inputValidator(calendarEventSchema)
   .handler(async ({ data, context }) => {
-
     const user = context.currentUser;
-    if (!user?.id || user.role === "user") {
+    if (!user?.id || !canManageEvents(user.role)) {
       throw new Error("User not authenticated or authorized to handle events");
     }
 
@@ -363,34 +318,37 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         genre: data.genre,
         startDate: data.startDate,
         endDate: data.endDate,
-        userId: user.id,
       })
-      .where(eq(schema.event.id, data.id || data.title));
-    console.log("Updated event:", updatedEvent);
+      .where(and(eq(schema.event.id, data.id), eq(schema.event.userId, user.id)))
+      .returning();
+
+    if (updatedEvent.length === 0) {
+      throw new Error("Event not found or not owned by user");
+    }
+
     return updatedEvent;
   });
 
-  export const updateAllRepeatedEventsFn = createServerFn({ method: "POST" })
+export const updateAllRepeatedEventsFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(calendarEventSchema)
+  .inputValidator(calendarEventSchema)
   .handler(async ({ data, context }) => {
-
     const user = context.currentUser;
-    if (!user?.id || user.role === "user") {
+    if (!user?.id || !canManageEvents(user.role)) {
       throw new Error("User not authenticated or authorized to handle events");
     }
 
     const [currentEvent] = await db
       .select()
       .from(schema.event)
-      .where(eq(schema.event.id, data.id))
+      .where(and(eq(schema.event.id, data.id), eq(schema.event.userId, user.id)))
       .limit(1);
 
     if (!currentEvent || !currentEvent.repeatGroupId) {
       throw new Error("Event not found or is not a repeated event");
     }
-    
-    const updatedEvents = await db
+
+    return db
       .update(schema.event)
       .set({
         title: data.title,
@@ -407,42 +365,37 @@ export const putEventDataFn = createServerFn({ method: "POST" })
         )
       )
       .returning();
-    
-    console.log(`Updated ${updatedEvents.length} repeated events in group ${currentEvent.repeatGroupId}`);
-    return updatedEvents;
   });
 
 export const deleteEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(calendarEventSchema.pick({ id: true }))
+  .inputValidator(calendarEventSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const user = context.currentUser;
-    if (!user?.id || user.role === "user") {
+    if (!user?.id || !canManageEvents(user.role)) {
       throw new Error("User not authenticated or authorized to handle events");
     }
 
     const deletedCount = await db
       .delete(schema.event)
-      .where(eq(schema.event.id, data.id));
-
-    console.log("Deleted event count:", deletedCount);
+      .where(and(eq(schema.event.id, data.id), eq(schema.event.userId, user.id)));
 
     return { deletedCount };
   });
 
 export const deleteAllRepeatedEventsFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(calendarEventSchema.pick({ id: true }))
+  .inputValidator(calendarEventSchema.pick({ id: true }))
   .handler(async ({ data, context }) => {
     const user = context.currentUser;
-    if (!user?.id || user.role === "user") {
+    if (!user?.id || !canManageEvents(user.role)) {
       throw new Error("User not authenticated or authorized to handle events");
     }
 
     const [currentEvent] = await db
       .select()
       .from(schema.event)
-      .where(eq(schema.event.id, data.id))
+      .where(and(eq(schema.event.id, data.id), eq(schema.event.userId, user.id)))
       .limit(1);
 
     if (!currentEvent || !currentEvent.repeatGroupId) {
@@ -459,27 +412,27 @@ export const deleteAllRepeatedEventsFn = createServerFn({ method: "POST" })
       )
       .returning();
 
-    console.log(`Deleted ${deletedEvents.length} repeated events in group ${currentEvent.repeatGroupId}`);
-
     return { deletedCount: deletedEvents.length };
   });
 
 export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(z.object({ 
-    id: z.string().uuid(), 
-    repeatEndDate: z.date() 
-  }))
+  .inputValidator(
+    z.object({
+      id: z.string().uuid(),
+      repeatEndDate: z.date(),
+    })
+  )
   .handler(async ({ data, context }) => {
     const user = context.currentUser;
-    if (!user?.id || user.role === "user") {
+    if (!user?.id || !canManageEvents(user.role)) {
       throw new Error("User not authenticated or authorized to handle events");
     }
 
     const [currentEvent] = await db
       .select()
       .from(schema.event)
-      .where(eq(schema.event.id, data.id))
+      .where(and(eq(schema.event.id, data.id), eq(schema.event.userId, user.id)))
       .limit(1);
 
     if (!currentEvent || !currentEvent.repeatGroupId) {
@@ -510,254 +463,176 @@ export const updateRepeatEndDateFn = createServerFn({ method: "POST" })
       )
       .returning();
 
-    console.log(`Updated repeat end date for ${updatedEvents.length} events, deleted ${deletedEvents.length} future events`);
-
-    return { updatedCount: updatedEvents.length, deletedCount: deletedEvents.length };
+    return {
+      updatedCount: updatedEvents.length,
+      deletedCount: deletedEvents.length,
+    };
   });
-
 
 export const postCalendarEventDataFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(calendarEventSchema)
+  .inputValidator(calendarEventSchema)
   .handler(async ({ data, context }) => {
-    try {
-      console.log("Received data:", data);
-
-      const user = context.currentUser;
-      if (!user?.id || user.role === "user") {
-        throw new Error(
-          "User not authenticated or authorized to handle events"
-        );
-      }
-
-      const event = await db
-        .insert(schema.event)
-        .values({
-          title: data.title,
-          description: data.description,
-          venue: data.venue,
-          address: data.address,
-          color: data.color,
-          genre: data.genre,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          latitude: data.latitude,
-          longitude: data.longitude,
-          userId: user.id,
-          createdAt: new Date(),
-        })
-        .returning();
-
-      return event;
-    } catch (error) {
-      console.error("Error inserting event:", error);
-      throw error;
+    const user = context.currentUser;
+    if (!user?.id || !canManageEvents(user.role)) {
+      throw new Error("User not authenticated or authorized to handle events");
     }
+
+    return db
+      .insert(schema.event)
+      .values({
+        title: data.title,
+        description: data.description,
+        venue: data.venue,
+        address: data.address,
+        color: data.color,
+        genre: data.genre,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        userId: user.id,
+        createdAt: new Date(),
+      })
+      .returning();
   });
 
-// COMMENTS APIs ----------------------------------------------------------------
+const commentCreateSchema = z.object({
+  eventId: z.string().uuid(),
+  content: z.string().min(1, "Please enter your comment"),
+});
+
+const commentUpdateInputSchema = z.object({
+  id: z.string().uuid(),
+  content: z.string().min(1, "Please enter your comment"),
+});
+
 export const getCommentsForEventFn = createServerFn({
   method: "GET",
-  response: "data",
 })
-  .validator(commentSchema)
+  .inputValidator(commentSchema.pick({ eventId: true }))
   .handler(async ({ data }) => {
-    const comments = await db
+    return db
       .select()
       .from(schema.comment)
       .where(eq(schema.comment.eventId, data.eventId))
       .orderBy(schema.comment.createdAt);
-
-    return comments;
   });
 
 export const postCommentForEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(commentSchema)
+  .inputValidator(commentCreateSchema)
   .handler(async ({ context, data }) => {
-    try {
-      console.log("Received comment data:", data);
-
-      const userId = context.currentUser?.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
-      const newComment = await db
-        .insert(schema.comment)
-        .values({
-          userId: userId!,
-          eventId: data.eventId,
-          content: data.content,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning();
-
-      return newComment;
-    } catch (error) {
-      console.error("Error inserting comment:", error);
-      throw error;
+    const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
     }
+
+    return db
+      .insert(schema.comment)
+      .values({
+        userId,
+        eventId: data.eventId,
+        content: data.content,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
   });
 
 export const updateCommentForEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(commentUpdateSchema)
-  .handler(async ({ data, context }) => {
-    try {
-      console.log("Received comment update data:", data);
-
-      const userId = context.currentUser?.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
-      const updatedComment = await db
-        .update(schema.comment)
-        .set({
-          content: data.content,
-          updatedAt: new Date(),
-        })
-        .where(eq(schema.comment.id, data.id!))
-        .returning();
-
-      return updatedComment;
-    } catch (error) {
-      console.error("Error updating comment:", error);
-      throw error;
-    }
-  });
-
-export const deleteCommentForEventFn = createServerFn({ method: "POST" })
-  .middleware([authMiddleware])
-  .validator(commentSchema.pick({ id: true }))
+  .inputValidator(commentUpdateInputSchema)
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
     if (!userId) {
       throw new Error("User not authenticated");
     }
 
-    try {
-      console.log("Received comment delete request for ID:", data.id);
+    const updatedComment = await db
+      .update(schema.comment)
+      .set({
+        content: data.content,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(schema.comment.id, data.id), eq(schema.comment.userId, userId)))
+      .returning();
 
-      const deletedCount = await db
-        .delete(schema.comment)
-        .where(eq(schema.comment.id, data.id));
-
-      return { deletedCount };
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      throw error;
+    if (updatedComment.length === 0) {
+      throw new Error("Comment not found or not owned by user");
     }
+
+    return updatedComment;
   });
 
-// FAVORITE EVENTS APIs ----------------------------------------------------------------
+export const deleteCommentForEventFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .inputValidator(commentSchema.pick({ id: true }))
+  .handler(async ({ data, context }) => {
+    const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const deletedComment = await db
+      .delete(schema.comment)
+      .where(and(eq(schema.comment.id, data.id), eq(schema.comment.userId, userId)));
+
+    return { deletedComment };
+  });
+
 export const getFavoriteEventsFn = createServerFn({
   method: "GET",
-  response: "data",
 })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const userId = context.currentUser?.id; // aktiv användar ID
+    const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
 
-    const events = await db // hämtar alla fält från event tabellen
-      .select({
-        id: schema.event.id,
-        title: schema.event.title,
-        description: schema.event.description,
-        venue: schema.event.venue,
-        address: schema.event.address,
-        color: schema.event.color,
-        genre: schema.event.genre,
-        startDate: schema.event.startDate,
-        endDate: schema.event.endDate,
-        latitude: schema.event.latitude,
-        longitude: schema.event.longitude,
-        userId: schema.event.userId,
-        createdAt: schema.event.createdAt,
-      })
+    const events = await db
+      .select(eventSelect)
       .from(schema.event)
       .innerJoin(
-        // gör en inner join med favoriteEvent tabellen för att bara få de events som är favoriter för den aktuella användaren
         schema.favoriteEvent,
         eq(schema.event.id, schema.favoriteEvent.eventId)
       )
-      .where(and(eq(schema.favoriteEvent.userId, userId!)))
-      .orderBy(schema.event.startDate); // sorterar på startDatum
+      .where(eq(schema.favoriteEvent.userId, userId))
+      .orderBy(schema.event.startDate);
 
-    const comments = await db // hämtar alla kommentarer
-      .select()
-      .from(schema.comment)
-      .orderBy(schema.comment.createdAt);
-
-    return events.map((events) => {
-      // mappar över events och lägger till kommentarer för varje event
-      const commentsForEvent = comments.filter(
-        (comment) => comment.eventId === events.id
-      );
-      return {
-        // returnar eventet med dess kommentarer
-        ...events,
-        isStarred: true,
-        comments: commentsForEvent,
-      };
-    });
+    const eventsWithComments = await attachComments(events);
+    return eventsWithComments.map((event) => ({
+      ...event,
+      isStarred: true,
+    }));
   });
 
 export const getUserFavoriteEventsFn = createServerFn({
   method: "GET",
-  response: "data",
 })
-  .validator(z.object({ userId: z.string().uuid() }))
+  .inputValidator(z.object({ userId: z.string().uuid() }))
   .handler(async ({ data }) => {
-    const events = await db // hämtar alla fält från event tabellen
-      .select({
-        id: schema.event.id,
-        title: schema.event.title,
-        description: schema.event.description,
-        venue: schema.event.venue,
-        address: schema.event.address,
-        color: schema.event.color,
-        genre: schema.event.genre,
-        startDate: schema.event.startDate,
-        endDate: schema.event.endDate,
-        latitude: schema.event.latitude,
-        longitude: schema.event.longitude,
-        userId: schema.event.userId,
-        createdAt: schema.event.createdAt,
-      })
+    const events = await db
+      .select(eventSelect)
       .from(schema.event)
       .innerJoin(
-        // gör en inner join med favoriteEvent tabellen för att bara få de events som är favoriter för den aktuella användaren
         schema.favoriteEvent,
         eq(schema.event.id, schema.favoriteEvent.eventId)
       )
-      .where(and(eq(schema.favoriteEvent.userId, data.userId)))
-      .orderBy(schema.event.startDate); // sorterar på startDatum
+      .where(eq(schema.favoriteEvent.userId, data.userId))
+      .orderBy(schema.event.startDate);
 
-    const comments = await db // hämtar alla kommentarer
-      .select()
-      .from(schema.comment)
-      .orderBy(schema.comment.createdAt);
-
-    return events.map((events) => {
-      // mappar över events och lägger till kommentarer för varje event
-      const commentsForEvent = comments.filter(
-        (comment) => comment.eventId === events.id
-      );
-      return {
-        // returnar eventet med dess kommentarer
-        ...events,
-        isStarred: true,
-        comments: commentsForEvent,
-      };
-    });
+    const eventsWithComments = await attachComments(events);
+    return eventsWithComments.map((event) => ({
+      ...event,
+      isStarred: true,
+    }));
   });
 
 export const addFavoriteEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(z.object({ eventId: z.uuid() }))
+  .inputValidator(z.object({ eventId: z.uuid() }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
     if (!userId) {
@@ -766,62 +641,52 @@ export const addFavoriteEventFn = createServerFn({ method: "POST" })
 
     const [existingFavorite] = await db
       .select({
-        // hämtar fälten userId, eventId, createdAt från favoriteEvent tabellen
         userId: schema.favoriteEvent.userId,
         eventId: schema.favoriteEvent.eventId,
         createdAt: schema.favoriteEvent.createdAt,
       })
       .from(schema.favoriteEvent)
       .where(
-        // where klausul som kollar att userId och eventId matchar
         and(
-          eq(schema.favoriteEvent.userId, userId!),
+          eq(schema.favoriteEvent.userId, userId),
           eq(schema.favoriteEvent.eventId, data.eventId)
         )
-      ); // kollar om eventet redan är en favorit för användaren
+      );
 
     if (existingFavorite) {
-      toast.error("Event is already in favorites");
       return existingFavorite;
     }
 
-    const newFavorite = await db // lägger till ett nytt event i favoriteEvent tabellen
+    return db
       .insert(schema.favoriteEvent)
       .values({
-        userId: userId!,
+        userId,
         eventId: data.eventId,
         createdAt: new Date(),
       })
       .returning();
-
-    toast.success("Event added to favorites");
-    return newFavorite; // returnerar det nya favorit-eventet
   });
 
 export const removeFavoriteEventFn = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(z.object({ id: z.uuid() }))
+  .inputValidator(z.object({ id: z.uuid() }))
   .handler(async ({ data, context }) => {
     const userId = context.currentUser?.id;
     if (!userId) {
       throw new Error("User not authenticated");
     }
 
-    const deletedEvent = await db // tar bort ett event från favoriteEvent tabellen baserat på userId och eventId
+    const deletedEvents = await db
       .delete(schema.favoriteEvent)
       .where(
         and(
-          eq(schema.favoriteEvent.userId, userId!),
+          eq(schema.favoriteEvent.userId, userId),
           eq(schema.favoriteEvent.eventId, data.id)
         )
-      );
+      )
+      .returning({
+        eventId: schema.favoriteEvent.eventId,
+      });
 
-    if (deletedEvent.rowCount! > 0) {
-      // kollar om något event faktiskt togs bort
-      toast.success("Event removed from favorites");
-    } else {
-      toast.error("Event not found in favorites");
-    }
-
-    return { deletedEvent }; // returnerar antalet borttagna rader från favoriteEvent tabellen
+    return { deletedCount: deletedEvents.length };
   });

@@ -5,7 +5,7 @@ import {
 	startOfDay,
 } from "date-fns";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 
 interface IProps {
 	selectedDate: Date;

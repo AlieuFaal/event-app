@@ -3,22 +3,39 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getLocale } from '@/paraglide/runtime';
 import { EventFeature, Marker } from './marker';
-import { Event } from 'drizzle/db';
+import { Event } from '@vibespot/database/schema';
 import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
 import { Button } from '../shadcn/ui/button';
 import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
 import { useSearch } from '@tanstack/react-router';
-import { lazy, Suspense } from 'react';
+import { lazy, type ComponentProps, Suspense } from 'react';
+import { toMapboxLngLat } from './coordinates';
 
-// Lazy load Mapbox component to avoid SSR issues
-const Geocoder = lazy(() =>
-  import('@mapbox/search-js-react').then((mod) => ({ default: mod.Geocoder }))
-);
+type GeocoderComponent = typeof import('@mapbox/search-js-react')['Geocoder'];
+type GeocoderProps = ComponentProps<GeocoderComponent>;
+
+// Lazy load Mapbox component and skip importing browser-only code during SSR
+const Geocoder = lazy(async () => {
+    const ServerGeocoder = (_props: GeocoderProps) => null;
+
+    if (typeof window === 'undefined') {
+        return { default: ServerGeocoder as unknown as GeocoderComponent };
+    }
+
+    const mod = await import('@mapbox/search-js-react');
+    return { default: mod.Geocoder };
+});
 
 interface EventMapViewProps {
     events: Event[];
     accessToken: string;
 }
+
+type GeocoderRetrieveResult = {
+    geometry?: {
+        coordinates?: number[];
+    };
+};
 
 export function EventMap({ events, accessToken }: EventMapViewProps) {
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -80,18 +97,23 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
     useEffect(() => {
         if (!mapRef.current) return;
         if (!event?.latitude || !event?.longitude) return;
+        const mapboxCoordinates = toMapboxLngLat({
+            latitude: event.latitude,
+            longitude: event.longitude
+        });
+        if (!mapboxCoordinates) return;
 
         if (!mapLoaded) {
             setActiveFeature({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [parseFloat(event?.latitude), parseFloat(event?.longitude)]
+                    coordinates: mapboxCoordinates
                 },
                 properties: { Event: event }
             });
             mapRef.current.flyTo({
-                center: [parseFloat(event?.latitude), parseFloat(event?.longitude)] as [number, number],
+                center: mapboxCoordinates,
                 zoom: 17.5,
                 duration: 4500,
                 essential: true,
@@ -130,11 +152,15 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                         accessToken={accessToken}
                         placeholder={getLocale() === 'sv' ? 'Sök plats' : 'Search location'}
                         value={inputValue}
-                        onChange={(value: any) => {
+                        onChange={(value: string) => {
                             setInputValue(value);
                         }}
-                        onRetrieve={(result: any) => {
-                            if (mapRef.current && result.geometry?.coordinates) {
+                        onRetrieve={(result: GeocoderRetrieveResult) => {
+                            if (
+                                mapRef.current &&
+                                result.geometry?.coordinates &&
+                                result.geometry.coordinates.length >= 2
+                            ) {
                                 const coordinates = result.geometry.coordinates;
                                 mapRef.current.flyTo({
                                     center: coordinates.slice() as [number, number],
@@ -203,23 +229,34 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                         </div>
                     )}
                 </div>
-                {mapLoaded && events?.map((event) => (
-                    <Marker
-                        key={event.id}
-                        map={mapRef.current}
-                        events={events}
-                        onClick={handleMarkerClick}
-                        isActive={activeFeature?.properties.Event.id === event.id}
-                        feature={{
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [parseFloat(event.latitude), parseFloat(event.longitude),]
-                            },
-                            properties: { Event: event }
-                        }}
-                    />
-                ))}
+                {mapLoaded && events?.map((event) => {
+                    const mapboxCoordinates = toMapboxLngLat({
+                        latitude: event.latitude,
+                        longitude: event.longitude,
+                    });
+
+                    if (!mapboxCoordinates) {
+                        return null;
+                    }
+
+                    return (
+                        <Marker
+                            key={event.id}
+                            map={mapRef.current}
+                            events={events}
+                            onClick={handleMarkerClick}
+                            isActive={activeFeature?.properties.Event.id === event.id}
+                            feature={{
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: mapboxCoordinates
+                                },
+                                properties: { Event: event }
+                            }}
+                        />
+                    );
+                })}
             </div>
         </div>
     );

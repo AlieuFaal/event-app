@@ -7,18 +7,17 @@ import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
+import type { User } from "@vibespot/database/schema";
 
 interface ProfileHeaderProps {
   followersCount: number;
   followingCount: number;
+  currentUser: User;
 }
 
-export default function ProfileHeader({ followersCount, followingCount }: ProfileHeaderProps) {
+export default function ProfileHeader({ followersCount, followingCount, currentUser }: ProfileHeaderProps) {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  const { data: session } = authClient.useSession();
-  const currentUser = session?.user as any;
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +50,11 @@ export default function ProfileHeader({ followersCount, followingCount }: Profil
     });
   }
 
-  const formatJoinDate = (date: Date) => {
+  const formatJoinDate = (date?: Date | string | null) => {
+    if (!date) {
+      return "Unknown";
+    }
+
     try {
       return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',

@@ -21,7 +21,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "@tanstack/react-router";
-import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "drizzle/db/schema";
+import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "@vibespot/database/schema";
 import { updateUserDataFn } from "@/services/user-service";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../shadcn/ui/dialog";

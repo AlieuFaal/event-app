@@ -1,8 +1,8 @@
-import { User } from 'drizzle/db'
+import { User } from '@vibespot/database/schema'
 import { Navbar05 } from './shadcn/ui/shadcn-io/navbar-05'
 
 interface HeaderProps {
-  currentUser?: User | null
+  currentUser: User | null
 }
 
 export function Header({ currentUser }: HeaderProps) {

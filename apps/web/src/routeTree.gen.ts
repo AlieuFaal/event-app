@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
@@ -23,10 +21,8 @@ import { Route as protectedEventsRouteImport } from './routes/(protected)/events
 import { Route as protectedEventMapRouteImport } from './routes/(protected)/event-map'
 import { Route as protectedEventCalendarRouteImport } from './routes/(protected)/event-calendar'
 import { Route as protectedCreateEventRouteImport } from './routes/(protected)/create-event'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as protectedUserIdRouteImport } from './routes/(protected)/user.$id'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api.auth.$'
-
-const rootServerRouteImport = createServerRootRoute()
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -87,19 +83,19 @@ const protectedCreateEventRoute = protectedCreateEventRouteImport.update({
   path: '/create-event',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const protectedUserIdRoute = protectedUserIdRouteImport.update({
   id: '/user/$id',
   path: '/user/$id',
   getParentRoute: () => protectedRouteRoute,
 } as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof protectedRouteRouteWithChildren
+  '/': typeof IndexRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -111,9 +107,10 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof protectedOnboardingRoute
   '/profile': typeof protectedProfileRoute
   '/user/$id': typeof protectedUserIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof protectedRouteRouteWithChildren
+  '/': typeof IndexRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -125,6 +122,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof protectedOnboardingRoute
   '/profile': typeof protectedProfileRoute
   '/user/$id': typeof protectedUserIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -141,6 +139,7 @@ export interface FileRoutesById {
   '/(protected)/onboarding': typeof protectedOnboardingRoute
   '/(protected)/profile': typeof protectedProfileRoute
   '/(protected)/user/$id': typeof protectedUserIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +156,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/user/$id'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,6 +171,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/user/$id'
+    | '/api/auth/$'
   id:
     | '__root__'
     | '/'
@@ -186,6 +187,7 @@ export interface FileRouteTypes {
     | '/(protected)/onboarding'
     | '/(protected)/profile'
     | '/(protected)/user/$id'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -194,27 +196,7 @@ export interface RootRouteChildren {
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-}
-export interface FileServerRoutesByFullPath {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -242,8 +224,8 @@ declare module '@tanstack/react-router' {
     }
     '/(protected)': {
       id: '/(protected)'
-      path: '/'
-      fullPath: '/'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof protectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -303,23 +285,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedCreateEventRouteImport
       parentRoute: typeof protectedRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(protected)/user/$id': {
       id: '/(protected)/user/$id'
       path: '/user/$id'
       fullPath: '/user/$id'
       preLoaderRoute: typeof protectedUserIdRouteImport
       parentRoute: typeof protectedRouteRoute
-    }
-  }
-}
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
     }
   }
 }
@@ -356,13 +334,17 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotpasswordRoute: ForgotpasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()

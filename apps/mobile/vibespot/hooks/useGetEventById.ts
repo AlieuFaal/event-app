@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Event } from "../../../../packages/database/src/schema";
+import type { Event } from "@vibespot/database/schema";
 import { apiClient } from "@/lib/api-client";
 
 export const useGetEventById = (id: string) => {

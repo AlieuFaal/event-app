@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/shadcn/ui/button';
+import { router } from '@/router';
 
 interface Props {
   children: ReactNode;
@@ -62,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <Button onClick={this.handleReset} size="lg">
                 Refresh Page
               </Button>
-              <Button variant="outline" size="lg" onClick={() => window.location.href = '/'}>
+              <Button variant="outline" size="lg" onClick={() => router.history.push('/')}>
                 Go Home
               </Button>
             </div>

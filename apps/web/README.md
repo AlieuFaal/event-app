@@ -35,6 +35,15 @@ This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 ## Routing
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
+### Generated files and `any` policy
+
+`src/routeTree.gen.ts` and everything under `src/paraglide/` are framework-generated outputs.
+
+- TanStack Router emits `as any` in `routeTree.gen.ts` unless `disableTypes` is enabled, which disables generated route typings.
+- Paraglide runtime/server generators emit JSDoc `any` annotations from upstream templates.
+
+Do not hand-edit these files. The monorepo check `bun run check:no-explicit-any-authored` enforces no explicit `any` in authored code and intentionally excludes these generated outputs.
+
 ### Adding A Route
 
 To add a new route to your application just add another a new file in the `./src/routes` directory.

@@ -9,7 +9,7 @@ import {
 } from "@/components/shadcn/ui/dialog"
 import { Label } from "../shadcn/ui/label";
 import CommentSection from "./event-comment-section";
-import { Event, EventWithComments, User } from "drizzle/db";
+import { Event, EventWithComments, User } from "@vibespot/database/schema";
 import { Button } from "../shadcn/ui/button";
 import { Star } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +19,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
 import { router } from "@/router";
 
-export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null }) {
+export default function EventCard({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser?: User | null }) {
     const addFavoriteEvent = useServerFn(addFavoriteEventFn)
     const removeFavoriteEvent = useServerFn(removeFavoriteEventFn)
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -146,7 +146,7 @@ export default function EventCard({ event, users, currentUser }: { event: EventW
                             <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(event)}</Label>
                         </div>
                     </div>
-                    <CommentSection users={users} event={event} currentUser={currentUser} />
+                    <CommentSection users={users} event={event} currentUser={currentUser ?? null} />
                 </DialogContent>
             </Dialog>
         </>

@@ -6,8 +6,15 @@ export const Route = createFileRoute('/signin')({
     beforeLoad: async ({ context, search }) => {
         // If user is already authenticated, redirect them away from signin
         if (context.IsAuthenticated && context.currentUser) {
-            const redirectTo = (search as any)?.redirect || '/';
-            throw redirect({ to: redirectTo });
+            const redirectTo =
+                typeof search === "object" &&
+                search !== null &&
+                "redirect" in search &&
+                typeof search.redirect === "string"
+                    ? search.redirect
+                    : "/";
+            const safeRedirect = redirectTo.startsWith("/") ? redirectTo : "/";
+            throw redirect({ to: safeRedirect });
         }
     },
 })

@@ -14,7 +14,7 @@ import { useCallback, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 
-import { Event } from "drizzle/db";
+import { Event, CalendarEvent } from "@vibespot/database/schema";
 
 interface ResizableEventBlockProps {
 	event: Event;
@@ -90,11 +90,19 @@ export function ResizableEvent({
 				end: format(newEnd, use24HourFormat ? "HH:mm" : "h:mm a"),
 			});
 
-			updateEvent({
+			const updatedEvent: CalendarEvent = {
 				...event,
+				userId: event.userId ?? null,
+				venue: event.venue ?? null,
+				repeat: event.repeat ?? "none",
+				repeatGroupId: event.repeatGroupId ?? null,
+				repeatEndDate: event.repeatEndDate ?? null,
+				imageUrl: event.imageUrl ?? null,
+				createdAt: event.createdAt ?? new Date(),
 				startDate: newStart,
 				endDate: newEnd,
-			});
+			};
+			updateEvent(updatedEvent);
 		},
 		[
 			start,

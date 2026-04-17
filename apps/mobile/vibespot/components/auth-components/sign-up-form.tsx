@@ -50,9 +50,10 @@ export function SignUpForm() {
                 onSuccess: async () => {
                     setLoading(false);
                     console.log("Account created successfully!");
-                    const session = authClient.useSession()
+                    const session = await authClient.getSession();
 
                     if (session.data?.user.role === 'New User') {
+                        router.navigate("/(protected)/onboarding");
                         return;
                     }
                     router.navigate("/");

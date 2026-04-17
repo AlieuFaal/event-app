@@ -12,13 +12,13 @@ const localeStorageKey = "PARAGLIDE_LOCALE";
 export const getThemeServerFn = createServerFn().handler(async () => (getCookie(storageKey) || "system") as T);
 
 export const setThemeServerFn = createServerFn({method: "POST"})
-  .validator(postThemeValidator)
+  .inputValidator(postThemeValidator)
   .handler(async ({data}) => setCookie(storageKey, data,));
 
 export const getLocaleServerFn = createServerFn().handler(async () => getCookie(localeStorageKey) || "en");
 
 export const setLocaleServerFn = createServerFn({method: "POST"})
-  .validator(z.string())
+  .inputValidator(z.string())
   .handler(async ({data}) => setCookie(localeStorageKey, data, {
     maxAge: 34560000, // 400 days
     path: "/",

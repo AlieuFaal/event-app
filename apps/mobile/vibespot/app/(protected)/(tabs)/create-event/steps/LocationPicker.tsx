@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
 import type { UseFormReturn } from "react-hook-form";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useGoogleAutocomplete } from '@appandflow/react-native-google-autocomplete';
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import MapView, { Marker } from 'react-native-maps';
 
 

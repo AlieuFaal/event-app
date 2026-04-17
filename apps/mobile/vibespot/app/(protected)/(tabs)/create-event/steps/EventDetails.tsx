@@ -3,7 +3,7 @@ import { eventInsertSchema } from "@vibespot/validation";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 import { View, Text } from "react-native";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 

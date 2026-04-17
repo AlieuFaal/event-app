@@ -9,7 +9,7 @@ import { CalendarMonthView } from "@/components/calendar/views/month-view/calend
 import { CalendarDayView } from "@/components/calendar/views/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/components/calendar/views/week-and-day-view/calendar-week-view";
 import { CalendarYearView } from "@/components/calendar/views/year-view/calendar-year-view";
-import { User } from "drizzle/db";
+import { User } from "@vibespot/database/schema";
 
 interface IProps {
 	currentUser?: User | null;

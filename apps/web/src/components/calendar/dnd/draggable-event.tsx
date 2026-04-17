@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import type React from "react";
 import type { ReactNode } from "react";
 import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 
 interface DraggableEventProps {
 	event: Event;

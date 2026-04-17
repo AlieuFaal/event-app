@@ -1,4 +1,4 @@
-import { set, z } from "zod";
+import { z } from "zod";
 import { eventInsertSchema } from "@vibespot/validation";
 import type { UseFormReturn } from "react-hook-form";
 import { View, Text, useColorScheme, Modal, Pressable, TouchableOpacity } from "react-native";
@@ -6,7 +6,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar, CalendarSync, CalendarX, Clock, LucideRepeat2 } from "lucide-react-native";
+import { Calendar, CalendarSync, CalendarX, Clock } from "lucide-react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 

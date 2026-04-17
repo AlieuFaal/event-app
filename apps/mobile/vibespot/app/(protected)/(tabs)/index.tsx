@@ -12,7 +12,7 @@ import * as Haptics from 'expo-haptics';
 import { EventActionsSheet } from '@/components/bottomsheet-component/eventactions-sheet';
 import UpcomingEventCard from '@/components/event-components/upcoming-event-card';
 import { useGetEvent } from '@/hooks/useGetEvent';
-import type { Event } from '@vibespot/validation';
+import type { Event } from "@vibespot/database/schema";
 
 const AnimatedScrollView = Animated.ScrollView;
 

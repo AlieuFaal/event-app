@@ -4,14 +4,13 @@ import { Separator } from "@radix-ui/react-select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/shadcn/ui/dropdown-menu";
 import { Toggle } from "@/components/shadcn/ui/toggle";
 import { useState } from "react";
-import { EventWithComments } from "drizzle/db";
 
-interface EventFilterProps {
-    events: EventWithComments[];
-    onFilterChange: (filteredEvents: EventWithComments[]) => void;
+interface EventFilterProps<TEvent extends { genre: TGenres | null }> {
+    events: TEvent[];
+    onFilterChange: (filteredEvents: TEvent[]) => void;
 }
 
-export default function EventFilter({ events, onFilterChange }: EventFilterProps) {
+export default function EventFilter<TEvent extends { genre: TGenres | null }>({ events, onFilterChange }: EventFilterProps<TEvent>) {
     const [selectedGenres, setSelectedGenres] = useState<TGenres[]>([]);
 
     const genres: TGenres[] = [

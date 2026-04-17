@@ -1,38 +1,52 @@
 {
-  "name": "vibespot-monorepo",
-  "private": true,
-  "workspaces": [
-    "apps/web",
-    "apps/mobile/vibespot",
-    "apps/api",
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "bun run --filter=event-app build",
-    "dev": "bun run --filter=event-app dev",
-    "build:web": "cd apps/web && bun run build:vercel",
-    "dev:web": "cd apps/web && bun run dev",
-    "dev:mobile": "cd apps/mobile/vibespot && expo start --dev-client",
-    "android": "cd apps/mobile/vibespot && expo run:android",
-    "ios": "cd apps/mobile/vibespot && expo run:ios",
-    "lint": "bun run --filter='./apps/*' --filter='./packages/*' lint",
-    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
-    "fresh-install": "bun run clean && bun install"
-  },
-  "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.91.2",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
-    "eslint": "^9.25.0",
-    "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "3.4.18",
-    "typescript": "~5.9.2"
-  },
-  "packageManager": "bun@1.3.2",
-  "version": "1.0.0",
-  "resolutions": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
-  }
+	"name": "vibespot-monorepo",
+	"private": true,
+	"workspaces": [
+		"apps/web",
+		"apps/mobile/vibespot",
+		"apps/api",
+		"packages/*"
+	],
+	"scripts": {
+		"build": "bun run --filter=event-app build",
+		"dev": "bun run --filter=event-app dev",
+		"build:web": "cd apps/web && bun run build:vercel",
+		"dev:web": "cd apps/web && bun run dev",
+		"dev:mobile": "cd apps/mobile/vibespot && expo start --dev-client",
+		"android": "cd apps/mobile/vibespot && expo run:android",
+		"ios": "cd apps/mobile/vibespot && expo run:ios",
+		"lint:web": "bun run --filter=event-app lint",
+		"lint:mobile": "bun run --filter=vibespot lint",
+		"lint:api": "bun run --filter=@vibespot/api lint",
+		"lint:db": "bun run --filter=@vibespot/database lint",
+		"lint:validation": "bun run --filter=@vibespot/validation lint",
+		"check:no-explicit-any-authored": "bun scripts/check-no-explicit-any-authored.mjs",
+		"lint": "bun run --filter=event-app --filter=vibespot --filter=@vibespot/api --filter=@vibespot/database lint && bun run check:no-explicit-any-authored",
+		"typecheck:web": "bun run --filter=event-app typecheck",
+		"typecheck:mobile": "bun run --filter=vibespot typecheck",
+		"typecheck:api": "bun run --filter=@vibespot/api typecheck",
+		"typecheck:db": "bun run --filter=@vibespot/database typecheck",
+		"tsc": "bun run typecheck:web && bun run typecheck:mobile && bun run typecheck:api && bun run typecheck:db",
+		"format": "biome check . --write --unsafe",
+		"clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+		"fresh-install": "bun run clean && bun install"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.12",
+		"@tanstack/eslint-plugin-query": "^5.91.2",
+		"@typescript-eslint/eslint-plugin": "^8.47.0",
+		"@typescript-eslint/parser": "^8.47.0",
+		"eslint": "^9.25.0",
+		"prettier": "^3.4.2",
+		"prettier-plugin-tailwindcss": "^0.5.11",
+		"tailwindcss": "3.4.18",
+		"typescript": "~5.9.2"
+	},
+	"packageManager": "bun@1.3.2",
+	"version": "1.0.0",
+	"resolutions": {
+		"react": "19.1.0",
+		"react-dom": "19.1.0",
+		"esbuild": "^0.25.0"
+	}
 }

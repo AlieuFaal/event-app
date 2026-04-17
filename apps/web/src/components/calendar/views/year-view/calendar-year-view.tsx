@@ -9,7 +9,7 @@ import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { getCalendarCells } from "@/components/calendar/helpers";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {

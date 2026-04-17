@@ -18,11 +18,9 @@ const getApiUrl = () => {
 
 const API_URL = getApiUrl();
 
-console.log("API Client URL:", API_URL);
-
 export const apiClient = hc<AppType>(API_URL, {
   init: {
-    credentials: "omit", 
+    credentials: "include",
   },
   headers(): Record<string, string> {
     const cookies = authClient.getCookie();
@@ -36,4 +34,3 @@ export const apiClient = hc<AppType>(API_URL, {
     return {};
   },
 });
-

@@ -19,7 +19,7 @@ import { TodayButton } from "@/components/calendar/header/today-button";
 import { Settings } from "@/components/calendar/settings/settings";
 import Views from "./view-tabs";
 import { m } from "@/paraglide/messages";
-import { User } from "drizzle/db";
+import { User } from "@vibespot/database/schema";
 
 interface calendarHeaderProps
 {

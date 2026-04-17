@@ -1,0 +1,51 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "assist": {
+    "enabled": false
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules/**/*",
+      "!**/.expo/**/*",
+      "!**/ios/**/*",
+      "!**/android/**/*",
+      "!**/static/**/*",
+      "!**/migrations/**/*",
+      "!**/dist/**/*",
+      "!**/build/**/*",
+      "!**/infra/**/*",
+      "!**/.vinxi/**/*",
+      "!**/.nitro/**/*",
+      "!**/.output/**/*",
+      "!**/.claude/**/*",
+      "!**/.obsidian/**/*",
+      "!**/.actions/**/*",
+      "!**/drizzle/**/*",
+      "!**/coverage/**/*",
+      "!**/routeTree.gen.ts",
+      "!**/*.html"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "correctness": {
+        "noUnusedImports": "warn"
+      }
+    }
+  }
+}

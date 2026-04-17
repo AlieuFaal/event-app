@@ -11,14 +11,14 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTr
 import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalDescription, ModalFooter } from "@/components/shadcn/ui/responsive-modal";
 import { deleteAllRepeatedEventsFn } from "@/services/eventService";
 
 interface IProps {
 	event: Event;
-	users: User[];
+	users?: User[];
 	children: ReactNode;
 }
 

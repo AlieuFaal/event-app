@@ -4,7 +4,7 @@ import { Platform, TextInput, type TextInputProps } from 'react-native';
 function Input({
   className,
   ...props
-}: TextInputProps & React.RefAttributes<TextInput>) {
+}: TextInputProps) {
   return (
     <TextInput
       className={cn(

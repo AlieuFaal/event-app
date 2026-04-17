@@ -15,7 +15,7 @@ import {
 import { formatTime, getColorClass } from "@/components/calendar/helpers";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 
 interface EventDropConfirmationDialogProps {
     open: boolean;

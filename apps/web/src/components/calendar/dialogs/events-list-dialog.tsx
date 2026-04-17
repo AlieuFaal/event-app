@@ -13,12 +13,12 @@ import { formatTime } from "@/components/calendar/helpers";
 import { dayCellVariants } from "@/components/calendar/views/month-view/day-cell";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
 import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-dialog";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 
 interface EventListDialogProps {
     date: Date;
     events: Event[];
-    users: User[];
+    users?: User[];
     maxVisibleEvents?: number;
     children?: ReactNode;
 }
@@ -27,8 +27,7 @@ export function EventListDialog({
     date,
     events,
     maxVisibleEvents = 3,
-    children,
-    users
+    children
 }: EventListDialogProps) {
     const cellEvents = events;
     const hiddenEventsCount = Math.max(cellEvents.length - maxVisibleEvents, 0);
@@ -61,7 +60,7 @@ export function EventListDialog({
                 <div className="max-h-[60vh] overflow-y-auto space-y-2">
                     {cellEvents.length > 0 ? (
                         cellEvents.map((event) => (
-                            <EventDetailsDialog event={event} users={users} key={event.id}>
+                            <EventDetailsDialog event={event} key={event.id}>
                                 <div
                                     className={cn(
                                         "flex items-center gap-2 p-2 border rounded-md hover:bg-muted cursor-pointer",

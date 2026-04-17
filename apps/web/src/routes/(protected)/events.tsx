@@ -1,18 +1,20 @@
 import EventList from '@/components/event-components/event-list'
 import EventPageHeader from '@/components/event-components/event-page-header';
 import EventFilter from '@/components/event-components/filter';
-import { useIsVisible } from '@/hooks/useIsVisible';
 import { getEventsWithCommentsFn } from '@/services/eventService';
 import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 
 export const Route = createFileRoute('/(protected)/events')({
     component: EventsComponent,
     loader: async (ctx) => {
         const currentUser = ctx.context.currentUser;
-        const events = await getEventsWithCommentsFn();
-        const users = await getUserDataFn();
+        const [events, users] = await Promise.all([
+            getEventsWithCommentsFn(),
+            getUserDataFn(),
+        ]);
+
         return { events, users, currentUser };
     }
 })
@@ -41,12 +43,9 @@ function EventsComponent() {
         });
     }, [genreFilteredEvents, users, searchInput]);
 
-    const ref1 = useRef<HTMLDivElement>(null);
-    const isVisible1 = useIsVisible(ref1);
-
     return (
         <>
-            <div className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} mx-auto`} ref={ref1} >
+            <div className="mx-auto">
                 <div className=''>
                     <EventPageHeader searchInput={searchInput} onSearchChange={setSearchInput} />
                 </div>

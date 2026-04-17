@@ -1,16 +1,17 @@
 import { useEffect, useRef } from "react"
 import mapboxgl from 'mapbox-gl';
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 import { createPortal } from "react-dom";
 import { Popup } from "./popup";
 import { PiMapPinFill } from "react-icons/pi";
+import type { LngLatCoordinates } from "./coordinates";
 
 
 export interface EventFeature {
     type: 'Feature';
     geometry: {
         type: 'Point';
-        coordinates: [number, number];
+        coordinates: LngLatCoordinates;
     };
     properties: { Event: Event }
 }

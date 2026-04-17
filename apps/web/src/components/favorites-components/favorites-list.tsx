@@ -1,4 +1,4 @@
-import { EventWithComments, User } from "drizzle/db";
+import { EventWithComments, User } from "@vibespot/database/schema";
 import FavoriteEventCards from "./favoriteEventCards";
 
 

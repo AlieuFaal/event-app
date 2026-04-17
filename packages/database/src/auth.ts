@@ -5,7 +5,53 @@ import { Resend } from "resend";
 import { db, schema, session } from ".";
 import { expo } from "@better-auth/expo";
 
-const resend = new Resend(process.env.VITE_PUBLIC_RESEND_API_KEY);
+const normalizeOrigin = (origin: string): string =>
+  origin.trim().replace(/\/+$/, "");
+
+const parseOrigins = (origins: string | undefined): string[] => {
+  if (!origins) {
+    return [];
+  }
+
+  return origins
+    .split(",")
+    .map((origin) => normalizeOrigin(origin))
+    .filter((origin) => origin.length > 0);
+};
+
+const authSecret = process.env.BETTER_AUTH_SECRET;
+const authBaseUrl = process.env.BETTER_AUTH_URL;
+const isProduction = process.env.NODE_ENV === "production";
+
+if (!authSecret) {
+  throw new Error("BETTER_AUTH_SECRET environment variable is not set");
+}
+
+if (!authBaseUrl) {
+  throw new Error("BETTER_AUTH_URL environment variable is not set");
+}
+
+const trustedOrigins = Array.from(
+  new Set([
+    ...parseOrigins(process.env.BETTER_AUTH_TRUSTED_ORIGINS),
+    normalizeOrigin(authBaseUrl),
+    ...(isProduction
+      ? []
+      : [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:3001",
+          "http://127.0.0.1:3001",
+        ]),
+  ])
+);
+
+const secureCookies =
+  process.env.BETTER_AUTH_SECURE_COOKIES === "true" || isProduction;
+const enableCrossSubDomainCookies =
+  process.env.BETTER_AUTH_ENABLE_CROSS_SUBDOMAIN_COOKIES === "true";
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -17,25 +63,7 @@ export const auth = betterAuth({
       verification: schema.verification,
     },
   }),
-  trustedOrigins: [
-    // "http://localhost:3000",
-    // "http://localhost:3001",
-    // "http://localhost:8081",
-    // "http://10.0.2.2:3001",
-    // "http://192.168.50.251:3001",
-    // "http://192.168.50.251:8081",
-    // "http://10.245.20.253:8081",
-    // "http://10.245.20.253:3001"
-    // "exp://172.20.10.2:8081",
-    // "exp://10.245.20.253:8081",
-    // "exp://10.245.20.221:8081",
-    // "exp://192.168.50.251:8081",
-    // "exp://"
-    // "vibespot://",
-    // ...(process.env.BETTER_AUTH_URL
-    //   ? [`https://${process.env.BETTER_AUTH_URL}`]
-    //   : []),
-  ],
+  trustedOrigins,
   user: {
     model: schema.user,
     sessionModel: schema.session,
@@ -75,9 +103,13 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url, token: _token }, _request) => {
+      if (!resend) {
+        throw new Error("RESEND_API_KEY environment variable is not set");
+      }
+
       const { data, error } = await resend.emails.send({
-        from: "VibeSpot <onboarding@resend.dev",
+        from: "VibeSpot <onboarding@resend.dev>",
         to: user.email,
         subject: "Verify your email",
         html: `Click the link to verify your email: ${url}`,
@@ -112,17 +144,17 @@ export const auth = betterAuth({
       clientSecret: process.env.APPLE_CLIENT_SECRET as string, // Your Apple OAuth app
     },
   },
-  secret: process.env.BETTER_AUTH_SECRET as string, // set this to a long random string in production
-  baseURL: process.env.BETTER_AUTH_URL as string, // The base URL of your app
+  secret: authSecret,
+  baseURL: authBaseUrl,
   advanced: {
     database: {
       generateId: () => crypto.randomUUID(),
     },
-    useSecureCookies: true,
-    disableOriginCheck: true, // Temporary, glöm ej!
+    useSecureCookies: secureCookies,
+    disableOriginCheck: false,
   },
   crossSubDomainCookies: {
-    enabled: true,
+    enabled: enableCrossSubDomainCookies,
   },
   cookies: {
     cookies: {
@@ -130,7 +162,7 @@ export const auth = betterAuth({
         name: "better-auth.session_token",
         attributes: {
           sameSite: "lax",
-          secure: false, // Set to true in production with HTTPS
+          secure: secureCookies,
           maxAge: 60 * 60 * 24 * 10, // 10 days
         },
       },

@@ -5,10 +5,13 @@
     "allowJs": true,
     "strict": true,
     "jsx": "react-jsx",
+    "verbatimModuleSyntax": false,
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@/*": ["./*"],
       "@vibespot/validation": ["../../../packages/validation/src/index.ts"],
-      "@vibespot/database": ["../../../packages/database/src/index.ts"]
+      "@vibespot/database": ["../../../packages/database/src/index.ts"],
+      "@vibespot/database/schema": ["../../../packages/database/src/schema.ts"]
     }
   },
   "include": [

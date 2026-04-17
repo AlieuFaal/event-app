@@ -8,8 +8,11 @@ import { useMemo, useState } from 'react';
 export const Route = createFileRoute('/(protected)/favorites')({
     component: FavoritesComponent,
     loader: async () => {
-        const favoriteEvents = await getFavoriteEventsFn();
-        const users = await getUserDataFn();
+        const [favoriteEvents, users] = await Promise.all([
+            getFavoriteEventsFn(),
+            getUserDataFn(),
+        ]);
+
         return {
             favoriteEvents,
             users,

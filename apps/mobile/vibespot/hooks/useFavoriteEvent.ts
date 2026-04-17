@@ -5,6 +5,12 @@ import { apiClient } from '@/lib/api-client';
 import { authClient } from '@/lib/auth-client';
 import { queryClient } from '@/app/_layout';
 
+type FavoriteEventResponse = {
+    event: {
+        id: string;
+    };
+};
+
 export function useFavoriteEvent(eventId: string | undefined) {
     const session = authClient.useSession();
 
@@ -32,8 +38,8 @@ export function useFavoriteEvent(eventId: string | undefined) {
             });
 
             if (res.ok) {
-                const events = await res.json();
-                return events.some((item: any) => item.event.id === eventId);
+                const events = await res.json() as FavoriteEventResponse[];
+                return events.some((item) => item.event.id === eventId);
             }
             return false;
         },

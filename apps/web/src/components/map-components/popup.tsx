@@ -10,7 +10,7 @@ import { EventFeature } from "./marker";
 import { m } from "@/paraglide/messages";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "../shadcn/ui/button";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 
 export interface PopupProps {
     activeFeature: EventFeature;

@@ -1,10 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { type User } from "@vibespot/validation/user";
 import { Mail } from "lucide-react-native";
 import { View, Text, Pressable } from "react-native";
 
-export function ProfileCard({ user }: { user: User | undefined }) {
+type ProfileUser = {
+	id: string;
+	name: string;
+	email: string;
+	image?: string | null;
+	bio?: string | null;
+};
+
+export function ProfileCard({ user }: { user: ProfileUser | undefined }) {
     return (
         <Card className="w-11/12 mx-auto rounded-3xl border dark:border-gray-500 dark:bg-secondary-foreground shadow drop-shadow-lg">
             <CardContent className="px-5">

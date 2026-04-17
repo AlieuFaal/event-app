@@ -11,7 +11,7 @@ import { groupEvents } from "@/components/calendar/helpers";
 import { CalendarTimeline } from "@/components/calendar/views/week-and-day-view/calendar-time-line";
 import { DayViewMultiDayEventsRow } from "@/components/calendar/views/week-and-day-view/day-view-multi-day-events-row";
 import { RenderGroupedEvents } from "@/components/calendar/views/week-and-day-view/render-grouped-events";
-import { Event } from "drizzle/db";
+import { Event } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {

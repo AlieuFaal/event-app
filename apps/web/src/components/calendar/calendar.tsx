@@ -1,7 +1,7 @@
 import { CalendarBody } from "@/components/calendar/calendar-body";
 import { DndProvider } from "@/components/calendar/contexts/dnd-context";
 import { CalendarHeader } from "@/components/calendar/header/calendar-header";
-import { User } from "drizzle/db";
+import { User } from "@vibespot/database/schema";
 
 interface calendar2Props
 {

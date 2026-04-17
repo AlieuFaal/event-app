@@ -8,7 +8,7 @@ import type {
 	TCalendarView,
 	TEventColor,
 } from "@/components/calendar/types";
-import type { Event, User, CalendarEvent } from "drizzle/db/schema";
+import type { Event, User, CalendarEvent } from "@vibespot/database/schema";
 
 interface ICalendarContext {
 	selectedDate: Date;
@@ -160,13 +160,13 @@ export function CalendarProvider2({
 		console.log("Adding event:", event);
 
 		// Convert CalendarEvent to Event for state management
-		const eventForState: Event = {
+		const eventForState = {
 			...event,
 			userId: event.userId || null,
 			venue: event.venue || null,
 			repeat: event.repeat || "none",
 			createdAt: new Date(),
-		};
+		} as Event;
 
 		setAllEvents((prev) => [...prev, eventForState]);
 		setFilteredEvents((prev) => [...prev, eventForState]);
@@ -180,7 +180,7 @@ export function CalendarProvider2({
 	};
 
 	const updateEvent = async (event: CalendarEvent) => {
-		const updatedEvent: Event = {
+		const updatedEvent = {
 			...event,
 			userId: event.userId || null,
 			venue: event.venue || null,
@@ -188,7 +188,7 @@ export function CalendarProvider2({
 			createdAt: new Date(),
 			startDate: new Date(event.startDate),
 			endDate: new Date(event.endDate),
-		};
+		} as Event;
 
 		setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updatedEvent : e)));
 		setFilteredEvents((prev) =>

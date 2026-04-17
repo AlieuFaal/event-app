@@ -12,7 +12,7 @@ import {
 } from "@/components/calendar/helpers";
 
 import { DayCell } from "@/components/calendar/views/month-view/day-cell";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {

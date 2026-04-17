@@ -13,7 +13,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import * as Haptics from 'expo-haptics';
 import { useAddEventToCalendar } from "@/hooks/useAddEventToCalendar";
-import type { Event } from "@vibespot/validation";
+import type { Event } from "@vibespot/database/schema";
+
+type FavoriteEventResponse = {
+    event: {
+        id: string;
+    };
+};
 
 export default function EventDetails() {
     const params = useLocalSearchParams();
@@ -59,8 +65,8 @@ export default function EventDetails() {
             });
 
             if (res.ok) {
-                const events = await res.json();
-                return events.some((item: any) => item.event.id === eventId);
+                const events = await res.json() as FavoriteEventResponse[];
+                return events.some((item) => item.event.id === eventId);
             }
             return false;
         },

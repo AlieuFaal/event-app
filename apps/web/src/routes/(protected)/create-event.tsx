@@ -1,7 +1,5 @@
 import EventCard from '@/components/event-components/create-event-card'
-import { useIsVisible } from '@/hooks/useIsVisible';
 import { createFileRoute } from '@tanstack/react-router'
-import { useRef } from 'react';
 
 export const Route = createFileRoute('/(protected)/create-event')({
   loader: async (ctx) => {
@@ -15,12 +13,9 @@ export const Route = createFileRoute('/(protected)/create-event')({
 
 function CreateEventsComponent() {
   const { currentUser } = Route.useLoaderData();
-  
-  const ref1 = useRef<HTMLDivElement>(null);
-  const isVisible1 = useIsVisible(ref1);
 
   return (
-    <div className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"}`} ref={ref1}>
+    <div>
       <EventCard currentUser={currentUser} />
     </div>
   )

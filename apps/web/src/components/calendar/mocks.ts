@@ -1,5 +1,20 @@
 import { COLORS } from "@/components/calendar/constants";
-import type { IEvent, IUser } from "@/components/calendar/interfaces";
+
+interface IUser {
+	id: string;
+	name: string;
+	picturePath: string | null;
+}
+
+interface IEvent {
+	id: number;
+	startDate: string;
+	endDate: string;
+	title: string;
+	color: string;
+	description: string;
+	user: IUser;
+}
 
 export const USERS_MOCK: IUser[] = [
 	{

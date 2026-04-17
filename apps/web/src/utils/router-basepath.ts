@@ -1,4 +1,4 @@
-import { isLocale, Locale, strategy } from "../paraglide/runtime.js";
+import { isLocale, strategy, type Locale } from "../paraglide/runtime.js";
 
 export function extractLocale(url: string): Locale | undefined {
   const urlObj = new URL(url, "http://dummy.com");

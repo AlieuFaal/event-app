@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/ui/tabs";
-import { EventWithComments, User } from "drizzle/db/schema";
+import { EventWithComments, User } from "@vibespot/database/schema";
 import FavoriteEventCards from "../favorites-components/favoriteEventCards";
 import EventCards from "../event-components/event-cards";
 

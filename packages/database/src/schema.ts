@@ -4,6 +4,7 @@ import {
   text,
   timestamp,
   boolean,
+  index,
   check,
   uuid,
   primaryKey,
@@ -80,10 +81,10 @@ export const user = pgTable(
 export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Please enter your name"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().nullish(),
-  image: z.string().url("Please enter a valid image URL").nullish(),
-  location: z.string().nullish(),
-  bio: z.string().nullish(),
+  phone: z.string().nullable(),
+  image: z.string().url("Please enter a valid image URL").nullable(),
+  location: z.string().nullable(),
+  bio: z.string().nullable(),
 });
 
 export const userSocialSchema = userSchema.extend({
@@ -177,25 +178,41 @@ export const verification = pgTable("verification", {
 });
 
 // Event Table -------------------------------------------------------------------------------------------------------------
-export const event = pgTable("event", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  venue: text("venue"),
-  address: text("address").notNull(),
-  color: text("color").$type<EventColor>().notNull().default("Blue"),
-  genre: text("genre").$type<Genre>().notNull().default("Indie"),
-  repeat: text("repeat").$type<RepeatOption>().notNull().default("none"),
-  repeatGroupId: uuid("repeat_group_id"),
-  repeatEndDate: timestamp("repeat_end_date"),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull(),
-  latitude: text("latitude").notNull(),
-  longitude: text("longitude").notNull(),
-  imageUrl: text("image_url"),
-});
+export const event = pgTable(
+  "event",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    venue: text("venue"),
+    address: text("address").notNull(),
+    color: text("color").$type<EventColor>().notNull().default("Blue"),
+    genre: text("genre").$type<Genre>().notNull().default("Indie"),
+    repeat: text("repeat").$type<RepeatOption>().notNull().default("none"),
+    repeatGroupId: uuid("repeat_group_id"),
+    repeatEndDate: timestamp("repeat_end_date"),
+    startDate: timestamp("start_date").notNull(),
+    endDate: timestamp("end_date").notNull(),
+    userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull(),
+    latitude: text("latitude").notNull(),
+    longitude: text("longitude").notNull(),
+    imageUrl: text("image_url"),
+  },
+  (table) => ({
+    eventEndDateStartDateIdx: index("event_end_date_start_date_idx").on(
+      table.endDate,
+      table.startDate
+    ),
+    eventUserIdStartDateIdx: index("event_user_id_start_date_idx").on(
+      table.userId,
+      table.startDate
+    ),
+    eventRepeatGroupIdIdx: index("event_repeat_group_id_idx").on(
+      table.repeatGroupId
+    ),
+  })
+);
 
 export const eventSchema = createSelectSchema(event, {
   id: z.string().uuid(),
@@ -231,7 +248,7 @@ export const geocodingSchema = eventSchema.pick({
   address: true,
 });
 
-export const eventInsertSchema = createInsertSchema(event, {
+export const eventInsertBaseSchema = createInsertSchema(event, {
   id: z.string().uuid().optional(),
   userId: z.string().uuid().nullish(),
   title: z
@@ -259,7 +276,9 @@ export const eventInsertSchema = createInsertSchema(event, {
   longitude: z.string(),
   createdAt: z.coerce.date().optional(),
   imageUrl: z.string().url().nullish(),
-}).superRefine((data, ctx) => {
+});
+
+export const eventInsertSchema = eventInsertBaseSchema.superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -318,22 +337,31 @@ export const calendarEventSchema = eventSchema.extend({
 });
 
 // Comment table -------------------------------------------------------------------------------------------------------------
-export const comment = pgTable("comment", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  eventId: uuid("event_id")
-    .notNull()
-    .references(() => event.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
+export const comment = pgTable(
+  "comment",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => event.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => ({
+    commentEventIdCreatedAtIdx: index("comment_event_id_created_at_idx").on(
+      table.eventId,
+      table.createdAt
+    ),
+  })
+);
 
 export const commentSchema = createSelectSchema(comment, {
   content: z.string().min(1, "Please enter your comment"),
@@ -436,8 +464,6 @@ export const CurrentUserSchema = userSchema
     bio: true,
     location: true,
     phone: true,
-    followers: true,
-    following: true,
   });
 
 export const schema = {

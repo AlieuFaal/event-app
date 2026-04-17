@@ -1,4 +1,4 @@
-import { CurrentUser, EventWithComments, User } from "drizzle/db";
+import { CurrentUser, EventWithComments, User } from "@vibespot/database/schema";
 import EventCards from "./event-cards";
 import { Separator } from "../shadcn/ui/separator";
 

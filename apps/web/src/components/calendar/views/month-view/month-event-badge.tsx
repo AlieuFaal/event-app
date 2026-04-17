@@ -7,7 +7,7 @@ import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { formatTime } from "@/components/calendar/helpers";
 import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
-import { Event, User } from "drizzle/db";
+import { Event, User } from "@vibespot/database/schema";
 
 const eventBadgeVariants = cva(
 	"mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",
@@ -55,7 +55,7 @@ interface IProps
 		"color" | "multiDayPosition"
 	> {
 	event: Event;
-	users: User[];
+	users?: User[];
 	cellDate: Date;
 	eventCurrentDay?: number;
 	eventTotalDays?: number;
@@ -108,7 +108,7 @@ export function MonthEventBadge({
 
 	return (
 		<DraggableEvent event={event}>
-			<EventDetailsDialog event={event} users={users} >
+			<EventDetailsDialog event={event} users={users}>
 				<div role="button" tabIndex={0} className={eventBadgeClasses}>
 					<div className="flex items-center gap-1.5 truncate">
 						{!["middle", "last"].includes(position) &&

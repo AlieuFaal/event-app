@@ -3,18 +3,18 @@ import { Label } from "../shadcn/ui/label";
 import { Textarea } from "../shadcn/ui/textarea";
 import CommentCard from "./comment-card";
 import { authClient } from "@/lib/auth-client";
-import { Comment, commentInsertSchema, User } from "drizzle/db";
+import { Comment, commentInsertSchema, User } from "@vibespot/database/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { FormField, FormItem, Form } from "../shadcn/ui/form";
 import { toast } from "sonner";
 import { postCommentForEventFn } from "@/services/eventService";
 import { useForm } from "react-hook-form";
-import { EventWithComments } from "drizzle/db";
+import { EventWithComments } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 import { useRouter } from "@tanstack/react-router";
 
-export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser: User | null}) {
+export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser?: User | null}) {
     const router = useRouter();
 
     const form = useForm<z.infer<typeof commentInsertSchema>>({
@@ -29,10 +29,16 @@ export default function CommentSection({ event, users, currentUser }: { event: E
             toast.warning(m.toast_comment_login_required());
             return;
         }
+        const currentUserId = currentUser?.id ?? session.data?.user.id;
+        if (!currentUserId) {
+            toast.warning(m.toast_comment_login_required());
+            return;
+        }
+
         const newComment: Comment = {
             ...values,
             id: crypto.randomUUID(),
-            userId: currentUser!.id,
+            userId: currentUserId,
             eventId: event.id,
             createdAt: new Date(),
             updatedAt: new Date(),

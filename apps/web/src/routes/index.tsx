@@ -1,10 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { WavyBackground } from 'src/components/shadcn/ui/shadcn-io/wavy-background'
 import { Button } from '@/components/shadcn/ui/button'
 import { getServerMessage } from '@/services/get-server-message'
 import { m } from '@/paraglide/messages'
-import { useEffect, useRef, useMemo } from 'react'
-import { useIsVisible } from '@/hooks/useIsVisible'
+import { useEffect, useMemo } from 'react'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/ui/card'
 import { PlaceholderImage2, PlaceholderImage3 } from '@/assets'
 import gsap from 'gsap';
@@ -25,18 +24,6 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { ctx, theme } = Route.useLoaderData()
-
-  const ref1 = useRef<HTMLDivElement>(null);
-  const isVisible1 = useIsVisible(ref1);
-
-  const ref2 = useRef<HTMLDivElement>(null);
-  const isVisible2 = useIsVisible(ref2);
-
-  const ref3 = useRef<HTMLDivElement>(null);
-  const isVisible3 = useIsVisible(ref3);
-
-  const ref4 = useRef<HTMLDivElement>(null);
-  const isVisible4 = useIsVisible(ref4);
 
   // Calculate background color safely (no document access during SSR)
   const backgroundColor = useMemo(() => {
@@ -60,7 +47,7 @@ function App() {
   return (
     <div className="relative">
       <div>
-        <div id='section1' ref={ref1} className={`transition-opacity ease-in duration-500 ${isVisible1 ? "opacity-100" : "opacity-0"} relative h-screen w-full overflow`}>
+        <div id='section1' className="relative h-screen w-full overflow">
             <WavyBackground
             backgroundFill={backgroundColor}
             colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9"]}
@@ -80,21 +67,21 @@ function App() {
               <div className='mt-8 md:mt-12 flex justify-center'>
               {ctx.IsAuthenticated ? (
                 <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
-                <a href="/events">
-                  {m.Home_Button2()}
-                </a>
+                  <Link to="/events">
+                    {m.Home_Button2()}
+                  </Link>
                 </Button>
               ) : <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-110 md:hover:scale-120 hover:shadow-xl hover:bg-[#9e8cfc] ">
-                <a href="/signin">
-                {m.Home_Button()}
-                </a>
+                <Link to="/signin">
+                  {m.Home_Button()}
+                </Link>
               </Button>}
               </div>
             </div>
             </WavyBackground>
         </div>
         <div id='section2' className="flex flex-col w-full text-center text-white border-t-1 border-b-1">
-          <div ref={ref2} className={`transition-opacity ease-in duration-1300 ${isVisible2 ? "opacity-100" : "opacity-0"}`}>
+          <div>
             <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-8 md:p-12 lg:p-20 transition-transform duration-300">
               <CardHeader>
                 <CardTitle className='text-xl md:text-2xl lg:text-3xl'>
@@ -106,7 +93,7 @@ function App() {
               </CardHeader>
             </Card>
           </div>
-          <div ref={ref3} className={`transition-opacity ease-in duration-1300 ${isVisible3 ? "opacity-100" : "opacity-0"} flex flex-col md:flex-row justify-between items-center`}>
+          <div className="flex flex-col md:flex-row justify-between items-center">
             <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-6 md:p-8 lg:p-10 w-full md:w-1/2">
               <CardHeader>
                 <CardTitle className='text-base md:text-lg lg:text-xl'>
@@ -121,7 +108,7 @@ function App() {
               <img src={PlaceholderImage2} alt="" className='rounded-2xl w-full h-auto max-h-60 md:max-h-none md:h-47 shadow-2xl object-cover' />
             </div>
           </div>
-          <div ref={ref4} className={`transition-opacity ease-in duration-1300 ${isVisible4 ? "opacity-100" : "opacity-0"} flex flex-col md:flex-row-reverse justify-between items-center`}>
+          <div className="flex flex-col md:flex-row-reverse justify-between items-center">
             <Card className="bg-secondary shadow-lg m-4 md:m-8 lg:m-10 p-6 md:p-8 lg:p-10 w-full md:w-1/2">
               <CardHeader>
                 <CardTitle className='text-base md:text-lg lg:text-xl'>
