@@ -168,7 +168,6 @@ export default function SignUp() {
                                     },
                                     onError: (ctx) => {
                                         setLoading(false);
-                                        console.error("Error signing up:", ctx.error);
                                         toast.error(ctx.error.message);
                                     },
                                     onSuccess: async () => {

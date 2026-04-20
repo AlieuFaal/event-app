@@ -37,19 +37,15 @@ export function SignUpForm() {
                 onRequest: () => {
                     setLoading(true);
                     if (password !== passwordConfirmation) {
-                        console.error("Passwords do not match");
                         setLoading(false);
                         throw new Error("Passwords do not match");
                     }
                 },
-                onError: (ctx) => {
+                onError: () => {
                     setLoading(false);
-                    console.error("Error signing up:", ctx.error);
-                    console.error(ctx.error.message);
                 },
                 onSuccess: async () => {
                     setLoading(false);
-                    console.log("Account created successfully!");
                     const session = await authClient.getSession();
 
                     if (session.data?.user.role === 'New User') {

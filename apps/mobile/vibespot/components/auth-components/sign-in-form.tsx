@@ -34,22 +34,14 @@ export function SignInForm() {
                 rememberMe,
             },
             {
-                onRequest: (ctx) => {
+                onRequest: () => {
                     setLoading(true);
-                    console.log("Signing in...");
                 },
-                onResponse: (ctx) => {
+                onResponse: () => {
                     setLoading(false);
-                    console.log("Response received.");
                 },
-                onError(ctx) {
-                    console.error("Error signing in:", ctx.error);
-                    console.error(ctx.error.message);
-                },
-                onSuccess: async (ctx) => {
-                    const user = await authClient.getSession();
-
-                    console.log("Login successful! User:", user.data?.user.name);
+                onError() {
+                    setLoading(false);
                 }
             });
     };
