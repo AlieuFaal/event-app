@@ -1,0 +1,6 @@
+{
+  "playwright-chromium": {
+    "command": "npx",
+    "args": ["-y", "@playwright/mcp@latest", "--headless", "--isolated"]
+  }
+}

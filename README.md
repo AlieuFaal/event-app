@@ -46,6 +46,7 @@ cp apps/mobile/vibespot/.env.example apps/mobile/vibespot/.env
 Set at least:
 - the **same** `BETTER_AUTH_SECRET` in `apps/web/.env` and `apps/api/.env`
 - map provider tokens if you use map features (`VITE_PUBLIC_MAPBOX_ACCESS_TOKEN`, `GOOGLE_MAPS_API_KEY`)
+- everything else can be kept the same as the examples.
 
 ### 3. Start infrastructure
 
@@ -53,7 +54,7 @@ Set at least:
 bun run infra:up
 ```
 
-This starts local PostgreSQL in Docker.
+This creates and starts local PostgreSQL in Docker.
 
 ### 4. Start web + API together
 

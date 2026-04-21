@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../shadcn/ui/card";
 import { Label } from "../shadcn/ui/label";
 import { format } from "date-fns";
 import { formatTime } from "../calendar/helpers";
-import { useCalendar } from "../calendar/contexts/calendar-context";
+import { useCalendarOptional } from "../calendar/contexts/calendar-context";
 import { EventFeature } from "./marker";
 import { m } from "@/paraglide/messages";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -21,7 +21,8 @@ export interface PopupProps {
 
 export const Popup = ({ map, activeFeature, events }: PopupProps) => {
 
-    const { use24HourFormat } = useCalendar();
+    const calendarContext = useCalendarOptional();
+    const use24HourFormat = calendarContext?.use24HourFormat ?? true;
 
     const popupRef = useRef<mapboxgl.Popup | null>(null);
 

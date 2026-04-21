@@ -4,7 +4,7 @@ import EventFilter from '@/components/event-components/filter';
 import { getEventsWithCommentsFn } from '@/services/eventService';
 import { getUserDataFn } from '@/services/user-service';
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/(protected)/events')({
     component: EventsComponent,
@@ -23,6 +23,10 @@ function EventsComponent() {
     const { events, users, currentUser } = Route.useLoaderData();
     const [searchInput, setSearchInput] = useState('');
     const [genreFilteredEvents, setGenreFilteredEvents] = useState(events);
+
+    useEffect(() => {
+        setGenreFilteredEvents(events);
+    }, [events]);
 
     const filteredEvents = useMemo(() => {
         const eventsToFilter = genreFilteredEvents;

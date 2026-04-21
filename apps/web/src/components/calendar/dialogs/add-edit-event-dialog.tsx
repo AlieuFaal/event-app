@@ -5,7 +5,7 @@ import { lazy, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { COLORS, GENRES } from "@/components/calendar/constants";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
 import { useDisclosure } from "@/components/calendar/hooks";
 import {
 	calendarFormSchema,
@@ -42,7 +42,12 @@ import {
 import { Textarea } from "@/components/shadcn/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { m } from "@/paraglide/messages";
-import { updateAllRepeatedEventsFn } from "@/services/eventService";
+import { router } from "@/router";
+import {
+	postCalendarEventDataFn,
+	putEventDataFn,
+	updateAllRepeatedEventsFn,
+} from "@/services/eventService";
 
 // Lazy load Mapbox components to avoid SSR issues
 const _AddressAutofill = lazy(() =>
@@ -69,7 +74,9 @@ export function AddEditEventDialog({
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [_deleteDialogOpen, _setDeleteDialogOpen] = useState(false);
-	const { addEvent, updateEvent } = useCalendar();
+	const calendarContext = useCalendarOptional();
+	const addEvent = calendarContext?.addEvent;
+	const updateEvent = calendarContext?.updateEvent;
 	const isEditing = !!event;
 
 	const initialDates = useMemo(() => {
@@ -161,13 +168,19 @@ export function AddEditEventDialog({
 					return;
 				}
 				await updateAllRepeatedEventsFn({ data: formattedEvent });
+				await router.invalidate();
 				toast.success("All repeated events updated successfully");
 			} else if (isEditing && !updateAll) {
 				if (!session) {
 					toast.error("You must be logged in to edit an event.");
 					return;
 				}
-				await updateEvent(formattedEvent);
+				if (updateEvent) {
+					await updateEvent(formattedEvent);
+				} else {
+					await putEventDataFn({ data: formattedEvent });
+					await router.invalidate();
+				}
 				toast.success("Event updated successfully");
 			} else {
 				if (!session) {
@@ -183,7 +196,12 @@ export function AddEditEventDialog({
 					);
 					return;
 				}
-				await addEvent(formattedEvent);
+				if (addEvent) {
+					await addEvent(formattedEvent);
+				} else {
+					await postCalendarEventDataFn({ data: formattedEvent });
+					await router.invalidate();
+				}
 				toast.success("Event created successfully");
 			}
 

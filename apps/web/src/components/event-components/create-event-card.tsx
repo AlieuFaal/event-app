@@ -145,7 +145,8 @@ export default function EventCard({
 			});
 
 			toast.success(m.toast_event_created());
-			router.navigate({ to: "/events" });
+			await router.navigate({ to: "/events" });
+			await router.invalidate();
 		} catch (error) {
 			console.error("Error submitting event:", error);
 			if (!session) {

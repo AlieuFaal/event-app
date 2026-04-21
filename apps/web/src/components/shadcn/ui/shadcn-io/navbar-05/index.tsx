@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 // import { Session } from '@/lib/auth-client';
-import { useEffect, useState, useRef } from 'react';
-import { ChevronDownIcon, LanguagesIcon } from 'lucide-react';
-import { Button } from "@/components/shadcn/ui/button"
+import { useEffect, useState, useRef } from "react";
+import { ChevronDownIcon, LanguagesIcon } from "lucide-react";
+import { Button } from "@/components/shadcn/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "src/components/shadcn/ui/navigation-menu.tsx"
+} from "src/components/shadcn/ui/navigation-menu.tsx";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/popover';
+} from "@/components/shadcn/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,47 +23,43 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/shadcn/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/ui/avatar';
-import { ModeToggle } from '@/components/mode-toggle';
-import { cn } from '@/lib/utils';
-import { Link, useRouter } from '@tanstack/react-router';
-import { authClient } from '@/lib/auth-client';
-import { m } from '@/paraglide/messages';
-import { setLocale } from '@/paraglide/runtime';
-import { setLocaleServerFn } from '@/services/ThemeService';
-import { User } from '@vibespot/database/schema';
+} from "@/components/shadcn/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/shadcn/ui/avatar";
+import { ModeToggle } from "@/components/mode-toggle";
+import { cn } from "@/lib/utils";
+import { Link, useRouter } from "@tanstack/react-router";
+import { authClient } from "@/lib/auth-client";
+import { m } from "@/paraglide/messages";
+import { setLocale } from "@/paraglide/runtime";
+import { setLocaleServerFn } from "@/services/ThemeService";
+import { User } from "@vibespot/database/schema";
+import vibeSpotLogo from "@/assets/images/VibeSpot-Logo-1.png";
 
 // Simple logo component for the navbar
-const Logo = (props: React.SVGAttributes<SVGElement>) => {
+const Logo = () => {
   return (
-    <svg width='1em' height='1em' viewBox='0 0 324 323' fill='currentColor' xmlns='http://www.w3.org/2000/svg' {...props}>
-      <rect
-        x='88.1023'
-        y='144.792'
-        width='151.802'
-        height='36.5788'
-        rx='18.2894'
-        transform='rotate(-38.5799 88.1023 144.792)'
-        fill='currentColor'
+    <span className="relative inline-flex h-14 w-14 items-center justify-center overflow-hidden top-1 left-2">
+      <img
+        src={vibeSpotLogo}
+        alt="VibeSpot logo"
+        className="h-full w-full object-cover saturate-125"
       />
-      <rect
-        x='85.3459'
-        y='244.537'
-        width='151.802'
-        height='36.5788'
-        rx='18.2894'
-        transform='rotate(-38.5799 85.3459 244.537)'
-        fill='currentColor'
-      />
-    </svg>
+      <span className="pointer-events-none absolute inset-0" />
+    </span>
   );
 };
 
 // Hamburger icon component
-const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>) => (
+const HamburgerIcon = ({
+  className,
+  ...props
+}: React.SVGAttributes<SVGElement>) => (
   <svg
-    className={cn('pointer-events-none', className)}
+    className={cn("pointer-events-none", className)}
     width={16}
     height={16}
     viewBox="0 0 24 24"
@@ -92,24 +88,24 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
 
 // Navigation links function - called inside component to use current locale
 const getNavigationLinks = (): Navbar05NavItem[] => [
-  { href: '/', label: m.nav_home() },
-  { href: '/create-event', label: m.nav_create_event() },
-  { href: '/events', label: m.nav_events() },
-  { href: '/event-calendar', label: m.nav_calendar() },
-  { href: '/event-map', label: m.nav_map() },
+  { href: "/", label: m.nav_home() },
+  { href: "/create-event", label: m.nav_create_event() },
+  { href: "/events", label: m.nav_events() },
+  { href: "/event-calendar", label: m.nav_calendar() },
+  { href: "/event-map", label: m.nav_map() },
 ];
 
 // Language menu Component
 const LanguageMenu = () => {
   const router = useRouter();
 
-  const handleLocaleChange = async (newLocale: 'en' | 'sv') => {
+  const handleLocaleChange = async (newLocale: "en" | "sv") => {
     try {
       await setLocaleServerFn({ data: newLocale });
       setLocale(newLocale, { reload: false });
       await router.invalidate();
     } catch (error) {
-      console.error('[LanguageMenu] Failed to change locale:', error);
+      console.error("[LanguageMenu] Failed to change locale:", error);
     }
   };
 
@@ -124,10 +120,10 @@ const LanguageMenu = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleLocaleChange('en')}>
+        <DropdownMenuItem onClick={() => handleLocaleChange("en")}>
           {m.language_english()}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange('sv')}>
+        <DropdownMenuItem onClick={() => handleLocaleChange("sv")}>
           {m.language_swedish()}
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -187,8 +183,8 @@ const LanguageMenu = () => {
 // User Menu Component
 
 const UserMenu = ({
-  userName = 'John Doe',
-  userEmail = 'john@example.com',
+  userName = "John Doe",
+  userEmail = "john@example.com",
   userAvatar,
   onItemClick,
 }: {
@@ -215,11 +211,18 @@ const UserMenu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground">
+        <Button
+          variant="ghost"
+          className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground"
+        >
           <Avatar className="h-7 w-7">
             <AvatarImage src={userAvatar ?? undefined} alt={userName} />
             <AvatarFallback className="text-xs">
-              {userName.split(' ').map(n => n[0]).join('').toLocaleUpperCase()}
+              {userName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toLocaleUpperCase()}
             </AvatarFallback>
           </Avatar>
           <ChevronDownIcon className="h-3 w-3 ml-1" />
@@ -230,14 +233,16 @@ const UserMenu = ({
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{userName}</p>
-            <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {userEmail}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigateToRoute('/profile')}>
+        <DropdownMenuItem onClick={() => navigateToRoute("/profile")}>
           {m.nav_profile()}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigateToRoute('/favorites')}>
+        <DropdownMenuItem onClick={() => navigateToRoute("/favorites")}>
           {m.nav_favorites()}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -275,10 +280,10 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
     {
       className,
       logo = <Logo />,
-      logoHref = '/',
+      logoHref = "/",
       navigationLinks, // Don't provide default here - will be generated in component body
-      userName = 'John Doe',
-      userEmail = 'john@example.com',
+      userName = "John Doe",
+      userEmail = "john@example.com",
       userAvatar,
       notificationCount = 3,
       onNavItemClick,
@@ -288,13 +293,13 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
       currentUser,
       ...props
     },
-    ref
+    ref,
   ) => {
     const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const user = currentUser;
-    
+
     // Generate navigation links inside component to use current locale
     const navLinks = navigationLinks || getNavigationLinks();
 
@@ -319,23 +324,29 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
     }, []);
 
     // Combine refs
-    const combinedRef = React.useCallback((node: HTMLElement | null) => {
-      containerRef.current = node;
-      if (typeof ref === 'function') {
-        ref(node);
-      } else if (ref) {
-        ref.current = node;
-      }
-    }, [ref]);
+    const combinedRef = React.useCallback(
+      (node: HTMLElement | null) => {
+        containerRef.current = node;
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      },
+      [ref],
+    );
 
-    const filteredNavLinks = user?.role === 'user' ? navLinks.filter(link => link.href !== '/create-event') : navLinks;
+    const filteredNavLinks =
+      user?.role === "user"
+        ? navLinks.filter((link) => link.href !== "/create-event")
+        : navLinks;
 
     return (
       <header
         ref={combinedRef}
         className={cn(
-          'sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline',
-          className
+          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline",
+          className,
         )}
         {...props}
       >
@@ -359,7 +370,10 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                     <NavigationMenuList className="flex-col items-start gap-0">
                       {filteredNavLinks.map((link, index) => (
                         <NavigationMenuItem key={index} className="w-full">
-                          <NavigationMenuLink asChild className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline">
+                          <NavigationMenuLink
+                            asChild
+                            className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline"
+                          >
                             <Link to={link.href}>{link.label}</Link>
                           </NavigationMenuLink>
                         </NavigationMenuItem>
@@ -374,12 +388,11 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               <button
                 onClick={() => router.history.push(logoHref)}
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
-
               >
-                <div className="text-2xl">
-                  {logo}
-                </div>
-                <span className="hidden font-bold text-xl sm:inline-block">VibeSpot</span>
+                <div className="text-2xl">{logo}</div>
+                <span className="hidden font-bold text-xl sm:inline-block">
+                  VibeSpot
+                </span>
               </button>
               {/* Navigation menu */}
               {!isMobile && (
@@ -387,7 +400,10 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                   <NavigationMenuList className="gap-1">
                     {filteredNavLinks.map((link, index) => (
                       <NavigationMenuItem key={index}>
-                        <NavigationMenuLink asChild className="text-muted-foreground font-medium transition-colors cursor-pointer group inline-flex h-8 w-max items-center justify-center rounded-lg bg-transparent px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                        <NavigationMenuLink
+                          asChild
+                          className="text-muted-foreground font-medium transition-colors cursor-pointer group inline-flex h-8 w-max items-center justify-center rounded-lg bg-transparent px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        >
                           <Link to={link.href}>{link.label}</Link>
                         </NavigationMenuLink>
                       </NavigationMenuItem>
@@ -420,16 +436,21 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
               />
             )}
             {!user && (
-              <Button variant={'outline'} onClick={() => router.history.push('/signin')}>{m.signin_card_title()}</Button>
+              <Button
+                variant={"outline"}
+                onClick={() => router.history.push("/signin")}
+              >
+                {m.signin_card_title()}
+              </Button>
             )}
           </div>
         </div>
       </header>
     );
-  }
+  },
 );
 
-Navbar05.displayName = 'Navbar05';
+Navbar05.displayName = "Navbar05";
 
 export { Logo, HamburgerIcon, LanguageMenu as InfoMenu, UserMenu };
 // export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };

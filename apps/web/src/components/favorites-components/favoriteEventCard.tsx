@@ -21,6 +21,14 @@ import React from "react";
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const placeholderImages = [
+        PlaceholderImage1,
+        PlaceholderImage2,
+        PlaceholderImage3,
+        PlaceholderImage4,
+        PlaceholderImage5,
+        PlaceholderImage6,
+    ];
 
     function getEventCreatorName(favoriteEvent: EventWithComments) {
 
@@ -76,9 +84,16 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
         await router.invalidate(); // Invalidera routern för att uppdatera datan
     }
     
-    function randomImage() {
-        const images = [PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6];
-        return images[Math.floor(Math.random() * images.length)];
+    function getEventImage(seed: string | undefined) {
+        if (!seed) {
+            return placeholderImages[0];
+        }
+
+        const hash = Array.from(seed).reduce((acc, char) => {
+            return ((acc << 5) - acc + char.charCodeAt(0)) | 0;
+        }, 0);
+
+        return placeholderImages[Math.abs(hash) % placeholderImages.length];
     }
 
     return (
@@ -86,7 +101,7 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
             <Card onClick={() => setDialogOpen(true)} className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative">
                 <CardContent className="flex flex-row space-x-16">
                     <div>
-                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={randomImage()} alt="" /> {/* Mock för tillfället */}
+                        <img className="relative top-10 w-50 rounded-xl shadow-2xl" src={getEventImage(favoriteEvent.id)} alt="" /> {/* Mock för tillfället */}
                     </div>
                     <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-160 relative">
                         <CardTitle className="text-3xl">{favoriteEvent.title}</CardTitle>

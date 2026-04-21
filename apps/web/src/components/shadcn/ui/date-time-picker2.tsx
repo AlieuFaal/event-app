@@ -16,7 +16,7 @@ import {
 } from "@/components/shadcn/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/shadcn/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
 import type { TEventFormData } from "@/components/calendar/schemas";
 import { useEffect, useState } from "react";
 
@@ -26,7 +26,8 @@ interface DatePickerProps {
 }
 
 export function DateTimePicker({ form, field }: DatePickerProps) {
-	const { use24HourFormat } = useCalendar();
+	const calendarContext = useCalendarOptional();
+	const use24HourFormat = calendarContext?.use24HourFormat ?? true;
 	const [isMounted, setIsMounted] = useState(false);
 
 	// Prevent hydration mismatch by only showing formatted date on client

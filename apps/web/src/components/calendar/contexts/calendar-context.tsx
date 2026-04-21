@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
 import { deleteEventDataFn, postCalendarEventDataFn, putEventDataFn } from "@/services/eventService";
 import type {
@@ -48,7 +48,7 @@ const DEFAULT_SETTINGS: CalendarSettings = {
 	agendaModeGroupBy: "date",
 };
 
-const CalendarContext = createContext({} as ICalendarContext);
+const CalendarContext = createContext<ICalendarContext | undefined>(undefined);
 
 export function CalendarProvider2({
 	children,
@@ -93,6 +93,11 @@ export function CalendarProvider2({
 
 	const [allEvents, setAllEvents] = useState<Event[]>(events || []);
 	const [filteredEvents, setFilteredEvents] = useState<Event[]>(events || []);
+
+	useEffect(() => {
+		setAllEvents(events || []);
+		setFilteredEvents(events || []);
+	}, [events]);
 
 	const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
 		setSettings({
@@ -157,8 +162,6 @@ export function CalendarProvider2({
 	};
 
 	const addEvent = async (event: CalendarEvent) => {
-		console.log("Adding event:", event);
-
 		// Convert CalendarEvent to Event for state management
 		const eventForState = {
 			...event,
@@ -173,7 +176,6 @@ export function CalendarProvider2({
 
 		try {
 			await postCalendarEventDataFn({ data: event });
-			console.log("Event saved to database successfully");
 		} catch (error) {
 			console.error("Failed to save event to database:", error);
 		}
@@ -194,11 +196,9 @@ export function CalendarProvider2({
 		setFilteredEvents((prev) =>
 			prev.map((e) => (e.id === event.id ? updatedEvent : e)),
 		);
-		console.log("Updating event:", updatedEvent);
 
 		try {
 			await putEventDataFn({ data: updatedEvent });
-			console.log("Event updated in database successfully");
 		} catch (error) {
 			console.error("Failed to update event in database:", error);
 		}
@@ -210,7 +210,6 @@ export function CalendarProvider2({
 
 		try {
 			await deleteEventDataFn({ data: { id: eventId } });
-			console.log("Event deleted from database successfully");
 		} catch (error) {
 			console.error("Failed to delete event from database:", error);
 		}
@@ -258,4 +257,8 @@ export function useCalendar(): ICalendarContext {
 	if (!context)
 		throw new Error("useCalendar must be used within a CalendarProvider.");
 	return context;
+}
+
+export function useCalendarOptional(): ICalendarContext | undefined {
+	return useContext(CalendarContext);
 }
