@@ -25,11 +25,13 @@ import { Event, EventWithComments, User } from "@vibespot/database/schema";
 import { Button } from "../shadcn/ui/button";
 import {
   ArrowUpRight,
+  Building2,
   CalendarDays,
   Clock3,
   MapPin,
   PencilLine,
   Star,
+  Theater,
   User2,
   X,
 } from "lucide-react";
@@ -78,6 +80,7 @@ export default function EventCard({
   const timeRangeLabel = `${event.startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${event.endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   const heroRings = [320, 274, 230, 188, 150, 116];
   const accent = getEventAccent(event.color);
+  const venueLabel = event.venue?.trim();
   const placeholderImages = [
     PlaceholderImage1,
     PlaceholderImage2,
@@ -226,6 +229,13 @@ export default function EventCard({
                   <MapPin className="size-3.5" style={{ color: accent.accent }} />
                   <span className="max-w-[200px] truncate">{event.address}</span>
                 </span>
+
+                {venueLabel ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
+                    <Theater className="size-3.5" style={{ color: accent.accent }} />
+                    <span className="max-w-[200px] truncate">{venueLabel}</span>
+                  </span>
+                ) : null}
               </div>
             </div>
           </div>
@@ -387,6 +397,26 @@ export default function EventCard({
                   Fly to
                 </Button>
               </div>
+
+              {venueLabel ? (
+                <div className="flex items-start gap-3 py-4">
+                  <div
+                    className="mt-0.5 rounded-md border p-2"
+                    style={{
+                      borderColor: accent.borderMuted,
+                      backgroundColor: accent.bgMuted,
+                    }}
+                  >
+                    <Theater className="size-4" style={{ color: accent.accent }} />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      {m.form_venue_label()}
+                    </p>
+                    <p className="text-sm text-foreground">{venueLabel}</p>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="flex items-start gap-3 py-4">
                 <div

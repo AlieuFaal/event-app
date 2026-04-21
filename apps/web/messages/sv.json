@@ -145,7 +145,7 @@
   "form_venue_description": "I vilken lokal äger evenemanget rum?",
   "form_address_label": "Address:",
   "form_address_placeholder": "Kaserntorget 6",
-  "form_address_description": "Vart är vibben? (måste vara en fullständig adress)",
+  "form_address_description": "Vart är Viben? (Måste vara en fullständig adress dvs gata & gatunummer)",
   "form_color_label": "Färg:",
   "form_color_description": "Välj en färg för att representera ditt evenemang i kalendern.",
   "form_color_blue": "Blå",

@@ -145,7 +145,7 @@
   "form_venue_description": "In what Venue is the event happening?",
   "form_address_label": "Address:",
   "form_address_placeholder": "Kaserntorget 6",
-  "form_address_description": "Where's the Vibe? (must be a full address)",
+  "form_address_description": "Where's the Vibe? (Must be a full address i.e street & street number)",
   "form_color_label": "Color:",
   "form_color_description": "Choose a color to represent your event on the calendar.",
   "form_color_blue": "Blue",

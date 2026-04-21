@@ -21,6 +21,7 @@ import React from "react";
 export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEvent: EventWithComments, users: User[] }) {
     const router = useRouter()
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const venueLabel = favoriteEvent.venue?.trim();
     const placeholderImages = [
         PlaceholderImage1,
         PlaceholderImage2,
@@ -107,6 +108,11 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                         <CardTitle className="text-3xl">{favoriteEvent.title}</CardTitle>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">{favoriteEvent.description}</CardDescription>
                         <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">{favoriteEvent.address}</CardDescription>
+                        {venueLabel ? (
+                            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-2">
+                                {m.form_venue_label()} {venueLabel}
+                            </CardDescription>
+                        ) : null}
                     </div>
                 </CardContent>
                 <Button
@@ -147,6 +153,11 @@ export default function FavoriteEventCard({ favoriteEvent, users }: { favoriteEv
                         <div className="grid gap-3">
                             <Label htmlFor="username-1" className="text-xl">{m.event_date_label()} {favoriteEvent.startDate.toUTCString()} - {favoriteEvent.endDate.toUTCString()}</Label>
                         </div>
+                        {venueLabel ? (
+                            <div className="grid gap-3">
+                                <Label htmlFor="username-1" className="text-xl">{m.form_venue_label()} {venueLabel}</Label>
+                            </div>
+                        ) : null}
                         <div className="grid gap-3">
                             <Label htmlFor="username-1" className="text-xl">{m.event_created_by()} {getEventCreatorName(favoriteEvent)}</Label>
                         </div>

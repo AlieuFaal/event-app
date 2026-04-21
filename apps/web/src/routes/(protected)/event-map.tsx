@@ -26,7 +26,7 @@ function RouteComponent() {
     const accessToken = import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
     return (
-        <div className="max-w-450 min-w-sm mx-auto min-h-sm">
+        <div className="min-w-sm mx-auto min-h-sm">
             <Suspense fallback={
                 <div className="flex items-center justify-center h-screen">
                     <Spinner className="text-primary" size={200} variant='ring' />

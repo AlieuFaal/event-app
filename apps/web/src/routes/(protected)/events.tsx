@@ -48,7 +48,7 @@ function EventsComponent() {
     }, [genreFilteredEvents, users, searchInput]);
 
     return (
-        <div className="relative mx-auto max-w-[2500px] pb-16 pt">
+        <div className="relative mx-auto pb-16 pt">
 
             <div className="relative space-y-8 sm:space-y-10">
                 <EventPageHeader

@@ -1,0 +1,37 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: Sign In
+        - generic [ref=e8]: Welcome Back! Sign in below to access your account.
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: E-mail
+          - textbox "E-mail" [ref=e13]:
+            - /placeholder: john@example.com
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - generic [ref=e16]: Password
+            - link "Forgot Password?" [ref=e17] [cursor=pointer]:
+              - /url: /forgotpassword
+          - textbox "Password" [ref=e18]:
+            - /placeholder: Submit your password
+        - generic [ref=e19]:
+          - checkbox "Remember Me" [ref=e20]
+          - checkbox
+          - generic [ref=e21]: Remember Me
+        - link "New to VibeSpot? Sign Up Here." [ref=e24] [cursor=pointer]:
+          - /url: /signup
+        - button "Log In" [ref=e25]:
+          - paragraph [ref=e26]: Log In
+        - generic [ref=e27]:
+          - button "Sign in with Google" [ref=e28]:
+            - img
+            - text: Sign in with Google
+          - button "Sign in with Apple" [ref=e29]:
+            - img
+            - text: Sign in with Apple
+          - button "Sign in with Facebook" [ref=e30]:
+            - img
+            - text: Sign in with Facebook
+  - region "Notifications alt+T"

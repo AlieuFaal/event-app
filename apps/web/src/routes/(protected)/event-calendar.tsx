@@ -1,11 +1,10 @@
-import { Calendar2 } from '@/components/calendar/calendar';
-import { Card } from '@/components/shadcn/ui/card';
-import { getEventDataFn } from '@/services/eventService';
-import { getUserDataFn } from '@/services/user-service';
-import { createFileRoute } from '@tanstack/react-router';
+import { Calendar2 } from "@/components/calendar/calendar";
+import { getEventDataFn } from "@/services/eventService";
+import { getUserDataFn } from "@/services/user-service";
+import { createFileRoute } from "@tanstack/react-router";
 import { CalendarProvider2 } from "@/components/calendar/contexts/calendar-context";
 
-export const Route = createFileRoute('/(protected)/event-calendar')({
+export const Route = createFileRoute("/(protected)/event-calendar")({
   component: EventCalendarComponent,
   loader: async (ctx) => {
     const [events, users] = await Promise.all([
@@ -16,19 +15,19 @@ export const Route = createFileRoute('/(protected)/event-calendar')({
     return {
       events,
       users,
-      currentUser
+      currentUser,
     };
-  }
-})
+  },
+});
 
 function EventCalendarComponent() {
   const { events, users, currentUser } = Route.useLoaderData();
 
   return (
-      <Card className="p-10 shadow-lg border rounded-2xl max-w-350 mx-auto">
-        <CalendarProvider2 events={events} users={users} view='month'>
-          <Calendar2 currentUser={currentUser} />
-        </CalendarProvider2>
-      </Card>
-  )
+    <div className="p-4 mx-auto bg-muted/30 dark:bg-accent/10">
+      <CalendarProvider2 events={events} users={users} view="month">
+        <Calendar2 currentUser={currentUser} />
+      </CalendarProvider2>
+    </div>
+  );
 }

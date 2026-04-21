@@ -1,0 +1,31 @@
+[     265ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/node_modules/.vite/deps/react-dom_client.js?v=781277b2:17986
+[ 1811591ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/src/components/event-components/create-event-card.tsx?t=1776765822734:0
+[ 1811592ms] [INFO] [hmr] /src/components/event-components/create-event-card.tsx failed to apply HMR as it's within a circular import. Reloading page to reset the execution order. To debug and break the circular import, you can run `vite --debug hmr` to log the circular dependency path if a file change triggered it. @ http://localhost:3001/@vite/client:817
+[ 1811594ms] [ERROR] [vite] Failed to reload /src/components/event-components/create-event-card.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:3001/@vite/client:808
+[ 1812481ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/node_modules/.vite/deps/react-dom_client.js?v=781277b2:17986
+[ 1812529ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/src/components/event-components/create-event-card.tsx?t=1776765822734:0
+[ 1813170ms] Error: Switched to client rendering because the server rendering errored:
+
+Transform failed with 1 error:
+/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/apps/web/src/components/event-components/create-event-card.tsx:279:56: ERROR: Expected ">" but found "["
+    at failureErrorWithLog (/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/esbuild/lib/main.js:1467:15)
+    at /Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/esbuild/lib/main.js:736:50
+    at responseCallbacks.<computed> (/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/esbuild/lib/main.js:603:9)
+    at handleIncomingPacket (/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/esbuild/lib/main.js:658:12)
+    at Socket.readFromStdout (/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/esbuild/lib/main.js:581:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+    at Pipe.callbackTrampoline (node:internal/async_hooks:130:17)
+[ 1813119ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/node_modules/.vite/deps/react-dom_client.js?v=781277b2:17986
+[ 1813151ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/src/components/event-components/create-event-card.tsx?t=1776765822734:0
+[ 1813187ms] [ERROR] %o
+
+%s
+
+%s
+ TypeError: Failed to fetch dynamically imported module: http://localhost:3001/src/routes/(protected)/create-event.tsx?t=1776765822734&tsr-split=component The above error occurred in the <Lazy> component. React will try to recreate this component tree from scratch using the error boundary you provided, CatchBoundaryImpl. @ http://localhost:3001/node_modules/.vite/deps/react-dom_client.js?v=781277b2:6263
+[ 1813187ms] [WARNING] Warning: Error in route match: /(protected)/create-event @ http://localhost:3001/@fs/Users/alieufaal/Hackermanz/GitHub-Repositoriez/Projectz/Personal-Projectz/event-app/node_modules/tiny-warning/dist/tiny-warning.esm.js?v=781277b2:8
+[ 1817406ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/node_modules/.vite/deps/react-dom_client.js?v=781277b2:17986
