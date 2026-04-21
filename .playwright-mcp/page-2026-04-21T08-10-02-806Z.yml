@@ -1,0 +1,123 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - button "VibeSpot logo VibeSpot" [ref=e6] [cursor=pointer]:
+          - img "VibeSpot logo" [ref=e9]
+          - generic [ref=e10]: VibeSpot
+        - navigation "Main" [ref=e11]:
+          - list [ref=e13]:
+            - listitem [ref=e14]:
+              - link "Home" [ref=e15] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e16]:
+              - link "Create Event" [ref=e17] [cursor=pointer]:
+                - /url: /create-event
+            - listitem [ref=e18]:
+              - link "Events" [ref=e19] [cursor=pointer]:
+                - /url: /events
+            - listitem [ref=e20]:
+              - link "Calendar" [ref=e21] [cursor=pointer]:
+                - /url: /event-calendar
+            - listitem [ref=e22]:
+              - link "Map" [ref=e23] [cursor=pointer]:
+                - /url: /event-map
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - button "Toggle theme" [ref=e26]:
+            - img
+            - generic [ref=e27]: Toggle theme
+          - button "Select language" [ref=e28]:
+            - img
+            - generic [ref=e29]: Select language
+        - button "TT User menu" [ref=e30]:
+          - generic [ref=e32]: TT
+          - img
+          - generic [ref=e33]: User menu
+  - main [ref=e34]:
+    - generic [ref=e36]:
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "ALL EVENTS" [level=1] [ref=e40]
+          - heading "GOOD THINGS HAPPEN WHEN HAPPY PEOPLE GET TOGETHER..." [level=2] [ref=e41]
+        - textbox "SEARCH FOR EVENTS..." [ref=e43]
+      - button [ref=e45] [cursor=pointer]:
+        - img
+      - generic [ref=e47]:
+        - paragraph [ref=e49]: APRIL
+        - generic [ref=e51]:
+          - generic [ref=e52] [cursor=pointer]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: Coachella
+              - generic [ref=e57]: Festival in California
+              - generic [ref=e58]: Slottsskogspromenaden 1
+            - button [ref=e59]:
+              - img
+            - generic [ref=e60]:
+              - generic [ref=e63]: Instrumental
+              - generic [ref=e64]:
+                - generic [ref=e65]: Tue, 21 Apr 2026 16:00:00 GMT
+                - paragraph [ref=e67]: "Created by: Alieu Faal"
+          - generic [ref=e68] [cursor=pointer]:
+            - generic [ref=e71]:
+              - generic [ref=e72]: Coachella
+              - generic [ref=e73]: Festival in California
+              - generic [ref=e74]: Slottsskogspromenaden 1
+            - button [ref=e75]:
+              - img
+            - generic [ref=e76]:
+              - generic [ref=e79]: Instrumental
+              - generic [ref=e80]:
+                - generic [ref=e81]: Tue, 28 Apr 2026 16:00:00 GMT
+                - paragraph [ref=e83]: "Created by: Alieu Faal"
+        - paragraph [ref=e85]: MAY
+        - generic [ref=e87]:
+          - generic [ref=e88] [cursor=pointer]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: Coachella
+              - generic [ref=e93]: Festival in California
+              - generic [ref=e94]: Slottsskogspromenaden 1
+            - button [ref=e95]:
+              - img
+            - generic [ref=e96]:
+              - generic [ref=e99]: Instrumental
+              - generic [ref=e100]:
+                - generic [ref=e101]: Tue, 05 May 2026 16:00:00 GMT
+                - paragraph [ref=e103]: "Created by: Alieu Faal"
+          - generic [ref=e104] [cursor=pointer]:
+            - generic [ref=e107]:
+              - generic [ref=e108]: Coachella
+              - generic [ref=e109]: Festival in California
+              - generic [ref=e110]: Slottsskogspromenaden 1
+            - button [ref=e111]:
+              - img
+            - generic [ref=e112]:
+              - generic [ref=e115]: Instrumental
+              - generic [ref=e116]:
+                - generic [ref=e117]: Tue, 12 May 2026 16:00:00 GMT
+                - paragraph [ref=e119]: "Created by: Alieu Faal"
+          - generic [ref=e120] [cursor=pointer]:
+            - generic [ref=e123]:
+              - generic [ref=e124]: Coachella
+              - generic [ref=e125]: Festival in California
+              - generic [ref=e126]: Slottsskogspromenaden 1
+            - button [ref=e127]:
+              - img
+            - generic [ref=e128]:
+              - generic [ref=e131]: Instrumental
+              - generic [ref=e132]:
+                - generic [ref=e133]: Tue, 19 May 2026 16:00:00 GMT
+                - paragraph [ref=e135]: "Created by: Alieu Faal"
+          - generic [ref=e136] [cursor=pointer]:
+            - generic [ref=e139]:
+              - generic [ref=e140]: Coachella
+              - generic [ref=e141]: Festival in California
+              - generic [ref=e142]: Slottsskogspromenaden 1
+            - button [ref=e143]:
+              - img
+            - generic [ref=e144]:
+              - generic [ref=e147]: Instrumental
+              - generic [ref=e148]:
+                - generic [ref=e149]: Tue, 26 May 2026 16:00:00 GMT
+                - paragraph [ref=e151]: "Created by: Alieu Faal"
+  - region "Notifications alt+T"

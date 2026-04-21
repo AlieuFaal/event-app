@@ -1,7 +1,6 @@
 import { CheckIcon, Filter, RefreshCcw } from "lucide-react";
 import type { TGenres } from "@/components/calendar/types";
-import { Separator } from "@radix-ui/react-select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/shadcn/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/shadcn/ui/dropdown-menu";
 import { Toggle } from "@/components/shadcn/ui/toggle";
 import { useState } from "react";
 
@@ -44,11 +43,17 @@ export default function EventFilter<TEvent extends { genre: TGenres | null }>({ 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Toggle variant="outline" className="cursor-pointer w-fit hover:scale-110 shadow-lg">
+                <Toggle variant="outline" className="h-10 gap-2 rounded-xl border-border/60 bg-background/80 px-3 shadow-sm transition hover:bg-accent">
                     <Filter className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-wider">Filter</span>
+                    {selectedGenres.length > 0 ? (
+                        <span className="rounded-full border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                            {selectedGenres.length}
+                        </span>
+                    ) : null}
                 </Toggle>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[180px] max-h-[400px] overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-[230px] max-h-[420px] overflow-y-auto rounded-xl border-border/60 p-1">
                 {genres.map((genre, index) => (
                     <DropdownMenuItem
                         key={index}
@@ -62,7 +67,7 @@ export default function EventFilter<TEvent extends { genre: TGenres | null }>({ 
                             {genre}
                             <span>
                                 {selectedGenres.includes(genre) && (
-                                    <span className="text-blue-500">
+                                    <span className="text-primary">
                                         <CheckIcon className="size-4" />
                                     </span>
                                 )}
@@ -70,7 +75,7 @@ export default function EventFilter<TEvent extends { genre: TGenres | null }>({ 
                         </span>
                     </DropdownMenuItem>
                 ))}
-                <Separator className="my-2" />
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                     disabled={selectedGenres.length === 0}
                     className="flex gap-2 cursor-pointer"

@@ -48,16 +48,20 @@ function EventsComponent() {
     }, [genreFilteredEvents, users, searchInput]);
 
     return (
-        <>
-            <div className="mx-auto">
-                <div className=''>
-                    <EventPageHeader searchInput={searchInput} onSearchChange={setSearchInput} />
+        <div className="relative mx-auto max-w-[2500px] pb-16 pt">
+
+            <div className="relative space-y-8 sm:space-y-10">
+                <EventPageHeader
+                    searchInput={searchInput}
+                    onSearchChange={setSearchInput}
+                    filterSlot={<EventFilter events={events} onFilterChange={setGenreFilteredEvents} />}
+                    resultsCount={filteredEvents.length}
+                />
+
+                <div className='px-4 sm:px-6 lg:px-8'>
+                    <EventList events={filteredEvents} users={users} currentUser={currentUser}/>
                 </div>
-                <div className="flex justify-end relative top-28 right-12">
-                    <EventFilter events={events} onFilterChange={setGenreFilteredEvents} />
-                </div>
-                <EventList events={filteredEvents} users={users} currentUser={currentUser}/>
             </div>
-        </>
+        </div>
     )
 }

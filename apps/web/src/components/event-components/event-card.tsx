@@ -71,6 +71,10 @@ export default function EventCard({
     day: "numeric",
     year: "numeric",
   });
+  const cardDateLabel = event.startDate.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
   const timeRangeLabel = `${event.startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${event.endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   const heroRings = [320, 274, 230, 188, 150, 116];
   const accent = getEventAccent(event.color);
@@ -153,65 +157,79 @@ export default function EventCard({
     <>
       <Card
         onClick={() => setDialogOpen(true)}
-        className="bg-card/60 text-card-foreground flex flex-col shadow-lg transition-all hover:scale-[1.025] hover:shadow-2xl cursor-pointer relative"
+        className="group relative cursor-pointer overflow-hidden border-border/60 bg-card/80 text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
       >
-        <CardContent className="flex flex-row space-x-16">
-          <div className="not-md:hidden">
+
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-start gap-4">
+            <div className="hidden sm:block">
               <img
-                className="relative top-10 w-50 rounded-xl shadow-2xl"
+                className="h-24 w-30 rounded-xl object-cover shadow-md"
                 src={getDeterministicImage(event.id)}
-                alt=""
-              />{" "}
-            {/* Mock för tillfället */}
-          </div>
-          <div className="flex flex-col justify-center bg-muted/70 p-5 rounded-2xl shadow-lg w-160 relative">
-            <CardTitle className="text-3xl">{event.title}</CardTitle>
-            <CardDescription className="text-gray-600 dark:text-amber-50 text-xl mt-5">
-              {event.description}
-            </CardDescription>
-            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg mt-5">
-              {event.address}
-            </CardDescription>
+                alt={`${event.title} cover`}
+              />
+            </div>
+
+            <div className="min-w-0 flex-1 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <CardTitle className="text-2xl leading-tight tracking-tight">
+                    {event.title}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-2 text-sm text-muted-foreground">
+                    {event.description}
+                  </CardDescription>
+                </div>
+
+                <Button
+                  className="shrink-0 rounded-full hover:cursor-pointer"
+                  variant={"ghost"}
+                  size={"icon"}
+                  onClick={(e) => {
+                    addOrRemoveFavorite();
+                    e.stopPropagation();
+                  }}
+                >
+                  <Star
+                    fill={event.isStarred ? "yellow" : "none"}
+                    color={event.isStarred ? "yellow" : "currentColor"}
+                  />
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs"
+                  style={{
+                    borderColor: accent.borderSoft,
+                    backgroundColor: accent.bgSoft,
+                  }}
+                >
+                  <span
+                    className="size-1.5 rounded-full"
+                    style={{ backgroundColor: accent.accent }}
+                  />
+                  {event.genre}
+                </span>
+
+                <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
+                  <CalendarDays className="size-3.5" style={{ color: accent.accent }} />
+                  {cardDateLabel}
+                </span>
+
+                <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
+                  <User2 className="size-3.5" style={{ color: accent.accent }} />
+                  {getEventCreatorName(event)}
+                </span>
+
+                <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
+                  <MapPin className="size-3.5" style={{ color: accent.accent }} />
+                  <span className="max-w-[200px] truncate">{event.address}</span>
+                </span>
+              </div>
+            </div>
           </div>
         </CardContent>
-        <Button
-          className="absolute top-3 right-3 not-md:hidden"
-          variant={"ghost"}
-          size={"icon"}
-          onClick={(e) => {
-            addOrRemoveFavorite();
-            e.stopPropagation(); // Förhindra att dialogen öppnas när knappen klickas
-          }}
-        >
-          <Star
-            fill={event.isStarred ? "yellow" : "none"}
-            color={event.isStarred ? "yellow" : "currentColor"}
-          />
-        </Button>
-        <div className="flex justify-end">
-          <div className="flex items-center mx-55">
-            <div className="border-1 h-fit w-30 bg-muted/70 p-3 rounded-sm shadow-lg flex justify-center not-sm:hidden">
-              <CardDescription className="text-xl text-card-foreground">
-                {event.genre}
-              </CardDescription>
-            </div>
-          </div>
-          <div className="justify-items-end-safe mx-5 bg-muted/70 rounded-xl shadow-lg w-fit p-3 not-sm:flex not-sm:flex-col">
-            <CardDescription className="text-gray-600 dark:text-amber-50 text-lg">
-              {event.startDate.toUTCString()}
-            </CardDescription>
-            <div className="not-md:hidden">
-              {
-                <p className="text-gray-600 dark:text-amber-50">
-                  {m.event_created_by()} {getEventCreatorName(event)}
-                </p>
-              }
-              {/* <Avatar className="h-7 w-7">
-                            <AvatarImage src={getEventCreatorImage(e) ?? undefined} alt="" />
-                            </Avatar> */}
-            </div>
-          </div>
-        </div>
       </Card>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent

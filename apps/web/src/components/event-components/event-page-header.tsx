@@ -1,37 +1,57 @@
 import { Input } from "../shadcn/ui/input";
+import { Search } from "lucide-react";
 
 interface EventPageHeaderProps {
     searchInput: string;
     onSearchChange: (value: string) => void;
+    filterSlot?: React.ReactNode;
+    resultsCount: number;
 }
 
-export default function EventPageHeader({ searchInput, onSearchChange }: EventPageHeaderProps) {
+export default function EventPageHeader({ searchInput, onSearchChange, filterSlot, resultsCount }: EventPageHeaderProps) {
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         onSearchChange(e.target.value);
     }
 
     return (
-        <>
-            <div className="flex flex-col min-w-md">
-                <div className="flex flex-row justify-start items-center m-10 bg-primary space-x-20 p-15 rounded-lg shadow-2xl font-mono">
-                    <h1 className="text-7xl text-secondary font-bold">
-                        ALL EVENTS
-                    </h1>
-                    <h2 className="text-lg text-secondary font-mono not-sm:hidden">GOOD THINGS HAPPEN WHEN HAPPY PEOPLE GET TOGETHER...</h2>
+        <section className="relative overflow-hidden rounded-b-[2rem] px-1 py-4 sm:px-12">
+            <div className="pointer-events-none absolute inset-x-8 -top-8 h-52 rounded-full bg-primary/20 blur-3xl dark:bg-primary/30" />
+
+            <div className="relative space-y-6 sm:space-y-7">
+                <div className="space-y-3">
+                    <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-primary">
+                        Curated nights
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                            Discover events that match your vibe
+                        </h1>
+                        <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
+                            A fresh lineup of experiences, artists and venues — filtered to what actually feels worth showing up for.
+                        </p>
+                    </div>
                 </div>
-                <div className="mx-10">
-                    {/* <Separator className="bg-primary rounded-lg"></Separator> */}
-                    <Input
-                        className="border-1 h-20 shadow-md"
-                        placeholder="SEARCH FOR EVENTS..."
-                        value={searchInput}
-                        onChange={handleSearch}
-                        style={{ fontSize: '1.2rem', marginTop: '1rem', marginBottom: '1rem', borderRadius: '1.0rem', }}
-                    />
-                    {/* <Separator className="bg-primary rounded-lg"></Separator> */}
+
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-2">
+                    <div className="relative flex-1">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            className="h-11 rounded-xl border-border/60 bg-background/80 pl-9 shadow-sm"
+                            placeholder="Search by title, address, venue or creator..."
+                            value={searchInput}
+                            onChange={handleSearch}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {filterSlot}
+                        <span className="rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+                            {resultsCount} results
+                        </span>
+                    </div>
                 </div>
             </div>
-        </>
+        </section>
     )
 }

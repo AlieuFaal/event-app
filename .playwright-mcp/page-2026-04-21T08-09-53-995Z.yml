@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e31]:
+    - generic [ref=e32]:
+      - generic [ref=e34]:
+        - button "VibeSpot logo VibeSpot" [ref=e35] [cursor=pointer]:
+          - img "VibeSpot logo" [ref=e38]
+          - generic [ref=e39]: VibeSpot
+        - navigation "Main" [ref=e40]:
+          - list [ref=e42]:
+            - listitem [ref=e43]:
+              - link "Home" [ref=e44] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e45]:
+              - link "Create Event" [ref=e46] [cursor=pointer]:
+                - /url: /create-event
+            - listitem [ref=e47]:
+              - link "Events" [ref=e48] [cursor=pointer]:
+                - /url: /events
+            - listitem [ref=e49]:
+              - link "Calendar" [ref=e50] [cursor=pointer]:
+                - /url: /event-calendar
+            - listitem [ref=e51]:
+              - link "Map" [ref=e52] [cursor=pointer]:
+                - /url: /event-map
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - button "Toggle theme" [ref=e55]:
+            - img
+            - generic [ref=e56]: Toggle theme
+          - button "Select language" [ref=e57]:
+            - img
+            - generic [ref=e58]: Select language
+        - button "TT User menu" [ref=e59]:
+          - generic [ref=e61]: TT
+          - img
+          - generic [ref=e62]: User menu
+  - main [ref=e2]:
+    - generic [ref=e64]:
+      - generic [ref=e69]:
+        - heading "VibeSpot" [level=1] [ref=e70]
+        - paragraph [ref=e71]: Where music meets the moment
+        - button "Explore Events!" [ref=e73]:
+          - link "Explore Events!" [ref=e74] [cursor=pointer]:
+            - /url: /events
+      - generic [ref=e75]:
+        - generic [ref=e78]:
+          - generic [ref=e79]: "\"VibeSpot isn't just an app, it's your gateway to unforgettable live music experiences. Discover events, connect with fellow music lovers, and let the rhythm of the city guide you to your next great adventure.\""
+          - generic [ref=e80]: "- Alex R., Event Manager"
+        - generic [ref=e84]: Discover live music events happening around you with VibeSpot. Whether you're into rock, jazz, pop, or indie, our app helps you find the perfect event to match your vibe.
+        - generic [ref=e88]:
+          - generic [ref=e89]: "\"VibeSpot makes it easy to connect with friends and fellow music enthusiasts. Share events, plan meetups, and create unforgettable memories together.\""
+          - generic [ref=e90]: "- Jamie L., Music Enthusiast"
+  - region "Notifications alt+T"

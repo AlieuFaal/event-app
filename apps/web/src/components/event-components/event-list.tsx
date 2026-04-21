@@ -1,6 +1,5 @@
-import { CurrentUser, EventWithComments, User } from "@vibespot/database/schema";
+import { EventWithComments, User } from "@vibespot/database/schema";
 import EventCards from "./event-cards";
-import { Separator } from "../shadcn/ui/separator";
 
 export default function EventList({ events, users, currentUser }: { events: EventWithComments[], users: User[], currentUser: User | null }) {
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
@@ -16,35 +15,35 @@ export default function EventList({ events, users, currentUser }: { events: Even
         return eventMonth === new Date(new Date().setMonth(new Date().getMonth() + 1)).getMonth();
     });
 
+    const sections = [
+        { label: currentMonth, events: currentMonthEvents },
+        { label: nextMonth, events: nextMonthEvents },
+    ].filter((section) => section.events.length > 0);
+
     return (
-        <div className="flex flex-col p-4 min-w-md">
-            <div className="m-8">
-                {currentMonthEvents.length === 0 && nextMonthEvents.length === 0 && (
-                    <p className="text-center text-lg">No events found...</p>
-                )}
-                {currentMonthEvents.length > 0 && (
-                    <>
-                        <div className="bg-primary w-fit p-3 rounded-t-lg relative">
-                            <p className="text-2xl font-bold mb-4 text-secondary">{currentMonth.toUpperCase()}</p>
-                        </div>
-                        <Separator className="bg-primary mb-2 py-0.5 rounded-r-lg" />
-                    </>
-                )}
+        <div className="space-y-10">
+            {sections.length === 0 && (
+                <div className="rounded-2xl border border-border/60 bg-background/75 p-12 text-center shadow-sm">
+                    <p className="text-lg font-semibold text-foreground">No events found</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Try adjusting your search or genre filters.
+                    </p>
+                </div>
+            )}
 
-                <EventCards events={currentMonthEvents} users={users} currentUser={currentUser}/>
+            {sections.map((section) => (
+                <section key={section.label} className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+                            {section.label}
+                        </span>
+                        <div className="h-px flex-1 bg-gradient-to-r from-primary/70 to-transparent" />
+                        <span className="text-xs text-muted-foreground">{section.events.length} events</span>
+                    </div>
 
-                {nextMonthEvents.length > 0 && (
-                    <>
-                        <div className="bg-primary w-fit p-3 rounded-t-lg relative mt-15">
-                            <p className="text-2xl font-bold mb-4 text-secondary">{nextMonth.toUpperCase()}</p>
-                        </div>
-                        <Separator className="bg-primary mb-2 py-0.5 rounded-r-lg" />
-                    </>
-                )}
-
-                <EventCards events={nextMonthEvents} users={users} currentUser={currentUser}/>
-                
-            </div>
+                    <EventCards events={section.events} users={users} currentUser={currentUser}/>
+                </section>
+            ))}
         </div>
     )
 }
