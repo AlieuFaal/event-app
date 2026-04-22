@@ -7,7 +7,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(protected)/user/$id')({
     loader: async ({ params }) => {
-        const [user, events, favoriteEvents, followersCount, followingCount, isFollowing] = await Promise.all([
+        const [user, events, favoriteEvents, followersData, followingData, isFollowing] = await Promise.all([
             getUserDataByIdFn({ data: { id: params.id } }),
             getUserEventsWithCommentsFn({ data: { userId: params.id } }),
             getUserFavoriteEventsFn({ data: { userId: params.id } }),
@@ -20,8 +20,10 @@ export const Route = createFileRoute('/(protected)/user/$id')({
             user,
             events,
             favoriteEvents,
-            followersCount,
-            followingCount,
+            followersCount: followersData.followerCount,
+            followingCount: followingData.followingCount,
+            followers: followersData.followers,
+            following: followingData.following,
             isFollowing,
         }
     },

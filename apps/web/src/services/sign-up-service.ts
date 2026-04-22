@@ -1,4 +1,4 @@
-import { PasswordChangeForm } from "@vibespot/database/schema";
+
 import { authClient } from "../lib/auth-client";
 
 const { data } = await authClient.signUp.email(

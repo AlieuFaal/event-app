@@ -1,21 +1,36 @@
 import { Button } from "@/components/shadcn/ui/button";
 import { Card, CardContent } from "@/components/shadcn/ui/card";
 import { Badge } from "@/components/shadcn/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/shadcn/ui/avatar";
 import { Camera, Calendar, Mail, MapPin, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { m } from "@/paraglide/messages";
 import type { User } from "@vibespot/database/schema";
+import { FollowersDialog } from "./dialogs/followers";
+import { FollowingsDialog } from "./dialogs/followings";
+import { FollowUserListItem } from "@/services/user-service";
 
 interface ProfileHeaderProps {
+  currentUser: User;
+  followers: FollowUserListItem[];
+  following: FollowUserListItem[];
   followersCount: number;
   followingCount: number;
-  currentUser: User;
 }
 
-export default function ProfileHeader({ followersCount, followingCount, currentUser }: ProfileHeaderProps) {
+export default function ProfileHeader({
+  followersCount,
+  followingCount,
+  currentUser,
+  followers,
+  following,
+}: ProfileHeaderProps) {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -33,12 +48,11 @@ export default function ProfileHeader({ followersCount, followingCount, currentU
           image: await convertImageToBase64(file),
         });
         toast.success(m.toast_image_upload_success());
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Failed to upload image:", error);
         toast.error(m.toast_image_upload_error());
       }
-    };
+    }
   };
 
   async function convertImageToBase64(file: File): Promise<string> {
@@ -56,9 +70,9 @@ export default function ProfileHeader({ followersCount, followingCount, currentU
     }
 
     try {
-      return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long'
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
       }).format(new Date(date));
     } catch {
       return "Unknown";
@@ -72,12 +86,19 @@ export default function ProfileHeader({ followersCount, followingCount, currentU
           <div className="relative">
             <Avatar className="h-32 w-32">
               <AvatarImage src={currentUser?.image!} alt="Profile" />
-              <AvatarFallback className="text-2xl">{currentUser?.name?.split(' ').map((n: string) => n[0]).join('').toLocaleUpperCase()}</AvatarFallback>
+              <AvatarFallback className="text-2xl">
+                {currentUser?.name
+                  ?.split(" ")
+                  .map((n: string) => n[0])
+                  .join("")
+                  .toLocaleUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <Button
               size="icon"
               variant="outline"
-              className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full hover:scale-120">
+              className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full hover:scale-120"
+            >
               <Camera />
             </Button>
             <input
@@ -91,20 +112,30 @@ export default function ProfileHeader({ followersCount, followingCount, currentU
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-2 md:flex-row md:items-center">
                 <h1 className="text-2xl font-bold">{currentUser?.name}</h1>
-                <Badge variant="secondary">{currentUser?.role || m.role_user()}</Badge>
+                <Badge variant="secondary">
+                  {currentUser?.role || m.role_user()}
+                </Badge>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                <Users className="size-4" />
-                <span className="font-semibold text-foreground">{followersCount}</span>
-                <span>{m.followers()}</span>
-              </div>
-              <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                <Users className="size-4" />
-                <span className="font-semibold text-foreground">{followingCount}</span>
-                <span>{m.following()}</span>
-              </div>
+              <FollowersDialog currentUser={currentUser} followers={followers}>
+                <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                  <Users className="size-4" />
+                  <span className="font-semibold text-foreground">
+                    {followersCount}
+                  </span>
+                  <span>{m.followers()}</span>
+                </div>
+              </FollowersDialog>
+              <FollowingsDialog following={following} currentUser={currentUser}>
+                <div className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+                  <Users className="size-4" />
+                  <span className="font-semibold text-foreground">
+                    {followingCount}
+                  </span>
+                  <span>{m.following()}</span>
+                </div>
+              </FollowingsDialog>
             </div>
             <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
               <div className="flex items-center gap-1">

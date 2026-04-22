@@ -25,7 +25,6 @@ import { Event, EventWithComments, User } from "@vibespot/database/schema";
 import { Button } from "../shadcn/ui/button";
 import {
   ArrowUpRight,
-  Building2,
   CalendarDays,
   Clock3,
   MapPin,
@@ -162,7 +161,6 @@ export default function EventCard({
         onClick={() => setDialogOpen(true)}
         className="group relative cursor-pointer overflow-hidden border-border/60 bg-card/80 text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
       >
-
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start gap-4">
             <div className="hidden sm:block">
@@ -216,23 +214,37 @@ export default function EventCard({
                 </span>
 
                 <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
-                  <CalendarDays className="size-3.5" style={{ color: accent.accent }} />
+                  <CalendarDays
+                    className="size-3.5"
+                    style={{ color: accent.accent }}
+                  />
                   {cardDateLabel}
                 </span>
 
                 <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
-                  <User2 className="size-3.5" style={{ color: accent.accent }} />
+                  <User2
+                    className="size-3.5"
+                    style={{ color: accent.accent }}
+                  />
                   {getEventCreatorName(event)}
                 </span>
 
                 <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
-                  <MapPin className="size-3.5" style={{ color: accent.accent }} />
-                  <span className="max-w-[200px] truncate">{event.address}</span>
+                  <MapPin
+                    className="size-3.5"
+                    style={{ color: accent.accent }}
+                  />
+                  <span className="max-w-[200px] truncate">
+                    {event.address}
+                  </span>
                 </span>
 
                 {venueLabel ? (
                   <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/35 px-2.5 py-1 text-xs text-muted-foreground">
-                    <Theater className="size-3.5" style={{ color: accent.accent }} />
+                    <Theater
+                      className="size-3.5"
+                      style={{ color: accent.accent }}
+                    />
                     <span className="max-w-[200px] truncate">{venueLabel}</span>
                   </span>
                 ) : null}
@@ -407,7 +419,10 @@ export default function EventCard({
                       backgroundColor: accent.bgMuted,
                     }}
                   >
-                    <Theater className="size-4" style={{ color: accent.accent }} />
+                    <Theater
+                      className="size-4"
+                      style={{ color: accent.accent }}
+                    />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

@@ -7,8 +7,47 @@ import {
   onbFormUpdateSchema,
   userSchema,
 } from "@vibespot/database/schema";
-import { count, eq, and } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
+
+export type FollowUserListItem = Pick<
+  typeof schema.user.$inferSelect,
+  "id" | "name" | "image"
+>;
+
+const getFollowersDataByUserId = async (userId: string) => {
+  const followers: FollowUserListItem[] = await db
+    .select({
+      id: schema.user.id,
+      name: schema.user.name,
+      image: schema.user.image,
+    })
+    .from(schema.followersTable)
+    .innerJoin(schema.user, eq(schema.followersTable.followerId, schema.user.id))
+    .where(eq(schema.followersTable.userId, userId));
+
+  return {
+    followerCount: followers.length,
+    followers,
+  };
+};
+
+const getFollowingDataByUserId = async (userId: string) => {
+  const following: FollowUserListItem[] = await db
+    .select({
+      id: schema.user.id,
+      name: schema.user.name,
+      image: schema.user.image,
+    })
+    .from(schema.followingTable)
+    .innerJoin(schema.user, eq(schema.followingTable.followingId, schema.user.id))
+    .where(eq(schema.followingTable.userId, userId));
+
+  return {
+    followingCount: following.length,
+    following,
+  };
+};
 
 const sanitizeUserForViewer = (
   user: typeof schema.user.$inferSelect,
@@ -243,12 +282,7 @@ export const getFollowersFn = createServerFn({
 })
   .inputValidator(userSchema.pick({ id: true }))
   .handler(async ({ data }) => {
-    const result = await db
-      .select({ count: count() })
-      .from(schema.followersTable)
-      .where(eq(schema.followersTable.userId, data.id));
-
-    return result[0]?.count || 0;
+    return getFollowersDataByUserId(data.id);
   });
 
 export const getFollowingFn = createServerFn({
@@ -256,12 +290,7 @@ export const getFollowingFn = createServerFn({
 })
   .inputValidator(userSchema.pick({ id: true }))
   .handler(async ({ data }) => {
-    const result = await db
-      .select({ count: count() })
-      .from(schema.followingTable)
-      .where(eq(schema.followingTable.userId, data.id));
-
-    return result[0]?.count || 0;
+    return getFollowingDataByUserId(data.id);
   });
 
 export const getContextFollowersFn = createServerFn({
@@ -274,12 +303,7 @@ export const getContextFollowersFn = createServerFn({
       throw new Error("User not authenticated");
     }
 
-    const result = await db
-      .select({ count: count() })
-      .from(schema.followersTable)
-      .where(eq(schema.followersTable.userId, userId));
-
-    return result[0]?.count || 0;
+    return getFollowersDataByUserId(userId);
   });
 
 export const getContextFollowingFn = createServerFn({
@@ -292,12 +316,7 @@ export const getContextFollowingFn = createServerFn({
       throw new Error("User not authenticated");
     }
 
-    const result = await db
-      .select({ count: count() })
-      .from(schema.followingTable)
-      .where(eq(schema.followingTable.userId, userId));
-
-    return result[0]?.count || 0;
+    return getFollowingDataByUserId(userId);
   });
 
 export const isUserFollowingFn = createServerFn({

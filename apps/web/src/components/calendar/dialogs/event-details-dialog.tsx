@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Calendar, Clock, MapPin, Text, User as UserLucide } from "lucide-react";
+import { Calendar, Clock, MapPin, Text, } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";

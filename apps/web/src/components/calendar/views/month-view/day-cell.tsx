@@ -1,7 +1,7 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { isToday, startOfDay, isSunday, isSameMonth, isSameDay } from "date-fns";
+import { startOfDay, isSunday, isSameMonth, isSameDay } from "date-fns";
 import { motion } from "framer-motion";
 import { useMemo, useCallback } from "react";
 

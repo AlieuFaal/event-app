@@ -43,7 +43,7 @@ const trustedOrigins = Array.from(
           "http://localhost:3001",
           "http://127.0.0.1:3001",
         ]),
-  ])
+  ]),
 );
 
 const secureCookies =
@@ -130,18 +130,20 @@ export const auth = betterAuth({
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID as string, // Your Facebook OAuth app
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string, // Your Facebook OAuth app
+      autoSignIn: true, // Automatically sign in the user after social sign up
+      scopes: ["email", "public_profile"], // Overwrites permissions
     },
     google: {
+      prompt: "select_account", // Force account selection on every login
       clientId: process.env.GOOGLE_CLIENT_ID as string, // Your Google OAuth app
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, // Your Google OAuth app
+      autoSignIn: true, // Automatically sign in the user after social sign up
     },
-    twitter: {
-      clientId: process.env.TWITTER_CLIENT_ID as string, // Your Twitter OAuth app
-      clientSecret: process.env.TWITTER_CLIENT_SECRET as string, // Your Twitter OAuth app
-    },
-    apple: {
-      clientId: process.env.APPLE_CLIENT_ID as string, // Your Apple OAuth app
-      clientSecret: process.env.APPLE_CLIENT_SECRET as string, // Your Apple OAuth app
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string, // Your GitHub OAuth app
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string, // Your GitHub OAuth app
+      autoSignIn: true, // Automatically sign in the user after social sign up
+      scopes: ["read:user", "user:email"], // Overwrites permissions
     },
   },
   secret: authSecret,
