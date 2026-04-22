@@ -1,17 +1,15 @@
+import { Search, Star } from "lucide-react";
 import { Input } from "../shadcn/ui/input";
-import { MusicIcon, Search } from "lucide-react";
 
 interface EventPageHeaderProps {
   searchInput: string;
   onSearchChange: (value: string) => void;
-  filterSlot?: React.ReactNode;
   resultsCount: number;
 }
 
-export default function EventPageHeader({
+export default function FavoriteEventPageHeader({
   searchInput,
   onSearchChange,
-  filterSlot,
   resultsCount,
 }: EventPageHeaderProps) {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,16 +23,16 @@ export default function EventPageHeader({
       <div className="relative space-y-6 sm:space-y-7">
         <div className="space-y-3">
           <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-primary gap-2">
-            <MusicIcon size={18}/>
-            Curated nights
+            <Star size={18} />
+            Personal picks
           </div>
           <div className="space-y-2">
             <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Discover events that match your vibe
+              Your favorite events!
             </h1>
             <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
-              A fresh lineup of experiences, artists and venues — filtered to
-              what actually feels worth showing up for.
+              Your personal lineup of experiences, artists and venues all in one
+              place.
             </p>
           </div>
         </div>
@@ -51,7 +49,6 @@ export default function EventPageHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            {filterSlot}
             <span className="rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
               {resultsCount} results
             </span>
