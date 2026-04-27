@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { db, schema, eq, and } from "@vibespot/database";
+import { gte } from "drizzle-orm";
 import { eventInsertSchema } from "@vibespot/validation";
 import { type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
@@ -17,7 +18,11 @@ const app = new Hono<{ Variables: AuthType }>()
       return c.json({ error: "User not authenticated" }, 401);
     }
 
-    const events = await db.select().from(schema.event);
+    const events = await db
+      .select()
+      .from(schema.event)
+      .where(gte(schema.event.endDate, new Date()))
+      .orderBy(schema.event.startDate);
 
     return c.json(events);
   })
@@ -57,12 +62,18 @@ const app = new Hono<{ Variables: AuthType }>()
         .from(schema.event)
         .innerJoin(
           schema.favoriteEvent,
-          eq(schema.event.id, schema.favoriteEvent.eventId)
+          eq(schema.event.id, schema.favoriteEvent.eventId),
         )
-        .where(eq(schema.favoriteEvent.userId, sessionUserId));
+        .where(
+          and(
+            eq(schema.favoriteEvent.userId, sessionUserId),
+            gte(schema.event.endDate, new Date()),
+          ),
+        )
+        .orderBy(schema.event.startDate);
 
       return c.json(favoriteEvents);
-    }
+    },
   )
   .post(
     "/favorites/:eventId",
@@ -82,8 +93,8 @@ const app = new Hono<{ Variables: AuthType }>()
         .where(
           and(
             eq(schema.favoriteEvent.userId, userId),
-            eq(schema.favoriteEvent.eventId, eventId)
-          )
+            eq(schema.favoriteEvent.eventId, eventId),
+          ),
         )
         .limit(1);
 
@@ -93,8 +104,8 @@ const app = new Hono<{ Variables: AuthType }>()
           .where(
             and(
               eq(schema.favoriteEvent.userId, userId),
-              eq(schema.favoriteEvent.eventId, eventId)
-            )
+              eq(schema.favoriteEvent.eventId, eventId),
+            ),
           )
           .returning();
 
@@ -111,7 +122,7 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(newFavorite);
-    }
+    },
   )
   .post("/events", zValidator("json", eventInsertSchema), async (c) => {
     const eventData = c.req.valid("json");
@@ -160,10 +171,10 @@ const app = new Hono<{ Variables: AuthType }>()
       const calculatedRepeatEndDate = customRepeatEndDate(
         startDate,
         repeat,
-        repeatEndDate
+        repeatEndDate,
       );
       const maxOccurrences = 500;
-      const repeatedEvents: Array<typeof schema.event.$inferSelect[]> = [];
+      const repeatedEvents: Array<(typeof schema.event.$inferSelect)[]> = [];
 
       const result = await db.transaction(async (tx) => {
         const initialRepeatedEvent = await tx
@@ -192,7 +203,10 @@ const app = new Hono<{ Variables: AuthType }>()
         let nextEndDate = addInterval(endDate, repeat);
         let count = 0;
 
-        while (nextStartDate <= calculatedRepeatEndDate && count < maxOccurrences) {
+        while (
+          nextStartDate <= calculatedRepeatEndDate &&
+          count < maxOccurrences
+        ) {
           const repeatedEvent = await tx
             .insert(schema.event)
             .values({
@@ -230,27 +244,31 @@ const app = new Hono<{ Variables: AuthType }>()
       return c.json({ error: "Failed to create event" }, 500);
     }
   })
-  .delete("/:id", zValidator("param", z.object({ id: z.uuid() })), async (c) => {
-    const { id: eventId } = c.req.valid("param");
-    const userId = c.var.user?.id;
+  .delete(
+    "/:id",
+    zValidator("param", z.object({ id: z.uuid() })),
+    async (c) => {
+      const { id: eventId } = c.req.valid("param");
+      const userId = c.var.user?.id;
 
-    if (!userId) {
-      return c.json({ error: "User not authenticated" }, 401);
-    }
+      if (!userId) {
+        return c.json({ error: "User not authenticated" }, 401);
+      }
 
-    try {
-      const deletedEvent = await db
-        .delete(schema.event)
-        .where(
-          and(eq(schema.event.id, eventId), eq(schema.event.userId, userId))
-        )
-        .returning();
+      try {
+        const deletedEvent = await db
+          .delete(schema.event)
+          .where(
+            and(eq(schema.event.id, eventId), eq(schema.event.userId, userId)),
+          )
+          .returning();
 
-      return c.json(deletedEvent);
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      return c.json({ error: "Failed to delete event" }, 500);
-    }
-  });
+        return c.json(deletedEvent);
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        return c.json({ error: "Failed to delete event" }, 500);
+      }
+    },
+  );
 
 export default app;

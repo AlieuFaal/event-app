@@ -34,7 +34,7 @@ export default function FilterEvents() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Toggle variant="outline" className="cursor-pointer w-fit hover:scale-110 shadow-lg">
+				<Toggle variant="outline" className="cursor-pointer w-fit hover:scale-105 shadow-lg">
 					<Filter className="h-4 w-4" />
 				</Toggle>
 			</DropdownMenuTrigger>

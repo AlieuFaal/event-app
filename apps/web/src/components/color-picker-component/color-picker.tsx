@@ -45,7 +45,7 @@ export function ColorPicker({ color, onChange }: ColorPickerProps) {
                                         // setOpen(false)
                                     }}
                                     className={cn(
-                                        "h-10 w-10 rounded-md border-2 transition-all hover:scale-110",
+                                        "h-10 w-10 rounded-md border-2 transition-all hover:scale-105",
                                         color === presetColor.value ? "border-foreground ring-2 ring-ring ring-offset-2" : "border-border",
                                     )}
                                     style={{ backgroundColor: presetColor.value }}

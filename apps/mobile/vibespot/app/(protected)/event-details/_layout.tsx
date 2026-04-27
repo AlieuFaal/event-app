@@ -1,6 +1,4 @@
-import { Stack, Tabs } from 'expo-router';
-import { View, Text, Pressable } from 'react-native';
-import { CircleUser, House, ListMusic, MapPinned, Plus } from 'lucide-react-native';
+import { Stack, } from 'expo-router';
 
 export default function EventDetailsLayout() {
     return (

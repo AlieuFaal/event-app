@@ -179,7 +179,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                     {mapRef.current && (
                         <div className='flex flex-row gap-1.5 md:gap-2 bg-background/60 backdrop-blur-sm p-1.5 md:p-2 rounded-full shadow-lg'>
                             <div>
-                                <Button size="icon" className='hover:scale-110 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
+                                <Button size="icon" className='hover:scale-105 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
                                     mapRef.current?.setConfig('basemap', {
                                         lightPreset: "dawn", colorMotorways: "#2e89ff",
                                         showPedestrianRoads: true,
@@ -191,7 +191,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                                 </Button>
                             </div>
                             <div>
-                                <Button size="icon" className='hover:scale-110 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
+                                <Button size="icon" className='hover:scale-105 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
                                     mapRef.current?.setConfig('basemap', {
                                         lightPreset: "day", colorMotorways: "#2e89ff",
                                         showPedestrianRoads: true,
@@ -203,7 +203,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                                 </Button>
                             </div>
                             <div>
-                                <Button size="icon" className='hover:scale-110 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
+                                <Button size="icon" className='hover:scale-105 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
                                     mapRef.current?.setConfig('basemap', {
                                         lightPreset: "dusk", colorMotorways: "#2e89ff",
                                         showPedestrianRoads: true,
@@ -215,7 +215,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                                 </Button>
                             </div>
                             <div>
-                                <Button size="icon" className='hover:scale-110 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
+                                <Button size="icon" className='hover:scale-105 rounded-full h-8 w-8 md:h-10 md:w-10 cursor-pointer' onClick={() => {
                                     mapRef.current?.setConfig('basemap', {
                                         lightPreset: "night", colorMotorways: "#2e89ff",
                                         showPedestrianRoads: true,

@@ -1,9 +1,6 @@
-import {
-  useQuery,
-} from '@tanstack/react-query'
+
 import { EventCard1 } from "@/components/event-components/event-card-1";
-import { apiClient } from "@/lib/api-client";
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useRef, useState } from "react";
 import Animated from "react-native-reanimated";

@@ -1,6 +1,6 @@
 import { PlaceholderImage1, PlaceholderImage2, PlaceholderImage3, PlaceholderImage4, PlaceholderImage5, PlaceholderImage6 } from "@/assets";
 import { Card, CardContent, CardDescription, CardTitle } from "../ui/card";
-import { Pressable, Text, Image } from "react-native";
+import { Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as Haptics from 'expo-haptics';
 import type { Event } from "@vibespot/database/schema";

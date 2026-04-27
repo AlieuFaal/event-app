@@ -398,7 +398,7 @@ export default function FavoriteEventCard({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleFlyTo(favoriteEvent)}
-                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-110 hover:cursor-pointer dark:text-white"
+                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-105 hover:cursor-pointer dark:text-white"
                   style={{
                     borderColor: accent.borderSoft,
                     backgroundColor: accent.bgSoft,
@@ -455,7 +455,7 @@ export default function FavoriteEventCard({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleGoToProfile(favoriteEvent)}
-                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-110 hover:cursor-pointer dark:text-white"
+                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-105 hover:cursor-pointer dark:text-white"
                   style={{
                     borderColor: accent.borderSoft,
                     backgroundColor: accent.bgSoft,

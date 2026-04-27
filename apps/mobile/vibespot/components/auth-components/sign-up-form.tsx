@@ -9,7 +9,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { useRouter } from 'expo-router';
-import * as React from 'react';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { authClient } from '@/lib/auth-client';

@@ -6,7 +6,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn/ui/avatar";
-import { Camera, Calendar, Mail, MapPin, Users } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Users, User2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import type { User } from "@vibespot/database/schema";
 import { FollowersDialog } from "./dialogs/followers";
 import { FollowingsDialog } from "./dialogs/followings";
 import { FollowUserListItem } from "@/services/user-service";
+import { useRouter } from "@tanstack/react-router";
 
 interface ProfileHeaderProps {
   currentUser: User;
@@ -33,6 +34,7 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,6 +49,7 @@ export default function ProfileHeader({
         await authClient.updateUser({
           image: await convertImageToBase64(file),
         });
+        await router.invalidate();
         toast.success(m.toast_image_upload_success());
       } catch (error) {
         console.error("Failed to upload image:", error);
@@ -84,6 +87,10 @@ export default function ProfileHeader({
       <CardContent className="p-6">
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           <div className="relative">
+            {/*<div className="inline-flex relative -top-5 -left-2 items-center bg-primary/10 px-4 py-1 rounded-full gap-2 border-primary/30 border text-xs uppercase tracking-[0.18em] text-primary">
+              <User2 size={18} />
+              Profile
+            </div>*/}
             <Avatar className="h-32 w-32">
               <AvatarImage src={currentUser?.image!} alt="Profile" />
               <AvatarFallback className="text-2xl">

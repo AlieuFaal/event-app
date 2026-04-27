@@ -125,11 +125,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
 				{event.userId !== session?.data?.user.id ? null : (
 					<div className="flex justify-end gap-2">
 						<AddEditEventDialog event={event}>
-							<Button variant="outline" className="hover:scale-110 cursor-pointer">{m.edit_event_button()}</Button>
+							<Button variant="outline" className="hover:scale-105 cursor-pointer">{m.edit_event_button()}</Button>
 						</AddEditEventDialog>
 						<Button
 							variant="destructive"
-							className="hover:scale-110 cursor-pointer"
+							className="hover:scale-105 cursor-pointer"
 							onClick={() => {
 								handleOpenDeleteDialog();
 							}}
@@ -153,7 +153,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						<ModalFooter className="flex justify-center-safe gap-4 mt-4">
 							<Button
 								variant="outline"
-								className="hover:scale-110 cursor-pointer"
+								className="hover:scale-105 cursor-pointer"
 								onClick={() => {
 									deleteEvent(event.id, true);
 								}}
@@ -162,7 +162,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
 							</Button>
 							<Button
 								variant="outline"
-								className="hover:scale-110 cursor-pointer"
+								className="hover:scale-105 cursor-pointer"
 								onClick={() => {
 									deleteEvent(event.id, false);
 								}}

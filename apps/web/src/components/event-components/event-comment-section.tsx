@@ -118,7 +118,7 @@ export default function CommentSection({ event, users, currentUser }: { event: E
                                     <Button
                                         type="submit"
                                         size="icon"
-                                        className="mt-0.5 rounded-full border hover:cursor-pointer hover:scale-110 transition-transform"
+                                        className="mt-0.5 rounded-full border hover:cursor-pointer hover:scale-105 transition-transform"
                                         style={{
                                             borderColor: accent.borderSoft,
                                             backgroundColor: accent.bgSoft,

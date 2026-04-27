@@ -399,7 +399,7 @@ export default function EventCard({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleFlyTo(event)}
-                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-110 hover:cursor-pointer dark:text-white"
+                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-105 hover:cursor-pointer dark:text-white"
                   style={{
                     borderColor: accent.borderSoft,
                     backgroundColor: accent.bgSoft,
@@ -456,7 +456,7 @@ export default function EventCard({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleGoToProfile(event)}
-                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-110 hover:cursor-pointer dark:text-white"
+                  className="mt-0.5 rounded-full border text-foreground transition-transform hover:scale-105 hover:cursor-pointer dark:text-white"
                   style={{
                     borderColor: accent.borderSoft,
                     backgroundColor: accent.bgSoft,

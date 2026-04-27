@@ -1,12 +1,23 @@
 import { Key, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/shadcn/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/shadcn/ui/card";
 import { Input } from "@/components/shadcn/ui/input";
 import { Label } from "@/components/shadcn/ui/label";
 import { Separator } from "@/components/shadcn/ui/separator";
 import { Switch } from "@/components/shadcn/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/shadcn/ui/tabs";
 import { Textarea } from "@/components/shadcn/ui/textarea";
 import { Badge } from "@/components/shadcn/ui/badge";
 import { authClient } from "@/lib/auth-client";
@@ -20,11 +31,23 @@ import {
 } from "@/components/shadcn/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "@tanstack/react-router";
-import { User, UserForm, userFormSchema, PasswordChangeForm, passwordChangeSchema } from "@vibespot/database/schema";
+import { useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  User,
+  UserForm,
+  userFormSchema,
+  PasswordChangeForm,
+  passwordChangeSchema,
+} from "@vibespot/database/schema";
 import { updateUserDataFn } from "@/services/user-service";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../shadcn/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../shadcn/ui/dialog";
 import React from "react";
 import { m } from "@/paraglide/messages";
 
@@ -32,11 +55,14 @@ interface ProfileContentProps {
   currentUser: User;
 }
 
-export default function ProfileContent({currentUser}: ProfileContentProps) {
+export default function ProfileContent({ currentUser }: ProfileContentProps) {
   const navigate = useNavigate();
+  const router = useRouter();
 
   const [switchState, setSwitchState] = React.useState(
-    typeof window !== 'undefined' ? localStorage.getItem('userRole') === 'artist' : false
+    typeof window !== "undefined"
+      ? localStorage.getItem("userRole") === "artist"
+      : false,
   );
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -56,6 +82,7 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
     console.log("Submitting data:", data);
     try {
       await updateUserDataFn({ data });
+      await router.invalidate();
       toast.success(m.toast_update_user_success());
     } catch (error) {
       console.error("Failed to update user:", error);
@@ -84,6 +111,8 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
         toast.error(error.message);
         return;
       }
+      
+      await router.invalidate();
       toast.success(m.toast_passwordchange_success());
       passwordForm.reset();
     } catch (error) {
@@ -94,10 +123,10 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
 
   const handleRoleToggle = async (checked: boolean): Promise<void> => {
     setSwitchState(checked);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('userRole', checked ? 'artist' : 'user');
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userRole", checked ? "artist" : "user");
     }
-    console.log('User role set to:', checked ? 'artist' : 'user');
+    console.log("User role set to:", checked ? "artist" : "user");
     const newRole: "artist" | "user" = checked ? "artist" : "user";
 
     try {
@@ -107,10 +136,11 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
         phone: currentUser?.phone ?? "",
         location: currentUser?.location ?? "",
         bio: currentUser?.bio ?? "",
-        role: newRole
+        role: newRole,
       };
 
       await updateUserDataFn({ data: updatedUserData });
+      await router.invalidate();
       toast.success(`${m.toast_update_userrole_success()} ${newRole}!`);
     } catch (error) {
       console.error(`Failed to update user role to ${newRole}:`, error);
@@ -121,11 +151,13 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
 
   return (
     <Tabs defaultValue="personal" className="space-y-6 mt-8">
-      <TabsList className="grid w-full grid-cols-4 not-md:grid-cols-2 gap-2">
+      <TabsList className="grid w-full grid-cols-4 not-md:grid-cols-2 gap-2 bg-gray-300/50 dark:bg-secondary/50">
         <TabsTrigger value="personal">{m.tabs_personal()}</TabsTrigger>
         <TabsTrigger value="account">{m.tabs_account()}</TabsTrigger>
         <TabsTrigger value="security">{m.tabs_security()}</TabsTrigger>
-        <TabsTrigger value="notifications">{m.tabs_notifications()}</TabsTrigger>
+        <TabsTrigger value="notifications">
+          {m.tabs_notifications()}
+        </TabsTrigger>
       </TabsList>
 
       {/* Personal Information */}
@@ -136,7 +168,11 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
             <CardDescription>{m.personal_info_description()}</CardDescription>
           </CardHeader>
           <Form {...form}>
-            <form id="user-form" method="post" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              id="user-form"
+              method="post"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
                   <FormField
@@ -158,31 +194,12 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                       </FormItem>
                     )}
                   />
-                  {/* <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="email">
-                          Email
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            id="email"
-                            placeholder="ludwig.skoeld@example.com"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
                   <FormField
                     control={form.control}
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="phone" >
+                        <FormLabel htmlFor="phone">
                           {m.personal_phone_label()}
                         </FormLabel>
                         <FormControl>
@@ -202,7 +219,7 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="location" >
+                        <FormLabel htmlFor="location">
                           {m.personal_location_label()}
                         </FormLabel>
                         <FormControl>
@@ -222,7 +239,7 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                     name="bio"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="bio" >
+                        <FormLabel htmlFor="bio">
                           {m.personal_bio_label()}
                         </FormLabel>
                         <FormControl>
@@ -239,7 +256,16 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                       </FormItem>
                     )}
                   />
-                  <Button form="user-form" type="submit" disabled={!form.formState.isDirty || !form.formState.isValid} onClick={form.handleSubmit(onSubmit)}>{m.button_save()}</Button>
+                  <Button
+                    form="user-form"
+                    type="submit"
+                    disabled={
+                      !form.formState.isDirty || !form.formState.isValid
+                    }
+                    onClick={form.handleSubmit(onSubmit)}
+                  >
+                    {m.button_save()}
+                  </Button>
                 </div>
               </CardContent>
             </form>
@@ -258,9 +284,14 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base">{m.account_status()}</Label>
-                <p className="text-muted-foreground text-sm">{m.account_status_active()}</p>
+                <p className="text-muted-foreground text-sm">
+                  {m.account_status_active()}
+                </p>
               </div>
-              <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
+              <Badge
+                variant="outline"
+                className="border-green-200 bg-green-50 text-green-700"
+              >
                 {m.account_status_badge()}
               </Badge>
             </div>
@@ -280,13 +311,18 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                   {m.account_switch_role_description()}
                 </p>
               </div>
-              <Switch onCheckedChange={handleRoleToggle} checked={switchState} />
+              <Switch
+                onCheckedChange={handleRoleToggle}
+                checked={switchState}
+              />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base">{m.account_data_export()}</Label>
-                <p className="text-muted-foreground text-sm">{m.account_data_export_description()}</p>
+                <p className="text-muted-foreground text-sm">
+                  {m.account_data_export_description()}
+                </p>
               </div>
               <Button variant="outline">{m.account_data_export()}</Button>
             </div>
@@ -295,8 +331,12 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
 
         <Card className="border-destructive/50">
           <CardHeader>
-            <CardTitle className="text-destructive">{m.account_danger_zone()}</CardTitle>
-            <CardDescription>{m.account_danger_zone_description()}</CardDescription>
+            <CardTitle className="text-destructive">
+              {m.account_danger_zone()}
+            </CardTitle>
+            <CardDescription>
+              {m.account_danger_zone_description()}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -307,24 +347,32 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                 </p>
               </div>
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <Button variant="destructive" onClick={() => setDialogOpen(true)}>
+                <Button
+                  variant="destructive"
+                  onClick={() => setDialogOpen(true)}
+                >
                   <Trash2 className="mr-2 h-4 w-4" />
                   {m.account_delete()}
                 </Button>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>{m.delete_modal_title()}</DialogTitle>
-                    <DialogDescription>{m.delete_modal_description()}</DialogDescription>
-                    <Button variant="destructive" onClick={async () => {
-                      try {
-                        await authClient.deleteUser({ callbackURL: "/" });
-                        toast.success(m.toast_delete_account_success());
-                        navigate({ to: "/" });
-                      } catch (error) {
-                        console.error("Failed to delete account:", error);
-                        toast.error(m.toast_delete_account_error());
-                      }
-                    }}>
+                    <DialogDescription>
+                      {m.delete_modal_description()}
+                    </DialogDescription>
+                    <Button
+                      variant="destructive"
+                      onClick={async () => {
+                        try {
+                          await authClient.deleteUser({ callbackURL: "/" });
+                          toast.success(m.toast_delete_account_success());
+                          navigate({ to: "/" });
+                        } catch (error) {
+                          console.error("Failed to delete account:", error);
+                          toast.error(m.toast_delete_account_error());
+                        }
+                      }}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       {m.button_delete()}
                     </Button>
@@ -348,11 +396,16 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">{m.label_password()}</Label>
-                  <p className="text-muted-foreground text-sm">{m.security_password_description()}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {m.security_password_description()}
+                  </p>
                 </div>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <div className="flex items-center justify-end">
-                    <Button variant="outline" onClick={() => setDialogOpen(true)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogOpen(true)}
+                    >
                       <Key className="mr-2 h-4 w-4" />
                       {m.security_change_password_button()}
                     </Button>
@@ -361,11 +414,17 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                     <DialogHeader>
                       <DialogTitle>Change Password</DialogTitle>
                       <DialogDescription>
-                        Enter your current password and a new password to change your password.
+                        Enter your current password and a new password to change
+                        your password.
                       </DialogDescription>
                     </DialogHeader>
                     <Form {...passwordForm}>
-                      <form id="password-form" method="post" className="grid gap-4 py-4" onSubmit={passwordForm.handleSubmit(onPasswordchange)}>
+                      <form
+                        id="password-form"
+                        method="post"
+                        className="grid gap-4 py-4"
+                        onSubmit={passwordForm.handleSubmit(onPasswordchange)}
+                      >
                         <div className="grid gap-2">
                           <FormField
                             control={passwordForm.control}
@@ -432,9 +491,14 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                           form="password-form"
                           type="submit"
                           className="mt-4"
-                          disabled={!passwordForm.formState.isValid || passwordForm.formState.isSubmitting}
+                          disabled={
+                            !passwordForm.formState.isValid ||
+                            passwordForm.formState.isSubmitting
+                          }
                         >
-                          {passwordForm.formState.isSubmitting ? "Updating..." : "Update Password"}
+                          {passwordForm.formState.isSubmitting
+                            ? "Updating..."
+                            : "Update Password"}
                         </Button>
                       </form>
                     </Form>
@@ -450,7 +514,10 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
+                  <Badge
+                    variant="outline"
+                    className="border-green-200 bg-green-50 text-green-700"
+                  >
                     {m.security_enabled_badge()}
                   </Badge>
                   <Button variant="outline" size="sm">
@@ -491,14 +558,18 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
         <Card>
           <CardHeader>
             <CardTitle>{m.notifications_info_title()}</CardTitle>
-            <CardDescription>{m.notifications_info_description()}</CardDescription>
+            <CardDescription>
+              {m.notifications_info_description()}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Email Notifications</Label>
-                  <p className="text-muted-foreground text-sm">Receive notifications via email</p>
+                  <p className="text-muted-foreground text-sm">
+                    Receive notifications via email
+                  </p>
                 </div>
                 <Switch defaultChecked />
               </div>
@@ -546,6 +617,6 @@ export default function ProfileContent({currentUser}: ProfileContentProps) {
           </CardContent>
         </Card>
       </TabsContent>
-    </Tabs >
+    </Tabs>
   );
 }

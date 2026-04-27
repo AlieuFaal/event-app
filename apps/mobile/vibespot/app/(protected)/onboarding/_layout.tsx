@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { PortalHost } from "@rn-primitives/portal";
 import { View } from "react-native";
-import { authClient } from "@/lib/auth-client";
 
 
 export default function OnboardingLayout() {

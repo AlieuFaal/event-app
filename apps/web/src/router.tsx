@@ -32,7 +32,7 @@ export const createRouter = () =>
 					</p>
 					<div className="mt-6">
 						<Button
-							className="hover:scale-110 hover:bg-secondary transition-transform rounded-2xl"
+							className="hover:scale-105 hover:bg-secondary transition-transform rounded-2xl"
 							variant="outline"
 						>
 							<Link to={"/"}>Return home</Link>
@@ -49,7 +49,7 @@ export const createRouter = () =>
 					<p className="mt-2 text-lg text-red-600">{error.message}</p>
 					<div className="mt-6">
 						<Button
-							className="hover:scale-110 hover:bg-secondary transition-transform rounded-2xl"
+							className="hover:scale-105 hover:bg-secondary transition-transform rounded-2xl"
 							variant="outline"
 						>
 							<Link to={"/"}>Return home</Link>

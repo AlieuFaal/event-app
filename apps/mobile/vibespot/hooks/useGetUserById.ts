@@ -1,6 +1,4 @@
-import { apiClient } from "@/lib/api-client";
-import { useQuery } from "@tanstack/react-query";
-import { type User } from "@vibespot/validation/user";
+
 
 // export const useGetUserById = (id: string) => {
 //   const { isPending, error, data } = useQuery<User, Error>({

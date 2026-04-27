@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
 import { Button } from "../ui/button";
 import { ArrowLeft, ArrowRight, CircleCheck } from "lucide-react-native";
-import { use } from "react";
 
 interface Props {
     currentStep: number;

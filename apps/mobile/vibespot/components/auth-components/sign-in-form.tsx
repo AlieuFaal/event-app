@@ -10,7 +10,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
-import * as React from 'react';
 import { Pressable, View } from 'react-native';
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';

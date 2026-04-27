@@ -43,7 +43,7 @@ export function Settings() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon" className="shadow-lg hover:scale-110">
+				<Button variant="outline" size="icon" className="shadow-lg hover:scale-105">
 					<SettingsIcon />
 				</Button>
 			</DropdownMenuTrigger>

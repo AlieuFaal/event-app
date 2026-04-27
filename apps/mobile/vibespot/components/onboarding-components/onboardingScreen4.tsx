@@ -1,4 +1,4 @@
-import React, { } from "react";
+
 import { View } from "@rn-primitives/slot";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";

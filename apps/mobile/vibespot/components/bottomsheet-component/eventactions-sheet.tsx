@@ -96,7 +96,7 @@ export function EventActionsSheet({
 
 				<View className="">
 					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 						onPress={handleViewDetails}
 					>
 						<ReceiptText size={24} className="text-gray-900 dark:text-white" />
@@ -106,7 +106,7 @@ export function EventActionsSheet({
 					</Pressable>
 
 					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 						onPress={handleSaveEvent}
 					>
 						<Heart
@@ -120,7 +120,7 @@ export function EventActionsSheet({
 					</Pressable>
 
 					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 						onPress={handleAddEventToCalendar}
 					>
 						<CalendarIcon size={24} className="text-gray-900 dark:text-white" />
@@ -130,7 +130,7 @@ export function EventActionsSheet({
 					</Pressable>
 
 					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 						onPress={handleViewOnMap}
 					>
 						<MapPin size={24} className="text-gray-900 dark:text-white" />
@@ -140,7 +140,7 @@ export function EventActionsSheet({
 					</Pressable>
 
 					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 						onPress={handleShareEvent}
 					>
 						<Share size={24} className="text-gray-900 dark:text-white" />
@@ -151,7 +151,7 @@ export function EventActionsSheet({
 
 					{selectedEvent?.userId === session.data?.user?.id && (
 						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 							onPress={() =>
 								Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 							}
@@ -165,7 +165,7 @@ export function EventActionsSheet({
 
 					{selectedEvent?.userId === session.data?.user?.id && (
 						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200"
+							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
 							onPress={() => {
 								handleDeleteEvent();
 								bottomSheetRef.current?.close();
@@ -180,7 +180,7 @@ export function EventActionsSheet({
 
 					{selectedEvent?.userId !== session.data?.user?.id && (
 						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-110 mt-5 transition-all duration-200 mb-5"
+							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200 mb-5"
 							onPress={() =>
 								Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 							}

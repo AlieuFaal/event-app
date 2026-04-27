@@ -1,4 +1,4 @@
-import React, { } from "react";
+
 import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/api-client";
 import { View } from "@rn-primitives/slot";

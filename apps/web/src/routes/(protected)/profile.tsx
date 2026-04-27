@@ -1,6 +1,5 @@
 import ProfileContent from "@/components/profile-components/profile-content";
 import ProfileHeader from "@/components/profile-components/profile-header";
-import { Card } from "@/components/shadcn/ui/card";
 import { Spinner } from "@/components/shadcn/ui/shadcn-io/spinner";
 import {
   getContextFollowersFn,
@@ -48,18 +47,16 @@ function ProfileComponent() {
         </div>
       }
     >
-      <Card className="bg-card text-card-foreground shadow-lg border-1 my-5 w-5/6 mx-auto min-w-sm">
-        <div className="mx-10 my-5">
-          <ProfileHeader
-            followers={followers}
-            following={following}
-            followersCount={followersCount}
-            followingCount={followingCount}
-            currentUser={currentUser}
-          />
-          <ProfileContent currentUser={currentUser} />
-        </div>
-      </Card>
+      <div className="p-8">
+        <ProfileHeader
+          followers={followers}
+          following={following}
+          followersCount={followersCount}
+          followingCount={followingCount}
+          currentUser={currentUser}
+        />
+        <ProfileContent currentUser={currentUser} />
+      </div>
     </ClientOnly>
   );
 }
