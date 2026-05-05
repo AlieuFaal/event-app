@@ -52,8 +52,6 @@ export function GenreSelection({ form }: Props) {
         }
     };
 
-    const selectedGenre = form.watch('genre');
-
     return (
         <View className='flex-1 bg-transparent'>
             <Controller

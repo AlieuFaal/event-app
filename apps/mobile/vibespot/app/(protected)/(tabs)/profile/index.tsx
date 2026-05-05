@@ -30,7 +30,22 @@ export default function Profile() {
       <View className="flex-1 p-4">
         {/* <Text className="text-3xl text-gray-900 dark:text-white">Profile</Text> */}
 
-        <ProfileCard key={user?.id} user={user} />
+        <ProfileCard
+          key={user?.id}
+          user={user}
+          onPressFollowers={() =>
+            router.push({
+              pathname: "/profile/views/Connections",
+              params: { tab: "followers" },
+            })
+          }
+          onPressFollowing={() =>
+            router.push({
+              pathname: "/profile/views/Connections",
+              params: { tab: "following" },
+            })
+          }
+        />
 
         <View>
           <Button

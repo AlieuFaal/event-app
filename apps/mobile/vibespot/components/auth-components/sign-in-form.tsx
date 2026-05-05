@@ -66,7 +66,7 @@ export function SignInForm() {
                                     autoCapitalize="none"
                                     returnKeyType="next"
                                     submitBehavior="submit"
-                                    className='p-6 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='p-6 h-fit rounded-full bg-white dark:bg-white text-gray-900 dark:text-gray-900'
                                     placeholderTextColor="#6b7280"
                                     value={email}
                                     onChangeText={setEmail}
@@ -78,13 +78,13 @@ export function SignInForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
-                                    className='p-6 h-fit rounded-3xl bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='p-6 h-fit rounded-full bg-white dark:bg-white text-gray-900 dark:text-gray-900'
                                     placeholderTextColor="#6b7280"
                                     value={password}
                                     onChangeText={setPassword}
                                 />
                             </View>
-                            <Button className="p-6 h-fit bg-primary rounded-3xl mt-3" onPress={handleSignIn} disabled={loading}>
+                            <Button className="p-6 h-fit bg-primary rounded-full mt-3" onPress={handleSignIn} disabled={loading}>
                                 <Text>Log In</Text>
                             </Button>
                             <View className="mt-5">

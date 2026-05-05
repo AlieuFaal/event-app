@@ -5,6 +5,7 @@ import {
   onbFormUpdateSchema,
   roleUpdateSchema,
   eq,
+  userFormSchema,
 } from "@vibespot/database";
 import { type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
@@ -16,7 +17,7 @@ const userIdParamSchema = z.object({
 
 const sanitizeUserForViewer = (
   user: typeof schema.user.$inferSelect,
-  viewerId: string
+  viewerId: string,
 ) => {
   if (user.id === viewerId) {
     return user;
@@ -72,6 +73,54 @@ const app = new Hono<{ Variables: AuthType }>()
 
     return c.json(sanitizeUserForViewer(userById, sessionUserId));
   })
+  .get("/:id/followers", zValidator("param", userIdParamSchema), async (c) => {
+    const sessionUserId = c.var.user?.id;
+    const { id: userId } = c.req.valid("param");
+
+    if (!sessionUserId) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const followers = await db
+      .select({
+        id: schema.user.id,
+        name: schema.user.name,
+        image: schema.user.image,
+        bio: schema.user.bio,
+      })
+      .from(schema.followersTable)
+      .innerJoin(
+        schema.user,
+        eq(schema.followersTable.followerId, schema.user.id),
+      )
+      .where(eq(schema.followersTable.userId, userId));
+
+    return c.json(followers);
+  })
+  .get("/:id/following", zValidator("param", userIdParamSchema), async (c) => {
+    const sessionUserId = c.var.user?.id;
+    const { id: userId } = c.req.valid("param");
+
+    if (!sessionUserId) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const following = await db
+      .select({
+        id: schema.user.id,
+        name: schema.user.name,
+        image: schema.user.image,
+        bio: schema.user.bio,
+      })
+      .from(schema.followingTable)
+      .innerJoin(
+        schema.user,
+        eq(schema.followingTable.followingId, schema.user.id),
+      )
+      .where(eq(schema.followingTable.userId, userId));
+
+    return c.json(following);
+  })
   .put(
     "/updateroletouser/:id",
     zValidator("param", userIdParamSchema),
@@ -96,7 +145,7 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(result[0]);
-    }
+    },
   )
   .put(
     "/updateroletoartist/:id",
@@ -122,7 +171,7 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(result[0]);
-    }
+    },
   )
   .put(
     "/updaterole/:id",
@@ -150,7 +199,7 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(result[0]);
-    }
+    },
   )
   .put(
     "/updateonboardinginfo/:id",
@@ -179,7 +228,39 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(result[0]);
-    }
+    },
+  )
+  .put(
+    "/updateprofile/:id",
+    zValidator("param", userIdParamSchema),
+    zValidator("json", userFormSchema),
+    async (c) => {
+      const sessionUserId = c.var.user?.id;
+      const { id: userId } = c.req.valid("param");
+      const data = c.req.valid("json");
+
+      if (!sessionUserId) {
+        return c.json({ error: "User not authenticated" }, 401);
+      }
+
+      if (sessionUserId !== userId) {
+        return c.json({ error: "Forbidden" }, 403);
+      }
+
+      const result = await db
+        .update(schema.user)
+        .set({
+          name: data.name,
+          phone: data.phone,
+          location: data.location,
+          bio: data.bio,
+          image: data.image,
+        })
+        .where(eq(schema.user.id, sessionUserId))
+        .returning();
+
+      return c.json(result[0]);
+    },
   );
 
 export default app;

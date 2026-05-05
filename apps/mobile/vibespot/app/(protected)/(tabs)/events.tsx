@@ -76,6 +76,7 @@ export default function Events() {
 					refreshControl={
 						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 					}
+					contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
 				>
 					{data
 						?.sort(

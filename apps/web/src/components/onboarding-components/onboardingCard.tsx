@@ -97,7 +97,7 @@ function View1({ isSelected, setIsSelected, setView1, setView2, setView3 }: { is
                         <Separator />
                     </div>
                     <div className="flex flex-row justify-between mt-10">
-                        <Button className="hover:scale-105 transition-transform" onClick={() => toast.warning("No going back from here :)")}>
+                        <Button className="hover:scale-90 transition-transform bg-transparent active:opacity-50 dark:bg-transparent dark:active:opacity-50" onClick={() => toast.warning("No going back from here :)")}>
                             <ArrowLeft /> {m.onb_back_Button()}
                         </Button>
 

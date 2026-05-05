@@ -3,8 +3,16 @@ import EventCard2 from "@/components/event-components/event-card-2";
 import { Separator } from "@/components/ui/separator";
 import { useGetFavoriteEvents } from "@/hooks/useGetFavoriteEvents";
 import type { Event } from "@vibespot/database";
+import { useRouter } from "expo-router";
+import { CalendarDays, Plus } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, RefreshControl, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -13,6 +21,7 @@ type FavoriteEventRow = { event: Event };
 
 export default function SavedEvents() {
   const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -21,6 +30,10 @@ export default function SavedEvents() {
   }, []);
 
   const { isPending, error, data } = useGetFavoriteEvents();
+
+  const onCreatePress = () => {
+    router.navigate("/(protected)/(tabs)/events");
+  };
 
   if (isPending) {
     return (
@@ -35,15 +48,74 @@ export default function SavedEvents() {
     );
   }
 
-  if (!data) {
+  if (!data || data.length === 0) {
     return (
-      <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-gray-600 dark:text-gray-300">
-            No events available.
-          </Text>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 32,
+        }}
+      >
+        <View
+          className="bg-gray-100 dark:bg-gray-900"
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 20,
+          }}
+        >
+          <CalendarDays size={36} strokeWidth={1.5} />
         </View>
-      </SafeAreaView>
+
+        <Text
+          className="text-gray-600 dark:text-gray-300"
+          style={{
+            fontSize: 18,
+            fontWeight: "700",
+            marginBottom: 8,
+            textAlign: "center",
+          }}
+        >
+          No favorites yet
+        </Text>
+
+        <Text
+          className="text-gray-600 dark:text-gray-300"
+          style={{
+            fontSize: 14,
+            textAlign: "center",
+            lineHeight: 20,
+            marginBottom: 28,
+          }}
+        >
+          Events you save will appear here. Tap the button below to see more
+          events you might like.
+        </Text>
+
+        <Pressable
+          onPress={onCreatePress}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            backgroundColor: "#8b5cf6",
+            borderRadius: 12,
+            paddingHorizontal: 20,
+            paddingVertical: 12,
+          }}
+          className="active:opacity-80"
+        >
+          <Plus size={18} color="#ffffff" strokeWidth={2.5} />
+          <Text style={{ fontSize: 14, fontWeight: "700", color: "#ffffff" }}>
+            Check out upcoming events
+          </Text>
+        </Pressable>
+      </View>
     );
   }
 

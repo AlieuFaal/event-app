@@ -26,6 +26,21 @@ const app = new Hono<{ Variables: AuthType }>()
 
     return c.json(events);
   })
+  .get("/my", async (c) => {
+    const userId = c.var.user?.id;
+
+    if (!userId) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const events = await db
+      .select()
+      .from(schema.event)
+      .where(eq(schema.event.userId, userId))
+      .orderBy(schema.event.startDate);
+
+    return c.json(events);
+  })
   .get("/:id", zValidator("param", z.object({ id: z.uuid() })), async (c) => {
     const { id: eventId } = c.req.valid("param");
     const userId = c.var.user?.id;

@@ -132,6 +132,11 @@ export default function EventDetails() {
     }
   }, [eventId, mutation]);
 
+  const goBack = () => {
+    Haptics.impactAsync();
+    router.back();
+  };
+
   if (isPending) {
     return (
       <SafeAreaView
@@ -181,9 +186,12 @@ export default function EventDetails() {
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={["top"]}>
       <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <Pressable onPress={() => router.back()} className="mr-3">
+        <Button
+          onPress={goBack}
+          className="mr-3 bg-transparent active:opacity-50 active:scale-90 p-4 dark:bg-transparent dark:active:opacity-50"
+        >
           <ArrowLeft size={24} color="#8b5cf6" />
-        </Pressable>
+        </Button>
         <Text className="text-xl font-semibold flex-1 text-gray-900 dark:text-white">
           Event Details
         </Text>

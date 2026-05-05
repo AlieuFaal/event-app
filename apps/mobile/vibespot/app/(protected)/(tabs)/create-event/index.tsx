@@ -211,7 +211,7 @@ export default function CreateEvents() {
           </View>
         )}
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent' }} keyboardDismissMode="interactive">
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent', paddingBottom: 80 }} keyboardDismissMode="interactive">
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}

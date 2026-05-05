@@ -76,7 +76,7 @@ export function SignUpForm() {
                                     placeholder="First Name"
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
-                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900 rounded-full'
                                     placeholderTextColor="#6b7280"
                                     value={firstName}
                                     onChangeText={setFirstName}
@@ -88,7 +88,7 @@ export function SignUpForm() {
                                     placeholder="Last Name"
                                     autoCapitalize="sentences"
                                     returnKeyType="next"
-                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900 rounded-full'
                                     placeholderTextColor="#6b7280"
                                     value={lastName}
                                     onChangeText={setLastName}
@@ -102,7 +102,7 @@ export function SignUpForm() {
                                     autoComplete="email"
                                     autoCapitalize="none"
                                     returnKeyType="next"
-                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900 rounded-full'
                                     placeholderTextColor="#6b7280"
                                     value={email}
                                     onChangeText={setEmail}
@@ -114,7 +114,7 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Password'
-                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900 rounded-full'
                                     placeholderTextColor="#6b7280"
                                     value={password}
                                     onChangeText={setPassword}
@@ -126,13 +126,13 @@ export function SignUpForm() {
                                     secureTextEntry
                                     returnKeyType="send"
                                     placeholder='Confirm Password'
-                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900'
+                                    className='h-fit p-4 bg-white dark:bg-white text-gray-900 dark:text-gray-900 rounded-full'
                                     placeholderTextColor="#6b7280"
                                     value={passwordConfirmation}
                                     onChangeText={setPasswordConfirmation}
                                 />
                             </View>
-                            <Button className="w-fit h-fit p-8" onPress={handleSignUp} disabled={loading}>
+                            <Button className="w-fit h-fit p-6" onPress={handleSignUp} disabled={loading}>
                                 <Text>Continue</Text>
                             </Button>
                         </View>

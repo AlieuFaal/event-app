@@ -62,13 +62,13 @@ export default function Home() {
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
       <View className="flex-1">
         <View className='h-fit mt-4'>
-          <Text className="text-left mx-11 text-2xl font-semibold text-gray-900 dark:text-white">Upcoming Event</Text>
+          <Text className="text-left mx-11 text-2xl font-semibold text-gray-900 dark:text-white">Happening Now</Text>
         </View>
         {data.slice(0, 1).map(event => (
           <UpcomingEventCard key={event.id} event={event} onLongPress={() => openSheet(event)} />
         ))}
         <View className="flex flex-row mt-10 w-11/12 mx-auto ml-11 h-fit">
-          <Text className="text-2xl font-semibold text-center items-start justify-start text-gray-900 dark:text-white">Happening Now</Text>
+          <Text className="text-2xl font-semibold text-center items-start justify-start text-gray-900 dark:text-white">Upcoming Events</Text>
         </View>
         <AnimatedScrollView horizontal={true} showsHorizontalScrollIndicator={false} className={"px-9 py-3"} contentContainerStyle={{ columnGap: 25 }} >
           {data.slice(0, 5).map((event) => (
