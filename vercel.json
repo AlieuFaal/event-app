@@ -4,12 +4,6 @@
   "outputDirectory": "apps/web/dist/client",
   "installCommand": "bun install --frozen-lockfile",
   "framework": null,
-  "functions": {
-    "apps/web/.output/server/index.mjs": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 60
-    }
-  },
   "routes": [
     {
       "src": "/(.*)",
