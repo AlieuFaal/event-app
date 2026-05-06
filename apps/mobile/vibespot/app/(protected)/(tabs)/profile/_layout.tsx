@@ -15,8 +15,10 @@ export default function ProfileLayout() {
           name="views/Connections"
           options={{ gestureEnabled: false }}
         />
+        <Stack.Screen name="views/EditProfile" />
         <Stack.Screen name="views/SavedEvents" />
         <Stack.Screen name="views/UserEvents" />
+        <Stack.Screen name="views/Settings" />
       </Stack>
     </View>
   );

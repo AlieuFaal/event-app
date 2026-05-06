@@ -1,20 +1,23 @@
 import { Tabs, useRouter, usePathname } from "expo-router";
-import { View, Text, Pressable, useColorScheme } from "react-native";
+import { View, Pressable, useColorScheme, Alert } from "react-native";
 import {
-  CircleUser,
   House,
   ListMusic,
   MapPin,
-  MapPinned,
   Plus,
   User,
 } from "lucide-react-native";
+import { authClient } from "@/lib/auth-client";
 
 export default function TabsLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
+
+  const canCreateEvents =
+    session?.user.role === "artist" || session?.user.role === "admin";
 
   const isHome =
     pathname === "/(protected)/(tabs)" ||
@@ -36,7 +39,7 @@ export default function TabsLayout() {
           elevation: 0,
         },
       }}
-      tabBar={({ state, navigation }) => {
+      tabBar={() => {
         return (
           <View className="absolute z-[999] bottom-0 left-0 right-0">
             <View
@@ -80,10 +83,18 @@ export default function TabsLayout() {
 
               {/* Create Event Tab */}
               <Pressable
-                onPress={() =>
-                  router.navigate("/(protected)/(tabs)/create-event")
-                }
-                className="items-center bg-white p-4 mb-1 rounded-full shadow drop-shadow-xl scale-90 active:scale-[0.85]"
+                onPress={() => {
+                  if (!canCreateEvents) {
+                    Alert.alert(
+                      "Artist mode required",
+                      "Switch to Artist mode in Settings to create events.",
+                    );
+                    return;
+                  }
+
+                  router.navigate("/(protected)/(tabs)/create-event");
+                }}
+                className={`items-center bg-white p-4 mb-1 rounded-full shadow drop-shadow-xl scale-90 active:scale-[0.85] ${!canCreateEvents ? "opacity-60" : ""}`}
               >
                 <View className="bg-gray-100 rounded-full shadow-lg drop-shadow-xl scale-150 p-2">
                   <Plus
@@ -143,7 +154,10 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ href: "/" }} />
       <Tabs.Screen name="events" />
-      <Tabs.Screen name="create-event" />
+      <Tabs.Screen
+        name="create-event"
+        options={{ href: canCreateEvents ? undefined : null }}
+      />
       <Tabs.Screen name="map" />
       <Tabs.Screen name="profile" />
     </Tabs>

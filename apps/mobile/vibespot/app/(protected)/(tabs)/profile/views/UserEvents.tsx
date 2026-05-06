@@ -1,6 +1,7 @@
 import { queryClient } from "@/app/_layout";
 import { UserEventCard } from "@/components/event-components/UserEventCard";
 import { useGetUserEvents } from "@/hooks/useGetUserEvents";
+import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/api-client";
 import type { Event } from "@vibespot/database/schema";
 import { useRouter } from "expo-router";
@@ -257,6 +258,9 @@ export default function UserEvents() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { data: session } = authClient.useSession();
+  const canCreateEvents =
+    session?.user.role === "artist" || session?.user.role === "admin";
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -485,9 +489,17 @@ export default function UserEvents() {
       {sections.length === 0 ? (
         <EmptyState
           isDark={isDark}
-          onCreatePress={() =>
-            router.navigate("/(protected)/(tabs)/create-event")
-          }
+          onCreatePress={() => {
+            if (!canCreateEvents) {
+              Alert.alert(
+                "Artist mode required",
+                "Switch to Artist mode in Settings to create events.",
+              );
+              return;
+            }
+
+            router.navigate("/(protected)/(tabs)/create-event");
+          }}
         />
       ) : (
         <SectionList<Event, Section>

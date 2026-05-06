@@ -55,6 +55,11 @@ const app = new Hono<{ Variables: AuthType }>()
       .where(eq(schema.event.id, eventId))
       .limit(1)
       .then((res) => res[0]);
+
+    if (!eventById) {
+      return c.json({ error: "Event not found" }, 404);
+    }
+
     return c.json(eventById);
   })
   .get(
@@ -147,6 +152,21 @@ const app = new Hono<{ Variables: AuthType }>()
 
     if (!userId) {
       return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const sessionUser = await db
+      .select({ role: schema.user.role })
+      .from(schema.user)
+      .where(eq(schema.user.id, userId))
+      .limit(1)
+      .then((result) => result[0]);
+
+    if (!sessionUser) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    if (sessionUser.role !== "artist" && sessionUser.role !== "admin") {
+      return c.json({ error: "Only artists can create events" }, 403);
     }
 
     const startDate = new Date(eventData.startDate);
@@ -278,7 +298,11 @@ const app = new Hono<{ Variables: AuthType }>()
           )
           .returning();
 
-        return c.json(deletedEvent);
+        if (!deletedEvent.length) {
+          return c.json({ error: "Event not found or not owned by user" }, 404);
+        }
+
+        return c.json(deletedEvent[0]);
       } catch (error) {
         console.error("Error deleting event:", error);
         return c.json({ error: "Failed to delete event" }, 500);

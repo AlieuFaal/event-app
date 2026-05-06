@@ -121,6 +121,64 @@ const app = new Hono<{ Variables: AuthType }>()
 
     return c.json(following);
   })
+  .get("/:id/export", zValidator("param", userIdParamSchema), async (c) => {
+    const sessionUserId = c.var.user?.id;
+    const { id: userId } = c.req.valid("param");
+
+    if (!sessionUserId) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    if (sessionUserId !== userId) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+
+    const userById = await db
+      .select()
+      .from(schema.user)
+      .where(eq(schema.user.id, sessionUserId))
+      .limit(1)
+      .then((result) => result[0]);
+
+    if (!userById) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    const ownedEvents = await db
+      .select()
+      .from(schema.event)
+      .where(eq(schema.event.userId, sessionUserId))
+      .orderBy(schema.event.startDate);
+
+    const favoriteEvents = await db
+      .select({
+        favoriteCreatedAt: schema.favoriteEvent.createdAt,
+        eventId: schema.event.id,
+        title: schema.event.title,
+        description: schema.event.description,
+        venue: schema.event.venue,
+        address: schema.event.address,
+        startDate: schema.event.startDate,
+        endDate: schema.event.endDate,
+        genre: schema.event.genre,
+        color: schema.event.color,
+        imageUrl: schema.event.imageUrl,
+        ownerId: schema.event.userId,
+      })
+      .from(schema.favoriteEvent)
+      .innerJoin(schema.event, eq(schema.favoriteEvent.eventId, schema.event.id))
+      .where(eq(schema.favoriteEvent.userId, sessionUserId))
+      .orderBy(schema.favoriteEvent.createdAt);
+
+    return c.json({
+      exportedAt: new Date().toISOString(),
+      user: userById,
+      events: {
+        owned: ownedEvents,
+        favorites: favoriteEvents,
+      },
+    });
+  })
   .put(
     "/updateroletouser/:id",
     zValidator("param", userIdParamSchema),

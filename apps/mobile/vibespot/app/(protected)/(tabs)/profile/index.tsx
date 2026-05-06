@@ -49,8 +49,8 @@ export default function Profile() {
 
         <View>
           <Button
-            variant={"outline"}
-            className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600"
+            variant={`${isDark ? "outline" : "default"}`}
+            className="h-16 mt-4 w-11/12 mx-auto border-primary bg-gray-500/20 dark:bg-gray-900 dark:border-gray-600"
             onPress={() => router.navigate("/profile/views/EditProfile")}
           >
             <View className="absolute left-4">
@@ -67,8 +67,8 @@ export default function Profile() {
 
         <View>
           <Button
-            variant={"outline"}
-            className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600"
+            variant={`${isDark ? "outline" : "default"}`}
+            className="h-16 mt-4 w-11/12 mx-auto border-primary bg-gray-500/20 dark:bg-gray-900 dark:border-gray-600"
             onPress={() => router.navigate("/profile/views/SavedEvents")}
           >
             <View className="absolute left-4">
@@ -85,8 +85,8 @@ export default function Profile() {
 
         <View>
           <Button
-            variant={"outline"}
-            className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600"
+            variant={`${isDark ? "outline" : "default"}`}
+            className="h-16 mt-4 w-11/12 mx-auto border-primary bg-gray-500/20 dark:bg-gray-900 dark:border-gray-600"
             onPress={() => router.navigate("/profile/views/UserEvents")}
           >
             <View className="absolute left-4">
@@ -103,8 +103,8 @@ export default function Profile() {
 
         <View>
           <Button
-            variant={"outline"}
-            className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600"
+            variant={`${isDark ? "outline" : "default"}`}
+            className="h-16 mt-4 w-11/12 mx-auto border-primary bg-gray-500/20 dark:bg-gray-900 dark:border-gray-600"
             onPress={() => router.navigate("/profile/views/Settings")}
           >
             <View className="absolute left-4">
@@ -121,8 +121,8 @@ export default function Profile() {
 
         <View>
           <Button
-            variant={"outline"}
-            className="h-16 mt-4 w-11/12 mx-auto border-primary dark:bg-gray-900 dark:border-gray-600"
+            variant={`${isDark ? "outline" : "default"}`}
+            className="h-16 mt-4 w-11/12 mx-auto border-primary bg-gray-500/20 dark:bg-gray-900 dark:border-gray-600"
             onPress={() => router.navigate("/profile/views/Support")}
           >
             <View className="absolute left-4">
@@ -138,8 +138,8 @@ export default function Profile() {
         </View>
 
         <Button
-          variant={"default"}
-          className="h-14 mt-4 w-11/12 mx-auto border-primary border"
+          variant={`${isDark ? "default" : "outline"}`}
+          className="h-14 mt-4 w-11/12 mx-auto border-primary border bg-gray-400/40"
           onPress={handleSignOut}
         >
           <Text className="text-center font-bold text-black dark:text-white">

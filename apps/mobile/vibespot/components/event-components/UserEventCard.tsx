@@ -135,7 +135,7 @@ export function UserEventCard({
       style={{ marginHorizontal: 16, marginBottom: 10 }}
     >
       <View
-        className="bg-gray-100 dark:bg-gray-900"
+        className="bg-gray-300/20 dark:bg-accent-foreground"
         style={{
           borderRadius: 16,
           flexDirection: "row",

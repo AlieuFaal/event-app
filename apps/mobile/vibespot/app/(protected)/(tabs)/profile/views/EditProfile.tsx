@@ -36,7 +36,7 @@ import { useCallback, useState } from "react";
 import { Pressable } from "react-native-gesture-handler";
 
 export default function EditProfile() {
-  const { data, isPending, error } = authClient.useSession();
+  const { data, isPending, error, refetch } = authClient.useSession();
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
   const currentUser = data?.user;
@@ -78,6 +78,7 @@ export default function EditProfile() {
       const selectedUri = result.assets[0].uri;
       authClient.updateUser({ image: selectedUri });
       console.log("Image has been selected");
+      refetch();
     }
   };
 
@@ -85,6 +86,7 @@ export default function EditProfile() {
     Haptics.impactAsync();
     authClient.updateUser({ image: null });
     console.log("Image has been removed");
+    refetch();
   };
 
   const handleSubmit = async () => {
@@ -106,7 +108,7 @@ export default function EditProfile() {
       });
 
       if (result.status === 200) {
-        await queryClient.invalidateQueries();
+        refetch();
         alert("Profile updated successfully");
       } else {
         alert("Failed to update profile");
@@ -244,7 +246,7 @@ export default function EditProfile() {
                   <Input
                     id="name"
                     placeholder="Ludvig Skoeld"
-                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-gray-500 dark:text-white text-black -mx-7"
+                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-secondary-foreground dark:text-white text-black -mx-7"
                     placeholderTextColor="#00000"
                     value={field.value}
                     onChangeText={field.onChange}
@@ -270,7 +272,7 @@ export default function EditProfile() {
                   <Input
                     id="phone"
                     placeholder="0701234567"
-                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-gray-500 dark:text-white text-black -mx-7"
+                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-secondary-foreground dark:text-white text-black -mx-7"
                     placeholderTextColor="#00000"
                     value={field.value || ""}
                     onChangeText={field.onChange}
@@ -299,7 +301,7 @@ export default function EditProfile() {
                   <Input
                     id="location"
                     placeholder="Varberg, Halland"
-                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-gray-500 dark:text-white text-black -mx-7"
+                    className="rounded-sm p-6 h-fit bg-gray-200 dark:bg-gray-900/40 dark:border-secondary-foreground dark:text-white text-black -mx-7"
                     placeholderTextColor="#00000"
                     value={field.value || ""}
                     onChangeText={field.onChange}
@@ -325,7 +327,7 @@ export default function EditProfile() {
                   <Input
                     id="bio"
                     placeholder="Tell people about yourself..."
-                    className="rounded-sm p-6 h-32 bg-gray-200 dark:bg-gray-900/40 dark:border-gray-500 dark:text-white text-black -mx-7 right"
+                    className="rounded-sm p-6 h-32 bg-gray-200 dark:bg-gray-900/40 dark:border-secondary-foreground dark:text-white text-black -mx-7 right"
                     placeholderTextColor="#00000"
                     value={field.value || ""}
                     onChangeText={field.onChange}

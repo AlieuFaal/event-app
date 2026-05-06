@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,12 +18,29 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/_layout";
 import { EventCreationsSuccessful } from "./steps/EventCreationSuccessful";
 import * as Crypto from 'expo-crypto';
+import { router } from "expo-router";
 
 export default function CreateEvents() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = authClient.useSession();
+  const canCreateEvents =
+    session?.user.role === "artist" || session?.user.role === "admin";
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    if (!canCreateEvents) {
+      Alert.alert(
+        "Artist mode required",
+        "Switch to Artist mode in Settings to create events.",
+      );
+      router.replace("/(protected)/(tabs)/profile");
+    }
+  }, [canCreateEvents, session]);
 
   const getDefaultStartDate = () => {
     const tomorrow = new Date();
@@ -80,6 +97,7 @@ export default function CreateEvents() {
     },
     onError: (error) => {
       console.error('Error creating event:', error);
+      setIsLoading(false);
     }
   })
 
@@ -124,6 +142,18 @@ export default function CreateEvents() {
       default: return "";
     }
   };
+
+  if (session && !canCreateEvents) {
+    return (
+      <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-base text-gray-900 dark:text-white">
+            Artist mode required to create events.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-transparent" edges={['top']}>
