@@ -1,13 +1,5 @@
 {
-  "version": 2,
   "buildCommand": "bun run build:web",
   "outputDirectory": "apps/web/dist/client",
-  "installCommand": "bun install --frozen-lockfile",
-  "framework": null,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/start"
-    }
-  ]
+  "installCommand": "bun install --frozen-lockfile"
 }
