@@ -300,8 +300,8 @@ export default function Settings() {
           </Text>
           <Card className="mt-2 bg-gray-400/40 dark:bg-secondary-foreground/40 border border-gray-500/20 rounded-2xl px-8">
             <CardContent className="flex flex-row gap-3 max-w-60 mt-5">
-              <View className="relative flex flex-col items-center bg-secondary-foreground p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
-                <User2 color={"lavender"} />
+              <View className="relative flex flex-col items-center bg-purple-500/25 p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
+                <User2 color={"#c4a0f0"} />
               </View>
               <View className="flex flex-col">
                 <Text className="text-lg text-gray-900 dark:text-white/70 font-medium -mt-7">
@@ -332,8 +332,8 @@ export default function Settings() {
           <Card className="mt-2 bg-gray-400/40 dark:bg-secondary-foreground/40 border border-gray-500/20 rounded-2xl px-8">
             <Pressable className="active:opacity-70" onPress={openSheet}>
               <CardContent className="flex flex-row items-center gap-3 mt-5">
-                <View className="relative flex flex-col items-center bg-secondary-foreground p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
-                  <Lock color={"lavender"} />
+                <View className="relative flex flex-col items-center bg-blue-500/20 p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
+                  <Lock color={"#7ab4f0"} />
                 </View>
                 <View className="flex flex-col">
                   <Text className="text-lg text-gray-900 dark:text-white/70 font-medium -mt-7">
@@ -350,8 +350,8 @@ export default function Settings() {
             </Pressable>
             <Separator className="bg-gray-500/15 w-full -mt-3" />
             <CardContent className="flex flex-row items-center gap-3 mt-3 max-w-52 opacity-60">
-              <View className="relative flex flex-col items-center bg-secondary-foreground p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
-                <ShieldCheck color={"lavender"} />
+              <View className="relative flex flex-col items-center bg-green-500/20 p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
+                <ShieldCheck color={"#5ee09a"} />
               </View>
               <View className="flex flex-col">
                 <Text className="text-lg text-gray-900 dark:text-white/70 font-medium -mt-7">
@@ -379,8 +379,8 @@ export default function Settings() {
               disabled={isExporting}
             >
               <CardContent className="flex flex-row items-center gap-3 mt-5">
-                <View className="relative flex flex-col items-center bg-secondary-foreground p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
-                  <Download color={"lavender"} />
+                <View className="relative flex flex-col items-center bg-orange-500/20 p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
+                  <Download color={"#e8a050"} />
                 </View>
                 <View className="flex flex-col">
                   <Text className="text-lg text-gray-900 dark:text-white/70 font-medium -mt-7">
@@ -411,8 +411,8 @@ export default function Settings() {
               disabled={isDeletingAccount}
             >
               <CardContent className="flex flex-row items-center gap-3 mt-5">
-                <View className="relative flex flex-col items-center bg-secondary-foreground p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
-                  <OctagonAlertIcon color={"lavender"} />
+                <View className="relative flex flex-col items-center bg-red-500/20 p-2 w-10 max-h-10 rounded-xl -ml-10 bottom-3">
+                  <OctagonAlertIcon color={"#e05555"} />
                 </View>
                 <View className="flex flex-col">
                   <Text className="text-lg text-destructive dark:text-destructive font-medium -mt-7">
