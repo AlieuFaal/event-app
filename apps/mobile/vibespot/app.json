@@ -9,13 +9,19 @@
     "scheme": "vibespot",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "backgroundColor": "#8b5cf6",
+    "backgroundColor": "#ffffff",
     "splash": {
-      "backgroundColor": "#8b5cf6"
+      "image": "./assets/images/VibeSpot-Splash-Light.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/images/VibeSpot-Splash-Dark.png",
+        "backgroundColor": "#07001d"
+      }
     },
     "ios": {
       "supportsTablet": true,
-      "backgroundColor": "#8b5cf6",
+      "backgroundColor": "#ffffff",
       "bundleIdentifier": "com.anonymous.vibespot",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -69,12 +75,15 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/VibeSpot-Logo-3.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#8b5cf6",
+          "image": "./assets/images/VibeSpot-Splash-Light.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#ffffff",
           "dark": {
-            "backgroundColor": "#6d28d9"
+            "image": "./assets/images/VibeSpot-Splash-Dark.png",
+            "backgroundColor": "#07001d"
+          },
+          "ios": {
+            "enableFullScreenImage_legacy": true
           }
         }
       ],
