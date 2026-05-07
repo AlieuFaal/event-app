@@ -74,7 +74,7 @@ bun run dev:with-studio
 
 ## Mobile workflow
 
-Mobile is intentionally **not** containerized. Keep infra running, then start Expo dev-client:
+Mobile is intentionally **not** containerized. Keep infra running or simply just run the API using "bun run dev:api", then start the Expo dev-client:
 
 ```bash
 bun run dev:mobile
