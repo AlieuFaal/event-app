@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
-import { type Event } from "@vibespot/database/schema";
+import type { EventWithAttendance } from "@/types/event";
 
 export const useGetEvent = () => {
-  const { isPending, error, data } = useQuery<Event[]>({
+  const { isPending, error, data } = useQuery<EventWithAttendance[]>({
     queryKey: ["events"],
     queryFn: async () => {
       const res = await apiClient.events.$get();
@@ -19,7 +19,7 @@ export const useGetEvent = () => {
             ? new Date(event.repeatEndDate)
             : null,
           createdAt: event.createdAt ? new Date(event.createdAt) : undefined,
-        })) as Event[];
+        })) as EventWithAttendance[];
 
         return events;
       } else {

@@ -12,10 +12,11 @@ import { useCallback, useState } from "react";
 import {
   ArrowLeft,
   Calendar,
-  MapPin,
   Clock,
   Star,
   Check,
+  MapPinHouse,
+  UsersRound,
 } from "lucide-react-native";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,8 @@ import {
   useAddEventToCalendar,
 } from "@/hooks/useAddEventToCalendar";
 import { useRemoveEventFromCalendar } from "@/hooks/useRemoveEventFromCalendar";
+import { getLocationLabel } from "@/components/event-components/all-events-utils";
+import { useEventAttendance } from "@/hooks/useEventAttendance";
 
 type FavoriteEventResponse = {
   event: {
@@ -59,6 +62,8 @@ export default function EventDetails() {
   }, []);
 
   const { isPending, error, data } = useGetEventById(eventId);
+  const { toggleAttendance, isPending: isAttendancePending } =
+    useEventAttendance(eventId);
 
   const addToCalendar = useAddEventToCalendar(data ?? null);
   const removeFromCalendar = useRemoveEventFromCalendar(data ?? null);
@@ -136,6 +141,9 @@ export default function EventDetails() {
     Haptics.impactAsync();
     router.back();
   };
+
+  const isEventPassed = data ? new Date(data.endDate) < new Date() : false;
+  const goingLabel = data?.attendeeCount === 1 ? "1 going" : `${data?.attendeeCount ?? 0} going`;
 
   if (isPending) {
     return (
@@ -242,6 +250,11 @@ export default function EventDetails() {
           <View className="flex-row items-center mb-3">
             <Clock size={20} color="#8b5cf6" />
             <Text className="ml-2 text-gray-700 dark:text-gray-300">
+              {new Date(data.startDate).toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+              -{" "}
               {new Date(data.endDate).toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -250,9 +263,16 @@ export default function EventDetails() {
           </View>
 
           <View className="flex-row items-center mb-3">
-            <MapPin size={20} color="#8b5cf6" />
+            <MapPinHouse size={20} color="#8b5cf6" />
             <Text className="ml-2 text-gray-700 dark:text-gray-300">
-              {data.address}
+              {getLocationLabel(data)}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center mb-5">
+            <UsersRound size={20} color="#8b5cf6" />
+            <Text className="ml-2 text-gray-700 dark:text-gray-300">
+              {goingLabel}
             </Text>
           </View>
 
@@ -263,14 +283,17 @@ export default function EventDetails() {
             {data.description || "No description available."}
           </Text>
 
-          {/* {event.price && (
-                        <View className="mb-6">
-                            <Text className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Ticket Price</Text>
-                            <Text className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                ${event.price}
-                            </Text>
-                        </View>
-                    )} */}
+          <Button
+            className={`mt-2 h-fit p-4 ${data.isGoing ? "border border-purple-600 bg-transparent dark:bg-card-foreground" : ""}`}
+            disabled={isEventPassed || isAttendancePending}
+            onPress={toggleAttendance}
+          >
+            <Text
+              className={`font-semibold ${data.isGoing ? "text-purple-600 dark:text-purple-400" : "text-white"}`}
+            >
+              {data.isGoing ? "Going" : "Go"}
+            </Text>
+          </Button>
 
           <View className="flex-row gap-3 mt-4">
             {isInCalendar ? (
@@ -287,6 +310,7 @@ export default function EventDetails() {
               <Button
                 className="flex-1 p-4 h-fit"
                 onPress={handleAddToCalendar}
+                disabled={isEventPassed}
               >
                 <Text className="text-white font-semibold">
                   Add To Calendar
@@ -296,6 +320,7 @@ export default function EventDetails() {
             <Button
               variant="outline"
               className="px-6 py-4 border-purple-600 dark:border-purple-500 dark:bg-card-foreground h-fit"
+              disabled={isEventPassed}
             >
               <Text className="text-purple-600 dark:text-purple-400 font-semibold">
                 Share

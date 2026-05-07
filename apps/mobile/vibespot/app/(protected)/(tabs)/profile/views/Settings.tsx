@@ -32,10 +32,12 @@ import { ChangePasswordSheet } from "@/components/bottomsheet-component/changePa
 import BottomSheet from "@gorhom/bottom-sheet";
 import * as FileSystem from "expo-file-system/legacy";
 import { roleUpdateSchema } from "@vibespot/validation";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 
 export default function Settings() {
   const { data, isPending, error, refetch } = authClient.useSession();
   const currentUser = data?.user;
+  const { handleScroll } = useTabBarScrollVisibility();
 
   const [switchState, setSwitchState] = React.useState(
     currentUser?.role === "artist" ? true : false,
@@ -250,8 +252,10 @@ export default function Settings() {
   return (
     <SafeAreaView>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <View className="flex-col items-start h-52 border-gray-200 dark:border-gray-800 gap-4">
           <Button

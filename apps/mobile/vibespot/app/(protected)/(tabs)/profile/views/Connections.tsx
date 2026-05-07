@@ -5,6 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useGetFollowers } from "@/hooks/useGetFollowers";
 import { useGetFollowing } from "@/hooks/useGetFollowing";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import { authClient } from "@/lib/auth-client";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft, Search } from "lucide-react-native";
@@ -45,6 +46,8 @@ const UserListScene = React.memo(function UserListScene({
   isLoading,
   emptyMessage,
 }: UserListSceneProps) {
+  const { handleScroll } = useTabBarScrollVisibility();
+
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -72,8 +75,10 @@ const UserListScene = React.memo(function UserListScene({
         <View className="h-px mx-4 bg-gray-100 dark:bg-gray-800" />
       )}
       showsVerticalScrollIndicator={false}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
       keyboardDismissMode="on-drag"
-      contentContainerStyle={{ paddingBottom: 120 }}
+      contentContainerStyle={{ paddingBottom: 32 }}
     />
   );
 });

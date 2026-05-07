@@ -1,10 +1,11 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import type { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import type { Event } from "@vibespot/database/schema";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import {
 	CalendarIcon,
+	Check,
+	ChevronRight,
 	Edit,
 	Flag,
 	Heart,
@@ -12,186 +13,301 @@ import {
 	MapPin,
 	ReceiptText,
 	Share,
+	UsersRound,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 import { useCallback } from "react";
+import type { ReactNode } from "react";
 import { Pressable, Text, View } from "react-native";
+import { getLocationLabel } from "@/components/event-components/all-events-utils";
 import { useAddEventToCalendar } from "@/hooks/useAddEventToCalendar";
 import { useDeleteEvent } from "@/hooks/useDeleteEvent";
+import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useFavoriteEvent } from "@/hooks/useFavoriteEvent";
 import { authClient } from "@/lib/auth-client";
+import { useTabBarVisibility } from "@/lib/tab-bar-visibility";
+import type { EventWithAttendance } from "@/types/event";
 
 interface EventDetailsSheetProps {
-	selectedEvent: Event | null;
+	selectedEvent: EventWithAttendance | null;
 	bottomSheetRef: React.RefObject<BottomSheetMethods | null>;
-	snapPoints: string[];
+}
+
+interface ActionRowProps {
+	icon: ReactNode;
+	label: string;
+	onPress: () => void;
+	disabled?: boolean;
+	destructive?: boolean;
+	rightLabel?: string;
+	rightIcon?: ReactNode;
+}
+
+function formatEventDate(event: EventWithAttendance | null) {
+	if (!event) return "";
+
+	return new Date(event.startDate).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+	});
+}
+
+function formatAttendeeCount(count: number | undefined) {
+	return count === 1 ? "1 going" : `${count ?? 0} going`;
+}
+
+function ActionRow({
+	icon,
+	label,
+	onPress,
+	disabled = false,
+	destructive = false,
+	rightLabel,
+	rightIcon,
+}: ActionRowProps) {
+	return (
+		<Pressable
+			disabled={disabled}
+			onPress={onPress}
+			className={`h-[48px] flex-row items-center rounded-2xl px-1 active:opacity-70 ${disabled ? "opacity-40" : ""}`}
+		>
+			<View className="h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/10">
+				{icon}
+			</View>
+			<Text
+				className={`ml-3 flex-1 text-[15px] font-semibold ${destructive ? "text-red-500 dark:text-red-400" : "text-gray-900 dark:text-[#f3eef8]"}`}
+				numberOfLines={1}
+			>
+				{label}
+			</Text>
+			{rightLabel ? (
+				<Text className="mr-2 text-[13px] text-gray-500 dark:text-[#91819f]">
+					{rightLabel}
+				</Text>
+			) : null}
+			{rightIcon}
+		</Pressable>
+	);
 }
 
 export function EventActionsSheet({
 	selectedEvent,
 	bottomSheetRef,
-	snapPoints,
 }: EventDetailsSheetProps) {
 	const router = useRouter();
 	const session = authClient.useSession();
 	const { colorScheme } = useColorScheme();
+	const { setTabBarHidden } = useTabBarVisibility();
+	const isDark = colorScheme === "dark";
 	const handleDeleteEvent = useDeleteEvent(selectedEvent?.id);
 	const handleAddEventToCalendar = useAddEventToCalendar(selectedEvent);
 	const { handleSaveEvent, isFavorited } = useFavoriteEvent(selectedEvent?.id);
+	const { toggleAttendance, isPending: isAttendancePending } =
+		useEventAttendance(selectedEvent?.id);
+	const isOwner = selectedEvent?.userId === session.data?.user?.id;
+	const isPastEvent = selectedEvent
+		? new Date(selectedEvent.endDate) < new Date()
+		: false;
+	const mutedIconColor = isDark ? "#a092ad" : "#6b7280";
+	const primaryIconColor = "#ffffff";
+	const dangerColor = isDark ? "#f87171" : "#ef4444";
+	const attendeeLabel = formatAttendeeCount(selectedEvent?.attendeeCount);
+	const subtitle = selectedEvent
+		? `${formatEventDate(selectedEvent)} · ${getLocationLabel(selectedEvent)}`
+		: "Choose an action";
 
-	const handleSheetChange = useCallback((index: number) => {
-		console.log("handleSheetChange", index);
-	}, []);
-
-	const handleClosePress = useCallback(() => {
+	const closeSheet = useCallback(() => {
 		bottomSheetRef.current?.close();
 	}, [bottomSheetRef]);
+
+	const handleSheetChange = useCallback(
+		(index: number) => {
+			if (index >= 0) {
+				setTabBarHidden(true);
+			}
+		},
+		[setTabBarHidden],
+	);
+
+	const handleSheetClose = useCallback(() => {
+		setTabBarHidden(false);
+	}, [setTabBarHidden]);
 
 	const handleViewDetails = useCallback(() => {
 		if (selectedEvent) {
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			router.push(`/event-details/${selectedEvent.id}`);
-			console.log("Navigating to details for event ID:", selectedEvent.id);
-			bottomSheetRef.current?.close();
+			closeSheet();
 		}
-	}, [bottomSheetRef, router, selectedEvent]);
+	}, [closeSheet, router, selectedEvent]);
 
-	const _handleEditEvent = useCallback(() => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-		console.log("Edit Event pressed");
-	}, []);
+	const handleSavePress = useCallback(() => {
+		handleSaveEvent();
+		closeSheet();
+	}, [closeSheet, handleSaveEvent]);
+
+	const handleAttendancePress = useCallback(() => {
+		toggleAttendance();
+		closeSheet();
+	}, [closeSheet, toggleAttendance]);
+
+	const handleAddToCalendarPress = useCallback(async () => {
+		await handleAddEventToCalendar();
+		closeSheet();
+	}, [closeSheet, handleAddEventToCalendar]);
 
 	const handleViewOnMap = useCallback(() => {
+		if (!selectedEvent) return;
+
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-		console.log("View On Map pressed");
-		router.push(`/(protected)/(tabs)/map?eventId=${selectedEvent?.id}`);
-	}, [router, selectedEvent?.id]);
+		router.push(`/(protected)/(tabs)/map?eventId=${selectedEvent.id}`);
+		closeSheet();
+	}, [closeSheet, router, selectedEvent]);
 
 	const handleShareEvent = useCallback(() => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		console.log("Share Event pressed");
-	}, []);
+		closeSheet();
+	}, [closeSheet]);
+
+	const handleEditEvent = useCallback(() => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+		console.log("Edit Event pressed");
+		closeSheet();
+	}, [closeSheet]);
+
+	const handleDeletePress = useCallback(() => {
+		handleDeleteEvent();
+		closeSheet();
+	}, [closeSheet, handleDeleteEvent]);
+
+	const handleReportPress = useCallback(() => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+		console.log("Report Event pressed");
+		closeSheet();
+	}, [closeSheet]);
 
 	return (
 		<BottomSheet
 			ref={bottomSheetRef}
-			onChange={handleSheetChange}
 			index={-1}
-			snapPoints={snapPoints}
+			onChange={handleSheetChange}
+			onClose={handleSheetClose}
+			enableDynamicSizing={true}
 			enablePanDownToClose={true}
-			onClose={handleClosePress}
+			maxDynamicContentSize={520}
 			backgroundStyle={{
-				backgroundColor: colorScheme === "dark" ? "#111827" : "#ffffff",
+				backgroundColor: isDark ? "#101722" : "#ffffff",
+				borderTopLeftRadius: 28,
+				borderTopRightRadius: 28,
 			}}
 			handleIndicatorStyle={{
-				backgroundColor: colorScheme === "dark" ? "#6b7280" : "#d1d5db",
+				width: 52,
+				backgroundColor: isDark ? "#586273" : "#d1d5db",
 			}}
 		>
-			<BottomSheetView className="flex-1 bg-white dark:bg-gray-900">
-				<View className="items-center">
-					<Text className="text-lg font-semibold mt-1 text-gray-900 dark:text-white">
-						Event Actions
+			<BottomSheetView className="px-5 pb-7">
+				<View className="pb-4 pt-1">
+					<Text
+						className="text-[20px] font-bold text-gray-950 dark:text-[#f8f4ff]"
+						numberOfLines={1}
+					>
+						{selectedEvent?.title ?? "Event Actions"}
+					</Text>
+					<Text
+						className="mt-1 text-[13px] text-gray-500 dark:text-[#9687a4]"
+						numberOfLines={1}
+					>
+						{subtitle}
 					</Text>
 				</View>
 
-				<View className="">
-					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-						onPress={handleViewDetails}
+				<Pressable
+					className={`mb-3 min-h-[56px] flex-row items-center rounded-2xl border border-violet-200 bg-violet-50 px-3 active:opacity-80 dark:border-[#4c2f75] dark:bg-[#1d1430] ${isPastEvent ? "opacity-50" : ""}`}
+					disabled={isPastEvent || isAttendancePending}
+					onPress={handleAttendancePress}
+				>
+					<View className="h-8 w-8 items-center justify-center rounded-full bg-violet-500">
+						{selectedEvent?.isGoing ? (
+							<Check size={18} color={primaryIconColor} strokeWidth={2.6} />
+						) : (
+							<UsersRound size={17} color={primaryIconColor} strokeWidth={2.4} />
+						)}
+					</View>
+					<Text
+						className="ml-3 flex-1 text-[15px] font-bold text-gray-950 dark:text-[#f3eef8]"
+						numberOfLines={1}
 					>
-						<ReceiptText size={24} className="text-gray-900 dark:text-white" />
-						<Text className="text-center p-5 text-gray-900 dark:text-white">
-							View Details
-						</Text>
-					</Pressable>
+						{isPastEvent
+							? "Event ended"
+							: selectedEvent?.isGoing
+								? "Going"
+								: "Go"}
+					</Text>
+					<Text className="text-[13px] font-medium text-gray-500 dark:text-[#91819f]">
+						{attendeeLabel}
+					</Text>
+				</Pressable>
 
-					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-						onPress={handleSaveEvent}
-					>
+				<View className="mb-2 h-px bg-gray-200 dark:bg-[#253044]" />
+
+				<ActionRow
+					icon={<ReceiptText size={18} color={mutedIconColor} />}
+					label="View details"
+					onPress={handleViewDetails}
+					rightIcon={<ChevronRight size={18} color={mutedIconColor} />}
+				/>
+				<ActionRow
+					icon={
 						<Heart
-							size={24}
-							fill={isFavorited ? "#C51104" : "none"}
-							className="text-gray-900 dark:text-white"
+							size={18}
+							color={isFavorited ? "#ef4444" : mutedIconColor}
+							fill={isFavorited ? "#ef4444" : "none"}
 						/>
-						<Text className="text-center p-5 text-gray-900 dark:text-white">
-							Save Event
-						</Text>
-					</Pressable>
+					}
+					label={isFavorited ? "Saved" : "Save event"}
+					onPress={handleSavePress}
+				/>
+				<ActionRow
+					icon={<CalendarIcon size={18} color={mutedIconColor} />}
+					label="Add to calendar"
+					onPress={handleAddToCalendarPress}
+				/>
+				<ActionRow
+					icon={<MapPin size={18} color={mutedIconColor} />}
+					label="View on map"
+					onPress={handleViewOnMap}
+				/>
+				<ActionRow
+					icon={<Share size={18} color={mutedIconColor} />}
+					label="Share"
+					onPress={handleShareEvent}
+				/>
 
-					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-						onPress={handleAddEventToCalendar}
-					>
-						<CalendarIcon size={24} className="text-gray-900 dark:text-white" />
-						<Text className="text-center p-5 text-gray-900 dark:text-white">
-							Add To Calendar
-						</Text>
-					</Pressable>
+				<View className="my-2 h-px bg-gray-200 dark:bg-[#253044]" />
 
-					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-						onPress={handleViewOnMap}
-					>
-						<MapPin size={24} className="text-gray-900 dark:text-white" />
-						<Text className="text-center p-5 text-gray-900 dark:text-white">
-							View On Map
-						</Text>
-					</Pressable>
-
-					<Pressable
-						className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-						onPress={handleShareEvent}
-					>
-						<Share size={24} className="text-gray-900 dark:text-white" />
-						<Text className="text-center p-5 text-gray-900 dark:text-white">
-							Share Event
-						</Text>
-					</Pressable>
-
-					{selectedEvent?.userId === session.data?.user?.id && (
-						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-							onPress={() =>
-								Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-							}
-						>
-							<Edit size={24} className="text-gray-900 dark:text-white" />
-							<Text className="text-center p-5 text-gray-900 dark:text-white">
-								Edit Event
-							</Text>
-						</Pressable>
-					)}
-
-					{selectedEvent?.userId === session.data?.user?.id && (
-						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200"
-							onPress={() => {
-								handleDeleteEvent();
-								bottomSheetRef.current?.close();
-							}}
-						>
-							<LucideTrash2 size={24} fillOpacity={80} />
-							<Text className="text-center p-5 text-red-500 dark:text-red-400">
-								Delete Event
-							</Text>
-						</Pressable>
-					)}
-
-					{selectedEvent?.userId !== session.data?.user?.id && (
-						<Pressable
-							className="flex-row border justify-center items-center bg-primary/70 rounded-sm w-11/12 mx-auto active:scale-105 mt-5 transition-all duration-200 mb-5"
-							onPress={() =>
-								Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-							}
-						>
-							<Flag size={24} fill={"red"} fillOpacity={80} />
-							<Text className="text-center text-red-500 dark:text-red-400 p-5">
-								Report Event
-							</Text>
-						</Pressable>
-					)}
-				</View>
+				{isOwner ? (
+					<>
+						<ActionRow
+							icon={<Edit size={18} color={mutedIconColor} />}
+							label="Edit event"
+							onPress={handleEditEvent}
+						/>
+						<ActionRow
+							icon={<LucideTrash2 size={18} color={dangerColor} />}
+							label="Delete event"
+							onPress={handleDeletePress}
+							destructive
+						/>
+					</>
+				) : (
+					<ActionRow
+						icon={<Flag size={18} color={dangerColor} />}
+						label="Report event"
+						onPress={handleReportPress}
+						destructive
+					/>
+				)}
 			</BottomSheetView>
 		</BottomSheet>
 	);

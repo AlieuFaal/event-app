@@ -9,6 +9,7 @@ import { GenreSelection } from "./steps/GenreSelection";
 import { EventDetails } from "./steps/EventDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import { NavigationButtons } from "@/components/event-creation-components/NavigationButtons";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import { authClient } from "@/lib/auth-client";
 import { LocationPicker } from "./steps/LocationPicker";
 import { DateTimePicker } from "./steps/DateTimePicker";
@@ -23,6 +24,7 @@ import { router } from "expo-router";
 export default function CreateEvents() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const { handleScroll } = useTabBarScrollVisibility();
 
   const { data: session } = authClient.useSession();
   const canCreateEvents =
@@ -241,7 +243,13 @@ export default function CreateEvents() {
           </View>
         )}
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent', paddingBottom: 80 }} keyboardDismissMode="interactive">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, backgroundColor: 'transparent', paddingBottom: 32 }}
+          keyboardDismissMode="interactive"
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
           {currentStep === 1 && <GenreSelection form={form} />}
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}

@@ -34,6 +34,7 @@ import { apiClient } from "@/lib/api-client";
 import { queryClient } from "@/app/_layout";
 import { useCallback, useState } from "react";
 import { Pressable } from "react-native-gesture-handler";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 
 export default function EditProfile() {
   const { data, isPending, error, refetch } = authClient.useSession();
@@ -41,6 +42,7 @@ export default function EditProfile() {
   const router = useRouter();
   const currentUser = data?.user;
   const colorScheme = useColorScheme();
+  const { handleScroll } = useTabBarScrollVisibility();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -175,7 +177,9 @@ export default function EditProfile() {
       </View>
       <KeyboardAwareScrollView
         keyboardDismissMode="interactive"
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 110 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

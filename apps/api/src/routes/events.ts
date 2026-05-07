@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { db, schema, eq, and } from "@vibespot/database";
-import { gte } from "drizzle-orm";
+import { count, gte, inArray } from "drizzle-orm";
 import { eventInsertSchema } from "@vibespot/validation";
 import { type AuthType } from "@vibespot/database/src/auth";
 import { zValidator } from "@hono/zod-validator";
@@ -10,6 +10,47 @@ import {
   customRepeatEndDate,
 } from "../helpers/repeatedEventHelpers";
 
+async function addAttendanceState<T extends typeof schema.event.$inferSelect>(
+  events: T[],
+  userId: string,
+) {
+  if (events.length === 0) return [];
+
+  const eventIds = events.map((event) => event.id);
+
+  const attendanceCounts = await db
+    .select({
+      eventId: schema.eventAttendance.eventId,
+      attendeeCount: count(),
+    })
+    .from(schema.eventAttendance)
+    .where(inArray(schema.eventAttendance.eventId, eventIds))
+    .groupBy(schema.eventAttendance.eventId);
+
+  const currentUserAttendance = await db
+    .select({ eventId: schema.eventAttendance.eventId })
+    .from(schema.eventAttendance)
+    .where(
+      and(
+        eq(schema.eventAttendance.userId, userId),
+        inArray(schema.eventAttendance.eventId, eventIds),
+      ),
+    );
+
+  const countByEventId = new Map(
+    attendanceCounts.map((row) => [row.eventId, row.attendeeCount]),
+  );
+  const currentUserEventIds = new Set(
+    currentUserAttendance.map((row) => row.eventId),
+  );
+
+  return events.map((event) => ({
+    ...event,
+    attendeeCount: countByEventId.get(event.id) ?? 0,
+    isGoing: currentUserEventIds.has(event.id),
+  }));
+}
+
 const app = new Hono<{ Variables: AuthType }>()
   .get("/", async (c) => {
     const userId = c.var.user?.id;
@@ -17,14 +58,20 @@ const app = new Hono<{ Variables: AuthType }>()
     if (!userId) {
       return c.json({ error: "User not authenticated" }, 401);
     }
+    const now = new Date();
 
     const events = await db
       .select()
       .from(schema.event)
-      .where(gte(schema.event.endDate, new Date()))
+      .where(
+        gte(
+          schema.event.endDate,
+          new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        ),
+      )
       .orderBy(schema.event.startDate);
 
-    return c.json(events);
+    return c.json(await addAttendanceState(events, userId));
   })
   .get("/my", async (c) => {
     const userId = c.var.user?.id;
@@ -60,7 +107,9 @@ const app = new Hono<{ Variables: AuthType }>()
       return c.json({ error: "Event not found" }, 404);
     }
 
-    return c.json(eventById);
+    const [eventWithAttendance] = await addAttendanceState([eventById], userId);
+
+    return c.json(eventWithAttendance);
   })
   .get(
     "/favorites/:userid",
@@ -142,6 +191,72 @@ const app = new Hono<{ Variables: AuthType }>()
         .returning();
 
       return c.json(newFavorite);
+    },
+  )
+  .post(
+    "/:eventId/attendance",
+    zValidator("param", z.object({ eventId: z.uuid() })),
+    async (c) => {
+      const { eventId } = c.req.valid("param");
+      const userId = c.var.user?.id;
+
+      if (!userId) {
+        return c.json({ error: "User not authenticated" }, 401);
+      }
+
+      const eventById = await db
+        .select()
+        .from(schema.event)
+        .where(eq(schema.event.id, eventId))
+        .limit(1)
+        .then((res) => res[0]);
+
+      if (!eventById) {
+        return c.json({ error: "Event not found" }, 404);
+      }
+
+      const [existingAttendance] = await db
+        .select()
+        .from(schema.eventAttendance)
+        .where(
+          and(
+            eq(schema.eventAttendance.userId, userId),
+            eq(schema.eventAttendance.eventId, eventId),
+          ),
+        )
+        .limit(1);
+
+      if (existingAttendance) {
+        await db
+          .delete(schema.eventAttendance)
+          .where(
+            and(
+              eq(schema.eventAttendance.userId, userId),
+              eq(schema.eventAttendance.eventId, eventId),
+            ),
+          );
+
+        const [eventWithAttendance] = await addAttendanceState(
+          [eventById],
+          userId,
+        );
+
+        return c.json(eventWithAttendance);
+      }
+
+      if (eventById.endDate < new Date()) {
+        return c.json({ error: "Cannot RSVP to past events" }, 400);
+      }
+
+      await db.insert(schema.eventAttendance).values({
+        userId,
+        eventId,
+        createdAt: new Date(),
+      });
+
+      const [eventWithAttendance] = await addAttendanceState([eventById], userId);
+
+      return c.json(eventWithAttendance);
     },
   )
   .post("/events", zValidator("json", eventInsertSchema), async (c) => {

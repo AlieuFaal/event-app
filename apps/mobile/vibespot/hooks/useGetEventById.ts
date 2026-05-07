@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Event } from "@vibespot/database/schema";
 import { apiClient } from "@/lib/api-client";
+import type { EventWithAttendance } from "@/types/event";
 
-export const useGetEventById = (id: string) => {
-  const { isPending, error, data } = useQuery<Event, Error>({
+export const useGetEventById = (id: string | undefined) => {
+  const { isPending, error, data } = useQuery<EventWithAttendance, Error>({
     queryKey: ["event", id],
     queryFn: async () => {
       const res = await apiClient.events[":id"].$get({
-        param: { id: id as string },
+        param: { id: id ?? "" },
       });
 
       if (res.ok) {
@@ -21,11 +21,12 @@ export const useGetEventById = (id: string) => {
             ? new Date(data.repeatEndDate)
             : null,
           createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
-        } as Event;
+        } as EventWithAttendance;
       } else {
         throw new Error("Failed to fetch event");
       }
     },
+    enabled: !!id,
   });
 
   return { isPending, error, data };

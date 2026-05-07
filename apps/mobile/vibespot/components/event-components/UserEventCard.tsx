@@ -3,6 +3,7 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { CalendarDays, MapPin, MoreVertical } from "lucide-react-native";
 import { Alert, Pressable, Text, View } from "react-native";
+import { getLocationLabel } from "./all-events-utils";
 
 // ─── Color map ────────────────────────────────────────────────────────────────
 // Maps the 6 EventColor values to hex so we can drive the left accent bar
@@ -219,7 +220,7 @@ export function UserEventCard({
           </View>
 
           {/* Address */}
-          {event.venue || event.address ? (
+          {event.address ? (
             <View
               style={{
                 flexDirection: "row",
@@ -241,7 +242,7 @@ export function UserEventCard({
                 }}
                 numberOfLines={1}
               >
-                {event.venue ?? event.address}
+                {getLocationLabel(event)}
               </Text>
             </View>
           ) : null}

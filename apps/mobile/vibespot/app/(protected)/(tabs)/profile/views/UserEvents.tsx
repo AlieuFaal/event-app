@@ -1,6 +1,7 @@
 import { queryClient } from "@/app/_layout";
 import { UserEventCard } from "@/components/event-components/UserEventCard";
 import { useGetUserEvents } from "@/hooks/useGetUserEvents";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/api-client";
 import type { Event } from "@vibespot/database/schema";
@@ -256,6 +257,7 @@ type Section = {
 
 export default function UserEvents() {
   const router = useRouter();
+  const { handleScroll } = useTabBarScrollVisibility();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { data: session } = authClient.useSession();
@@ -505,8 +507,10 @@ export default function UserEvents() {
         <SectionList<Event, Section>
           sections={sections}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingTop: 4, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingTop: 4, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           stickySectionHeadersEnabled={false}
           refreshControl={
             <RefreshControl

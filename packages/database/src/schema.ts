@@ -48,6 +48,9 @@ export type EventWithComments = z.infer<typeof eventWithCommentsSchema>;
 export type CurrentUser = z.infer<typeof CurrentUserSchema>;
 export type PasswordChangeForm = z.infer<typeof passwordChangeSchema>;
 
+export type EventAttendance = z.infer<typeof eventAttendanceSchema>;
+export type NewEventAttendance = z.infer<typeof eventAttendanceInsertSchema>;
+
 // User Table -------------------------------------------------------------------------------------------------------------
 export const user = pgTable(
   "user",
@@ -406,6 +409,31 @@ export const favoriteEvent = pgTable(
   })
 );
 
+// Event attendance (RSVP) table -------------------------------------------------------------------------------------------------------------
+export const eventAttendance = pgTable(
+  "event_attendance",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => event.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.eventId] }),
+  })
+);
+
+export const eventAttendanceSchema = createSelectSchema(eventAttendance);
+
+export const eventAttendanceInsertSchema = createInsertSchema(eventAttendance).omit({
+  createdAt: true,
+});
+
 // Followers and Following Tables -------------------------------------------------------------------------------------------------------------
 export const followersTable = pgTable(
   "followers",
@@ -474,6 +502,7 @@ export const schema = {
   event,
   comment,
   favoriteEvent,
+  eventAttendance,
   followersTable,
   followingTable,
 };

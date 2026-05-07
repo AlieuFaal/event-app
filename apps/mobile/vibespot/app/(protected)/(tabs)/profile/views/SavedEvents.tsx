@@ -2,6 +2,7 @@ import { queryClient } from "@/app/_layout";
 import EventCard2 from "@/components/event-components/event-card-2";
 import { Separator } from "@/components/ui/separator";
 import { useGetFavoriteEvents } from "@/hooks/useGetFavoriteEvents";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import type { Event } from "@vibespot/database";
 import { useRouter } from "expo-router";
 import { CalendarDays, Plus } from "lucide-react-native";
@@ -22,6 +23,7 @@ type FavoriteEventRow = { event: Event };
 export default function SavedEvents() {
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+  const { handleScroll } = useTabBarScrollVisibility();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -144,6 +146,8 @@ export default function SavedEvents() {
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

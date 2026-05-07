@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Clock3, MapPin, MoreVertical } from "lucide-react-native";
 import type { GestureResponderEvent } from "react-native";
-import { Pressable, Text, useColorScheme, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import type { EventWithAttendance } from "@/types/event";
 import {
   formatDay,
@@ -12,18 +12,20 @@ import {
   getLocationLabel,
 } from "./all-events-utils";
 
-interface UpcomingEventCardProps {
+interface AllEventsCardProps {
   event: EventWithAttendance;
-  onActionsPress?: (event: EventWithAttendance) => void;
+  isPast: boolean;
+  isDark: boolean;
+  onActionsPress: (event: EventWithAttendance) => void;
 }
 
-export function UpcomingEventCard({
+export function AllEventsCard({
   event,
+  isPast,
+  isDark,
   onActionsPress,
-}: UpcomingEventCardProps) {
+}: AllEventsCardProps) {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
-  const isPast = new Date(event.endDate) < new Date();
   const accentColor = getAccentColor(event.color);
   const genreBg = getGenreBg(event.color, isDark);
   const startDate = new Date(event.startDate);
@@ -31,7 +33,7 @@ export function UpcomingEventCard({
 
   const handleActionsPress = (pressEvent: GestureResponderEvent) => {
     pressEvent.stopPropagation();
-    onActionsPress?.(event);
+    onActionsPress(event);
   };
 
   return (
@@ -42,7 +44,7 @@ export function UpcomingEventCard({
           params: { id: event.id },
         })
       }
-      className="mx-4 mb-2.5 my-5 px-3 active:opacity-85"
+      className="mx-4 mb-2.5 active:opacity-85"
       style={{ opacity: isPast ? 0.55 : 1 }}
     >
       <View
@@ -99,11 +101,7 @@ export function UpcomingEventCard({
         </View>
 
         <View className="items-end gap-2">
-          <Pressable
-            disabled={!onActionsPress}
-            hitSlop={10}
-            onPress={handleActionsPress}
-          >
+          <Pressable hitSlop={10} onPress={handleActionsPress}>
             <MoreVertical
               size={15}
               color={isDark ? "#4a3a5a" : "#9ca3af"}
