@@ -1,10 +1,10 @@
 import OnboardingScreenComponent1 from "@/components/onboarding-components/onboardingScreen1";
-import { View } from "@rn-primitives/slot";
+import { View } from "react-native";
 
 export default function Onboarding() {
 
   return (
-    <View>
+    <View className="flex-1">
       <OnboardingScreenComponent1 />
     </View>
   );

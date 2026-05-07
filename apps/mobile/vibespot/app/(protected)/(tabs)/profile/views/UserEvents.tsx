@@ -1,4 +1,4 @@
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { UserEventCard } from "@/components/event-components/UserEventCard";
 import { useGetUserEvents } from "@/hooks/useGetUserEvents";
 import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/api-client";
-import { View } from "@rn-primitives/slot";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Card,

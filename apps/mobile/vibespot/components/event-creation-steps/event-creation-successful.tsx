@@ -23,7 +23,7 @@ export function EventCreationsSuccessful() {
 			<View className="mb-6">
 				<LottieView
 					ref={animationRef}
-					source={require("../../../../../assets/animations/success.json")}
+					source={require("../../assets/animations/success.json")}
 					autoPlay={true}
 					loop={false}
 					style={{

@@ -5,19 +5,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { eventInsertSchema } from "@vibespot/validation";
-import { GenreSelection } from "./steps/GenreSelection";
-import { EventDetails } from "./steps/EventDetails";
+import { GenreSelection } from "@/components/event-creation-steps/genre-selection";
+import { EventDetails } from "@/components/event-creation-steps/event-details";
 import { ScrollView } from "react-native-gesture-handler";
 import { NavigationButtons } from "@/components/event-creation-components/NavigationButtons";
 import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import { authClient } from "@/lib/auth-client";
-import { LocationPicker } from "./steps/LocationPicker";
-import { DateTimePicker } from "./steps/DateTimePicker";
-import { ImageUpload } from "./steps/ImageUpload";
+import { LocationPicker } from "@/components/event-creation-steps/location-picker";
+import { DateTimePicker } from "@/components/event-creation-steps/date-time-picker";
+import { ImageUpload } from "@/components/event-creation-steps/image-upload";
 import { apiClient } from "@/lib/api-client";
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/app/_layout";
-import { EventCreationsSuccessful } from "./steps/EventCreationSuccessful";
+import { queryClient } from "@/lib/query-client";
+import { EventCreationsSuccessful } from "@/components/event-creation-steps/event-creation-successful";
 import * as Crypto from 'expo-crypto';
 import { router } from "expo-router";
 

@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { PortalHost } from "@rn-primitives/portal";
 import { View } from "react-native";
 
 export default function OnboardingLayout() {
@@ -11,7 +10,7 @@ export default function OnboardingLayout() {
           contentStyle: {
             backgroundColor: "transparent",
           },
-          animation: "fade",
+          animation: "none",
         }}
       >
         <Stack.Screen name="index" />
@@ -19,7 +18,6 @@ export default function OnboardingLayout() {
         <Stack.Screen name="onboardingScreen3" />
         <Stack.Screen name="onboardingScreen4" />
       </Stack>
-      <PortalHost />
     </View>
   );
 }

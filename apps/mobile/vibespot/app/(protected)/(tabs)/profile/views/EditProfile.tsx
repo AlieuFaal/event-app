@@ -31,7 +31,7 @@ import { Controller, useForm } from "react-hook-form";
 import { UserForm, userFormSchema } from "@vibespot/database/schema";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { apiClient } from "@/lib/api-client";
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { useCallback, useState } from "react";
 import { Pressable } from "react-native-gesture-handler";
 import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
@@ -162,8 +162,10 @@ export default function EditProfile() {
     <SafeAreaView className="flex-1" edges={["top"]}>
       <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800">
         <Button
+          hitSlop={8}
           onPress={goBack}
-          className="mr-2 bg-transparent active:opacity-50 active:scale-90 p-5 dark:bg-transparent dark:active:opacity-50"
+          pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+          className="mr-2 h-12 w-12 bg-transparent p-0 active:opacity-50 dark:bg-transparent dark:active:opacity-50"
         >
           <ArrowLeft size={24} color="#8b5cf6" />
         </Button>

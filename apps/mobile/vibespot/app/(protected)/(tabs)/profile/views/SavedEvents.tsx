@@ -1,4 +1,4 @@
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import EventCard2 from "@/components/event-components/event-card-2";
 import { Separator } from "@/components/ui/separator";
 import { useGetFavoriteEvents } from "@/hooks/useGetFavoriteEvents";

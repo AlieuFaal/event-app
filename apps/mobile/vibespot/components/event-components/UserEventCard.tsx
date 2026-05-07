@@ -80,6 +80,9 @@ type UserEventCardProps = {
   onDelete: (eventId: string) => void;
 };
 
+const ACTION_HIT_SLOP = { top: 6, right: 6, bottom: 6, left: 6 };
+const ACTION_PRESS_RETENTION_OFFSET = { top: 14, right: 14, bottom: 14, left: 14 };
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UserEventCard({
@@ -178,9 +181,18 @@ export function UserEventCard({
             </Text>
 
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open event actions"
               onPress={handleOptionsPress}
-              hitSlop={8}
-              style={{ padding: 2 }}
+              hitSlop={ACTION_HIT_SLOP}
+              pressRetentionOffset={ACTION_PRESS_RETENTION_OFFSET}
+              style={{
+                alignItems: "center",
+                borderRadius: 22,
+                height: 44,
+                justifyContent: "center",
+                width: 44,
+              }}
             >
               <MoreVertical
                 size={18}

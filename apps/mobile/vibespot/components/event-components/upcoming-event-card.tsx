@@ -12,6 +12,9 @@ import {
   getLocationLabel,
 } from "./all-events-utils";
 
+const ACTION_HIT_SLOP = { top: 6, right: 6, bottom: 6, left: 6 };
+const ACTION_PRESS_RETENTION_OFFSET = { top: 14, right: 14, bottom: 14, left: 14 };
+
 interface UpcomingEventCardProps {
   event: EventWithAttendance;
   onActionsPress?: (event: EventWithAttendance) => void;
@@ -100,9 +103,13 @@ export function UpcomingEventCard({
 
         <View className="items-end gap-2">
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open event actions"
             disabled={!onActionsPress}
-            hitSlop={10}
+            hitSlop={ACTION_HIT_SLOP}
             onPress={handleActionsPress}
+            pressRetentionOffset={ACTION_PRESS_RETENTION_OFFSET}
+            className="h-11 w-11 items-center justify-center rounded-full active:bg-black/5 dark:active:bg-white/10 disabled:opacity-50"
           >
             <MoreVertical
               size={15}

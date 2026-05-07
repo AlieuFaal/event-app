@@ -11,6 +11,9 @@ import {
   useTabBarVisibility,
 } from "@/lib/tab-bar-visibility";
 
+const TAB_HIT_SLOP = { top: 8, right: 4, bottom: 8, left: 4 };
+const TAB_PRESS_RETENTION_OFFSET = { top: 16, right: 16, bottom: 16, left: 16 };
+
 function TabBarContent() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -46,18 +49,26 @@ function TabBarContent() {
       style={animatedTabBarStyle}
     >
       <View
-        className={`w-full flex-row items-center justify-around border-t px-2 pb-4 pt-2 ${isDark ? "border-black/20 bg-accent/90" : "border-gray-300 bg-white/90"}`}
+        className={`w-full flex-row items-center justify-between border-t px-2 pb-4 pt-2 ${isDark ? "border-black/20 bg-accent/90" : "border-gray-300 bg-white/90"}`}
       >
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Home tab"
+          hitSlop={TAB_HIT_SLOP}
           onPress={() => router.navigate("/(protected)/(tabs)")}
-          className="mb-1 items-center px-2 py-3 active:scale-95"
+          pressRetentionOffset={TAB_PRESS_RETENTION_OFFSET}
+          className="mb-1 h-16 flex-1 items-center justify-center active:opacity-70"
         >
           <House color={isHome ? "#8b5cf6" : isDark ? "#545563" : "#6b7280"} />
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Events tab"
+          hitSlop={TAB_HIT_SLOP}
           onPress={() => router.navigate("/(protected)/(tabs)/events")}
-          className="mb-1 items-center px-2 py-3 active:scale-95"
+          pressRetentionOffset={TAB_PRESS_RETENTION_OFFSET}
+          className="mb-1 h-16 flex-1 items-center justify-center active:opacity-70"
         >
           <ListMusic
             color={
@@ -71,6 +82,9 @@ function TabBarContent() {
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Create event tab"
+          hitSlop={TAB_HIT_SLOP}
           onPress={() => {
             if (!canCreateEvents) {
               Alert.alert(
@@ -82,19 +96,28 @@ function TabBarContent() {
 
             router.navigate("/(protected)/(tabs)/create-event");
           }}
-          className={`mb-1 scale-90 items-center rounded-full bg-white p-4 shadow drop-shadow-xl active:scale-[0.85] ${!canCreateEvents ? "opacity-60" : ""}`}
+          pressRetentionOffset={TAB_PRESS_RETENTION_OFFSET}
+          className={`mb-1 h-16 flex-1 items-center justify-center active:opacity-80 ${!canCreateEvents ? "opacity-60" : ""}`}
         >
-          <View className="scale-150 rounded-full bg-gray-100 p-2 shadow-lg drop-shadow-xl">
-            <Plus
-              color={pathname.includes("/create-event") ? "#8b5cf6" : "#000000"}
-              strokeWidth={"2.5"}
-            />
+          <View className="h-14 w-14 items-center justify-center rounded-full bg-white shadow drop-shadow-xl">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-100 shadow-lg drop-shadow-xl">
+              <Plus
+                color={
+                  pathname.includes("/create-event") ? "#8b5cf6" : "#000000"
+                }
+                strokeWidth={"2.5"}
+              />
+            </View>
           </View>
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Map tab"
+          hitSlop={TAB_HIT_SLOP}
           onPress={() => router.navigate("/(protected)/(tabs)/map")}
-          className="mb-1 items-center px-2 py-3 active:scale-95"
+          pressRetentionOffset={TAB_PRESS_RETENTION_OFFSET}
+          className="mb-1 h-16 flex-1 items-center justify-center active:opacity-70"
         >
           <MapPin
             color={
@@ -108,8 +131,12 @@ function TabBarContent() {
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Profile tab"
+          hitSlop={TAB_HIT_SLOP}
           onPress={() => router.navigate("/(protected)/(tabs)/profile")}
-          className="mb-1 items-center px-2 py-3 active:scale-95"
+          pressRetentionOffset={TAB_PRESS_RETENTION_OFFSET}
+          className="mb-1 h-16 flex-1 items-center justify-center active:opacity-70"
         >
           <User
             color={

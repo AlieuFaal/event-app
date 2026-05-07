@@ -143,8 +143,8 @@ export function EventActionsSheet({
 
 	const handleSavePress = useCallback(() => {
 		handleSaveEvent();
-		closeSheet();
-	}, [closeSheet, handleSaveEvent]);
+		// closeSheet();
+	}, [handleSaveEvent]);
 
 	const handleAttendancePress = useCallback(() => {
 		toggleAttendance();
@@ -195,7 +195,7 @@ export function EventActionsSheet({
 			onClose={handleSheetClose}
 			enableDynamicSizing={true}
 			enablePanDownToClose={true}
-			maxDynamicContentSize={520}
+			maxDynamicContentSize={750}
 			backgroundStyle={{
 				backgroundColor: isDark ? "#101722" : "#ffffff",
 				borderTopLeftRadius: 28,

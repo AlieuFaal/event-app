@@ -1,8 +1,9 @@
 import type { Event } from "@vibespot/database";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useRef } from "react";
+import { MapPin as MapPinIcon } from "lucide-react-native";
+import { useCallback, useEffect, useRef } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import MapView, { type MapMarker, Marker } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGetEvent } from "@/hooks/useGetEvent";
 
@@ -11,9 +12,8 @@ export default function Map() {
 	const mapRef = useRef<MapView>(null);
 	const { eventId } = useLocalSearchParams<{ eventId?: string }>();
 	const searchedEvent = data?.find((e: Event) => e.id === eventId);
-	const markerRef = useRef<MapMarker>(null);
 
-	const zoomToLocation = (lat: number, lng: number) => {
+	const zoomToLocation = useCallback((lat: number, lng: number) => {
 		mapRef.current?.animateToRegion(
 			{
 				latitude: lat,
@@ -23,7 +23,7 @@ export default function Map() {
 			},
 			1000,
 		);
-	};
+	}, []);
 
 	useEffect(() => {
 		if (searchedEvent) {
@@ -31,7 +31,6 @@ export default function Map() {
 				parseFloat(searchedEvent.latitude),
 				parseFloat(searchedEvent.longitude),
 			);
-			mapRef.current?.animateToRegion;
 		}
 	}, [searchedEvent, zoomToLocation]);
 
@@ -86,11 +85,11 @@ export default function Map() {
 			>
 				{data?.map((event: Event) => (
 					<Marker
-						ref={markerRef}
 						key={event.id}
 						title={event.title}
 						description={event.startDate.toUTCString()}
 						titleVisibility="adaptive"
+						anchor={{ x: 0.5, y: 0.5 }}
 						coordinate={{
 							latitude: parseFloat(event.latitude),
 							longitude: parseFloat(event.longitude),
@@ -101,9 +100,15 @@ export default function Map() {
 								parseFloat(event.longitude),
 							)
 						}
-						pinColor="purple"
 						stopPropagation={true}
-					/>
+						tracksViewChanges={false}
+					>
+						<View collapsable={false} style={styles.markerTouchTarget}>
+							<View style={styles.markerBubble}>
+								<MapPinIcon color="#ffffff" size={22} strokeWidth={2.6} />
+							</View>
+						</View>
+					</Marker>
 				))}
 			</MapView>
 		</View>
@@ -111,11 +116,24 @@ export default function Map() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	map: {
 		width: "100%",
 		height: "100%",
+	},
+	markerTouchTarget: {
+		alignItems: "center",
+		height: 48,
+		justifyContent: "center",
+		width: 48,
+	},
+	markerBubble: {
+		alignItems: "center",
+		backgroundColor: "#8b5cf6",
+		borderColor: "#ffffff",
+		borderRadius: 18,
+		borderWidth: 2,
+		height: 36,
+		justifyContent: "center",
+		width: 36,
 	},
 });

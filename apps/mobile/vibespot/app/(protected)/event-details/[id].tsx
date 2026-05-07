@@ -27,7 +27,7 @@ import {
   PlaceholderImage5,
   PlaceholderImage6,
 } from "@/assets";
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useGetEventById } from "@/hooks/useGetEventById";
 import { authClient } from "@/lib/auth-client";
@@ -195,8 +195,10 @@ export default function EventDetails() {
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-900" edges={["top"]}>
       <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <Button
+          hitSlop={8}
           onPress={goBack}
-          className="mr-3 bg-transparent active:opacity-50 active:scale-90 p-4 dark:bg-transparent dark:active:opacity-50"
+          pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+          className="mr-3 h-12 w-12 bg-transparent p-0 active:opacity-50 dark:bg-transparent dark:active:opacity-50"
         >
           <ArrowLeft size={24} color="#8b5cf6" />
         </Button>

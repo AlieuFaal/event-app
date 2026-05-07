@@ -5,28 +5,16 @@ import { PortalHost } from "@rn-primitives/portal";
 import { authClient } from "@/lib/auth-client";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-export const queryClient = new QueryClient();
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
 
 export default function RootLayout() {
-
-  queryClient.setDefaultOptions({
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      refetchInterval: 5 * 60 * 1000,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: true,
-    },
-  });
-
-  // queryClient.invalidateQueries();
-
-  const session = authClient.useSession();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync("transparent");
@@ -44,25 +32,36 @@ export default function RootLayout() {
                 animated
                 backgroundColor="transparent"
               />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: { backgroundColor: "transparent" },
-                  animation: "fade",
-                  animationDuration: 400,
-                  freezeOnBlur: true,
-                }}
-              >
-                <Stack.Protected guard={!session.data}>
-                  <Stack.Screen name="index" />
-                  <Stack.Screen name="signup" />
-                  <Stack.Screen name="forgotpassword" />
-                </Stack.Protected>
+              {isSessionPending ? (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ActivityIndicator size="large" color="#8b5cf6" />
+                </View>
+              ) : (
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: "transparent" },
+                    animation: "fade",
+                    animationDuration: 400,
+                  }}
+                >
+                  <Stack.Protected guard={!session}>
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="signup" />
+                    <Stack.Screen name="forgotpassword" />
+                  </Stack.Protected>
 
-                <Stack.Protected guard={!!session.data}>
-                  <Stack.Screen name="(protected)" />
-                </Stack.Protected>
-              </Stack>
+                  <Stack.Protected guard={!!session}>
+                    <Stack.Screen name="(protected)" />
+                  </Stack.Protected>
+                </Stack>
+              )}
               <PortalHost />
             </View>
           </KeyboardProvider>

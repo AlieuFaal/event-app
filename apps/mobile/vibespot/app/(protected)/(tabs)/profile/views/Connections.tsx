@@ -156,8 +156,10 @@ export default function Connections() {
       {/* Header */}
       <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800">
         <Button
+          hitSlop={8}
           onPress={goBack}
-          className="mr-3 p-3 bg-transparent active:opacity-50 active:scale-90 dark:bg-transparent dark:active:opacity-50"
+          pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+          className="mr-3 h-12 w-12 bg-transparent p-0 active:opacity-50 dark:bg-transparent dark:active:opacity-50"
         >
           <ArrowLeft size={24} color="#8b5cf6" />
         </Button>

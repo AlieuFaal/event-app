@@ -1,31 +1,24 @@
 import { authClient } from "@/lib/auth-client";
-import { router, Stack } from "expo-router";
-import { useEffect } from "react";
+import { Stack } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { useColorScheme } from "react-native";
+import { ActivityIndicator, useColorScheme, View } from "react-native";
+
+const lightModeColors: readonly [string, string, string] = [
+  "#f9f8fc",
+  "#f5f3ff",
+  "#faf8ff",
+];
+const darkModeColors: readonly [string, string, string] = [
+  "#2a1525",
+  "#1e1829",
+  "#221b2e",
+];
 
 export default function ProtectedLayout() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const colorScheme = useColorScheme();
-
-  useEffect(() => {
-    if (session && session.user?.role === "New User") {
-      router.replace("/(protected)/onboarding");
-    }
-  }, [session]);
-
-  // Light mode: Very light purple/lavender gradient (matches web app background)
-  // Dark mode: Deep purple gradient (matches web app dark mode)
-  const lightModeColors: readonly [string, string, string] = [
-    "#f9f8fc",
-    "#f5f3ff",
-    "#faf8ff",
-  ];
-  const darkModeColors: readonly [string, string, string] = [
-    "#2a1525",
-    "#1e1829",
-    "#221b2e",
-  ];
+  const isNewUser = session?.user?.role === "New User";
 
   return (
     <LinearGradient
@@ -34,17 +27,28 @@ export default function ProtectedLayout() {
       end={{ x: 1, y: 1 }}
       style={{ flex: 1 }}
     >
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: "transparent" },
-          animation: "simple_push",
-        }}
-      >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="onboarding" />
-        <Stack.Screen name="event-details" />
-      </Stack>
+      {isSessionPending || !session ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#8b5cf6" />
+        </View>
+      ) : (
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "transparent" },
+            animation: "simple_push",
+          }}
+        >
+          <Stack.Protected guard={isNewUser}>
+            <Stack.Screen name="onboarding" />
+          </Stack.Protected>
+
+          <Stack.Protected guard={!isNewUser}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="event-details" />
+          </Stack.Protected>
+        </Stack>
+      )}
     </LinearGradient>
   );
 }

@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { apiClient } from '@/lib/api-client';
 import { authClient } from '@/lib/auth-client';
-import { queryClient } from '@/app/_layout';
+import { queryClient } from '@/lib/query-client';
 
 type FavoriteEventResponse = {
     event: {

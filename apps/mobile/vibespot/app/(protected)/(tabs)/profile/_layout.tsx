@@ -19,6 +19,7 @@ export default function ProfileLayout() {
         <Stack.Screen name="views/SavedEvents" />
         <Stack.Screen name="views/UserEvents" />
         <Stack.Screen name="views/Settings" />
+        <Stack.Screen name="views/Support" />
       </Stack>
     </View>
   );

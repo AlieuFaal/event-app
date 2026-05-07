@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollView } from "react-native-gesture-handler";
 import React, { useMemo, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { ChangePasswordSheet } from "@/components/bottomsheet-component/changePassword-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import * as FileSystem from "expo-file-system/legacy";
@@ -259,8 +259,10 @@ export default function Settings() {
       >
         <View className="flex-col items-start h-52 border-gray-200 dark:border-gray-800 gap-4">
           <Button
+            hitSlop={8}
             onPress={goBack}
-            className="mr-2 bg-transparent active:opacity-50 active:scale-90 p-5 dark:bg-transparent dark:active:opacity-50"
+            pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+            className="mr-2 bg-transparent p-3 active:opacity-50 dark:bg-transparent dark:active:opacity-50"
           >
             <View className="flex-row items-center gap-2 h-20">
               <ChevronLeft size={24} color="#8b5cf6" />

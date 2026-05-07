@@ -11,7 +11,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { EventActionsSheet } from "@/components/bottomsheet-component/eventactions-sheet";
 import { AllEventsCard } from "@/components/event-components/all-events-card";
 import { AllEventsHeader } from "@/components/event-components/all-events-header";

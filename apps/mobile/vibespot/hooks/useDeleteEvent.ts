@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { Alert } from "react-native";
-import { queryClient } from "@/app/_layout";
+import { queryClient } from "@/lib/query-client";
 import { apiClient } from "@/lib/api-client";
 
 export const useDeleteEvent = (eventId: string | undefined) => {

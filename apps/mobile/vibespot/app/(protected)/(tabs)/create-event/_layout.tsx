@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { PortalHost } from "@rn-primitives/portal";
 import { View } from "react-native";
 
 
@@ -15,7 +14,6 @@ export default function CreateEventLayout() {
             }}>
                 <Stack.Screen name="index" />
             </Stack>
-            <PortalHost />
         </View>
     )
 }
