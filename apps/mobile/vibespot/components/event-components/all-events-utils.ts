@@ -56,6 +56,22 @@ export function formatTimeRange(startDate: Date, endDate: Date): string {
 	return `${start} - ${end}`;
 }
 
+export function isEventLive(
+	event: { startDate: Date | string; endDate: Date | string },
+	now: Date,
+): boolean {
+	const startDate = new Date(event.startDate);
+	const endDate = new Date(event.endDate);
+	return startDate <= now && endDate >= now;
+}
+
+export function isEventActive(
+	event: { endDate: Date | string },
+	now: Date,
+): boolean {
+	return new Date(event.endDate) >= now;
+}
+
 export function isWithinThisWeek(date: Date, now: Date): boolean {
 	const startOfWeek = new Date(now);
 	startOfWeek.setHours(0, 0, 0, 0);

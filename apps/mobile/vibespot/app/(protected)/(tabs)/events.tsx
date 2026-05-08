@@ -1,5 +1,6 @@
 import type { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -16,6 +17,7 @@ import { EventActionsSheet } from "@/components/bottomsheet-component/eventactio
 import { AllEventsCard } from "@/components/event-components/all-events-card";
 import { AllEventsHeader } from "@/components/event-components/all-events-header";
 import {
+  isEventLive,
   getErrorMessage,
   isWithinThisWeek,
 } from "@/components/event-components/all-events-utils";
@@ -25,26 +27,74 @@ import { useGetEvent } from "@/hooks/useGetEvent";
 import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import type { EventWithAttendance } from "@/types/event";
 
-type TimeFilter = "all" | "upcoming" | "this-week";
+type TimeFilter = "all" | "live" | "going" | "upcoming" | "this-week";
 type ActiveFilter = TimeFilter | `genre:${string}`;
 
 type EventSection = {
-  title: "Upcoming" | "Past";
+  title: "Live now" | "Upcoming" | "Past";
   isPast: boolean;
   data: EventWithAttendance[];
 };
 
+const EVENTS_REFETCH_INTERVAL_MS = 30_000;
+const LIVE_FILTER_STALE_TIME_MS = 15_000;
+const NOW_REFRESH_INTERVAL_MS = 60_000;
+
+function getInitialFilter(filterParam: string | string[] | undefined) {
+  const filter = Array.isArray(filterParam) ? filterParam[0] : filterParam;
+
+  if (
+    filter === "live" ||
+    filter === "going" ||
+    filter === "upcoming" ||
+    filter === "this-week"
+  ) {
+    return filter;
+  }
+
+  if (filter?.startsWith("genre:")) {
+    return filter as `genre:${string}`;
+  }
+
+  return undefined;
+}
+
 export default function Events() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const { isPending, error, data } = useGetEvent();
+  const { filter } = useLocalSearchParams<{
+    filter?: string | string[];
+  }>();
+  const routeFilter = getInitialFilter(filter);
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>(
+    routeFilter ?? "all",
+  );
+  const { isPending, error, data } = useGetEvent({
+    refetchInterval:
+      activeFilter === "live" ? EVENTS_REFETCH_INTERVAL_MS : undefined,
+    refetchIntervalInBackground: false,
+    staleTime: activeFilter === "live" ? LIVE_FILTER_STALE_TIME_MS : undefined,
+  });
   const [refreshing, setRefreshing] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
   const [selectedEvent, setSelectedEvent] =
     useState<EventWithAttendance | null>(null);
   const bottomSheetRef = useRef<BottomSheetMethods | null>(null);
-  const now = useMemo(() => new Date(), []);
+  const [now, setNow] = useState(() => new Date());
   const { handleScroll } = useTabBarScrollVisibility();
+
+  useEffect(() => {
+    setActiveFilter(routeFilter ?? "all");
+  }, [routeFilter]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNow(new Date());
+    }, NOW_REFRESH_INTERVAL_MS);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -77,15 +127,19 @@ export default function Events() {
 
   const filteredEvents = useMemo(() => {
     if (activeFilter === "all") return events;
+    if (activeFilter === "live") {
+      return events.filter((event) => isEventLive(event, now));
+    }
+    if (activeFilter === "going") {
+      return events.filter((event) => event.isGoing);
+    }
     if (activeFilter === "upcoming") {
       return events.filter((event) => new Date(event.endDate) >= now);
     }
     if (activeFilter === "this-week") {
       return events.filter((event) => {
         const startDate = new Date(event.startDate);
-        return (
-          isWithinThisWeek(startDate, now) && new Date(event.endDate) >= now
-        );
+        return isWithinThisWeek(startDate, now);
       });
     }
     if (activeFilter.startsWith("genre:")) {
@@ -114,7 +168,11 @@ export default function Events() {
 
     const builtSections: EventSection[] = [];
     if (upcoming.length > 0) {
-      builtSections.push({ title: "Upcoming", isPast: false, data: upcoming });
+      builtSections.push({
+        title: activeFilter === "live" ? "Live now" : "Upcoming",
+        isPast: false,
+        data: upcoming,
+      });
     }
     if (past.length > 0) {
       builtSections.push({ title: "Past", isPast: true, data: past });
@@ -189,6 +247,16 @@ export default function Events() {
                 label="All"
                 active={activeFilter === "all"}
                 onPress={() => setActiveFilter("all")}
+              />
+              <FilterPill
+                label="Live now"
+                active={activeFilter === "live"}
+                onPress={() => setActiveFilter("live")}
+              />
+              <FilterPill
+                label="Going"
+                active={activeFilter === "going"}
+                onPress={() => setActiveFilter("going")}
               />
               <FilterPill
                 label="Upcoming"

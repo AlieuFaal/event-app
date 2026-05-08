@@ -1,9 +1,15 @@
 import { apiClient } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
+import type { UseQueryOptions } from "@tanstack/react-query";
 import type { EventWithAttendance } from "@/types/event";
 
-export const useGetEvent = () => {
-  const { isPending, error, data } = useQuery<EventWithAttendance[]>({
+type UseGetEventOptions = Pick<
+  UseQueryOptions<EventWithAttendance[], Error>,
+  "refetchInterval" | "refetchIntervalInBackground" | "staleTime"
+>;
+
+export const useGetEvent = (options?: UseGetEventOptions) => {
+  const { isPending, error, data } = useQuery<EventWithAttendance[], Error>({
     queryKey: ["events"],
     queryFn: async () => {
       const res = await apiClient.events.$get();
@@ -26,6 +32,7 @@ export const useGetEvent = () => {
         throw new Error("Failed to fetch events");
       }
     },
+    ...options,
   });
   return { isPending, error, data };
 };

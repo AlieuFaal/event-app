@@ -301,9 +301,22 @@ export default function UserEvents() {
         [
           { text: "Cancel", style: "cancel" },
           {
-            text: "Delete",
+            text: "Continue",
             style: "destructive",
-            onPress: () => deleteMutation.mutate(eventId),
+            onPress: () => {
+              Alert.alert(
+                "Delete forever?",
+                "Please confirm one more time. This event will be permanently deleted.",
+                [
+                  { text: "Keep Event", style: "cancel" },
+                  {
+                    text: "Delete Forever",
+                    style: "destructive",
+                    onPress: () => deleteMutation.mutate(eventId),
+                  },
+                ],
+              );
+            },
           },
         ],
       );

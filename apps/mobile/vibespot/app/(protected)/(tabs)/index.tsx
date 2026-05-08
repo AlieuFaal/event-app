@@ -1,34 +1,38 @@
-import { EventCard1 } from "@/components/event-components/event-card-1";
-import { View, Text, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef, useState } from "react";
-import Animated from "react-native-reanimated";
 import type { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import * as Haptics from "expo-haptics";
 import { EventActionsSheet } from "@/components/bottomsheet-component/eventactions-sheet";
+import { HomeContent } from "@/components/home-components/home-content";
+import { authClient } from "@/lib/auth-client";
+import { queryClient } from "@/lib/query-client";
+import { useTabBarScrollVisibility } from "@/hooks/useTabBarScrollVisibility";
 import { useGetEvent } from "@/hooks/useGetEvent";
-import { UpcomingEventCard } from "@/components/event-components/upcoming-event-card";
 import type { EventWithAttendance } from "@/types/event";
+import * as Haptics from "expo-haptics";
+import { useRef, useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const AnimatedScrollView = Animated.ScrollView;
+const HOME_EVENTS_REFETCH_INTERVAL_MS = 30_000;
+const HOME_EVENTS_STALE_TIME_MS = 15_000;
 
 export default function Home() {
   const [selectedEvent, setSelectedEvent] =
     useState<EventWithAttendance | null>(null);
 
   const bottomSheetRef = useRef<BottomSheetMethods | null>(null);
+  const { data: session } = authClient.useSession();
+  const { handleScroll } = useTabBarScrollVisibility();
 
   const openSheet = (event: EventWithAttendance) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelectedEvent(event);
     bottomSheetRef.current?.expand();
   };
 
-  const { isPending, error, data } = useGetEvent();
-
-  const upcomingEvents = data?.filter(
-    (event) => new Date(event.startDate) > new Date(),
-  );
+  const { isPending, error, data } = useGetEvent({
+    refetchInterval: HOME_EVENTS_REFETCH_INTERVAL_MS,
+    refetchIntervalInBackground: false,
+    staleTime: HOME_EVENTS_STALE_TIME_MS,
+  });
 
   if (isPending) {
     return (
@@ -38,6 +42,26 @@ export default function Home() {
           <Text className="text-gray-600 dark:text-gray-300">
             Loading events...
           </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
+        <View className="flex-1 items-center justify-center px-8">
+          <Text className="text-center text-[15px] leading-[22px] text-red-500 dark:text-red-400">
+            Error fetching events: {(error as Error).message}
+          </Text>
+          <Pressable
+            onPress={() => {
+              void queryClient.invalidateQueries({ queryKey: ["events"] });
+            }}
+            className="mt-4 rounded-xl bg-violet-500 px-4 py-2.5 active:opacity-80"
+          >
+            <Text className="text-[13px] font-bold text-white">Try Again</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -55,67 +79,18 @@ export default function Home() {
     );
   }
 
-  if (error) {
-    return (
-      <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-red-500 dark:text-red-400">
-            Error fetching events: {(error as Error).message}
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
-      <View className="flex-1">
-        <View className="h-fit mt-4">
-          <Text className="text-left mx-11 text-2xl font-semibold text-gray-900 dark:text-white">
-            Happening Now
-          </Text>
-        </View>
-        {upcomingEvents && upcomingEvents.length > 0 ? (
-          upcomingEvents
-            .slice(0, 1)
-            .map((event) => (
-              <UpcomingEventCard
-                key={event.id}
-                event={event}
-                onActionsPress={openSheet}
-              />
-            ))
-        ) : (
-          <View className="flex-1 justify-center items-center mt-10 border border-gray-300 rounded-lg mx-11 p-6">
-            <Text>
-              No upcoming events at the moment. Please check back later!
-            </Text>
-          </View>
-        )}
-        <View className="flex flex-row mt-10 w-11/12 mx-auto ml-11 h-fit">
-          <Text className="text-2xl font-semibold text-center items-start justify-start text-gray-900 dark:text-white">
-            Upcoming Events
-          </Text>
-        </View>
-        <AnimatedScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          className={"px-9 py-3"}
-          contentContainerStyle={{ columnGap: 25 }}
-        >
-          {upcomingEvents?.slice(0, 5).map((event) => (
-            <EventCard1
-              key={event.id}
-              event={event}
-              onLongPress={() => openSheet(event)}
-            />
-          ))}
-        </AnimatedScrollView>
-        <EventActionsSheet
-          selectedEvent={selectedEvent}
-          bottomSheetRef={bottomSheetRef}
-        />
-      </View>
+      <HomeContent
+        events={data}
+        onActionsPress={openSheet}
+        onScroll={handleScroll}
+        userName={session?.user.name}
+      />
+      <EventActionsSheet
+        selectedEvent={selectedEvent}
+        bottomSheetRef={bottomSheetRef}
+      />
     </SafeAreaView>
   );
 }

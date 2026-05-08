@@ -1,17 +1,25 @@
-import type { Event } from "@vibespot/database";
 import { useLocalSearchParams } from "expo-router";
 import { MapPin as MapPinIcon } from "lucide-react-native";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { isEventActive } from "@/components/event-components/all-events-utils";
 import { useGetEvent } from "@/hooks/useGetEvent";
+import type { EventWithAttendance } from "@/types/event";
+
+const NOW_REFRESH_INTERVAL_MS = 60_000;
 
 export default function Map() {
 	const { isPending, error, data } = useGetEvent();
 	const mapRef = useRef<MapView>(null);
 	const { eventId } = useLocalSearchParams<{ eventId?: string }>();
-	const searchedEvent = data?.find((e: Event) => e.id === eventId);
+	const [now, setNow] = useState(() => new Date());
+	const activeEvents = useMemo(
+		() => data?.filter((event) => isEventActive(event, now)) ?? [],
+		[data, now],
+	);
+	const searchedEvent = activeEvents.find((event) => event.id === eventId);
 
 	const zoomToLocation = useCallback((lat: number, lng: number) => {
 		mapRef.current?.animateToRegion(
@@ -33,6 +41,16 @@ export default function Map() {
 			);
 		}
 	}, [searchedEvent, zoomToLocation]);
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			setNow(new Date());
+		}, NOW_REFRESH_INTERVAL_MS);
+
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, []);
 
 	if (isPending) {
 		return (
@@ -83,7 +101,7 @@ export default function Map() {
 					longitudeDelta: 0.3,
 				}}
 			>
-				{data?.map((event: Event) => (
+				{activeEvents.map((event: EventWithAttendance) => (
 					<Marker
 						key={event.id}
 						title={event.title}
