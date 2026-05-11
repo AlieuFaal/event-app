@@ -13,7 +13,9 @@ export const getThemeServerFn = createServerFn().handler(async () => (getCookie(
 
 export const setThemeServerFn = createServerFn({method: "POST"})
   .inputValidator(postThemeValidator)
-  .handler(async ({data}) => setCookie(storageKey, data,));
+  .handler(async ({data}) => setCookie(storageKey, data, {
+    path: "/",
+  }));
 
 export const getLocaleServerFn = createServerFn().handler(async () => getCookie(localeStorageKey) || "en");
 

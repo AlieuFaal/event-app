@@ -24,10 +24,10 @@ export function ExploreTrendingSection({
     <section className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-xl font-bold text-white">What others are going to</h2>
-          <span className="text-sm text-[#8d89a5]">Trending by attendee count</span>
+          <h2 className="text-xl font-bold text-[var(--explore-heading)]">What others are going to</h2>
+          <span className="text-sm text-[var(--explore-faint)]">Trending by attendee count</span>
         </div>
-        <span className="text-sm font-semibold text-[#bf8cff]">
+        <span className="text-sm font-semibold text-[var(--explore-purple-text)]">
           {events.length > 0 ? "Top picks" : "No trending events"}
         </span>
       </div>
@@ -88,9 +88,9 @@ export function ExploreTrendingSection({
           })}
         </div>
       ) : (
-        <div className="rounded-[10px] border border-white/10 bg-[#121520] p-6">
-          <p className="text-lg font-black text-white">No events match your filters</p>
-          <p className="mt-2 text-sm text-[#a9a4ba]">
+        <div className="rounded-[10px] border border-[var(--explore-border)] bg-[var(--explore-card)] p-6 shadow-[var(--explore-shadow)]">
+          <p className="text-lg font-black text-[var(--explore-heading)]">No events match your filters</p>
+          <p className="mt-2 text-sm text-[var(--explore-muted)]">
             Trending events will appear here once events have RSVPs.
           </p>
         </div>

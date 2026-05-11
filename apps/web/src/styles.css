@@ -157,6 +157,41 @@ code {
   --shadow-xl: 0px 4px 17px -4px hsl(240 30% 25% / 0.45), 0px 8px 10px -5px hsl(240 30% 25% / 0.45);
   --shadow-2xl: 0px 4px 17px -4px hsl(240 30% 25% / 1.13);
   --tracking-normal: 0em;
+  --explore-bg: radial-gradient(
+      ellipse 1080px 720px at 94% 4%,
+      rgba(145, 111, 255, 0.2),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 920px 620px at 100% 44%,
+      rgba(120, 91, 218, 0.12),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 800px 580px at 0% 14%,
+      rgba(83, 151, 255, 0.18),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 840px 680px at 10% 78%,
+      rgba(123, 92, 191, 0.1),
+      transparent 72%
+    ),
+    linear-gradient(180deg, #fbf9ff 0%, #f4f0ff 45%, #f8f7ff 100%);
+  --explore-heading: #211b34;
+  --explore-text: #443d58;
+  --explore-muted: #6f6880;
+  --explore-faint: #8d879d;
+  --explore-card: rgba(255, 255, 255, 0.78);
+  --explore-card-strong: rgba(255, 255, 255, 0.9);
+  --explore-dialog-bg: #ffffff;
+  --explore-input: rgba(255, 255, 255, 0.76);
+  --explore-border: rgba(91, 74, 128, 0.18);
+  --explore-border-strong: rgba(124, 92, 191, 0.34);
+  --explore-purple: #6e56cf;
+  --explore-purple-text: #5f43c2;
+  --explore-purple-soft: rgba(124, 92, 191, 0.11);
+  --explore-shadow: 0 22px 70px rgba(57, 45, 92, 0.12);
 }
 
 .dark {
@@ -212,6 +247,41 @@ code {
   --shadow-lg: 0px 4px 17px -4px hsl(240 30% 25% / 0.45), 0px 4px 6px -5px hsl(240 30% 25% / 0.45);
   --shadow-xl: 0px 4px 17px -4px hsl(240 30% 25% / 0.45), 0px 8px 10px -5px hsl(240 30% 25% / 0.45);
   --shadow-2xl: 0px 4px 17px -4px hsl(240 30% 25% / 1.13);
+  --explore-bg: radial-gradient(
+      ellipse 1180px 760px at 92% 4%,
+      rgba(110, 58, 220, 0.34),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 980px 680px at 100% 44%,
+      rgba(87, 47, 175, 0.18),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 840px 620px at 0% 16%,
+      rgba(16, 61, 121, 0.24),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 880px 720px at 8% 78%,
+      rgba(15, 38, 82, 0.14),
+      transparent 72%
+    ),
+    linear-gradient(180deg, #080914 0%, #070812 46%, #050711 100%);
+  --explore-heading: #ffffff;
+  --explore-text: #d6d2e4;
+  --explore-muted: #a9a4ba;
+  --explore-faint: #8d89a5;
+  --explore-card: rgba(18, 21, 32, 0.9);
+  --explore-card-strong: #121520;
+  --explore-dialog-bg: #121520;
+  --explore-input: rgba(17, 20, 32, 0.9);
+  --explore-border: rgba(255, 255, 255, 0.1);
+  --explore-border-strong: rgba(143, 92, 255, 0.45);
+  --explore-purple: #bb73ff;
+  --explore-purple-text: #bf8cff;
+  --explore-purple-soft: rgba(143, 92, 255, 0.15);
+  --explore-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
 }
 
 #map-container {
@@ -241,8 +311,55 @@ code {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+  html {
     @apply bg-background text-foreground;
+  }
+  body {
+    @apply min-h-screen bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+}
+
+.explore-page {
+  background: var(--explore-bg);
+}
+
+.events-page {
+  background:
+    radial-gradient(
+      ellipse 980px 560px at 86% -8%,
+      rgba(124, 92, 191, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 820px 540px at 8% 10%,
+      rgba(83, 151, 255, 0.12),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 900px 680px at 96% 58%,
+      rgba(124, 92, 191, 0.08),
+      transparent 74%
+    ),
+    linear-gradient(180deg, var(--background) 0%, var(--background) 100%);
+}
+
+.dark .events-page {
+  background:
+    radial-gradient(
+      ellipse 1080px 640px at 86% -8%,
+      rgba(110, 58, 220, 0.26),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 860px 580px at 4% 12%,
+      rgba(16, 61, 121, 0.2),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 940px 720px at 100% 60%,
+      rgba(87, 47, 175, 0.14),
+      transparent 74%
+    ),
+    linear-gradient(180deg, var(--background) 0%, var(--background) 100%);
 }

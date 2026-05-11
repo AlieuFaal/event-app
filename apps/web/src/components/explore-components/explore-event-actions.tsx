@@ -17,7 +17,7 @@ export function FavoriteButton({ event, onToggleFavorite }: FavoriteButtonProps)
   return (
     <button
       aria-label={event.isStarred ? "Remove from favorites" : "Save event"}
-      className="inline-flex size-9 items-center justify-center rounded-[8px] border border-white/10 bg-black/25 text-white/80 transition hover:border-[#bf73ff]/55 hover:text-white"
+      className="inline-flex size-9 items-center justify-center rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-card)] text-[var(--explore-text)] transition hover:border-[var(--explore-border-strong)] hover:text-[var(--explore-heading)]"
       onClick={(clickEvent) => {
         clickEvent.stopPropagation();
         onToggleFavorite(event);
@@ -41,8 +41,8 @@ export function RsvpButton({
       className={cn(
         "inline-flex h-9 min-w-24 items-center justify-center gap-2 rounded-[8px] border px-4 text-sm font-bold transition",
         event.isGoing
-          ? "border-[#8f5cff]/70 bg-[#1b1430] text-[#d5c1ff]"
-          : "border-[#8f5cff]/70 bg-transparent text-[#caa6ff] hover:bg-[#211936]",
+          ? "border-[var(--explore-border-strong)] bg-[var(--explore-purple-soft)] text-[var(--explore-purple-text)]"
+          : "border-[var(--explore-border-strong)] bg-transparent text-[var(--explore-purple-text)] hover:bg-[var(--explore-purple-soft)]",
       )}
       disabled={isPending}
       onClick={(clickEvent) => {

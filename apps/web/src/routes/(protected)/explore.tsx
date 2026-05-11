@@ -38,13 +38,14 @@ export const Route = createFileRoute("/(protected)/explore")({
     return {
       currentUser,
       events: events as ExploreEvent[],
+      nowIso: new Date().toISOString(),
       users,
     };
   },
 });
 
 function ExploreComponent() {
-  const { currentUser, events, users } = Route.useLoaderData();
+  const { currentUser, events, nowIso, users } = Route.useLoaderData();
   const router = useRouter();
   const addFavoriteEvent = useServerFn(addFavoriteEventFn);
   const removeFavoriteEvent = useServerFn(removeFavoriteEventFn);
@@ -55,7 +56,7 @@ function ExploreComponent() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [attendancePendingEventId, setAttendancePendingEventId] = useState<string | null>(null);
   const deferredSearchInput = useDeferredValue(searchInput);
-  const [now] = useState(() => new Date());
+  const [now] = useState(() => new Date(nowIso));
 
   const activeEvents = useMemo(
     () => events.filter((event) => new Date(event.endDate) >= now),
@@ -172,14 +173,13 @@ function ExploreComponent() {
     router.navigate({ to: "/user/$id", params: { id: userId } });
   };
 
+  const handleFlyToEvent = (event: ExploreEvent) => {
+    setSelectedEventId(null);
+    router.navigate({ to: "/event-map", search: { id: event.id } });
+  };
+
   return (
-    <div
-      className="min-h-screen overflow-hidden text-white"
-      style={{
-        background:
-          "radial-gradient(ellipse 1180px 760px at 92% 4%, rgba(110, 58, 220, 0.34), transparent 72%), radial-gradient(ellipse 980px 680px at 100% 44%, rgba(87, 47, 175, 0.18), transparent 74%), radial-gradient(ellipse 840px 620px at 0% 16%, rgba(16, 61, 121, 0.24), transparent 72%), radial-gradient(ellipse 880px 720px at 8% 78%, rgba(15, 38, 82, 0.14), transparent 72%), linear-gradient(180deg, #080914 0%, #070812 46%, #050711 100%)",
-      }}
-    >
+    <div className="explore-page min-h-screen overflow-hidden">
       <main className="relative mx-auto flex max-w-[1600px] flex-col gap-5 px-4 pb-16 sm:px-8 lg:px-[60px]">
         <ExploreHero
           onFilterClick={handleFilterClick}
@@ -237,6 +237,7 @@ function ExploreComponent() {
         attendancePendingEventId={attendancePendingEventId}
         currentUser={currentUser}
         event={selectedEvent}
+        onFlyToEvent={handleFlyToEvent}
         onOpenChange={(open) => {
           if (!open) setSelectedEventId(null);
         }}

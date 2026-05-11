@@ -48,7 +48,7 @@ export function ExploreLiveSection({
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+        <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--explore-heading)]">
           <span className="size-2 rounded-full bg-[#f04e5f] shadow-[0_0_18px_rgba(240,78,95,0.8)]" />
           Happening now
         </h2>
@@ -173,9 +173,9 @@ export function ExploreLiveSection({
           </div>
         </article>
       ) : (
-        <div className="rounded-[10px] border border-white/10 bg-[#121520] p-6">
-          <p className="text-xl font-black text-white">Nothing live right now</p>
-          <p className="mt-2 text-sm text-[#a9a4ba]">
+        <div className="rounded-[10px] border border-[var(--explore-border)] bg-[var(--explore-card)] p-6 shadow-[var(--explore-shadow)]">
+          <p className="text-xl font-black text-[var(--explore-heading)]">Nothing live right now</p>
+          <p className="mt-2 text-sm text-[var(--explore-muted)]">
             {nextEvent
               ? `${nextEvent.title} is next up. ${formatStartsIn(new Date(nextEvent.startDate), now)}.`
               : "New events will show up here when they are live."}

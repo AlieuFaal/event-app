@@ -28,7 +28,8 @@ export function ExploreUpcomingSection({
   onToggleFavorite,
 }: ExploreUpcomingSectionProps) {
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const canCycleEvents = events.length > 3;
+  const carouselCycleCount = Math.min(events.length, 5);
+  const canCycleEvents = events.length > 3 && carouselCycleCount > 1;
   const visibleEvents = useMemo(() => {
     if (events.length === 0) return [];
 
@@ -44,29 +45,29 @@ export function ExploreUpcomingSection({
 
   const showPreviousEvents = () => {
     setCarouselIndex((currentIndex) =>
-      currentIndex === 0 ? events.length - 1 : currentIndex - 1,
+      currentIndex === 0 ? carouselCycleCount - 1 : currentIndex - 1,
     );
   };
 
   const showNextEvents = () => {
-    setCarouselIndex((currentIndex) => (currentIndex + 1) % events.length);
+    setCarouselIndex((currentIndex) => (currentIndex + 1) % carouselCycleCount);
   };
 
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-white">Upcoming events</h2>
+        <h2 className="text-xl font-bold text-[var(--explore-heading)]">Upcoming events</h2>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-[#bf8cff]">
+          <span className="text-sm font-semibold text-[var(--explore-purple-text)]">
             {canCycleEvents
-              ? `${carouselIndex + 1} of ${events.length}`
+              ? `${carouselIndex + 1} of ${carouselCycleCount}`
               : `${events.length} shown`}
           </span>
           {canCycleEvents ? (
             <div className="flex items-center gap-1.5">
               <button
                 aria-label="Previous upcoming events"
-                className="inline-flex size-8 items-center justify-center rounded-[8px] border border-white/10 bg-[#17182a] text-[#d6c4ff] transition hover:border-[#a980ff]/70 hover:bg-[#201b34]"
+                className="inline-flex size-8 items-center justify-center rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-card)] text-[var(--explore-purple-text)] transition hover:border-[var(--explore-border-strong)] hover:bg-[var(--explore-purple-soft)]"
                 onClick={showPreviousEvents}
                 type="button"
               >
@@ -74,7 +75,7 @@ export function ExploreUpcomingSection({
               </button>
               <button
                 aria-label="Next upcoming events"
-                className="inline-flex size-8 items-center justify-center rounded-[8px] border border-white/10 bg-[#17182a] text-[#d6c4ff] transition hover:border-[#a980ff]/70 hover:bg-[#201b34]"
+                className="inline-flex size-8 items-center justify-center rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-card)] text-[var(--explore-purple-text)] transition hover:border-[var(--explore-border-strong)] hover:bg-[var(--explore-purple-soft)]"
                 onClick={showNextEvents}
                 type="button"
               >
@@ -85,7 +86,7 @@ export function ExploreUpcomingSection({
         </div>
       </div>
 
-      <div className="min-h-[238px] overflow-hidden rounded-[10px] border border-white/10 bg-[#121520] shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
+      <div className="min-h-[238px] overflow-hidden rounded-[10px] border border-[var(--explore-border)] bg-[var(--explore-card-strong)] shadow-[var(--explore-shadow)]">
         {events.length > 0 ? (
           visibleEvents.map((event) => {
             const startDate = new Date(event.startDate);
@@ -95,7 +96,7 @@ export function ExploreUpcomingSection({
 
             return (
               <article
-                className="group grid min-h-[79px] w-full cursor-pointer grid-cols-[54px_86px_minmax(0,1fr)] items-center gap-3 border-b border-white/10 p-3 text-left transition last:border-b-0 hover:bg-white/[0.035] sm:grid-cols-[56px_92px_minmax(0,1fr)_auto]"
+                className="group grid min-h-[79px] w-full cursor-pointer grid-cols-[54px_86px_minmax(0,1fr)] items-center gap-3 border-b border-[var(--explore-border)] p-3 text-left transition last:border-b-0 hover:bg-[var(--explore-purple-soft)] sm:grid-cols-[56px_92px_minmax(0,1fr)_auto]"
                 key={event.id}
                 onClick={() => onOpenEvent(event)}
                 onKeyDown={(keyboardEvent) => {
@@ -107,9 +108,9 @@ export function ExploreUpcomingSection({
                 role="button"
                 tabIndex={0}
               >
-                <div className="rounded-[8px] border border-white/10 bg-black/20 px-2 py-2 text-center">
-                  <p className="text-[11px] font-black text-[#aaa4bd]">{dateBadge.day}</p>
-                  <p className="text-lg font-black text-white">{dateBadge.date}</p>
+                <div className="rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-purple-soft)] px-2 py-2 text-center">
+                  <p className="text-[11px] font-black text-[var(--explore-muted)]">{dateBadge.day}</p>
+                  <p className="text-lg font-black text-[var(--explore-heading)]">{dateBadge.date}</p>
                 </div>
 
                 <img
@@ -119,10 +120,10 @@ export function ExploreUpcomingSection({
                 />
 
                 <div className="min-w-0 space-y-1.5">
-                  <h3 className="truncate text-base font-black text-white">
+                  <h3 className="truncate text-base font-black text-[var(--explore-heading)]">
                     {event.title}
                   </h3>
-                  <p className="truncate text-sm text-[#a9a4ba]">
+                  <p className="truncate text-sm text-[var(--explore-muted)]">
                     {getLocationLabel(event)} · {formatDateLine(startDate)} ·{" "}
                     {formatTimeRange(startDate, endDate)}
                   </p>
@@ -134,7 +135,7 @@ export function ExploreUpcomingSection({
                 </div>
 
                 <div className="col-span-3 flex items-center justify-between gap-3 sm:col-span-1 sm:justify-end">
-                  <span className="inline-flex items-center gap-1.5 text-sm text-[#c6c0d3]">
+                  <span className="inline-flex items-center gap-1.5 text-sm text-[var(--explore-text)]">
                     <Users className="size-4 text-[#a98cff]" />
                     {getAttendeeLabel(event.attendeeCount)}
                   </span>
@@ -150,8 +151,8 @@ export function ExploreUpcomingSection({
           })
         ) : (
           <div className="p-6">
-            <p className="text-lg font-black text-white">No upcoming events found</p>
-            <p className="mt-2 text-sm text-[#a9a4ba]">
+            <p className="text-lg font-black text-[var(--explore-heading)]">No upcoming events found</p>
+            <p className="mt-2 text-sm text-[var(--explore-muted)]">
               Try clearing search, day, or genre filters.
             </p>
           </div>

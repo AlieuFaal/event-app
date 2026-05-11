@@ -19,9 +19,7 @@ export default function EventPageHeader({
   };
 
   return (
-    <section className="relative overflow-hidden rounded-b-[2rem] px-1 py-4 sm:px-12">
-      <div className="pointer-events-none absolute inset-x-8 -top-8 h-52 rounded-full bg-primary/20 blur-3xl dark:bg-primary/30" />
-
+    <section className="relative px-4 py-7 sm:px-8 sm:py-8 lg:px-[60px]">
       <div className="relative space-y-6 sm:space-y-7">
         <div className="space-y-3">
           <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-primary gap-2">

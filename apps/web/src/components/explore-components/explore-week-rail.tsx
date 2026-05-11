@@ -22,11 +22,11 @@ export function ExploreWeekRail({
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-white">Your week</h2>
+        <h2 className="text-xl font-bold text-[var(--explore-heading)]">Your week</h2>
         <div className="flex flex-wrap items-center justify-end gap-3">
           {selectedDate ? (
             <button
-              className="text-sm font-semibold text-[#bf8cff] transition hover:text-white"
+              className="text-sm font-semibold text-[var(--explore-purple-text)] transition hover:text-[var(--explore-heading)]"
               onClick={() => onDateSelect(null)}
               type="button"
             >
@@ -34,7 +34,7 @@ export function ExploreWeekRail({
             </button>
           ) : null}
           <Link
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#d8c7ff] transition hover:text-white"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--explore-purple-text)] transition hover:text-[var(--explore-heading)]"
             to="/event-calendar"
           >
             View full calendar
@@ -54,19 +54,19 @@ export function ExploreWeekRail({
           return (
             <button
               className={cn(
-                "min-w-[132px] rounded-[8px] border border-white/10 bg-[#111420]/90 px-4 py-2.5 text-center transition hover:border-[#8f5cff]/55 hover:bg-[#17172a]",
-                isSelected && "border-[#bf73ff] bg-[#18142b] shadow-[0_0_0_1px_rgba(191,115,255,0.25)]",
+                "min-w-[132px] rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-card)] px-4 py-2.5 text-center transition hover:border-[var(--explore-border-strong)] hover:bg-[var(--explore-card-strong)]",
+                isSelected && "border-[var(--explore-border-strong)] bg-[var(--explore-purple-soft)] shadow-[0_0_0_1px_rgba(191,115,255,0.25)]",
               )}
               key={day.toISOString()}
               onClick={() => onDateSelect(isSelected ? null : day)}
               type="button"
             >
-              <p className="text-sm font-black text-white">
+              <p className="text-sm font-black text-[var(--explore-heading)]">
                 {index === 0 || isToday
                   ? "Today"
                   : day.toLocaleDateString("en-US", { weekday: "short" })}
               </p>
-              <p className="text-xs text-[#a9a4ba]">
+              <p className="text-xs text-[var(--explore-muted)]">
                 {day.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               </p>
               <p

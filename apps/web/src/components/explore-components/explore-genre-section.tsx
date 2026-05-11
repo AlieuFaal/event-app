@@ -18,10 +18,10 @@ export function ExploreGenreSection({
   return (
     <section className="space-y-4" id="explore-genres">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-white">Browse by genre</h2>
+        <h2 className="text-xl font-bold text-[var(--explore-heading)]">Browse by genre</h2>
         {selectedGenres.length > 0 ? (
           <button
-            className="text-sm font-semibold text-[#bf8cff] transition hover:text-white"
+            className="text-sm font-semibold text-[var(--explore-purple-text)] transition hover:text-[var(--explore-heading)]"
             onClick={onClearGenres}
             type="button"
           >
@@ -38,8 +38,8 @@ export function ExploreGenreSection({
           return (
             <button
               className={cn(
-                "inline-flex h-12 items-center gap-3 rounded-[8px] border border-white/10 bg-[#141722] px-4 text-sm font-semibold text-[#d8d4e6] transition hover:border-[#8f5cff]/50 hover:bg-[#19182a]",
-                isSelected && "border-[#9b6fff] bg-[#211936] text-white",
+                "inline-flex h-12 items-center gap-3 rounded-[8px] border border-[var(--explore-border)] bg-[var(--explore-card)] px-4 text-sm font-semibold text-[var(--explore-text)] transition hover:border-[var(--explore-border-strong)] hover:bg-[var(--explore-purple-soft)]",
+                isSelected && "border-[var(--explore-border-strong)] bg-[var(--explore-purple-soft)] text-[var(--explore-heading)]",
               )}
               key={genre}
               onClick={() => onGenreToggle(genre)}
@@ -49,7 +49,7 @@ export function ExploreGenreSection({
                 <Music2 className="size-4" />
               </span>
               {genre}
-              <span className="text-xs text-[#88839c]">{count}</span>
+              <span className="text-xs text-[var(--explore-faint)]">{count}</span>
             </button>
           );
         })}

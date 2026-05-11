@@ -48,8 +48,7 @@ function EventsComponent() {
     }, [genreFilteredEvents, users, searchInput]);
 
     return (
-        <div className="relative mx-auto pb-16 pt">
-
+        <div className="events-page min-h-screen overflow-hidden pb-16">
             <div className="relative space-y-8 sm:space-y-10">
                 <EventPageHeader
                     searchInput={searchInput}

@@ -50,24 +50,24 @@ export function ExploreSnapshot({
 
   return (
     <section className="space-y-3">
-      <h2 className="text-xl font-bold text-white">Your snapshot</h2>
+      <h2 className="text-xl font-bold text-[var(--explore-heading)]">Your snapshot</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
 
           return (
             <article
-              className="flex min-h-[84px] items-center gap-4 rounded-[10px] border border-white/10 bg-[#121520]/90 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)]"
+              className="flex min-h-[84px] items-center gap-4 rounded-[10px] border border-[var(--explore-border)] bg-[var(--explore-card)] p-4 shadow-[var(--explore-shadow)]"
               key={stat.label}
             >
               <div className={`flex size-11 items-center justify-center rounded-[9px] ${stat.iconClass}`}>
                 <Icon className="size-5" />
               </div>
               <div>
-                <p className="text-[26px] font-black leading-none text-white">
+                <p className="text-[26px] font-black leading-none text-[var(--explore-heading)]">
                   {stat.value.toLocaleString()}
                 </p>
-                <p className="mt-1 text-sm text-[#d6d2e4]">{stat.label}</p>
+                <p className="mt-1 text-sm text-[var(--explore-text)]">{stat.label}</p>
                 <p className={`mt-1 text-xs font-medium ${stat.hintClass}`}>
                   {stat.hint}
                 </p>

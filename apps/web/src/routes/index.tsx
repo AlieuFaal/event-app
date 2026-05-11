@@ -39,7 +39,13 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
+    const previousBackgroundColor = document.body.style.backgroundColor;
+
     document.body.style.backgroundColor = backgroundColor;
+
+    return () => {
+      document.body.style.backgroundColor = previousBackgroundColor;
+    };
   }, [backgroundColor]);
 
   // Only register GSAP plugins on client side, once
