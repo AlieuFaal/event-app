@@ -10,7 +10,7 @@ import { EventFeature } from "./marker";
 import { m } from "@/paraglide/messages";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "../shadcn/ui/button";
-import { Event } from "@vibespot/database/schema";
+import type { Event } from "@vibespot/database/schema";
 
 export interface PopupProps {
     activeFeature: EventFeature;
@@ -28,18 +28,25 @@ export const Popup = ({ map, activeFeature, events }: PopupProps) => {
 
     const contentRef = useRef(document.createElement('div'));
 
-    // Get all events at the same location
-    const sameLocationEvents = events.filter(event =>
-        event.address === activeFeature.properties.Event.address &&
-        event.id !== activeFeature.properties.Event.id
-    );
-    sameLocationEvents.unshift(activeFeature.properties.Event);
+    const sameLocationEvents = events.length > 0 ? events : [activeFeature.properties.Event];
 
     // Track which event we're currently displaying
-    const [index, setIndex] = useState(0);
+    const [index, setIndex] = useState(() => {
+        const activeEventIndex = sameLocationEvents.findIndex(
+            (event) => event.id === activeFeature.properties.Event.id,
+        );
+        return Math.max(activeEventIndex, 0);
+    });
 
     // Get the current event being displayed
     const currentEvent = sameLocationEvents[index];
+
+    useEffect(() => {
+        const activeEventIndex = sameLocationEvents.findIndex(
+            (event) => event.id === activeFeature.properties.Event.id,
+        );
+        setIndex(Math.max(activeEventIndex, 0));
+    }, [activeFeature.properties.Event.id, sameLocationEvents]);
 
     const showPreviousEvent = (e: React.MouseEvent) => {
         // Prevent event propagation to avoid closing the popup

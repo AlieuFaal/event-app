@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getLocale } from '@/paraglide/runtime';
 import { EventFeature, Marker } from './marker';
-import { Event } from '@vibespot/database/schema';
+import type { Event } from '@vibespot/database/schema';
 import { Spinner } from '../shadcn/ui/shadcn-io/spinner';
 import { Button } from '../shadcn/ui/button';
 import { MoonStar, Sun, Sunrise, Sunset } from 'lucide-react';
@@ -31,11 +31,56 @@ interface EventMapViewProps {
     accessToken: string;
 }
 
+interface MapEventGroup {
+    id: string;
+    coordinates: [longitude: number, latitude: number];
+    events: Event[];
+}
+
 type GeocoderRetrieveResult = {
     geometry?: {
         coordinates?: number[];
     };
 };
+
+function getCoordinateGroupKey(coordinates: [longitude: number, latitude: number]) {
+    return `${coordinates[1].toFixed(5)}:${coordinates[0].toFixed(5)}`;
+}
+
+function groupEventsByCoordinates(events: Event[]): MapEventGroup[] {
+    const groupsByKey = new Map<string, MapEventGroup>();
+
+    for (const event of events) {
+        const coordinates = toMapboxLngLat({
+            latitude: event.latitude,
+            longitude: event.longitude,
+        });
+
+        if (!coordinates) continue;
+
+        const groupId = getCoordinateGroupKey(coordinates);
+        const existingGroup = groupsByKey.get(groupId);
+
+        if (existingGroup) {
+            existingGroup.events.push(event);
+            continue;
+        }
+
+        groupsByKey.set(groupId, {
+            id: groupId,
+            coordinates,
+            events: [event],
+        });
+    }
+
+    return Array.from(groupsByKey.values()).map((group) => ({
+        ...group,
+        events: [...group.events].sort(
+            (a, b) =>
+                new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+        ),
+    }));
+}
 
 export function EventMap({ events, accessToken }: EventMapViewProps) {
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -47,6 +92,7 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
 
     const eventId = useSearch({ from: '/(protected)/event-map', select: (s) => ({ id: s.id }) });
     const event = events.find(e => e.id === eventId.id);
+    const eventGroups = useMemo(() => groupEventsByCoordinates(events), [events]);
 
     useEffect(() => {
         if (!mapContainerRef.current) return;
@@ -96,31 +142,29 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
 
     useEffect(() => {
         if (!mapRef.current) return;
+        if (!mapLoaded) return;
         if (!event?.latitude || !event?.longitude) return;
-        const mapboxCoordinates = toMapboxLngLat({
-            latitude: event.latitude,
-            longitude: event.longitude
-        });
-        if (!mapboxCoordinates) return;
+        const searchedGroup = eventGroups.find((group) =>
+            group.events.some((groupEvent) => groupEvent.id === event.id)
+        );
+        if (!searchedGroup) return;
 
-        if (!mapLoaded) {
-            setActiveFeature({
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: mapboxCoordinates
-                },
-                properties: { Event: event }
-            });
-            mapRef.current.flyTo({
-                center: mapboxCoordinates,
-                zoom: 17.5,
-                duration: 4500,
-                essential: true,
-                animate: true,
-            });
-        }
-    }, [event]);
+        setActiveFeature({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: searchedGroup.coordinates
+            },
+            properties: { Event: event }
+        });
+        mapRef.current.flyTo({
+            center: searchedGroup.coordinates,
+            zoom: 17.5,
+            duration: 4500,
+            essential: true,
+            animate: true,
+        });
+    }, [event, eventGroups, mapLoaded]);
 
     const handleMarkerClick = (feature: EventFeature) => {
         if (activeFeature?.properties.Event.id === feature.properties.Event.id) {
@@ -229,30 +273,27 @@ export function EventMap({ events, accessToken }: EventMapViewProps) {
                         </div>
                     )}
                 </div>
-                {mapLoaded && events?.map((event) => {
-                    const mapboxCoordinates = toMapboxLngLat({
-                        latitude: event.latitude,
-                        longitude: event.longitude,
-                    });
-
-                    if (!mapboxCoordinates) {
-                        return null;
-                    }
+                {mapLoaded && eventGroups.map((group) => {
+                    const primaryEvent = group.events[0];
+                    if (!primaryEvent) return null;
+                    const isActive = activeFeature
+                        ? group.events.some((event) => event.id === activeFeature.properties.Event.id)
+                        : false;
 
                     return (
                         <Marker
-                            key={event.id}
+                            key={group.id}
                             map={mapRef.current}
-                            events={events}
+                            events={group.events}
                             onClick={handleMarkerClick}
-                            isActive={activeFeature?.properties.Event.id === event.id}
+                            isActive={isActive}
                             feature={{
                                 type: 'Feature',
                                 geometry: {
                                     type: 'Point',
-                                    coordinates: mapboxCoordinates
+                                    coordinates: group.coordinates
                                 },
-                                properties: { Event: event }
+                                properties: { Event: primaryEvent }
                             }}
                         />
                     );
