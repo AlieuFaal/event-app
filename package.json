@@ -38,6 +38,7 @@
 		"typecheck:db": "bun run --filter=@vibespot/database typecheck",
 		"tsc": "bun run typecheck:web && bun run typecheck:mobile && bun run typecheck:api && bun run typecheck:db",
 		"format": "biome check . --write --unsafe",
+		"images:clear-invalid": "bun scripts/clear-invalid-image-urls.ts",
 		"clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
 		"fresh-install": "bun run clean && bun install"
 	},

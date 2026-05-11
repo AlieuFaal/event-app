@@ -25,9 +25,9 @@ const heroMessages = [
   { lead: "Catch the moment,", endMark: "." },
   { lead: "Pick your spot,", endMark: "." },
   { lead: "Find your vibe,", endMark: "." },
-  { lead: "Step into the sound,", endMark: "." },
-  { lead: "Tonight is yours,", endMark: "." },
-  { lead: "Get to moving,", endMark: "." },
+  { lead: "Step to the sound,", endMark: "." },
+  { lead: "Tonight is yours,", endMark: "!" },
+  { lead: "Let's get moving,", endMark: "!" },
 ] as const;
 
 export function getFallbackImage(eventId: string) {

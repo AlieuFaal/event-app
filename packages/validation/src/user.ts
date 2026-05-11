@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nullableHttpsImageUrlSchema } from "./image";
 
 // Constants
 export const roles = ["user", "artist", "admin", "New User"] as const;
@@ -21,7 +22,7 @@ export const userSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   emailVerified: z.boolean(),
   phone: z.string().nullish(),
-  image: z.string().url("Please enter a valid image URL").nullish(),
+  image: nullableHttpsImageUrlSchema,
   location: z.string().nullish(),
   bio: z.string().nullish(),
   createdAt: z.date(),
@@ -39,7 +40,7 @@ export const userInsertSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   emailVerified: z.boolean().optional(),
   phone: z.string().nullish(),
-  image: z.string().url("Please enter a valid image URL").optional(),
+  image: nullableHttpsImageUrlSchema,
   location: z.string().nullish(),
   bio: z.string().nullish(),
   createdAt: z.date().optional(),
@@ -52,7 +53,7 @@ export const userUpdateSchema = z.object({
   email: z.string().email("Please enter a valid email address").optional(),
   emailVerified: z.boolean().optional(),
   phone: z.string().nullish(),
-  image: z.string().url("Please enter a valid image URL").optional(),
+  image: nullableHttpsImageUrlSchema,
   location: z.string().nullish(),
   bio: z.string().nullish(),
   updatedAt: z.date().optional(),
@@ -63,7 +64,7 @@ export const userFormSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Please enter your name").optional(),
   phone: z.string().nullish(),
-  image: z.string().url("Please enter a valid image URL").optional(),
+  image: nullableHttpsImageUrlSchema,
   location: z.string().nullish(),
   bio: z.string().nullish(),
   role: z.enum(["user", "artist"]).default("user").optional(),
@@ -114,11 +115,7 @@ export const passwordChangeSchema = z
 
 export const CurrentUserSchema = userSchema
   .extend({
-    image: z
-      .string()
-      .url("Please enter a valid image URL")
-      .nullable()
-      .optional(),
+    image: nullableHttpsImageUrlSchema,
   })
   .omit({
     role: true,

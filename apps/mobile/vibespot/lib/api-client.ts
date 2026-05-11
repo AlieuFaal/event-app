@@ -16,7 +16,7 @@ const getApiUrl = () => {
   }
 };
 
-const API_URL = getApiUrl();
+export const API_URL = getApiUrl();
 
 export const apiClient = hc<AppType>(API_URL, {
   init: {

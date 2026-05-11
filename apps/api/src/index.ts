@@ -2,6 +2,7 @@ import { type AuthType, auth } from "@vibespot/database/src/auth";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import events from "./routes/events";
+import uploads from "./routes/uploads";
 import users from "./routes/users";
 
 const app = new Hono<{ Variables: AuthType }>({ strict: false });
@@ -71,7 +72,10 @@ app.get("/", (c) => {
 });
 
 // Register routes
-const routes = app.route("/events", events).route("/users", users);
+const routes = app
+  .route("/events", events)
+  .route("/uploads", uploads)
+  .route("/users", users);
 
 // Export the routes type
 export type AppType = typeof routes;

@@ -6,7 +6,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn/ui/avatar";
-import { Camera, Calendar, Mail, MapPin, Users, User2 } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import { FollowersDialog } from "./dialogs/followers";
 import { FollowingsDialog } from "./dialogs/followings";
 import { FollowUserListItem } from "@/services/user-service";
 import { useRouter } from "@tanstack/react-router";
+import { uploadImage } from "@/lib/image-upload";
 
 interface ProfileHeaderProps {
   currentUser: User;
@@ -32,40 +33,33 @@ export default function ProfileHeader({
   followers,
   following,
 }: ProfileHeaderProps) {
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const router = useRouter();
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
       try {
+        setIsUploadingImage(true);
+        const { url } = await uploadImage({
+          file,
+          kind: "avatar",
+          userId: currentUser.id,
+        });
         await authClient.updateUser({
-          image: await convertImageToBase64(file),
+          image: url,
         });
         await router.invalidate();
         toast.success(m.toast_image_upload_success());
       } catch (error) {
         console.error("Failed to upload image:", error);
         toast.error(m.toast_image_upload_error());
+      } finally {
+        setIsUploadingImage(false);
+        e.target.value = "";
       }
     }
   };
-
-  async function convertImageToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
 
   const formatJoinDate = (date?: Date | string | null) => {
     if (!date) {
@@ -104,6 +98,7 @@ export default function ProfileHeader({
             <Button
               size="icon"
               variant="outline"
+              disabled={isUploadingImage}
               className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full hover:scale-120"
             >
               <Camera />
@@ -112,6 +107,7 @@ export default function ProfileHeader({
               type="file"
               accept="image/*"
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0 "
+              disabled={isUploadingImage}
               onChange={handleImageChange}
             />
           </div>

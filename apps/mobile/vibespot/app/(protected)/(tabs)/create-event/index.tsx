@@ -24,6 +24,7 @@ import { router } from "expo-router";
 export default function CreateEvents() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { handleScroll } = useTabBarScrollVisibility();
 
   const { data: session } = authClient.useSession();
@@ -190,7 +191,7 @@ export default function CreateEvents() {
             ) : (
               <NavigationButtons
                 currentStep={currentStep}
-                isLoading={isLoading}
+                isLoading={isLoading || isUploadingImage}
                 totalSteps={5}
                 onNext={() => {
                   if (currentStep === 2) {
@@ -254,7 +255,12 @@ export default function CreateEvents() {
           {currentStep === 2 && <EventDetails form={form} />}
           {currentStep === 3 && <LocationPicker form={form} />}
           {currentStep === 4 && <DateTimePicker form={form} />}
-          {currentStep === 5 && <ImageUpload form={form} />}
+          {currentStep === 5 && (
+            <ImageUpload
+              form={form}
+              onUploadStateChange={setIsUploadingImage}
+            />
+          )}
           {currentStep === 6 && <EventCreationsSuccessful />}
         </ScrollView>
       </View>

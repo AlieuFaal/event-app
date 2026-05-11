@@ -20,6 +20,8 @@ import {
   eventColors,
   genres,
   repeatOptions,
+  httpsImageUrlSchema,
+  nullableHttpsImageUrlSchema,
   type Role,
   type EventColor,
   type Genre,
@@ -85,7 +87,7 @@ export const userSchema = createSelectSchema(user, {
   name: z.string().min(1, "Please enter your name"),
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().nullable(),
-  image: z.string().url("Please enter a valid image URL").nullable(),
+  image: httpsImageUrlSchema.nullable(),
   location: z.string().nullable(),
   bio: z.string().nullable(),
 });
@@ -97,13 +99,13 @@ export const userSocialSchema = userSchema.extend({
 export const userInsertSchema = createInsertSchema(user, {
   name: z.string().min(1, "Please enter your name"),
   email: z.string().email("Please enter a valid email address"),
-  image: z.string().url("Please enter a valid image URL").optional(),
+  image: nullableHttpsImageUrlSchema,
 });
 
 export const userUpdateSchema = createUpdateSchema(user, {
   name: z.string().min(1, "Please enter your name").optional(),
   email: z.string().email("Please enter a valid email address").optional(),
-  image: z.string().url("Please enter a valid image URL").optional(),
+  image: nullableHttpsImageUrlSchema,
 });
 
 export const userFormSchema = userUpdateSchema
@@ -243,7 +245,7 @@ export const eventSchema = createSelectSchema(event, {
   userId: z.string().uuid().nullish(),
   latitude: z.string(),
   longitude: z.string(),
-  imageUrl: z.string().url().nullish(),
+  imageUrl: nullableHttpsImageUrlSchema,
   createdAt: z.date(),
 });
 
@@ -278,7 +280,7 @@ export const eventInsertBaseSchema = createInsertSchema(event, {
   latitude: z.string(),
   longitude: z.string(),
   createdAt: z.coerce.date().optional(),
-  imageUrl: z.string().url().nullish(),
+  imageUrl: nullableHttpsImageUrlSchema,
 });
 
 export const eventInsertSchema = eventInsertBaseSchema.superRefine((data, ctx) => {
@@ -319,7 +321,7 @@ export const eventUpdateSchema = createUpdateSchema(event, {
   updatedAt: z.date().optional(),
   color: z.enum(eventColors).optional(),
   genre: z.enum(genres).optional(),
-  imageUrl: z.string().url().nullish(),
+  imageUrl: nullableHttpsImageUrlSchema,
 }).superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.startDate > data.endDate) {
     ctx.addIssue({
@@ -481,11 +483,7 @@ export const passwordChangeSchema = z
 
 export const CurrentUserSchema = userSchema
   .extend({
-    image: z
-      .string()
-      .url("Please enter a valid image URL")
-      .nullable()
-      .optional(),
+    image: nullableHttpsImageUrlSchema,
   })
   .omit({
     role: true,

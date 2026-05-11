@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nullableHttpsImageUrlSchema } from "./image";
 
 // Constants
 export const eventColors = [
@@ -90,7 +91,7 @@ export const eventSchema = z.object({
   userId: z.string().uuid().nullish(),
   latitude: z.string(),
   longitude: z.string(),
-  imageUrl: z.string().nullish(),
+  imageUrl: nullableHttpsImageUrlSchema,
   createdAt: z.string(),
 });
 
@@ -129,7 +130,7 @@ export const eventInsertSchema = z
     latitude: z.string(),
     longitude: z.string(),
     createdAt: z.string().datetime().optional(),
-    imageUrl: z.string().nullish(),
+    imageUrl: nullableHttpsImageUrlSchema,
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
@@ -170,7 +171,7 @@ export const eventUpdateSchema = z
     updatedAt: z.string().optional(),
     color: z.enum(eventColors).optional(),
     genre: z.enum(genres).optional(),
-    imageUrl: z.string().nullish(),
+    imageUrl: nullableHttpsImageUrlSchema,
   })
   .superRefine((data, ctx) => {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {

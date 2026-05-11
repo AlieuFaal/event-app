@@ -6,11 +6,17 @@ import {
 import type { Register } from "@tanstack/react-router";
 import { overwriteGetLocale } from "./paraglide/runtime";
 import { paraglideMiddleware } from "./paraglide/server";
+import { handleImageUploadRequest } from "./lib/server/image-upload-handler";
 
 const startFetch = createStartHandler(defaultStreamHandler);
 
 const fetch = ((request, requestOpts) => {
 	const method = request.method.toUpperCase();
+	const pathname = new URL(request.url).pathname;
+
+	if (method === "POST" && pathname === "/api/uploads/images") {
+		return handleImageUploadRequest(request);
+	}
 
 	// Avoid locale middleware on non-GET requests so request bodies remain readable
 	// for server functions and auth handlers.

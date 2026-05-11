@@ -31,6 +31,7 @@ import { Controller, useForm } from "react-hook-form";
 import { UserForm, userFormSchema } from "@vibespot/database/schema";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { apiClient } from "@/lib/api-client";
+import { uploadImage } from "@/lib/image-upload";
 import { queryClient } from "@/lib/query-client";
 import { useCallback, useState } from "react";
 import { Pressable } from "react-native-gesture-handler";
@@ -41,6 +42,7 @@ export default function EditProfile() {
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
   const currentUser = data?.user;
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const colorScheme = useColorScheme();
   const { handleScroll } = useTabBarScrollVisibility();
 
@@ -72,15 +74,36 @@ export default function EditProfile() {
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [16, 9],
-      quality: 1,
+      quality: 0.86,
+      preferredAssetRepresentationMode:
+        ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible,
     });
     Haptics.selectionAsync();
 
     if (!result.canceled) {
       const selectedUri = result.assets[0].uri;
-      authClient.updateUser({ image: selectedUri });
-      console.log("Image has been selected");
-      refetch();
+      const userId = data?.user.id;
+
+      if (!userId) {
+        alert("User not found");
+        return;
+      }
+
+      try {
+        setIsUploadingImage(true);
+        const { url } = await uploadImage({
+          uri: selectedUri,
+          kind: "avatar",
+          userId,
+        });
+        await authClient.updateUser({ image: url });
+        await refetch();
+      } catch (error) {
+        alert("Failed to upload image");
+        console.error("Failed to upload image:", error);
+      } finally {
+        setIsUploadingImage(false);
+      }
     }
   };
 
@@ -190,7 +213,8 @@ export default function EditProfile() {
         <View className="flex flex-row items-center bg-transparent border-none mt-8">
           <Button
             className="w-32 h-32 bg-secondary-foreground/20 dark:bg-secondary-foreground/80 rounded-2xl ml-5 flex active:opacity-10"
-            onPress={pickImage}
+              onPress={pickImage}
+              disabled={isUploadingImage}
           >
             {!data.user?.image && <LucideImagePlus size={34} />}
             {data.user?.image && (

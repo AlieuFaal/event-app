@@ -151,7 +151,7 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
 	const month = selectedDate.getMonth();
 
 	const daysInMonth = endOfMonth(selectedDate).getDate(); // Faster than new Date(year, month + 1, 0)
-	const firstDayOfMonth = startOfMonth(selectedDate).getDay();
+	const firstDayOfMonth = (startOfMonth(selectedDate).getDay() + 6) % 7;
 	const daysInPrevMonth = endOfMonth(new Date(year, month - 1)).getDate();
 	const totalDays = firstDayOfMonth + daysInMonth;
 

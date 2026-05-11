@@ -1,7 +1,7 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { startOfDay, isSunday, isSameMonth, isSameDay } from "date-fns";
+import { startOfDay, isMonday, isSameMonth, isSameDay } from "date-fns";
 import { motion } from "framer-motion";
 import { useMemo, useCallback } from "react";
 
@@ -120,7 +120,7 @@ export function DayCell({ cell, events, eventPositions, users, currentUser }: IP
       <motion.div
         className={cn(
           "flex h-full lg:min-h-[10rem] flex-col gap-1 border-l border-t",
-          isSunday(date) && "border-l-0"
+          isMonday(date) && "border-l-0"
         )}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -135,7 +135,7 @@ export function DayCell({ cell, events, eventPositions, users, currentUser }: IP
               "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary px-0 font-bold text-primary-foreground"
             )}
           >
-            {day + 1}
+            {day}
           </motion.span>
 
           <motion.div
