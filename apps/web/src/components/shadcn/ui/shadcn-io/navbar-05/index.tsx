@@ -89,6 +89,7 @@ const HamburgerIcon = ({
 // Navigation links function - called inside component to use current locale
 const getNavigationLinks = (): Navbar05NavItem[] => [
   { href: "/", label: m.nav_home() },
+  { href: "/explore", label: m.nav_explore() },
   { href: "/create-event", label: m.nav_create_event() },
   { href: "/events", label: m.nav_events() },
   { href: "/event-calendar", label: m.nav_calendar() },

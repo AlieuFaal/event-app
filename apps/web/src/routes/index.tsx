@@ -73,7 +73,7 @@ function App() {
               <div className="mt-6 flex justify-center">
                 {ctx.IsAuthenticated ? (
                   <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-105 md:hover:scale-110 hover:shadow-xl">
-                    <Link to="/events">{m.Home_Button2()}</Link>
+                    <Link to="/explore">{m.Home_Button2()}</Link>
                   </Button>
                 ) : (
                   <Button className="text-base md:text-lg lg:text-xl px-8 md:px-12 lg:px-14 py-4 md:py-5 lg:py-6 rounded-full font-bold transition-duration-300 hover:scale-105 md:hover:scale-110 hover:shadow-xl">

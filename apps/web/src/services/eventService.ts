@@ -7,7 +7,7 @@ import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
 import { schema } from "@vibespot/database/schema";
 import { db } from "@vibespot/database";
-import { eq, and, gte, inArray } from "drizzle-orm";
+import { count, eq, and, gte, inArray } from "drizzle-orm";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 
 const eventSelect = {
@@ -68,6 +68,64 @@ const attachComments = async <T extends { id: string }>(events: T[]) => {
   }));
 };
 
+const attachEventEngagement = async <T extends { id: string }>(
+  events: T[],
+  userId: string
+) => {
+  if (events.length === 0) {
+    return [] as Array<T & { attendeeCount: number; isGoing: boolean; isStarred: boolean }>;
+  }
+
+  const eventIds = events.map((event) => event.id);
+
+  const [attendanceCounts, currentUserAttendance, currentUserFavorites] =
+    await Promise.all([
+      db
+        .select({
+          eventId: schema.eventAttendance.eventId,
+          attendeeCount: count(),
+        })
+        .from(schema.eventAttendance)
+        .where(inArray(schema.eventAttendance.eventId, eventIds))
+        .groupBy(schema.eventAttendance.eventId),
+      db
+        .select({ eventId: schema.eventAttendance.eventId })
+        .from(schema.eventAttendance)
+        .where(
+          and(
+            eq(schema.eventAttendance.userId, userId),
+            inArray(schema.eventAttendance.eventId, eventIds)
+          )
+        ),
+      db
+        .select({ eventId: schema.favoriteEvent.eventId })
+        .from(schema.favoriteEvent)
+        .where(
+          and(
+            eq(schema.favoriteEvent.userId, userId),
+            inArray(schema.favoriteEvent.eventId, eventIds)
+          )
+        ),
+    ]);
+
+  const attendanceCountByEventId = new Map(
+    attendanceCounts.map((row) => [row.eventId, row.attendeeCount])
+  );
+  const currentUserAttendanceIds = new Set(
+    currentUserAttendance.map((row) => row.eventId)
+  );
+  const currentUserFavoriteIds = new Set(
+    currentUserFavorites.map((row) => row.eventId)
+  );
+
+  return events.map((event) => ({
+    ...event,
+    attendeeCount: attendanceCountByEventId.get(event.id) ?? 0,
+    isGoing: currentUserAttendanceIds.has(event.id),
+    isStarred: currentUserFavoriteIds.has(event.id),
+  }));
+};
+
 export const getEventDataFn = createServerFn({
   method: "GET",
 }).handler(async () => {
@@ -94,6 +152,26 @@ export const getEventsWithCommentsFn = createServerFn({
 
   return attachComments(events);
 });
+
+export const getExploreEventsFn = createServerFn({
+  method: "GET",
+})
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const events = await db
+      .select(eventSelect)
+      .from(schema.event)
+      .where(gte(schema.event.endDate, new Date()))
+      .orderBy(schema.event.startDate);
+
+    const eventsWithComments = await attachComments(events);
+    return attachEventEngagement(eventsWithComments, userId);
+  });
 
 export const getUserEventsWithCommentsFn = createServerFn({
   method: "GET",
@@ -579,6 +657,72 @@ export const deleteCommentForEventFn = createServerFn({ method: "POST" })
       .where(and(eq(schema.comment.id, data.id), eq(schema.comment.userId, userId)));
 
     return { deletedComment };
+  });
+
+export const toggleEventAttendanceFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .inputValidator(z.object({ eventId: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const userId = context.currentUser?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const [eventById] = await db
+      .select(eventSelect)
+      .from(schema.event)
+      .where(eq(schema.event.id, data.eventId))
+      .limit(1);
+
+    if (!eventById) {
+      throw new Error("Event not found");
+    }
+
+    const [existingAttendance] = await db
+      .select()
+      .from(schema.eventAttendance)
+      .where(
+        and(
+          eq(schema.eventAttendance.userId, userId),
+          eq(schema.eventAttendance.eventId, data.eventId)
+        )
+      )
+      .limit(1);
+
+    if (existingAttendance) {
+      await db
+        .delete(schema.eventAttendance)
+        .where(
+          and(
+            eq(schema.eventAttendance.userId, userId),
+            eq(schema.eventAttendance.eventId, data.eventId)
+          )
+        );
+
+      const [eventWithComments] = await attachComments([eventById]);
+      const [eventWithEngagement] = await attachEventEngagement(
+        [eventWithComments],
+        userId
+      );
+      return eventWithEngagement;
+    }
+
+    if (eventById.endDate < new Date()) {
+      throw new Error("Cannot RSVP to past events");
+    }
+
+    await db.insert(schema.eventAttendance).values({
+      userId,
+      eventId: data.eventId,
+      createdAt: new Date(),
+    });
+
+    const [eventWithComments] = await attachComments([eventById]);
+    const [eventWithEngagement] = await attachEventEngagement(
+      [eventWithComments],
+      userId
+    );
+    return eventWithEngagement;
   });
 
 export const getFavoriteEventsFn = createServerFn({
