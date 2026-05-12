@@ -202,8 +202,8 @@ const UserMenu = ({
   const handleLogout = async () => {
     try {
       await authClient.signOut();
-      await router.invalidate();
       await router.navigate({ to: "/", replace: true });
+      await router.invalidate();
     } catch (error) {
       console.error("Failed to sign out:", error);
     }

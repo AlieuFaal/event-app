@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { Resend } from "resend";
-import { db, schema, session } from ".";
+import { db, schema } from ".";
 import { expo } from "@better-auth/expo";
 
 const normalizeOrigin = (origin: string): string =>
@@ -154,13 +154,11 @@ export const auth = betterAuth({
     },
     useSecureCookies: secureCookies,
     disableOriginCheck: false,
-  },
-  crossSubDomainCookies: {
-    enabled: enableCrossSubDomainCookies,
-  },
-  cookies: {
+    crossSubDomainCookies: {
+      enabled: enableCrossSubDomainCookies,
+    },
     cookies: {
-      sessionToken: {
+      session_token: {
         name: "better-auth.session_token",
         attributes: {
           sameSite: "lax",
@@ -169,14 +167,12 @@ export const auth = betterAuth({
         },
       },
     },
-    session: {
-      model: session,
-      expiresIn: 60 * 60 * 24 * 7, // 7 days
-      updateAge: 60 * 60 * 24, // 1 day
-      cookieCache: {
-        enabled: true,
-        maxAge: 10 * 60,
-      },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day
+    cookieCache: {
+      enabled: false,
     },
   },
   plugins: [tanstackStartCookies(), expo()], // make sure this is the last plugin in the array

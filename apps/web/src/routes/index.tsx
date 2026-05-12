@@ -14,29 +14,26 @@ import { PlaceholderImage2, PlaceholderImage3 } from "@/assets";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin, ScrollTrigger } from "gsap/all";
-import { getThemeServerFn } from "@/services/ThemeService";
+import { useTheme } from "@/components/Themeprovider";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
     getServerMessage({ data: "🎉" });
     const ctx = context;
-    const theme = await getThemeServerFn();
 
-    return { ctx, theme };
+    return { ctx };
   },
   component: App,
 });
 
 function App() {
-  const { ctx, theme } = Route.useLoaderData();
+  const { ctx } = Route.useLoaderData();
+  const { resolvedTheme } = useTheme();
 
   // Calculate background color safely (no document access during SSR)
   const backgroundColor = useMemo(() => {
-    if (theme === "dark") return "#0f0f23";
-    if (theme === "light") return "#ffffff";
-    // Default to light for SSR
-    return "#ffffff";
-  }, [theme]);
+    return resolvedTheme === "dark" ? "#0f0f23" : "#ffffff";
+  }, [resolvedTheme]);
 
   useEffect(() => {
     const previousBackgroundColor = document.body.style.backgroundColor;

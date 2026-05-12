@@ -1,15 +1,29 @@
 import { setThemeServerFn } from "@/services/ThemeService";
 import { useRouter } from "@tanstack/react-router";
-import { createContext, PropsWithChildren, use, useCallback, useEffect, useMemo, useState } from "react"
+import {
+    createContext,
+    PropsWithChildren,
+    use,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react"
 
-type Theme = "light" | "dark" | "system"
+export type Theme = "light" | "dark" | "system"
+export type ResolvedTheme = "light" | "dark"
 
-type ThemeContextVal = { theme: Theme; setTheme: (val: Theme) => void };
+type ThemeContextVal = {
+    theme: Theme;
+    resolvedTheme: ResolvedTheme;
+    setTheme: (val: Theme) => void;
+};
 type Props = PropsWithChildren<{ theme: Theme }>;
 
 const ThemeContext = createContext<ThemeContextVal | null>(null);
+const THEME_STORAGE_KEY = "theme-preference";
 
-function getResolvedTheme(theme: Theme): "light" | "dark" {
+function getResolvedTheme(theme: Theme): ResolvedTheme {
     if (theme !== "system") {
         return theme;
     }
@@ -21,35 +35,49 @@ function getResolvedTheme(theme: Theme): "light" | "dark" {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function applyThemePreference(theme: Theme) {
+function applyThemePreference(theme: Theme): ResolvedTheme {
+    const resolvedTheme = getResolvedTheme(theme);
+
+    if (typeof document === "undefined") {
+        return resolvedTheme;
+    }
+
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(resolvedTheme);
+    document.documentElement.dataset.themePreference = theme;
+
+    return resolvedTheme;
+}
+
+function persistThemeCookie(theme: Theme) {
     if (typeof document === "undefined") {
         return;
     }
 
-    const resolvedTheme = getResolvedTheme(theme);
-
-    document.documentElement.classList.remove("light", "dark", "system");
-    document.documentElement.classList.add(resolvedTheme);
-    document.documentElement.dataset.themePreference = theme;
+    document.cookie = `${THEME_STORAGE_KEY}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
 export function ThemeProvider({ children, theme }: Props) {
     const router = useRouter()
     const [currentTheme, setCurrentTheme] = useState(theme);
+    const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => getResolvedTheme(theme));
 
     useEffect(() => {
         setCurrentTheme(theme);
+        setResolvedTheme(applyThemePreference(theme));
     }, [theme]);
 
     useEffect(() => {
-        applyThemePreference(currentTheme);
+        setResolvedTheme(applyThemePreference(currentTheme));
 
         if (currentTheme !== "system" || typeof window === "undefined") {
             return;
         }
 
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        const handleSystemThemeChange = () => applyThemePreference("system");
+        const handleSystemThemeChange = () => {
+            setResolvedTheme(applyThemePreference("system"));
+        };
 
         mediaQuery.addEventListener("change", handleSystemThemeChange);
 
@@ -60,8 +88,11 @@ export function ThemeProvider({ children, theme }: Props) {
 
     const setTheme = useCallback((val: Theme) => {
         const previousTheme = currentTheme;
+        const previousResolvedTheme = resolvedTheme;
+
         setCurrentTheme(val);
-        applyThemePreference(val);
+        setResolvedTheme(applyThemePreference(val));
+        persistThemeCookie(val);
 
         void (async () => {
             try {
@@ -69,15 +100,17 @@ export function ThemeProvider({ children, theme }: Props) {
                 await router.invalidate()
             } catch (error) {
                 setCurrentTheme(previousTheme);
+                setResolvedTheme(previousResolvedTheme);
                 applyThemePreference(previousTheme);
+                persistThemeCookie(previousTheme);
                 console.error("Failed to update theme:", error)
             }
         })()
-    }, [currentTheme, router]);
+    }, [currentTheme, resolvedTheme, router]);
 
     const contextValue = useMemo(
-        () => ({ theme: currentTheme, setTheme }),
-        [currentTheme, setTheme],
+        () => ({ theme: currentTheme, resolvedTheme, setTheme }),
+        [currentTheme, resolvedTheme, setTheme],
     );
 
     return <ThemeContext value={contextValue}>{children}</ThemeContext>;

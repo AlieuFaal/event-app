@@ -6,6 +6,19 @@ import Constants from "expo-constants";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import type { auth as authInstance } from "@vibespot/database/src/auth";
 
+export const MOBILE_AUTH_CALLBACK_URL = "/";
+export const MOBILE_AUTH_NEW_USER_CALLBACK_URL = "/onboarding";
+
+const getAuthScheme = (): string => {
+  const scheme = Constants.expoConfig?.scheme;
+
+  if (Array.isArray(scheme)) {
+    return scheme[0] ?? "vibespot";
+  }
+
+  return scheme ?? "vibespot";
+};
+
 const getBaseUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri?.split(":").shift();
   const productionApiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -28,13 +41,14 @@ const getBaseUrl = () => {
 };
 
 const baseURL = getBaseUrl();
+const authScheme = getAuthScheme();
 
 export const authClient = createAuthClient({
   baseURL: baseURL,
   plugins: [
     inferAdditionalFields<typeof authInstance>(),
     expoClient({
-      scheme: "vibespot",
+      scheme: authScheme,
       storagePrefix: "vibespot-auth",
       storage: SecureStore,
     }),

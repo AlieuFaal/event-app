@@ -58,6 +58,7 @@ export default function SignIn({
               ? loginResult.redirectTo
               : redirectTo;
 
+          await router.invalidate();
           await router.navigate({ to: nextRoute, replace: true });
           toast.success("Login successful!");
         },

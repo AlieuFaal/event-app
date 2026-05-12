@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'expo-router';
@@ -39,8 +39,9 @@ export function SignInForm() {
                 onResponse: () => {
                     setLoading(false);
                 },
-                onError() {
+                onError(ctx) {
                     setLoading(false);
+                    Alert.alert("Sign-in failed", ctx.error.message);
                 }
             });
     };
@@ -114,7 +115,7 @@ export function SignInForm() {
                             <Text className="text-muted-foreground px-4 text-sm">or</Text>
                             <Separator className="flex-1" />
                         </View>
-                        <SocialConnections />
+                        <SocialConnections disabled={loading} />
                     </CardContent>
                 </KeyboardAwareScrollView>
             </Card>
