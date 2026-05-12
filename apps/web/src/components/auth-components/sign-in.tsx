@@ -22,7 +22,11 @@ import { onUserLoginFn } from "@/services/user-service";
 import { m } from "@/paraglide/messages";
 import { toast } from "sonner";
 
-export default function SignIn() {
+export default function SignIn({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,9 +53,12 @@ export default function SignIn() {
         onSuccess: async (ctx) => {
           const loginResult = await onNewUserLogin();
 
-          if (loginResult?.redirectTo) {
-            router.navigate({ to: loginResult.redirectTo });
-          }
+          const nextRoute =
+            loginResult?.redirectTo === "/onboarding"
+              ? loginResult.redirectTo
+              : redirectTo;
+
+          await router.navigate({ to: nextRoute, replace: true });
           toast.success("Login successful!");
         },
       },
@@ -62,7 +69,7 @@ export default function SignIn() {
     await authClient.signIn.social(
       {
         provider: "google",
-        callbackURL: "/",
+        callbackURL: redirectTo,
         newUserCallbackURL: "/onboarding",
       },
       {
@@ -77,7 +84,7 @@ export default function SignIn() {
     await authClient.signIn.social(
       {
         provider: "facebook",
-        callbackURL: "/",
+        callbackURL: redirectTo,
         newUserCallbackURL: "/onboarding",
       },
       {
@@ -92,7 +99,7 @@ export default function SignIn() {
     await authClient.signIn.social(
       {
         provider: "github",
-        callbackURL: "/",
+        callbackURL: redirectTo,
         newUserCallbackURL: "/onboarding",
       },
       {

@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { getSafeAuthRedirectTarget, isPublicAuthPath } from '@/lib/auth-redirect'
 
 let lastAuthCheckTime = 0;
 const AUTH_CHECK_THROTTLE = 2000; // Don't show toast more than once every 2 seconds
@@ -7,6 +8,10 @@ const AUTH_CHECK_THROTTLE = 2000; // Don't show toast more than once every 2 sec
 export const Route = createFileRoute('/(protected)')({
     component: RouteComponent,
     beforeLoad: async ({ context, location }) => {
+        if (isPublicAuthPath(location.pathname)) {
+            return;
+        }
+
         if (!context.IsAuthenticated || !context.currentUser) {
             const now = Date.now();
             const shouldShowToast = now - lastAuthCheckTime > AUTH_CHECK_THROTTLE;
@@ -16,7 +21,11 @@ export const Route = createFileRoute('/(protected)')({
                 lastAuthCheckTime = now;
             }
             
-            throw redirect({to: "/signin", search: { redirect: location.href }})
+            throw redirect({
+                to: "/signin",
+                search: { redirect: getSafeAuthRedirectTarget(location.href) },
+                replace: true,
+            })
         }
     }
 })

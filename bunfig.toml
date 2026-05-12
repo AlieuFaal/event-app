@@ -1,7 +1,11 @@
 # Bun configuration for monorepo
 [install]
 # Use exact versions for better reproducibility
-exact = false
+exact = true
+
+# Only resolve package versions published at least 3 days ago.
+# This reduces exposure to freshly published supply-chain compromises.
+minimumReleaseAge = 259200
 
 # Auto-install peer dependencies
 auto = true
