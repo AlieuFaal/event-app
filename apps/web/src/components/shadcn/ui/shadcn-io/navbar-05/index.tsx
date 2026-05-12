@@ -203,7 +203,7 @@ const UserMenu = ({
     try {
       await authClient.signOut();
       await router.invalidate();
-      await router.navigate({ to: "/signin", replace: true });
+      await router.navigate({ to: "/", replace: true });
     } catch (error) {
       console.error("Failed to sign out:", error);
     }
