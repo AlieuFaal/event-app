@@ -23,7 +23,10 @@ const getFollowersDataByUserId = async (userId: string) => {
       image: schema.user.image,
     })
     .from(schema.followersTable)
-    .innerJoin(schema.user, eq(schema.followersTable.followerId, schema.user.id))
+    .innerJoin(
+      schema.user,
+      eq(schema.followersTable.followerId, schema.user.id),
+    )
     .where(eq(schema.followersTable.userId, userId));
 
   return {
@@ -40,7 +43,10 @@ const getFollowingDataByUserId = async (userId: string) => {
       image: schema.user.image,
     })
     .from(schema.followingTable)
-    .innerJoin(schema.user, eq(schema.followingTable.followingId, schema.user.id))
+    .innerJoin(
+      schema.user,
+      eq(schema.followingTable.followingId, schema.user.id),
+    )
     .where(eq(schema.followingTable.userId, userId));
 
   return {
@@ -51,7 +57,7 @@ const getFollowingDataByUserId = async (userId: string) => {
 
 const sanitizeUserForViewer = (
   user: typeof schema.user.$inferSelect,
-  viewerId: string
+  viewerId: string,
 ) => {
   if (user.id === viewerId) {
     return user;
@@ -179,31 +185,31 @@ export const onbUpdateUserDataFn = createServerFn({
     return result[0];
   });
 
-export const onUserLoginFn = createServerFn()
-  .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    const userId = context.currentUser?.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+// export const onUserLoginFn = createServerFn()
+//   .middleware([authMiddleware])
+//   .handler(async ({ context }) => {
+//     const userId = context.currentUser?.id;
+//     if (!userId) {
+//       throw new Error("User not authenticated");
+//     }
 
-    const dbUser = await db
-      .select()
-      .from(schema.user)
-      .where(eq(schema.user.id, userId))
-      .limit(1)
-      .then((res) => res[0]);
+//     const dbUser = await db
+//       .select()
+//       .from(schema.user)
+//       .where(eq(schema.user.id, userId))
+//       .limit(1)
+//       .then((res) => res[0]);
 
-    if (!dbUser || !dbUser.role) {
-      throw new Error("User not authenticated");
-    }
+//     if (!dbUser || !dbUser.role) {
+//       throw new Error("User not authenticated");
+//     }
 
-    if (dbUser.role === "New User") {
-      return { redirectTo: "/onboarding" };
-    }
+//     if (dbUser.role === "New User") {
+//       return { redirectTo: "/onboarding" };
+//     }
 
-    return { redirectTo: "/" };
-  });
+//     return { redirectTo: "/" };
+//   });
 
 export const followUserFn = createServerFn({
   method: "POST",
@@ -259,8 +265,8 @@ export const unfollowUserFn = createServerFn({
       .where(
         and(
           eq(schema.followersTable.userId, data.id),
-          eq(schema.followersTable.followerId, userId)
-        )
+          eq(schema.followersTable.followerId, userId),
+        ),
       )
       .returning();
 
@@ -269,8 +275,8 @@ export const unfollowUserFn = createServerFn({
       .where(
         and(
           eq(schema.followingTable.userId, userId),
-          eq(schema.followingTable.followingId, data.id)
-        )
+          eq(schema.followingTable.followingId, data.id),
+        ),
       )
       .returning();
 
@@ -336,8 +342,8 @@ export const isUserFollowingFn = createServerFn({
       .where(
         and(
           eq(schema.followersTable.userId, data.id),
-          eq(schema.followersTable.followerId, userId)
-        )
+          eq(schema.followersTable.followerId, userId),
+        ),
       );
 
     return result.length > 0;

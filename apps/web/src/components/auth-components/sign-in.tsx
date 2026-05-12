@@ -17,8 +17,6 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { router } from "@/router";
 import { authClient } from "@/lib/auth-client";
-import { useServerFn } from "@tanstack/react-start";
-import { onUserLoginFn } from "@/services/user-service";
 import { m } from "@/paraglide/messages";
 import { toast } from "sonner";
 
@@ -31,7 +29,20 @@ export default function SignIn({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const onNewUserLogin = useServerFn(onUserLoginFn);
+
+  const waitForClientSession = async () => {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const session = await authClient.getSession().catch(() => null);
+
+      if (session?.data?.user) {
+        return session.data.user;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 100 * (attempt + 1)));
+    }
+
+    return null;
+  };
 
   const handleSignIn = async () => {
     await authClient.signIn.email(
@@ -51,11 +62,11 @@ export default function SignIn({
           toast.error(ctx.error.message);
         },
         onSuccess: async (ctx) => {
-          const loginResult = await onNewUserLogin();
+          const sessionUser = (await waitForClientSession()) ?? ctx.data?.user;
 
           const nextRoute =
-            loginResult?.redirectTo === "/onboarding"
-              ? loginResult.redirectTo
+            sessionUser?.role === "New User"
+              ? "/onboarding"
               : redirectTo;
 
           await router.invalidate();
