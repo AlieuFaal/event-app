@@ -19,7 +19,7 @@ export function ExploreHero({
   return (
     <section className="grid gap-8 pt-7 lg:grid-cols-[minmax(390px,520px)_minmax(0,1fr)] lg:items-end lg:pt-8">
       <div className="space-y-3">
-        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--explore-border-strong)] bg-[var(--explore-purple-soft)] px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[var(--explore-purple-text)]">
+        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--explore-border-strong)] bg-[var(--explore-purple-soft)] px-3 py-1 text-xs uppercase tracking-[0.16em] text-[var(--explore-purple-text)]">
           <Sparkles className="size-4" />
           Explore
         </div>
