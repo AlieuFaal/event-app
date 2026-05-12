@@ -1,13 +1,23 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
-import { Comment, User } from "@vibespot/database/schema";
+import type { schema } from "@vibespot/database/schema";
 import { toast } from "sonner";
 import { router } from "@/router";
 import { Button } from "../shadcn/ui/button";
 import { PlaceholderImage1 } from "@/assets";
 
+type CommentCardUser = Pick<
+    typeof schema.user.$inferSelect,
+    "id" | "name" | "image"
+>;
+
+type CommentCardComment = Pick<
+    typeof schema.comment.$inferSelect,
+    "id" | "userId" | "content" | "createdAt"
+>;
+
 interface CommentCardProps {
-    users: User[];
-    comment: Comment;
+    users: CommentCardUser[];
+    comment: CommentCardComment;
 }
 
 export default function CommentCard({ comment, users }: CommentCardProps) {
@@ -21,7 +31,7 @@ export default function CommentCard({ comment, users }: CommentCardProps) {
         .slice(0, 2)
         .toUpperCase();
 
-    function visitUserProfile(comment: Comment) {
+    function visitUserProfile(comment: CommentCardComment) {
         const user = users.find((user) => user.id === comment.userId);
 
         console.log("Visiting profile of user:", user?.name);

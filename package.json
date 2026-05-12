@@ -61,6 +61,9 @@
 	"resolutions": {
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
+		"drizzle-kit": "0.31.6",
+		"drizzle-orm": "0.44.7",
+		"drizzle-zod": "0.8.3",
 		"esbuild": "^0.25.0",
 		"ms": "4.0.0-nightly.202508271359"
 	}

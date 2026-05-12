@@ -2,26 +2,53 @@ import { Button } from "../shadcn/ui/button";
 import { Textarea } from "../shadcn/ui/textarea";
 import CommentCard from "./comment-card";
 import { authClient } from "@/lib/auth-client";
-import { Comment, commentInsertSchema, User } from "@vibespot/database/schema";
+import type { schema } from "@vibespot/database/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { FormControl, FormField, FormItem, Form, FormMessage } from "../shadcn/ui/form";
 import { toast } from "sonner";
 import { postCommentForEventFn } from "@/services/eventService";
 import { useForm } from "react-hook-form";
-import { EventWithComments } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 import { useRouter } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { SendHorizontal } from "lucide-react";
 import { getEventAccent } from "./event-accent";
 
-export default function CommentSection({ event, users, currentUser }: { event: EventWithComments, users: User[], currentUser?: User | null}) {
+type CommentSectionEvent = Pick<
+    typeof schema.event.$inferSelect,
+    "id" | "color"
+> & {
+    comments?: Array<typeof schema.comment.$inferSelect>;
+};
+
+type CommentSectionUser = Pick<
+    typeof schema.user.$inferSelect,
+    "id" | "name" | "image"
+>;
+
+type CommentSectionCurrentUser = Pick<typeof schema.user.$inferSelect, "id"> | null;
+
+const commentFormSchema = z.object({
+    content: z.string().min(1, "Please enter your comment"),
+});
+
+type CommentFormValues = z.infer<typeof commentFormSchema>;
+
+export default function CommentSection({
+    event,
+    users,
+    currentUser,
+}: {
+    event: CommentSectionEvent;
+    users: CommentSectionUser[];
+    currentUser?: CommentSectionCurrentUser;
+}) {
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof commentInsertSchema>>({
+    const form = useForm<CommentFormValues>({
         mode: "onBlur",
-        resolver: zodResolver(commentInsertSchema),
+        resolver: zodResolver(commentFormSchema),
     })
 
     const session = authClient.useSession();
@@ -38,7 +65,7 @@ export default function CommentSection({ event, users, currentUser }: { event: E
         .slice(0, 2)
         .toUpperCase();
 
-    const onSubmit = async (values: z.infer<typeof commentInsertSchema>) => {
+    const onSubmit = async (values: CommentFormValues) => {
         if (!session.data) {
             toast.warning(m.toast_comment_login_required());
             return;
@@ -48,16 +75,13 @@ export default function CommentSection({ event, users, currentUser }: { event: E
             return;
         }
 
-        const newComment: Comment = {
-            ...values,
-            id: crypto.randomUUID(),
-            userId: currentUserId,
-            eventId: event.id,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
         try {
-            const response = await postCommentForEventFn({ data: newComment });
+            const response = await postCommentForEventFn({
+                data: {
+                    eventId: event.id,
+                    content: values.content,
+                },
+            });
             if (response) {
                 toast.success(m.toast_comment_success());
                 form.reset();

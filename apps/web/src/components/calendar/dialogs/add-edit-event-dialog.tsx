@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addMinutes, set } from "date-fns";
-import type { Event, User } from "@vibespot/database/schema";
+import type { schema } from "@vibespot/database/schema";
 import { lazy, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -60,9 +60,39 @@ interface IProps {
 	children: ReactNode;
 	startDate?: Date;
 	startTime?: { hour: number; minute: number };
-	event?: Event;
-	currentUser?: User | null;
+	event?: EditableEvent;
+	currentUser?: EditableEventUser | null;
 }
+
+type EditableEvent = Pick<
+	typeof schema.event.$inferSelect,
+	| "id"
+	| "title"
+	| "description"
+	| "address"
+	| "startDate"
+	| "endDate"
+	| "color"
+	| "genre"
+> &
+	Partial<
+		Pick<
+			typeof schema.event.$inferSelect,
+			| "userId"
+			| "venue"
+			| "latitude"
+			| "longitude"
+			| "repeat"
+			| "repeatGroupId"
+			| "repeatEndDate"
+			| "createdAt"
+			| "imageUrl"
+		>
+	>;
+
+type EditableEventUser = Pick<typeof schema.user.$inferSelect, "id"> & {
+	role?: string | null;
+};
 
 export function AddEditEventDialog({
 	children,

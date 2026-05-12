@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/shadcn/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { User } from "@vibespot/database/schema";
 import type { ReactNode } from "react";
 import {
   ArrowUpRight,
@@ -35,14 +34,19 @@ import {
   getLocationLabel,
 } from "./explore-utils";
 import { RsvpButton } from "./explore-event-actions";
-import type { ExploreEvent, ExploreEventAction } from "./types";
+import type {
+  ExploreCurrentUser,
+  ExploreEvent,
+  ExploreEventAction,
+  ExploreUser,
+} from "./types";
 
 type ExploreEventDialogProps = {
   attendancePendingEventId: string | null;
-  currentUser: User | null;
+  currentUser: ExploreCurrentUser;
   event: ExploreEvent | null;
   open: boolean;
-  users: User[];
+  users: ExploreUser[];
   onOpenChange: (open: boolean) => void;
   onFlyToEvent: ExploreEventAction;
   onProfileOpen: (userId: string) => void;

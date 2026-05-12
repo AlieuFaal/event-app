@@ -6,8 +6,7 @@ import {
   PlaceholderImage5,
   PlaceholderImage6,
 } from "@/assets";
-import type { User } from "@vibespot/database/schema";
-import type { ExploreEvent } from "./types";
+import type { ExploreEvent, ExploreUser } from "./types";
 
 const fallbackImages = [
   PlaceholderImage1,
@@ -47,11 +46,11 @@ export function getEventImage(event: ExploreEvent) {
   return fallbackImages[imageIndex % fallbackImages.length];
 }
 
-export function getEventCreator(event: ExploreEvent, users: User[]) {
+export function getEventCreator(event: ExploreEvent, users: ExploreUser[]) {
   return users.find((user) => user.id === event.userId);
 }
 
-export function getCreatorName(event: ExploreEvent, users: User[]) {
+export function getCreatorName(event: ExploreEvent, users: ExploreUser[]) {
   return getEventCreator(event, users)?.name ?? "Unknown creator";
 }
 
@@ -162,4 +161,3 @@ export function getEventCountsByGenre(events: ExploreEvent[]) {
     .map(([genre, count]) => ({ genre, count }))
     .sort((a, b) => a.genre.localeCompare(b.genre));
 }
-

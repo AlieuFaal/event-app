@@ -37,7 +37,7 @@ export const Route = createFileRoute("/(protected)/explore")({
 
     return {
       currentUser,
-      events: events as ExploreEvent[],
+      events,
       nowIso: new Date().toISOString(),
       users,
     };
