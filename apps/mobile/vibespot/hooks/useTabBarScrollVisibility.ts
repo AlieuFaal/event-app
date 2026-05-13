@@ -12,7 +12,7 @@ type UseTabBarScrollVisibilityOptions = {
 export function useTabBarScrollVisibility({
 	bottomRevealBuffer = 140,
 	enabled = true,
-	hideDistance = 96,
+	hideDistance = 150,
 	minRevealDelta = 12,
 }: UseTabBarScrollVisibilityOptions = {}) {
 	const lastScrollYRef = useRef(0);

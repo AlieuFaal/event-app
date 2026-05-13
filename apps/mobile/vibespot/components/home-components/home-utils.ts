@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import {
   PlaceholderImage1,
   PlaceholderImage2,
@@ -5,9 +6,10 @@ import {
   PlaceholderImage4,
   PlaceholderImage5,
   PlaceholderImage6,
+  PlaceholderImage7,
+  PlaceholderImage8,
 } from "@/assets";
 import type { EventWithAttendance } from "@/types/event";
-import { useRouter } from "expo-router";
 
 const fallbackImages = [
   PlaceholderImage1,
@@ -16,6 +18,8 @@ const fallbackImages = [
   PlaceholderImage4,
   PlaceholderImage5,
   PlaceholderImage6,
+  PlaceholderImage7,
+  PlaceholderImage8,
 ];
 
 const HERO_MESSAGE_ROTATION_MS = 1000 * 60 * 60 * 6;

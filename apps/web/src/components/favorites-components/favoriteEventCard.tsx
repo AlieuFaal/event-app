@@ -32,7 +32,9 @@ import {
 	PlaceholderImage3,
 	PlaceholderImage4,
 	PlaceholderImage5,
-	PlaceholderImage6,
+  PlaceholderImage6,
+  PlaceholderImage7,
+  PlaceholderImage8,
 } from "../../assets";
 import { AddEditEventDialog } from "../calendar/dialogs/add-edit-event-dialog";
 import { getEventAccent } from "../event-components/event-accent";
@@ -82,7 +84,9 @@ export default function FavoriteEventCard({
 		PlaceholderImage3,
 		PlaceholderImage4,
 		PlaceholderImage5,
-		PlaceholderImage6,
+    PlaceholderImage6,
+    PlaceholderImage7,
+    PlaceholderImage8,
 	];
 
 	function getEventCreatorName(favoriteEvent: EventWithComments) {

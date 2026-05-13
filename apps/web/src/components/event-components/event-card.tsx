@@ -34,7 +34,9 @@ import {
 	PlaceholderImage3,
 	PlaceholderImage4,
 	PlaceholderImage5,
-	PlaceholderImage6,
+  PlaceholderImage6,
+  PlaceholderImage7,
+  PlaceholderImage8,
 } from "../../assets";
 import { Button } from "../shadcn/ui/button";
 import {
@@ -87,7 +89,9 @@ export default function EventCard({
 		PlaceholderImage3,
 		PlaceholderImage4,
 		PlaceholderImage5,
-		PlaceholderImage6,
+    PlaceholderImage6,
+    PlaceholderImage7,
+    PlaceholderImage8,
 	];
 
 	function getEventCreatorName(event: Event) {

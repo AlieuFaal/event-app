@@ -66,7 +66,7 @@ export function HomeContent({
 
   return (
     <AnimatedScrollView
-      contentContainerStyle={{ gap: 28, paddingBottom: 128, paddingTop: 10 }}
+      contentContainerStyle={{ gap: 32, paddingTop: 10 }}
       contentInsetAdjustmentBehavior="automatic"
       onScroll={onScroll}
       scrollEventThrottle={16}

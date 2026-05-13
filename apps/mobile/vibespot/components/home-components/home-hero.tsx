@@ -24,11 +24,12 @@ export function HomeHero({ firstName, isDark, now }: HomeHeroProps) {
           {formatDateHeading(now)}
         </Text>
         <Text
-          className={`mt-3 line-clamp-2 w-screen font-black text-4xl leading-[48px] ${
+          className={`mt-7 line-clamp-2 w-screen font-black text-4xl leading-[48px] ${
             isDark ? "text-white" : "text-gray-950"
           }`}
         >
           {heroMessage.lead}
+          {" "}
           <Text className="text-[#9b5cff]">
             {firstName}
             {heroMessage.endMark}
