@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import type { schema } from "@vibespot/database/schema";
 import { toast } from "sonner";
-import { router } from "@/router";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "../shadcn/ui/button";
 import { PlaceholderImage1 } from "@/assets";
 
@@ -21,6 +21,7 @@ interface CommentCardProps {
 }
 
 export default function CommentCard({ comment, users }: CommentCardProps) {
+    const navigate = useNavigate();
     const commentCreator = users.find((user) => user.id === comment.userId);
     const creatorName = commentCreator?.name ?? "Unknown";
     const creatorImage = commentCreator?.image ?? PlaceholderImage1;
@@ -40,7 +41,7 @@ export default function CommentCard({ comment, users }: CommentCardProps) {
             return toast.error("User not found. Please try again.");
         }
 
-        return router.navigate({ to: `/user/${user.id}` })
+        return navigate({ to: "/user/$id", params: { id: user.id } })
     }
 
     return (

@@ -8,6 +8,18 @@ import { expo } from "@better-auth/expo";
 const normalizeOrigin = (origin: string): string =>
   origin.trim().replace(/\/+$/, "");
 
+const normalizeBaseUrl = (value: string): string => {
+  const candidate = normalizeOrigin(value);
+  const withProtocol =
+    candidate.startsWith("http://") || candidate.startsWith("https://")
+      ? candidate
+      : candidate.startsWith("localhost") || candidate.startsWith("127.0.0.1")
+        ? `http://${candidate}`
+        : `https://${candidate}`;
+
+  return new URL(withProtocol).toString().replace(/\/+$/, "");
+};
+
 const parseOrigins = (origins: string | undefined): string[] => {
   if (!origins) {
     return [];
@@ -15,12 +27,19 @@ const parseOrigins = (origins: string | undefined): string[] => {
 
   return origins
     .split(",")
-    .map((origin) => normalizeOrigin(origin))
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0)
+    .map((origin) => normalizeBaseUrl(origin))
     .filter((origin) => origin.length > 0);
 };
 
 const authSecret = process.env.BETTER_AUTH_SECRET;
-const authBaseUrl = process.env.BETTER_AUTH_URL;
+const authBaseUrlInput =
+  process.env.BETTER_AUTH_URL ||
+  process.env.VERCEL_URL;
+const authBaseUrl = authBaseUrlInput
+  ? normalizeBaseUrl(authBaseUrlInput)
+  : undefined;
 const isProduction = process.env.NODE_ENV === "production";
 
 if (!authSecret) {
@@ -34,7 +53,7 @@ if (!authBaseUrl) {
 const trustedOrigins = Array.from(
   new Set([
     ...parseOrigins(process.env.BETTER_AUTH_TRUSTED_ORIGINS),
-    normalizeOrigin(authBaseUrl),
+    authBaseUrl,
     ...(isProduction
       ? []
       : [

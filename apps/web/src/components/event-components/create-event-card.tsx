@@ -11,9 +11,9 @@ import { lazy, type ComponentProps, Suspense, useEffect, useState } from "react"
 import { useForm, useWatch, type FieldErrors } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { m } from "@/paraglide/messages";
-import { router } from "@/router";
 import { repeatEventsFn } from "@/services/eventService";
 import { GENRES } from "../calendar/constants";
 import { ColorPicker } from "../color-picker-component/color-picker";
@@ -152,6 +152,7 @@ const FIELD_STEP_INDEX: Record<keyof CreateEventFormData, number> = {
 export default function EventCard({
 	currentUser: _currentUser,
 }: EventCardProps) {
+	const navigate = useNavigate();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [showRepeatEndDate, setShowRepeatEndDate] = useState(false);
 
@@ -228,7 +229,7 @@ export default function EventCard({
 			});
 
 			toast.success(m.toast_event_created());
-			await router.navigate({ to: "/events", replace: true });
+			await navigate({ to: "/events", replace: true });
 		} catch (error) {
 			console.error("Error submitting event:", error);
 			toast.error(m.toast_event_failed());

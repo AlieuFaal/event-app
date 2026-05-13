@@ -3,6 +3,7 @@ import { addMinutes, set } from "date-fns";
 import type { schema } from "@vibespot/database/schema";
 import { lazy, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { COLORS, GENRES } from "@/components/calendar/constants";
 import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
@@ -42,7 +43,6 @@ import {
 import { Textarea } from "@/components/shadcn/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { m } from "@/paraglide/messages";
-import { router } from "@/router";
 import {
 	postCalendarEventDataFn,
 	putEventDataFn,
@@ -104,6 +104,7 @@ export function AddEditEventDialog({
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [_deleteDialogOpen, _setDeleteDialogOpen] = useState(false);
+	const router = useRouter();
 	const calendarContext = useCalendarOptional();
 	const addEvent = calendarContext?.addEvent;
 	const updateEvent = calendarContext?.updateEvent;

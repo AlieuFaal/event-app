@@ -1,5 +1,5 @@
 import SignUp from '@/components/auth-components/sign-up'
-import { getSafeAuthRedirectTarget } from '@/lib/auth-redirect'
+import { getRedirectParamFromSearch, getSafeAuthRedirectTarget } from '@/lib/auth-redirect'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/signup')({
@@ -7,15 +7,8 @@ export const Route = createFileRoute('/signup')({
   beforeLoad: async ({ context, search }) => {
     // If user is already authenticated, redirect them away from signup
     if (context.IsAuthenticated && context.currentUser) {
-      const hasRedirectTarget =
-        typeof search === "object" && search !== null && "redirect" in search;
-
-      if (hasRedirectTarget) {
-        return;
-      }
-
       const safeRedirect = getSafeAuthRedirectTarget(
-        undefined,
+        getRedirectParamFromSearch(search),
       );
       throw redirect({ to: safeRedirect, replace: true });
     }

@@ -35,6 +35,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   addFavoriteEventFn,
   removeFavoriteEventFn,
@@ -42,7 +43,6 @@ import {
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { m } from "@/paraglide/messages";
-import { router } from "@/router";
 import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event-dialog";
 import { getEventAccent } from "./event-accent";
 
@@ -57,6 +57,7 @@ export default function EventCard({
 }) {
   const addFavoriteEvent = useServerFn(addFavoriteEventFn);
   const removeFavoriteEvent = useServerFn(removeFavoriteEventFn);
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [, setIsStarred] = useState(false);
@@ -148,11 +149,16 @@ export default function EventCard({
   }
 
   function handleFlyTo(event: Event) {
-    router.navigate({ to: "/event-map", search: { id: event.id } });
+    navigate({ to: "/event-map", search: { id: event.id } });
   }
 
   function handleGoToProfile(event: Event) {
-    router.navigate({ to: `/user/${event.userId}` });
+    if (!event.userId) {
+      toast.error("Event creator was not found");
+      return;
+    }
+
+    navigate({ to: "/user/$id", params: { id: event.userId } });
   }
 
   return (

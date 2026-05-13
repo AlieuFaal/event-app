@@ -13,9 +13,8 @@ import { Label } from "@/components/shadcn/ui/label";
 import { Checkbox } from "src/components/shadcn/ui/checkbox.tsx";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { router } from "@/router";
 import { authClient } from "@/lib/auth-client";
 import { m } from "@/paraglide/messages";
 import { toast } from "sonner";
@@ -25,6 +24,7 @@ export default function SignIn({
 }: {
   redirectTo?: string;
 }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

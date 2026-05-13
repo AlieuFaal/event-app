@@ -60,8 +60,23 @@ export const createRouter = () =>
 		},
 	});
 
-export const router = createRouter();
-export const getRouter = () => router;
+let clientRouter: ReturnType<typeof createRouter> | undefined;
+
+const getClientRouter = (): ReturnType<typeof createRouter> => {
+	if (!clientRouter) {
+		clientRouter = createRouter();
+	}
+
+	return clientRouter;
+};
+
+export const getRouter = (): ReturnType<typeof createRouter> => {
+	if (typeof window === "undefined") {
+		return createRouter();
+	}
+
+	return getClientRouter();
+};
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {

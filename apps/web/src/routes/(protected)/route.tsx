@@ -1,16 +1,9 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import {
-  getSafeAuthRedirectTarget,
-  isPublicAuthPath,
-} from "@/lib/auth-redirect";
+import { getSafeAuthRedirectTarget } from "@/lib/auth-redirect";
 
 export const Route = createFileRoute("/(protected)")({
   component: RouteComponent,
   beforeLoad: async ({ context, location }) => {
-    if (isPublicAuthPath(location.pathname)) {
-      return;
-    }
-
     if (!context.IsAuthenticated || !context.currentUser) {
       throw redirect({
         to: "/signin",

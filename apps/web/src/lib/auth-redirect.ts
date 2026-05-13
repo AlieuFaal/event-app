@@ -1,8 +1,11 @@
 const AUTH_ROUTES = new Set(["/signin", "/signup"]);
-const PUBLIC_ROUTES = new Set(["/", "/signin", "/signup", "/forgotpassword"]);
 
-export function isPublicAuthPath(pathname: string): boolean {
-	return PUBLIC_ROUTES.has(pathname) || pathname.startsWith("/api/auth");
+export function getRedirectParamFromSearch(search: unknown): unknown {
+	if (typeof search !== "object" || search === null) {
+		return undefined;
+	}
+
+	return "redirect" in search ? search.redirect : undefined;
 }
 
 export function getSafeAuthRedirectTarget(
