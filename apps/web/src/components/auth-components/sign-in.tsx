@@ -30,20 +30,6 @@ export default function SignIn({
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const waitForClientSession = async () => {
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const session = await authClient.getSession().catch(() => null);
-
-      if (session?.data?.user) {
-        return session.data.user;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 100 * (attempt + 1)));
-    }
-
-    return null;
-  };
-
   const handleSignIn = async () => {
     await authClient.signIn.email(
       {
@@ -52,20 +38,18 @@ export default function SignIn({
         rememberMe,
       },
       {
-        onRequest: (ctx) => {
+        onRequest: () => {
           setLoading(true);
         },
-        onResponse: (ctx) => {
+        onResponse: () => {
           setLoading(false);
         },
         onError(ctx) {
           toast.error(ctx.error.message);
         },
         onSuccess: async (ctx) => {
-          const sessionUser = (await waitForClientSession()) ?? ctx.data?.user;
-
           const nextRoute =
-            sessionUser?.role === "New User"
+            ctx.data?.user?.role === "New User"
               ? "/onboarding"
               : redirectTo;
 

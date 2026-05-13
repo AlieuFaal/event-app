@@ -185,32 +185,6 @@ export const onbUpdateUserDataFn = createServerFn({
     return result[0];
   });
 
-// export const onUserLoginFn = createServerFn()
-//   .middleware([authMiddleware])
-//   .handler(async ({ context }) => {
-//     const userId = context.currentUser?.id;
-//     if (!userId) {
-//       throw new Error("User not authenticated");
-//     }
-
-//     const dbUser = await db
-//       .select()
-//       .from(schema.user)
-//       .where(eq(schema.user.id, userId))
-//       .limit(1)
-//       .then((res) => res[0]);
-
-//     if (!dbUser || !dbUser.role) {
-//       throw new Error("User not authenticated");
-//     }
-
-//     if (dbUser.role === "New User") {
-//       return { redirectTo: "/onboarding" };
-//     }
-
-//     return { redirectTo: "/" };
-//   });
-
 export const followUserFn = createServerFn({
   method: "POST",
 })
