@@ -1,3 +1,4 @@
+import type { Event, User } from "@vibespot/database/schema";
 import {
 	differenceInDays,
 	endOfDay,
@@ -5,7 +6,6 @@ import {
 	startOfDay,
 } from "date-fns";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
-import { Event, User } from "@vibespot/database/schema";
 
 interface IProps {
 	selectedDate: Date;
@@ -16,15 +16,15 @@ interface IProps {
 export function DayViewMultiDayEventsRow({
 	selectedDate,
 	multiDayEvents,
-	users
+	users,
 }: IProps) {
 	const dayStart = startOfDay(selectedDate);
 	const dayEnd = endOfDay(selectedDate);
 
 	const multiDayEventsInDay = multiDayEvents
 		.filter((event) => {
-			const eventStart = (event.startDate);
-			const eventEnd = (event.endDate);
+			const eventStart = event.startDate;
+			const eventEnd = event.endDate;
 
 			return (
 				isWithinInterval(dayStart, { start: eventStart, end: eventEnd }) ||
@@ -33,14 +33,8 @@ export function DayViewMultiDayEventsRow({
 			);
 		})
 		.sort((a, b) => {
-			const durationA = differenceInDays(
-				(a.endDate),
-				(a.startDate),
-			);
-			const durationB = differenceInDays(
-				(b.endDate),
-				(b.startDate),
-			);
+			const durationA = differenceInDays(a.endDate, a.startDate);
+			const durationB = differenceInDays(b.endDate, b.startDate);
 			return durationB - durationA;
 		});
 
@@ -51,8 +45,8 @@ export function DayViewMultiDayEventsRow({
 			<div className="w-18"></div>
 			<div className="flex flex-1 flex-col gap-1 border-l py-1">
 				{multiDayEventsInDay.map((event) => {
-					const eventStart = startOfDay((event.startDate));
-					const eventEnd = startOfDay((event.endDate));
+					const eventStart = startOfDay(event.startDate);
+					const eventEnd = startOfDay(event.endDate);
 					const currentDate = startOfDay(selectedDate);
 
 					const eventTotalDays = differenceInDays(eventEnd, eventStart) + 1;

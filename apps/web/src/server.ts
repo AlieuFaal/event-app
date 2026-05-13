@@ -1,12 +1,12 @@
+import type { Register } from "@tanstack/react-router";
 import {
 	createStartHandler,
 	defaultStreamHandler,
 	type RequestHandler,
 } from "@tanstack/react-start/server";
-import type { Register } from "@tanstack/react-router";
+import { handleImageUploadRequest } from "./lib/server/image-upload-handler";
 import { overwriteGetLocale } from "./paraglide/runtime";
 import { paraglideMiddleware } from "./paraglide/server";
-import { handleImageUploadRequest } from "./lib/server/image-upload-handler";
 
 const startFetch = createStartHandler(defaultStreamHandler);
 

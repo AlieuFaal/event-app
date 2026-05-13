@@ -32,7 +32,9 @@ function hexToRgb(hex: string) {
 }
 
 export function getEventAccent(color?: string) {
-	const accentHex = EVENT_ACCENT_BY_COLOR[color as keyof typeof EVENT_ACCENT_BY_COLOR] ?? DEFAULT_ACCENT;
+	const accentHex =
+		EVENT_ACCENT_BY_COLOR[color as keyof typeof EVENT_ACCENT_BY_COLOR] ??
+		DEFAULT_ACCENT;
 	const { r, g, b } = hexToRgb(accentHex);
 	const rgba = (alpha: number) => `rgba(${r}, ${g}, ${b}, ${alpha})`;
 

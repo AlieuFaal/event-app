@@ -1,17 +1,16 @@
+import type { Event } from "@vibespot/database/schema";
 import { format, isWithinInterval } from "date-fns";
 import { Calendar, Clock, User } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { DayPicker } from "@/components/shadcn/ui/day-picker";
-import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-
 import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event-dialog";
 import { DroppableArea } from "@/components/calendar/dnd/droppable-area";
 import { groupEvents } from "@/components/calendar/helpers";
 import { CalendarTimeline } from "@/components/calendar/views/week-and-day-view/calendar-time-line";
 import { DayViewMultiDayEventsRow } from "@/components/calendar/views/week-and-day-view/day-view-multi-day-events-row";
 import { RenderGroupedEvents } from "@/components/calendar/views/week-and-day-view/render-grouped-events";
-import { Event } from "@vibespot/database/schema";
+import { DayPicker } from "@/components/shadcn/ui/day-picker";
+import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { m } from "@/paraglide/messages";
 
 interface IProps {
@@ -59,8 +58,8 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 		return (
 			events.filter((event) =>
 				isWithinInterval(now, {
-					start: (event.startDate),
-					end: (event.endDate),
+					start: event.startDate,
+					end: event.endDate,
 				}),
 			) || []
 		);
@@ -69,7 +68,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 	const currentEvents = getCurrentEvents(singleDayEvents);
 
 	const dayEvents = singleDayEvents.filter((event) => {
-		const eventDate = (event.startDate);
+		const eventDate = event.startDate;
 		return (
 			eventDate.getDate() === selectedDate.getDate() &&
 			eventDate.getMonth() === selectedDate.getMonth() &&
@@ -92,7 +91,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 					{/* Day header */}
 					<div className="relative z-20 flex border-b">
 						<div className="w-18"></div>
-						<span className="flex-1 border-l py-2 text-center text-xs font-medium text-t-quaternary">
+						<span className="flex-1 border-l py-2 text-center font-medium text-t-quaternary text-xs">
 							{format(selectedDate, "EE")}{" "}
 							<span className="font-semibold text-t-secondary">
 								{format(selectedDate, "d")}
@@ -109,7 +108,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 								<div key={hour} className="relative" style={{ height: "96px" }}>
 									<div className="absolute -top-3 right-2 flex h-6 items-center">
 										{index !== 0 && (
-											<span className="text-xs text-t-quaternary">
+											<span className="text-t-quaternary text-xs">
 												{format(
 													new Date().setHours(hour, 0, 0, 0),
 													use24HourFormat ? "HH:00" : "h a",
@@ -148,7 +147,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 											</AddEditEventDialog>
 										</DroppableArea>
 
-										<div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
+										<div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-b-tertiary border-dashed"></div>
 
 										<DroppableArea
 											date={selectedDate}
@@ -196,12 +195,12 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 								<span className="relative inline-flex size-2.5 rounded-full bg-green-600"></span>
 							</span>
 
-							<p className="text-sm font-semibold text-t-secondary">
+							<p className="font-semibold text-sm text-t-secondary">
 								{m.calendar_happening_now()}
 							</p>
 						</div>
 					) : (
-						<p className="p-4 text-center text-sm italic text-t-tertiary">
+						<p className="p-4 text-center text-sm text-t-tertiary italic">
 							{m.calendar_no_appointments()}
 						</p>
 					)}
@@ -214,7 +213,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
 									return (
 										<div key={event.id} className="space-y-1.5">
-											<p className="line-clamp-2 text-sm font-semibold">
+											<p className="line-clamp-2 font-semibold text-sm">
 												{event.title}
 											</p>
 
@@ -238,12 +237,12 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 												<Clock className="size-4 text-t-quinary" />
 												<span className="text-sm text-t-tertiary">
 													{format(
-														(event.startDate),
+														event.startDate,
 														use24HourFormat ? "HH:mm" : "hh:mm a",
 													)}{" "}
 													-
 													{format(
-														(event.endDate),
+														event.endDate,
 														use24HourFormat ? "HH:mm" : "hh:mm a",
 													)}
 												</span>

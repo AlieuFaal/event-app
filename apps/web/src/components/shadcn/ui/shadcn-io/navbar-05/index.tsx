@@ -1,135 +1,137 @@
 "use client";
 
+import { Link, useRouter } from "@tanstack/react-router";
+import type { User } from "@vibespot/database/schema";
+import { ChevronDownIcon, LanguagesIcon } from "lucide-react";
 import * as React from "react";
 // import { Session } from '@/lib/auth-client';
-import { useEffect, useState, useRef } from "react";
-import { ChevronDownIcon, LanguagesIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+	NavigationMenu,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+} from "src/components/shadcn/ui/navigation-menu.tsx";
+import vibeSpotLogo from "@/assets/images/VibeSpot-Logo-1.png";
+import { ModeToggle } from "@/components/mode-toggle";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@/components/shadcn/ui/avatar";
 import { Button } from "@/components/shadcn/ui/button";
 import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "src/components/shadcn/ui/navigation-menu.tsx";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "@/components/shadcn/ui/dropdown-menu";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadcn/ui/avatar";
-import { ModeToggle } from "@/components/mode-toggle";
-import { cn } from "@/lib/utils";
-import { Link, useRouter } from "@tanstack/react-router";
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/shadcn/ui/popover";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 import { setLocale } from "@/paraglide/runtime";
 import { setLocaleServerFn } from "@/services/ThemeService";
-import { User } from "@vibespot/database/schema";
-import vibeSpotLogo from "@/assets/images/VibeSpot-Logo-1.png";
 
 // Simple logo component for the navbar
 const Logo = () => {
-  return (
-    <span className="relative inline-flex h-14 w-14 items-center justify-center overflow-hidden top-1 left-2">
-      <img
-        src={vibeSpotLogo}
-        alt="VibeSpot logo"
-        className="h-full w-full object-cover saturate-125"
-      />
-      <span className="pointer-events-none absolute inset-0" />
-    </span>
-  );
+	return (
+		<span className="relative top-1 left-2 inline-flex h-14 w-14 items-center justify-center overflow-hidden">
+			<img
+				src={vibeSpotLogo}
+				alt="VibeSpot logo"
+				className="h-full w-full object-cover saturate-125"
+			/>
+			<span className="pointer-events-none absolute inset-0" />
+		</span>
+	);
 };
 
 // Hamburger icon component
 const HamburgerIcon = ({
-  className,
-  ...props
+	className,
+	...props
 }: React.SVGAttributes<SVGElement>) => (
-  <svg
-    className={cn("pointer-events-none", className)}
-    width={16}
-    height={16}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M4 12L20 12"
-      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
-    />
-    <path
-      d="M4 12H20"
-      className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-    />
-    <path
-      d="M4 12H20"
-      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
-    />
-  </svg>
+	<svg
+		aria-hidden="true"
+		focusable="false"
+		className={cn("pointer-events-none", className)}
+		width={16}
+		height={16}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="2"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		xmlns="http://www.w3.org/2000/svg"
+		{...props}
+	>
+		<path
+			d="M4 12L20 12"
+			className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
+		/>
+		<path
+			d="M4 12H20"
+			className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
+		/>
+		<path
+			d="M4 12H20"
+			className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
+		/>
+	</svg>
 );
 
 // Navigation links function - called inside component to use current locale
 const getNavigationLinks = (): Navbar05NavItem[] => [
-  { href: "/", label: m.nav_home() },
-  { href: "/explore", label: m.nav_explore() },
-  { href: "/create-event", label: m.nav_create_event() },
-  { href: "/events", label: m.nav_events() },
-  { href: "/event-calendar", label: m.nav_calendar() },
-  { href: "/event-map", label: m.nav_map() },
+	{ href: "/", label: m.nav_home() },
+	{ href: "/explore", label: m.nav_explore() },
+	{ href: "/create-event", label: m.nav_create_event() },
+	{ href: "/events", label: m.nav_events() },
+	{ href: "/event-calendar", label: m.nav_calendar() },
+	{ href: "/event-map", label: m.nav_map() },
 ];
 
 // Language menu Component
 const LanguageMenu = () => {
-  const router = useRouter();
+	const router = useRouter();
 
-  const handleLocaleChange = async (newLocale: "en" | "sv") => {
-    try {
-      await setLocaleServerFn({ data: newLocale });
-      setLocale(newLocale, { reload: false });
-      await router.invalidate();
-    } catch (error) {
-      console.error("[LanguageMenu] Failed to change locale:", error);
-    }
-  };
+	const handleLocaleChange = async (newLocale: "en" | "sv") => {
+		try {
+			await setLocaleServerFn({ data: newLocale });
+			setLocale(newLocale, { reload: false });
+			await router.invalidate();
+		} catch (error) {
+			console.error("[LanguageMenu] Failed to change locale:", error);
+		}
+	};
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="h-9 w-9">
-          <LanguagesIcon className="h-4 w-4" />
-          <span className="sr-only">Select language</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleLocaleChange("en")}>
-          {m.language_english()}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLocaleChange("sv")}>
-          {m.language_swedish()}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline" size="icon" className="h-9 w-9">
+					<LanguagesIcon className="h-4 w-4" />
+					<span className="sr-only">Select language</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-56">
+				<DropdownMenuLabel>{m.language_select_label()}</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={() => handleLocaleChange("en")}>
+					{m.language_english()}
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => handleLocaleChange("sv")}>
+					{m.language_swedish()}
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 };
 
 // // Notification Menu Component
@@ -184,274 +186,275 @@ const LanguageMenu = () => {
 // User Menu Component
 
 const UserMenu = ({
-  userName = "John Doe",
-  userEmail = "john@example.com",
-  userAvatar,
-  onItemClick,
+	userName = "John Doe",
+	userEmail = "john@example.com",
+	userAvatar,
+	onItemClick: _onItemClick,
 }: {
-  userName?: string;
-  userEmail?: string;
-  userAvatar?: string | null | undefined;
-  onItemClick?: (item: string) => void;
+	userName?: string;
+	userEmail?: string;
+	userAvatar?: string | null | undefined;
+	onItemClick?: (item: string) => void;
 }) => {
-  const router = useRouter();
-  const navigateToRoute = (route: string) => {
-    router.history.push(route);
-  };
+	const router = useRouter();
+	const navigateToRoute = (route: string) => {
+		router.history.push(route);
+	};
 
-  const handleLogout = async () => {
-    try {
-      await authClient.signOut();
-      await router.navigate({ to: "/", replace: true });
-      await router.invalidate();
-    } catch (error) {
-      console.error("Failed to sign out:", error);
-    }
-  };
+	const handleLogout = async () => {
+		try {
+			await authClient.signOut();
+			await router.navigate({ to: "/", replace: true });
+			await router.invalidate();
+		} catch (error) {
+			console.error("Failed to sign out:", error);
+		}
+	};
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground"
-        >
-          <Avatar className="h-7 w-7">
-            <AvatarImage src={userAvatar ?? undefined} alt={userName} />
-            <AvatarFallback className="text-xs">
-              {userName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toLocaleUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <ChevronDownIcon className="h-3 w-3 ml-1" />
-          <span className="sr-only">User menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{userName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {userEmail}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigateToRoute("/profile")}>
-          {m.nav_profile()}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigateToRoute("/favorites")}>
-          {m.nav_favorites()}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleLogout()}>
-          {m.nav_logout()}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button
+					variant="ghost"
+					className="h-9 px-2 py-0 hover:bg-accent hover:text-accent-foreground"
+				>
+					<Avatar className="h-7 w-7">
+						<AvatarImage src={userAvatar ?? undefined} alt={userName} />
+						<AvatarFallback className="text-xs">
+							{userName
+								.split(" ")
+								.map((n) => n[0])
+								.join("")
+								.toLocaleUpperCase()}
+						</AvatarFallback>
+					</Avatar>
+					<ChevronDownIcon className="ml-1 h-3 w-3" />
+					<span className="sr-only">User menu</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-56">
+				<DropdownMenuLabel>
+					<div className="flex flex-col space-y-1">
+						<p className="font-medium text-sm leading-none">{userName}</p>
+						<p className="text-muted-foreground text-xs leading-none">
+							{userEmail}
+						</p>
+					</div>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={() => navigateToRoute("/profile")}>
+					{m.nav_profile()}
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => navigateToRoute("/favorites")}>
+					{m.nav_favorites()}
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={() => handleLogout()}>
+					{m.nav_logout()}
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 };
 
 // Types
 export interface Navbar05NavItem {
-  href?: string;
-  label: string;
+	href?: string;
+	label: string;
 }
 
 export interface Navbar05Props extends React.HTMLAttributes<HTMLElement> {
-  logo?: React.ReactNode;
-  logoHref?: string;
-  navigationLinks?: Navbar05NavItem[];
-  currentUser: User | null;
-  userName?: string;
-  userEmail?: string;
-  userAvatar?: string;
-  notificationCount?: number;
-  onNavItemClick?: (href: string) => void;
-  onInfoItemClick?: (item: string) => void;
-  onNotificationItemClick?: (item: string) => void;
-  onUserItemClick?: (item: string) => void;
+	logo?: React.ReactNode;
+	logoHref?: string;
+	navigationLinks?: Navbar05NavItem[];
+	currentUser: User | null;
+	userName?: string;
+	userEmail?: string;
+	userAvatar?: string;
+	notificationCount?: number;
+	onNavItemClick?: (href: string) => void;
+	onInfoItemClick?: (item: string) => void;
+	onNotificationItemClick?: (item: string) => void;
+	onUserItemClick?: (item: string) => void;
 }
 
 export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
-  (
-    {
-      className,
-      logo = <Logo />,
-      logoHref = "/",
-      navigationLinks, // Don't provide default here - will be generated in component body
-      userName = "John Doe",
-      userEmail = "john@example.com",
-      userAvatar,
-      notificationCount = 3,
-      onNavItemClick,
-      onInfoItemClick,
-      onNotificationItemClick,
-      onUserItemClick,
-      currentUser,
-      ...props
-    },
-    ref,
-  ) => {
-    const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
-    const containerRef = useRef<HTMLElement>(null);
-    const user = currentUser;
+	(
+		{
+			className,
+			logo = <Logo />,
+			logoHref = "/",
+			navigationLinks, // Don't provide default here - will be generated in component body
+			userName = "John Doe",
+			userEmail = "john@example.com",
+			userAvatar,
+			notificationCount = 3,
+			onNavItemClick,
+			onInfoItemClick,
+			onNotificationItemClick,
+			onUserItemClick,
+			currentUser,
+			...props
+		},
+		ref,
+	) => {
+		const router = useRouter();
+		const [isMobile, setIsMobile] = useState(false);
+		const containerRef = useRef<HTMLElement>(null);
+		const user = currentUser;
 
-    // Generate navigation links inside component to use current locale
-    const navLinks = navigationLinks || getNavigationLinks();
+		// Generate navigation links inside component to use current locale
+		const navLinks = navigationLinks || getNavigationLinks();
 
-    useEffect(() => {
-      const checkWidth = () => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth;
-          setIsMobile(width < 768); // 768px is md breakpoint
-        }
-      };
+		useEffect(() => {
+			const checkWidth = () => {
+				if (containerRef.current) {
+					const width = containerRef.current.offsetWidth;
+					setIsMobile(width < 768); // 768px is md breakpoint
+				}
+			};
 
-      checkWidth();
+			checkWidth();
 
-      const resizeObserver = new ResizeObserver(checkWidth);
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current);
-      }
+			const resizeObserver = new ResizeObserver(checkWidth);
+			if (containerRef.current) {
+				resizeObserver.observe(containerRef.current);
+			}
 
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, []);
+			return () => {
+				resizeObserver.disconnect();
+			};
+		}, []);
 
-    // Combine refs
-    const combinedRef = React.useCallback(
-      (node: HTMLElement | null) => {
-        containerRef.current = node;
-        if (typeof ref === "function") {
-          ref(node);
-        } else if (ref) {
-          ref.current = node;
-        }
-      },
-      [ref],
-    );
+		// Combine refs
+		const combinedRef = React.useCallback(
+			(node: HTMLElement | null) => {
+				containerRef.current = node;
+				if (typeof ref === "function") {
+					ref(node);
+				} else if (ref) {
+					ref.current = node;
+				}
+			},
+			[ref],
+		);
 
-    const filteredNavLinks =
-      user?.role === "user"
-        ? navLinks.filter((link) => link.href !== "/create-event")
-        : navLinks;
+		const filteredNavLinks =
+			user?.role === "user"
+				? navLinks.filter((link) => link.href !== "/create-event")
+				: navLinks;
 
-    return (
-      <header
-        ref={combinedRef}
-        className={cn(
-          "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline",
-          className,
-        )}
-        {...props}
-      >
-        <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
-          {/* Left side */}
-          <div className="flex items-center gap-2">
-            {/* Mobile menu trigger */}
-            {isMobile && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    className="group h-9 w-9 hover:bg-accent hover:text-accent-foreground"
-                    variant="ghost"
-                    size="icon"
-                  >
-                    <HamburgerIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className="w-64 p-1">
-                  <NavigationMenu className="max-w-none">
-                    <NavigationMenuList className="flex-col items-start gap-0">
-                      {filteredNavLinks.map((link, index) => (
-                        <NavigationMenuItem key={index} className="w-full">
-                          <NavigationMenuLink
-                            asChild
-                            className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground cursor-pointer no-underline"
-                          >
-                            <Link to={link.href}>{link.label}</Link>
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
-                      ))}
-                    </NavigationMenuList>
-                  </NavigationMenu>
-                </PopoverContent>
-              </Popover>
-            )}
-            {/* Main nav */}
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => router.history.push(logoHref)}
-                className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
-              >
-                <div className="text-2xl">{logo}</div>
-                <span className="hidden font-bold text-xl sm:inline-block">
-                  VibeSpot
-                </span>
-              </button>
-              {/* Navigation menu */}
-              {!isMobile && (
-                <NavigationMenu className="flex">
-                  <NavigationMenuList className="gap-1">
-                    {filteredNavLinks.map((link, index) => (
-                      <NavigationMenuItem key={index}>
-                        <NavigationMenuLink
-                          asChild
-                          className="text-muted-foreground font-medium transition-colors cursor-pointer group inline-flex h-8 w-max items-center justify-center rounded-lg bg-transparent px-4 py-2 text-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                        >
-                          <Link to={link.href}>{link.label}</Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    ))}
-                  </NavigationMenuList>
-                </NavigationMenu>
-              )}
-            </div>
-          </div>
-          {/* Right side */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              {/* Mode */}
-              <ModeToggle />
-              {/* Info menu */}
-              <LanguageMenu />
-              {/* Notification */}
-              {/* <NotificationMenu
+		return (
+			<header
+				ref={combinedRef}
+				className={cn(
+					"sticky top-0 z-50 w-full border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6 [&_*]:no-underline",
+					className,
+				)}
+				{...props}
+			>
+				<div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
+					{/* Left side */}
+					<div className="flex items-center gap-2">
+						{/* Mobile menu trigger */}
+						{isMobile && (
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										className="group h-9 w-9 hover:bg-accent hover:text-accent-foreground"
+										variant="ghost"
+										size="icon"
+									>
+										<HamburgerIcon />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent align="start" className="w-64 p-1">
+									<NavigationMenu className="max-w-none">
+										<NavigationMenuList className="flex-col items-start gap-0">
+											{filteredNavLinks.map((link, index) => (
+												<NavigationMenuItem key={index} className="w-full">
+													<NavigationMenuLink
+														asChild
+														className="flex w-full cursor-pointer items-center rounded-md px-3 py-2 font-medium text-sm no-underline transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+													>
+														<Link to={link.href}>{link.label}</Link>
+													</NavigationMenuLink>
+												</NavigationMenuItem>
+											))}
+										</NavigationMenuList>
+									</NavigationMenu>
+								</PopoverContent>
+							</Popover>
+						)}
+						{/* Main nav */}
+						<div className="flex items-center gap-6">
+							<button
+								type="button"
+								onClick={() => router.history.push(logoHref)}
+								className="flex cursor-pointer items-center space-x-2 text-primary transition-colors hover:text-primary/90"
+							>
+								<div className="text-2xl">{logo}</div>
+								<span className="hidden font-bold text-xl sm:inline-block">
+									VibeSpot
+								</span>
+							</button>
+							{/* Navigation menu */}
+							{!isMobile && (
+								<NavigationMenu className="flex">
+									<NavigationMenuList className="gap-1">
+										{filteredNavLinks.map((link, index) => (
+											<NavigationMenuItem key={index}>
+												<NavigationMenuLink
+													asChild
+													className="group inline-flex h-8 w-max cursor-pointer items-center justify-center rounded-lg bg-transparent px-4 py-2 font-medium text-muted-foreground text-sm transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+												>
+													<Link to={link.href}>{link.label}</Link>
+												</NavigationMenuLink>
+											</NavigationMenuItem>
+										))}
+									</NavigationMenuList>
+								</NavigationMenu>
+							)}
+						</div>
+					</div>
+					{/* Right side */}
+					<div className="flex items-center gap-4">
+						<div className="flex items-center gap-2">
+							{/* Mode */}
+							<ModeToggle />
+							{/* Info menu */}
+							<LanguageMenu />
+							{/* Notification */}
+							{/* <NotificationMenu
                 notificationCount={notificationCount}
                 onItemClick={onNotificationItemClick}
               /> */}
-            </div>
-            {/* User menu */}
-            {user && (
-              <UserMenu
-                userName={user?.name}
-                userEmail={user?.email}
-                userAvatar={user?.image}
-                onItemClick={onUserItemClick}
-              />
-            )}
-            {!user && (
-              <Button
-                variant={"outline"}
-                onClick={() => router.history.push("/signin")}
-              >
-                {m.signin_card_title()}
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
-    );
-  },
+						</div>
+						{/* User menu */}
+						{user && (
+							<UserMenu
+								userName={user?.name}
+								userEmail={user?.email}
+								userAvatar={user?.image}
+								onItemClick={onUserItemClick}
+							/>
+						)}
+						{!user && (
+							<Button
+								variant={"outline"}
+								onClick={() => router.history.push("/signin")}
+							>
+								{m.signin_card_title()}
+							</Button>
+						)}
+					</div>
+				</div>
+			</header>
+		);
+	},
 );
 
 Navbar05.displayName = "Navbar05";
 
-export { Logo, HamburgerIcon, LanguageMenu as InfoMenu, UserMenu };
+export { HamburgerIcon, LanguageMenu as InfoMenu, Logo, UserMenu };
 // export { Logo, HamburgerIcon, InfoMenu, NotificationMenu, UserMenu };

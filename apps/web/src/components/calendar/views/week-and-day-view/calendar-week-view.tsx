@@ -1,219 +1,211 @@
-import {addDays, format, isSameDay, startOfWeek} from "date-fns";
-import {motion} from "framer-motion";
-import {ScrollArea} from "@/components/shadcn/ui/scroll-area";
+import type { Event, User } from "@vibespot/database/schema";
+import { addDays, format, isSameDay, startOfWeek } from "date-fns";
+import { motion } from "framer-motion";
 import {
-    fadeIn,
-    staggerContainer,
-    transition,
+	fadeIn,
+	staggerContainer,
+	transition,
 } from "@/components/calendar/animations";
-import {useCalendar} from "@/components/calendar/contexts/calendar-context";
-import {AddEditEventDialog} from "@/components/calendar/dialogs/add-edit-event-dialog";
-import {DroppableArea} from "@/components/calendar/dnd/droppable-area";
-import {groupEvents} from "@/components/calendar/helpers";
-import {CalendarTimeline} from "@/components/calendar/views/week-and-day-view/calendar-time-line";
-import {RenderGroupedEvents} from "@/components/calendar/views/week-and-day-view/render-grouped-events";
-import {
-    WeekViewMultiDayEventsRow
-} from "@/components/calendar/views/week-and-day-view/week-view-multi-day-events-row";
-import { Event, User } from "@vibespot/database/schema";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event-dialog";
+import { DroppableArea } from "@/components/calendar/dnd/droppable-area";
+import { groupEvents } from "@/components/calendar/helpers";
+import { CalendarTimeline } from "@/components/calendar/views/week-and-day-view/calendar-time-line";
+import { RenderGroupedEvents } from "@/components/calendar/views/week-and-day-view/render-grouped-events";
+import { WeekViewMultiDayEventsRow } from "@/components/calendar/views/week-and-day-view/week-view-multi-day-events-row";
+import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { m } from "@/paraglide/messages";
 
 interface IProps {
-    singleDayEvents: Event[];
-    multiDayEvents: Event[];
-    users: User[];
+	singleDayEvents: Event[];
+	multiDayEvents: Event[];
+	users: User[];
 }
 
-export function CalendarWeekView({singleDayEvents, multiDayEvents, users}: IProps) {
-    const {selectedDate, use24HourFormat} = useCalendar();
+export function CalendarWeekView({
+	singleDayEvents,
+	multiDayEvents,
+	users,
+}: IProps) {
+	const { selectedDate, use24HourFormat } = useCalendar();
 
-    const weekStart = startOfWeek(selectedDate, {weekStartsOn: 1}); // Week starts on Monday
-    const weekDays = Array.from({length: 7}, (_, i) => addDays(weekStart, i));
-    const hours = Array.from({length: 24}, (_, i) => i);
+	const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Week starts on Monday
+	const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+	const hours = Array.from({ length: 24 }, (_, i) => i);
 
-    return (
-        <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={fadeIn}
-            transition={transition}
-        >
-            <motion.div
-                className="flex flex-col items-center justify-center border-b p-4 text-sm sm:hidden"
-                initial={{opacity: 0, y: -20}}
-                animate={{opacity: 1, y: 0}}
-                transition={transition}
-            >
-                <p>{m.calendar_week_not_recommended()}</p>
-                <p>{m.calendar_use_desktop()}</p>
-            </motion.div>
+	return (
+		<motion.div
+			initial="initial"
+			animate="animate"
+			exit="exit"
+			variants={fadeIn}
+			transition={transition}
+		>
+			<motion.div
+				className="flex flex-col items-center justify-center border-b p-4 text-sm sm:hidden"
+				initial={{ opacity: 0, y: -20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={transition}
+			>
+				<p>{m.calendar_week_not_recommended()}</p>
+				<p>{m.calendar_use_desktop()}</p>
+			</motion.div>
 
-            <motion.div
-                className="flex-col sm:flex"
-                variants={staggerContainer}
-            >
-                <div>
-                    <WeekViewMultiDayEventsRow
-                        selectedDate={selectedDate}
-                        multiDayEvents={multiDayEvents}
-                        users={users}
-                    />
+			<motion.div className="flex-col sm:flex" variants={staggerContainer}>
+				<div>
+					<WeekViewMultiDayEventsRow
+						selectedDate={selectedDate}
+						multiDayEvents={multiDayEvents}
+						users={users}
+					/>
 
-                    {/* Week header */}
-                    <motion.div
-                        className="relative z-20 flex border-b"
-                        initial={{opacity: 0, y: -20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={transition}
-                    >
-                        {/* Time column header - responsive width */}
-                        <div className="w-18"></div>
-                        <div className="grid flex-1 grid-cols-7  border-l">
-                            {weekDays.map((day, index) => (
-                                <motion.span
-                                    key={index}
-                                    className="py-1 sm:py-2 text-center text-xs font-medium text-t-quaternary"
-                                    initial={{opacity: 0, y: -10}}
-                                    animate={{opacity: 1, y: 0}}
-                                    transition={{delay: index * 0.05, ...transition}}
-                                >
-                                    {/* Mobile: Show only day abbreviation and number */}
-                                    <span className="block sm:hidden">
-									{format(day, "EEE").charAt(0)}
-                                        <span className="block font-semibold text-t-secondary text-xs">
-										{format(day, "d")}
+					{/* Week header */}
+					<motion.div
+						className="relative z-20 flex border-b"
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={transition}
+					>
+						{/* Time column header - responsive width */}
+						<div className="w-18"></div>
+						<div className="grid flex-1 grid-cols-7 border-l">
+							{weekDays.map((day, index) => (
+								<motion.span
+									key={index}
+									className="py-1 text-center font-medium text-t-quaternary text-xs sm:py-2"
+									initial={{ opacity: 0, y: -10 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: index * 0.05, ...transition }}
+								>
+									{/* Mobile: Show only day abbreviation and number */}
+									<span className="block sm:hidden">
+										{format(day, "EEE").charAt(0)}
+										<span className="block font-semibold text-t-secondary text-xs">
+											{format(day, "d")}
+										</span>
 									</span>
-								</span>
-                                    {/* Desktop: Show full format */}
-                                    <span className="hidden sm:inline">
-									{format(day, "EE")}{" "}
-                                        <span className="ml-1 font-semibold text-t-secondary">
-										{format(day, "d")}
+									{/* Desktop: Show full format */}
+									<span className="hidden sm:inline">
+										{format(day, "EE")}{" "}
+										<span className="ml-1 font-semibold text-t-secondary">
+											{format(day, "d")}
+										</span>
 									</span>
-								</span>
-                                </motion.span>
-                            ))}
-                        </div>
-                    </motion.div>
+								</motion.span>
+							))}
+						</div>
+					</motion.div>
+				</div>
 
-                </div>
-
-                <ScrollArea className="h-[736px]" type="always">
-                    <div className="flex">
-                        {/* Hours column */}
-                        <motion.div className="relative w-18" variants={staggerContainer}>
-                            {hours.map((hour, index) => (
-                                <motion.div
-                                    key={hour}
-                                    className="relative"
-                                    style={{height: "96px"}}
-                                    initial={{opacity: 0, x: -20}}
-                                    animate={{opacity: 1, x: 0}}
-                                    transition={{delay: index * 0.02, ...transition}}
-                                >
-                                    <div className="absolute -top-3 right-2 flex h-6 items-center">
-                                        {index !== 0 && (
-                                            <span className="text-xs text-t-quaternary">
+				<ScrollArea className="h-[736px]" type="always">
+					<div className="flex">
+						{/* Hours column */}
+						<motion.div className="relative w-18" variants={staggerContainer}>
+							{hours.map((hour, index) => (
+								<motion.div
+									key={hour}
+									className="relative"
+									style={{ height: "96px" }}
+									initial={{ opacity: 0, x: -20 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: index * 0.02, ...transition }}
+								>
+									<div className="absolute -top-3 right-2 flex h-6 items-center">
+										{index !== 0 && (
+											<span className="text-t-quaternary text-xs">
 												{format(
-                                                    new Date().setHours(hour, 0, 0, 0),
-                                                    use24HourFormat ? "HH:00" : "h a",
-                                                )}
+													new Date().setHours(hour, 0, 0, 0),
+													use24HourFormat ? "HH:00" : "h a",
+												)}
 											</span>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </motion.div>
+										)}
+									</div>
+								</motion.div>
+							))}
+						</motion.div>
 
-                        {/* Week grid */}
-                        <motion.div
-                            className="relative flex-1 border-l"
-                            variants={staggerContainer}
-                        >
-                            <div className="grid grid-cols-7 divide-x">
-                                {weekDays.map((day, dayIndex) => {
-                                    const dayEvents = singleDayEvents.filter(
-                                        (event) =>
-                                            isSameDay((event.startDate), day) ||
-                                            isSameDay((event.endDate), day),
-                                    );
-                                    const groupedEvents = groupEvents(dayEvents);
+						{/* Week grid */}
+						<motion.div
+							className="relative flex-1 border-l"
+							variants={staggerContainer}
+						>
+							<div className="grid grid-cols-7 divide-x">
+								{weekDays.map((day, dayIndex) => {
+									const dayEvents = singleDayEvents.filter(
+										(event) =>
+											isSameDay(event.startDate, day) ||
+											isSameDay(event.endDate, day),
+									);
+									const groupedEvents = groupEvents(dayEvents);
 
-                                    return (
-                                        <motion.div
-                                            key={dayIndex}
-                                            className="relative"
-                                            initial={{opacity: 0}}
-                                            animate={{opacity: 1}}
-                                            transition={{delay: dayIndex * 0.1, ...transition}}
-                                        >
-                                            {hours.map((hour, index) => (
-                                                <motion.div
-                                                    key={hour}
-                                                    className="relative"
-                                                    style={{height: "96px"}}
-                                                    initial={{opacity: 0}}
-                                                    animate={{opacity: 1}}
-                                                    transition={{delay: index * 0.01, ...transition}}
-                                                >
-                                                    {index !== 0 && (
-                                                        <div
-                                                            className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>
-                                                    )}
+									return (
+										<motion.div
+											key={dayIndex}
+											className="relative"
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											transition={{ delay: dayIndex * 0.1, ...transition }}
+										>
+											{hours.map((hour, index) => (
+												<motion.div
+													key={hour}
+													className="relative"
+													style={{ height: "96px" }}
+													initial={{ opacity: 0 }}
+													animate={{ opacity: 1 }}
+													transition={{ delay: index * 0.01, ...transition }}
+												>
+													{index !== 0 && (
+														<div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>
+													)}
 
-                                                    <DroppableArea
-                                                        date={day}
-                                                        hour={hour}
-                                                        minute={0}
-                                                        className="absolute inset-x-0 top-0  h-[48px]"
-                                                    >
-                                                        <AddEditEventDialog
-                                                            startDate={day}
-                                                            startTime={{hour, minute: 0}}
-                                                        >
-                                                            <div
-                                                                className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary"/>
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
+													<DroppableArea
+														date={day}
+														hour={hour}
+														minute={0}
+														className="absolute inset-x-0 top-0 h-[48px]"
+													>
+														<AddEditEventDialog
+															startDate={day}
+															startTime={{ hour, minute: 0 }}
+														>
+															<div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
+														</AddEditEventDialog>
+													</DroppableArea>
 
-                                                    <div
-                                                        className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
+													<div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-b-tertiary border-dashed"></div>
 
-                                                    <DroppableArea
-                                                        date={day}
-                                                        hour={hour}
-                                                        minute={30}
-                                                        className="absolute inset-x-0 bottom-0 h-[48px]"
-                                                    >
-                                                        <AddEditEventDialog
-                                                            startDate={day}
-                                                            startTime={{hour, minute: 30}}
-                                                        >
-                                                            <div
-                                                                className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary"/>
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
-                                                </motion.div>
-                                            ))}
+													<DroppableArea
+														date={day}
+														hour={hour}
+														minute={30}
+														className="absolute inset-x-0 bottom-0 h-[48px]"
+													>
+														<AddEditEventDialog
+															startDate={day}
+															startTime={{ hour, minute: 30 }}
+														>
+															<div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
+														</AddEditEventDialog>
+													</DroppableArea>
+												</motion.div>
+											))}
 
-                                            <RenderGroupedEvents
-                                                groupedEvents={groupedEvents}
-                                                day={day}
-                                                users={users}
-                                            />
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
+											<RenderGroupedEvents
+												groupedEvents={groupedEvents}
+												day={day}
+												users={users}
+											/>
+										</motion.div>
+									);
+								})}
+							</div>
 
-                            <CalendarTimeline/>
-                        </motion.div>
-                    </div>
-                </ScrollArea>
-            </motion.div>
-        </motion.div>
-    );
+							<CalendarTimeline />
+						</motion.div>
+					</div>
+				</ScrollArea>
+			</motion.div>
+		</motion.div>
+	);
 }
-
-

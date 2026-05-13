@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
 
 interface DroppableAreaProps {
@@ -19,6 +19,7 @@ export function DroppableArea({
 	const { handleEventDrop, isDragging } = useDragDrop();
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: Drag and drop handlers are intentionally attached to this non-interactive container.
 		<div
 			className={`${className || ""} ${isDragging ? "drop-target" : ""}`}
 			onDragOver={(e) => {

@@ -1,11 +1,8 @@
 "use client";
 
+import type { User } from "@vibespot/database/schema";
 import { motion } from "framer-motion";
-import {
-	Plus,
-} from "lucide-react";
-
-import { Button } from "@/components/shadcn/ui/button";
+import { Plus } from "lucide-react";
 import {
 	slideFromLeft,
 	slideFromRight,
@@ -17,16 +14,15 @@ import { DateNavigator } from "@/components/calendar/header/date-navigator";
 import FilterEvents from "@/components/calendar/header/filter";
 import { TodayButton } from "@/components/calendar/header/today-button";
 import { Settings } from "@/components/calendar/settings/settings";
-import Views from "./view-tabs";
+import { Button } from "@/components/shadcn/ui/button";
 import { m } from "@/paraglide/messages";
-import { User } from "@vibespot/database/schema";
+import Views from "./view-tabs";
 
-interface calendarHeaderProps
-{
+interface calendarHeaderProps {
 	currentUser?: User | null;
 }
 
-export function CalendarHeader({currentUser}: calendarHeaderProps) {
+export function CalendarHeader({ currentUser }: calendarHeaderProps) {
 	const { view, events } = useCalendar();
 
 	return (
@@ -49,7 +45,7 @@ export function CalendarHeader({currentUser}: calendarHeaderProps) {
 				animate="animate"
 				transition={transition}
 			>
-				<div className="options flex-wrap flex items-center gap-4 md:gap-2">
+				<div className="options flex flex-wrap items-center gap-4 md:gap-2">
 					<FilterEvents />
 					<Views />
 				</div>

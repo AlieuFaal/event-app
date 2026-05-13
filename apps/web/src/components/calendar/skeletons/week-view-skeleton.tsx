@@ -7,6 +7,7 @@ export function WeekViewSkeleton() {
 				<div className="w-18"></div>
 				{Array.from({ length: 7 }).map((_, i) => (
 					<div
+						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 						key={i}
 						className="flex flex-col items-center justify-center py-2"
 					>
@@ -19,6 +20,7 @@ export function WeekViewSkeleton() {
 			<div className="flex flex-1 overflow-y-auto">
 				<div className="w-18 flex-shrink-0">
 					{Array.from({ length: 12 }).map((_, i) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 						<div key={i} className="relative h-12 border-b pr-2 text-right">
 							<Skeleton className="absolute -top-3 right-2 h-4 w-10" />
 						</div>
@@ -27,8 +29,10 @@ export function WeekViewSkeleton() {
 
 				<div className="grid flex-1 grid-cols-7 divide-x">
 					{Array.from({ length: 7 }).map((_, dayIndex) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 						<div key={dayIndex} className="relative">
 							{Array.from({ length: 12 }).map((_, hourIndex) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 								<div key={hourIndex} className="h-12 border-b"></div>
 							))}
 						</div>

@@ -37,7 +37,7 @@ export default function Home() {
   if (isPending) {
     return (
       <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="fuchsia" />
           <Text className="text-gray-600 dark:text-gray-300">
             Loading events...
@@ -51,7 +51,7 @@ export default function Home() {
     return (
       <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center text-[15px] leading-[22px] text-red-500 dark:text-red-400">
+          <Text className="text-center text-[15px] text-red-500 leading-[22px] dark:text-red-400">
             Error fetching events: {(error as Error).message}
           </Text>
           <Pressable
@@ -60,7 +60,7 @@ export default function Home() {
             }}
             className="mt-4 rounded-xl bg-violet-500 px-4 py-2.5 active:opacity-80"
           >
-            <Text className="text-[13px] font-bold text-white">Try Again</Text>
+            <Text className="font-bold text-[13px] text-white">Try Again</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -70,7 +70,7 @@ export default function Home() {
   if (!data) {
     return (
       <SafeAreaView className="flex-1 bg-transparent" edges={["top"]}>
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1 items-center justify-center">
           <Text className="text-gray-600 dark:text-gray-300">
             No events available.
           </Text>

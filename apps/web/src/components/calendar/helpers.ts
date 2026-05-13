@@ -1,3 +1,4 @@
+import type { Event } from "@vibespot/database/schema";
 import {
 	addDays,
 	addMonths,
@@ -26,14 +27,8 @@ import {
 	subYears,
 } from "date-fns";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import type {
-	ICalendarCell,
-} from "@/components/calendar/interfaces";
-import type {
-	TCalendarView,
-	TEventColor,
-} from "@/components/calendar/types";
-import { Event } from "@vibespot/database/schema";
+import type { ICalendarCell } from "@/components/calendar/interfaces";
+import type { TCalendarView, TEventColor } from "@/components/calendar/types";
 
 const FORMAT_STRING = "MMM d, yyyy";
 
@@ -97,23 +92,22 @@ export function getEventsCount(
 	};
 
 	const compareFn = compareFns[view];
-	return events.filter((event) => compareFn((event.startDate), date))
-		.length;
+	return events.filter((event) => compareFn(event.startDate, date)).length;
 }
 
 export function groupEvents(dayEvents: Event[]): Event[][] {
 	const sortedEvents = dayEvents.sort(
-		(a, b) => (a.startDate).getTime() - (b.startDate).getTime(),
+		(a, b) => a.startDate.getTime() - b.startDate.getTime(),
 	);
 	const groups: Event[][] = [];
 
 	for (const event of sortedEvents) {
-		const eventStart = (event.startDate);
+		const eventStart = event.startDate;
 		let placed = false;
 
 		for (const group of groups) {
 			const lastEventInGroup = group[group.length - 1];
-			const lastEventEnd = (lastEventInGroup.endDate);
+			const lastEventEnd = lastEventInGroup.endDate;
 
 			if (eventStart >= lastEventEnd) {
 				group.push(event);
@@ -199,8 +193,7 @@ export function calculateMonthEventPositions(
 			const aDuration = differenceInDays(a.endDate, a.startDate);
 			const bDuration = differenceInDays(b.endDate, b.startDate);
 			return (
-				bDuration - aDuration ||
-				a.startDate.getTime() - b.startDate.getTime()
+				bDuration - aDuration || a.startDate.getTime() - b.startDate.getTime()
 			);
 		}),
 		...singleDayEvents.sort(

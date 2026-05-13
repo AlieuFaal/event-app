@@ -1,6 +1,9 @@
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { ControllerRenderProps, UseFormReturn } from "react-hook-form";
+import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
+import type { TEventFormData } from "@/components/calendar/schemas";
 import { Button } from "@/components/shadcn/ui/button";
 import { Calendar } from "@/components/shadcn/ui/calendar";
 import {
@@ -16,9 +19,6 @@ import {
 } from "@/components/shadcn/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/shadcn/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
-import type { TEventFormData } from "@/components/calendar/schemas";
-import { useEffect, useState } from "react";
 
 interface DatePickerProps {
 	form: UseFormReturn<TEventFormData>;
@@ -84,7 +84,10 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 								)
 							) : field.value ? (
 								// During SSR and first render, show ISO format to prevent hydration mismatch
-								new Date(field.value).toISOString().slice(0, 16).replace('T', ' ')
+								new Date(field.value)
+									.toISOString()
+									.slice(0, 16)
+									.replace("T", " ")
 							) : (
 								<span>MM/DD/YYYY hh:mm aa</span>
 							)}
@@ -100,9 +103,9 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 							onSelect={handleDateSelect}
 							initialFocus
 						/>
-						<div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+						<div className="flex flex-col divide-y sm:h-[300px] sm:flex-row sm:divide-x sm:divide-y-0">
 							<ScrollArea className="w-64 sm:w-auto">
-								<div className="flex sm:flex-col p-2">
+								<div className="flex p-2 sm:flex-col">
 									{Array.from(
 										{ length: use24HourFormat ? 24 : 12 },
 										(_, i) => i,
@@ -117,7 +120,7 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 													? "default"
 													: "ghost"
 											}
-											className="sm:w-full shrink-0 aspect-square"
+											className="aspect-square shrink-0 sm:w-full"
 											onClick={() => handleTimeChange("hour", hour.toString())}
 										>
 											{hour.toString().padStart(2, "0")}
@@ -127,7 +130,7 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 								<ScrollBar orientation="horizontal" className="sm:hidden" />
 							</ScrollArea>
 							<ScrollArea className="w-64 sm:w-auto">
-								<div className="flex sm:flex-col p-2">
+								<div className="flex p-2 sm:flex-col">
 									{Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
 										<Button
 											key={minute}
@@ -137,7 +140,7 @@ export function DateTimePicker({ form, field }: DatePickerProps) {
 													? "default"
 													: "ghost"
 											}
-											className="sm:w-full shrink-0 aspect-square"
+											className="aspect-square shrink-0 sm:w-full"
 											onClick={() =>
 												handleTimeChange("minute", minute.toString())
 											}

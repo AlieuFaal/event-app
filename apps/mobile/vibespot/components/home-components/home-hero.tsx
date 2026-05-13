@@ -17,14 +17,14 @@ export function HomeHero({ firstName, isDark, now }: HomeHeroProps) {
     <View className="flex-row items-start justify-between gap-4">
       <View className="min-w-0 flex-1">
         <Text
-          className={`text-[13px] font-black tracking-[1.6px] ${
+          className={`font-black text-[13px tracking-[1.6px] ${
             isDark ? "text-[#7d6a8d]" : "text-gray-500"
           }`}
         >
           {formatDateHeading(now)}
         </Text>
         <Text
-          className={`mt-3 text-4xl w-screen font-black leading-[48px] line-clamp-2 ${
+          className={`mt-3 line-clamp-2 w-screen font-black text-4xl leading-[48px] ${
             isDark ? "text-white" : "text-gray-950"
           }`}
         >

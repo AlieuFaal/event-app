@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addMinutes, set } from "date-fns";
+import { useRouter } from "@tanstack/react-router";
 import type { schema } from "@vibespot/database/schema";
+import { addMinutes, set } from "date-fns";
 import { lazy, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { COLORS, GENRES } from "@/components/calendar/constants";
 import { useCalendarOptional } from "@/components/calendar/contexts/calendar-context";
@@ -383,7 +383,7 @@ export function AddEditEventDialog({
 												onValueChange={field.onChange}
 												defaultValue={"none"}
 											>
-												<SelectTrigger className="w-full h-9">
+												<SelectTrigger className="h-9 w-full">
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
@@ -517,7 +517,7 @@ export function AddEditEventDialog({
 						</ModalDescription>
 					</ModalHeader>
 					<div className="flex w-fit">
-						<ModalFooter className="flex justify-center-safe gap-4 mt-4">
+						<ModalFooter className="justify-center-safe mt-4 flex gap-4">
 							<Button
 								variant="outline"
 								className=""

@@ -1,15 +1,12 @@
+import type { Event, User } from "@vibespot/database/schema";
 import { getYear, isSameDay, isSameMonth } from "date-fns";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import {
-	staggerContainer,
-	transition,
-} from "@/components/calendar/animations";
+import { staggerContainer, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { getCalendarCells } from "@/components/calendar/helpers";
 import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
-import { Event, User } from "@vibespot/database/schema";
+import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 
 interface IProps {
@@ -18,7 +15,11 @@ interface IProps {
 	users: User[];
 }
 
-export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IProps) {
+export function CalendarYearView({
+	singleDayEvents,
+	multiDayEvents,
+	users,
+}: IProps) {
 	const { selectedDate, setSelectedDate } = useCalendar();
 	const currentYear = getYear(selectedDate);
 	const allEvents = [...multiDayEvents, ...singleDayEvents];
@@ -49,13 +50,13 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 	];
 
 	return (
-		<div className="flex flex-col h-full  overflow-y-auto p-4  sm:p-6">
+		<div className="flex h-full flex-col overflow-y-auto p-4 sm:p-6">
 			{/* Year grid */}
 			<motion.div
 				initial="initial"
 				animate="animate"
 				variants={staggerContainer}
-				className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr"
+				className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
 			>
 				{MONTHS.map((month, monthIndex) => {
 					const monthDate = new Date(currentYear, monthIndex, 1);
@@ -64,7 +65,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 					return (
 						<motion.div
 							key={month}
-							className="flex flex-col border border-border rounded-lg shadow-sm overflow-hidden"
+							className="flex flex-col overflow-hidden rounded-lg border border-border shadow-sm"
 							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: monthIndex * 0.05, ...transition }}
@@ -72,24 +73,18 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 							aria-label={`${month} ${currentYear} calendar`}
 						>
 							{/* Month header */}
-							<div
-								className="px-3 py-2 text-center font-semibold text-sm sm:text-base cursor-pointer hover:bg-primary/20 transition-colors"
+							<button
+								type="button"
+								className="cursor-pointer px-3 py-2 text-center font-semibold text-sm transition-colors hover:bg-primary/20 sm:text-base"
 								onClick={() =>
 									setSelectedDate(new Date(currentYear, monthIndex, 1))
 								}
-								role="button"
-								tabIndex={0}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										setSelectedDate(new Date(currentYear, monthIndex, 1));
-									}
-								}}
 								aria-label={`Select ${month}`}
 							>
 								{month}
-							</div>
+							</button>
 
-							<div className="grid grid-cols-7 text-center text-xs font-medium text-muted-foreground py-2">
+							<div className="grid grid-cols-7 py-2 text-center font-medium text-muted-foreground text-xs">
 								{WEEKDAYS.map((day) => (
 									<div key={day} className="p-1">
 										{day}
@@ -97,7 +92,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 								))}
 							</div>
 
-							<div className="grid grid-cols-7 gap-0.5 p-1.5 flex-grow text-xs">
+							<div className="grid flex-grow grid-cols-7 gap-0.5 p-1.5 text-xs">
 								{cells.map((cell) => {
 									const isCurrentMonth = isSameMonth(cell.date, monthDate);
 									const isToday = isSameDay(cell.date, new Date());
@@ -110,26 +105,30 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 										<div
 											key={cell.date.toISOString()}
 											className={cn(
-												"flex flex-col items-center justify-start p-1 min-h-[2rem] relative",
+												"relative flex min-h-[2rem] flex-col items-center justify-start p-1",
 												!isCurrentMonth && "text-muted-foreground/40",
 												hasEvents && isCurrentMonth
-													? "cursor-pointer hover:bg-accent/20 hover:rounded-md"
+													? "cursor-pointer hover:rounded-md hover:bg-accent/20"
 													: "cursor-default",
 											)}
 										>
 											{isCurrentMonth && hasEvents ? (
-												<EventListDialog date={cell.date} events={dayEvents} users={users}>
-													<div className="w-full h-full flex flex-col items-center justify-start gap-0.5">
+												<EventListDialog
+													date={cell.date}
+													events={dayEvents}
+													users={users}
+												>
+													<div className="flex h-full w-full flex-col items-center justify-start gap-0.5">
 														<span
 															className={cn(
-																"size-5 flex items-center justify-center font-medium",
+																"flex size-5 items-center justify-center font-medium",
 																isToday &&
 																	"rounded-full bg-primary text-primary-foreground",
 															)}
 														>
 															{cell.day}
 														</span>
-														<div className="flex justify-center items-center gap-0.5">
+														<div className="flex items-center justify-center gap-0.5">
 															{dayEvents.length <= 2 ? (
 																dayEvents
 																	.slice(0, 2)
@@ -141,7 +140,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 																		/>
 																	))
 															) : (
-																<div className="flex flex-col justify-center items-center">
+																<div className="flex flex-col items-center justify-center">
 																	<EventBullet
 																		color={dayEvents[0].color}
 																		className="size-1.5"
@@ -155,10 +154,10 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents,users }: IPro
 													</div>
 												</EventListDialog>
 											) : (
-												<div className="w-full h-full flex flex-col items-center justify-start">
+												<div className="flex h-full w-full flex-col items-center justify-start">
 													<span
 														className={cn(
-															"size-5 flex items-center justify-center font-medium",
+															"flex size-5 items-center justify-center font-medium",
 														)}
 													>
 														{cell.day}

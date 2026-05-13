@@ -1,18 +1,13 @@
+import type { Event, User } from "@vibespot/database/schema";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
-import {
-	staggerContainer,
-	transition,
-} from "@/components/calendar/animations";
+import { staggerContainer, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-
 import {
 	calculateMonthEventPositions,
 	getCalendarCells,
 } from "@/components/calendar/helpers";
-
 import { DayCell } from "@/components/calendar/views/month-view/day-cell";
-import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
 
 interface IProps {
@@ -22,7 +17,12 @@ interface IProps {
 	currentUser?: User | null;
 }
 
-export function CalendarMonthView({ singleDayEvents, multiDayEvents, users, currentUser }: IProps) {
+export function CalendarMonthView({
+	singleDayEvents,
+	multiDayEvents,
+	users,
+	currentUser,
+}: IProps) {
 	const { selectedDate } = useCalendar();
 
 	const WEEK_DAYS = [
@@ -60,7 +60,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents, users, curr
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: index * 0.05, ...transition }}
 					>
-						<span className="text-xs font-medium text-t-quaternary">{day}</span>
+						<span className="font-medium text-t-quaternary text-xs">{day}</span>
 					</motion.div>
 				))}
 			</div>
@@ -68,6 +68,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents, users, curr
 			<div className="grid grid-cols-7 overflow-hidden">
 				{cells.map((cell, index) => (
 					<DayCell
+						// biome-ignore lint/suspicious/noArrayIndexKey: Month grid cell identity is position-based and intentionally keyed by index.
 						key={index}
 						cell={cell}
 						events={allEvents}

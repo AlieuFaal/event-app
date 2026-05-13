@@ -1,13 +1,13 @@
+import type { Event, User } from "@vibespot/database/schema";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 import { endOfDay, isSameDay, startOfDay } from "date-fns";
-import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { formatTime } from "@/components/calendar/helpers";
-import {EventBullet} from "@/components/calendar/views/month-view/event-bullet";
-import { Event, User } from "@vibespot/database/schema";
+import { EventBullet } from "@/components/calendar/views/month-view/event-bullet";
+import { cn } from "@/lib/utils";
 
 const eventBadgeVariants = cva(
 	"mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",
@@ -35,8 +35,7 @@ const eventBadgeVariants = cva(
 				"Yellow-dot": "bg-bg-secondary text-t-primary [&_svg]:fill-yellow-600",
 			},
 			multiDayPosition: {
-				first:
-					"relative z-10 mr-0 rounded-r-none border-r-0 [&>span]:mr-2.5",
+				first: "relative z-10 mr-0 rounded-r-none border-r-0 [&>span]:mr-2.5",
 				middle:
 					"relative z-10 mx-0 w-[calc(100%_+_1px)] rounded-none border-x-0",
 				last: "ml-0 rounded-l-none border-l-0",
@@ -70,7 +69,7 @@ export function MonthEventBadge({
 	eventTotalDays,
 	className,
 	position: propPosition,
-	users
+	users,
 }: IProps) {
 	const { badgeVariant, use24HourFormat } = useCalendar();
 
@@ -95,8 +94,8 @@ export function MonthEventBadge({
 		position = "middle";
 	}
 
-	const renderBadgeText = ["first", "none"].includes(position) ;
-	const renderBadgeTime =  ["last", "none"].includes(position);
+	const renderBadgeText = ["first", "none"].includes(position);
+	const renderBadgeTime = ["last", "none"].includes(position);
 
 	const color = (
 		badgeVariant === "dot" ? `${event.color}-dot` : event.color
@@ -109,12 +108,10 @@ export function MonthEventBadge({
 	return (
 		<DraggableEvent event={event}>
 			<EventDetailsDialog event={event} users={users}>
-				<div role="button" tabIndex={0} className={eventBadgeClasses}>
+				<button type="button" className={eventBadgeClasses}>
 					<div className="flex items-center gap-1.5 truncate">
 						{!["middle", "last"].includes(position) &&
-							badgeVariant === "dot" && (
-								<EventBullet color={event.color} />
-							)}
+							badgeVariant === "dot" && <EventBullet color={event.color} />}
 
 						{renderBadgeText && (
 							<p className="flex-1 truncate font-semibold">
@@ -131,11 +128,11 @@ export function MonthEventBadge({
 					<div className="hidden sm:block">
 						{renderBadgeTime && (
 							<span>
-							{formatTime(new Date(event.startDate), use24HourFormat)}
-						</span>
+								{formatTime(new Date(event.startDate), use24HourFormat)}
+							</span>
 						)}
 					</div>
-				</div>
+				</button>
 			</EventDetailsDialog>
 		</DraggableEvent>
 	);

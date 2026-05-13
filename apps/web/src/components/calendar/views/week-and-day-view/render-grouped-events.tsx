@@ -1,7 +1,7 @@
+import type { Event, User } from "@vibespot/database/schema";
 import { areIntervalsOverlapping } from "date-fns";
 import { getEventBlockStyle } from "@/components/calendar/helpers";
 import { EventBlock } from "@/components/calendar/views/week-and-day-view/event-block";
-import { Event, User } from "@vibespot/database/schema";
 
 interface RenderGroupedEventsProps {
 	groupedEvents: Event[][];
@@ -12,7 +12,7 @@ interface RenderGroupedEventsProps {
 export function RenderGroupedEvents({
 	groupedEvents,
 	day,
-	users
+	users,
 }: RenderGroupedEventsProps) {
 	return groupedEvents.map((group, groupIndex) =>
 		group.map((event) => {
@@ -28,12 +28,12 @@ export function RenderGroupedEvents({
 					otherGroup.some((otherEvent) =>
 						areIntervalsOverlapping(
 							{
-								start: (event.startDate),
-								end: (event.endDate),
+								start: event.startDate,
+								end: event.endDate,
 							},
 							{
-								start: (otherEvent.startDate),
-								end: (otherEvent.endDate),
+								start: otherEvent.startDate,
+								end: otherEvent.endDate,
 							},
 						),
 					),

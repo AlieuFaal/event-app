@@ -14,6 +14,7 @@ export function DayViewSkeleton() {
 			<div className="flex flex-1 overflow-y-auto">
 				<div className="w-18 flex-shrink-0">
 					{Array.from({ length: 12 }).map((_, i) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 						<div key={i} className="relative h-12 border-b pr-2 text-right">
 							<Skeleton className="absolute -top-3 right-2 h-4 w-10" />
 						</div>
@@ -23,6 +24,7 @@ export function DayViewSkeleton() {
 				<div className="flex-1">
 					<div className="relative">
 						{Array.from({ length: 12 }).map((_, hourIndex) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders are static and index keys are stable for this fixed-length list.
 							<div key={hourIndex} className="h-12 border-b"></div>
 						))}
 					</div>

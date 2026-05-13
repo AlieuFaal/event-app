@@ -24,11 +24,11 @@ const AvatarGroup = ({
 
 	return (
 		<div
-			className={cn("flex items-center flex-row-reverse", className)}
+			className={cn("flex flex-row-reverse items-center", className)}
 			{...props}
 		>
 			{remainingAvatars > 0 && (
-				<Avatar className="-ml-2 hover:z-10 relative ring-2 ring-background">
+				<Avatar className="relative -ml-2 ring-2 ring-background hover:z-10">
 					<AvatarFallback className="bg-muted-foreground text-white">
 						+{remainingAvatars}
 					</AvatarFallback>
@@ -38,7 +38,7 @@ const AvatarGroup = ({
 				if (!React.isValidElement(avatar)) return null;
 
 				return (
-					<div key={index} className="-ml-2 hover:z-10 relative">
+					<div key={index} className="relative -ml-2 hover:z-10">
 						{React.cloneElement(avatar as React.ReactElement<AvatarProps>, {
 							className: "ring-2 ring-background",
 						})}

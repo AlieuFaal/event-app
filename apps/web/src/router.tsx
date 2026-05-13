@@ -26,13 +26,13 @@ export const createRouter = () =>
 		defaultNotFoundComponent: () => {
 			return (
 				<div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
-					<h1 className="text-4xl font-bold">404 - Page Not Found</h1>
+					<h1 className="font-bold text-4xl">404 - Page Not Found</h1>
 					<p className="mt-4 text-lg">
 						The page you are looking for does not seem to exist.
 					</p>
 					<div className="mt-6">
 						<Button
-							className="hover:scale-105 hover:bg-secondary transition-transform rounded-2xl"
+							className="rounded-2xl transition-transform hover:scale-105 hover:bg-secondary"
 							variant="outline"
 						>
 							<Link to={"/"}>Return home</Link>
@@ -45,11 +45,11 @@ export const createRouter = () =>
 		defaultErrorComponent: ({ error }) => {
 			return (
 				<div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
-					<h1 className="text-4xl font-bold">Oops something went wrong! 🫠</h1>
+					<h1 className="font-bold text-4xl">Oops something went wrong! 🫠</h1>
 					<p className="mt-2 text-lg text-red-600">{error.message}</p>
 					<div className="mt-6">
 						<Button
-							className="hover:scale-105 hover:bg-secondary transition-transform rounded-2xl"
+							className="rounded-2xl transition-transform hover:scale-105 hover:bg-secondary"
 							variant="outline"
 						>
 							<Link to={"/"}>Return home</Link>

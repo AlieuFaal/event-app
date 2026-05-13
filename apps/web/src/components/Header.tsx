@@ -1,12 +1,10 @@
-import { User } from '@vibespot/database/schema'
-import { Navbar05 } from './shadcn/ui/shadcn-io/navbar-05'
+import type { User } from "@vibespot/database/schema";
+import { Navbar05 } from "./shadcn/ui/shadcn-io/navbar-05";
 
 interface HeaderProps {
-  currentUser: User | null
+	currentUser: User | null;
 }
 
 export function Header({ currentUser }: HeaderProps) {
-  return (
-      <Navbar05 currentUser={currentUser} />
-  )
+	return <Navbar05 currentUser={currentUser} />;
 }

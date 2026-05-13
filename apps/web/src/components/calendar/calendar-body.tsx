@@ -1,5 +1,6 @@
 "use client";
 
+import type { User } from "@vibespot/database/schema";
 import { isSameDay } from "date-fns";
 import { motion } from "framer-motion";
 import { fadeIn, transition } from "@/components/calendar/animations";
@@ -9,7 +10,6 @@ import { CalendarMonthView } from "@/components/calendar/views/month-view/calend
 import { CalendarDayView } from "@/components/calendar/views/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/components/calendar/views/week-and-day-view/calendar-week-view";
 import { CalendarYearView } from "@/components/calendar/views/year-view/calendar-year-view";
-import { User } from "@vibespot/database/schema";
 
 interface IProps {
 	currentUser?: User | null;
@@ -31,7 +31,7 @@ export function CalendarBody({ currentUser }: IProps) {
 	});
 
 	return (
-		<div className="w-full h-full overflow-scroll relative">
+		<div className="relative h-full w-full overflow-scroll">
 			<motion.div
 				key={view}
 				initial="initial"
@@ -59,7 +59,6 @@ export function CalendarBody({ currentUser }: IProps) {
 					<CalendarDayView
 						singleDayEvents={singleDayEvents}
 						multiDayEvents={multiDayEvents}
-
 					/>
 				)}
 				{view === "year" && (

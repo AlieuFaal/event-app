@@ -1,14 +1,15 @@
 "use client";
 
+import type { CalendarEvent, Event, User } from "@vibespot/database/schema";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/calendar/hooks";
-import { deleteEventDataFn, postCalendarEventDataFn, putEventDataFn } from "@/services/eventService";
-import type {
-	TCalendarView,
-	TEventColor,
-} from "@/components/calendar/types";
-import type { Event, User, CalendarEvent } from "@vibespot/database/schema";
+import type { TCalendarView, TEventColor } from "@/components/calendar/types";
+import {
+	deleteEventDataFn,
+	postCalendarEventDataFn,
+	putEventDataFn,
+} from "@/services/eventService";
 
 interface ICalendarContext {
 	selectedDate: Date;
@@ -192,7 +193,9 @@ export function CalendarProvider2({
 			endDate: new Date(event.endDate),
 		} as Event;
 
-		setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updatedEvent : e)));
+		setAllEvents((prev) =>
+			prev.map((e) => (e.id === event.id ? updatedEvent : e)),
+		);
 		setFilteredEvents((prev) =>
 			prev.map((e) => (e.id === event.id ? updatedEvent : e)),
 		);

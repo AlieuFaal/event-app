@@ -17,7 +17,7 @@ const ModalOverlay = (props: DialogPrimitive.DialogOverlayProps) => {
 			{...props}
 			className={cn(
 				"fixed inset-0 z-50 bg-background/80 backdrop-blur-sm",
-				"data-[state=open]:animate-in data-[state=closed]:animate-out",
+				"data-[state=closed]:animate-out data-[state=open]:animate-in",
 				"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
 				props.className,
 			)}
@@ -70,7 +70,7 @@ const ModalContent = ({
 				className={cn(ModalVariants({ side }), className)}
 			>
 				{children}
-				<ModalClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+				<ModalClose className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
 					<X className="h-4 w-4" />
 					<span className="sr-only">Close</span>
 				</ModalClose>
@@ -102,26 +102,26 @@ const ModalFooter = (props: HTMLAttributes<HTMLDivElement>) => (
 const ModalTitle = (props: DialogPrimitive.DialogTitleProps) => (
 	<DialogPrimitive.Title
 		{...props}
-		className={cn("text-lg font-semibold text-foreground", props.className)}
+		className={cn("font-semibold text-foreground text-lg", props.className)}
 	/>
 );
 
 const ModalDescription = (props: DialogPrimitive.DialogDescriptionProps) => (
 	<DialogPrimitive.Description
 		{...props}
-		className={cn("text-sm text-muted-foreground", props.className)}
+		className={cn("text-muted-foreground text-sm", props.className)}
 	/>
 );
 
 export {
 	Modal,
-	ModalPortal,
-	ModalOverlay,
-	ModalTrigger,
 	ModalClose,
 	ModalContent,
-	ModalHeader,
-	ModalFooter,
-	ModalTitle,
 	ModalDescription,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	ModalPortal,
+	ModalTitle,
+	ModalTrigger,
 };

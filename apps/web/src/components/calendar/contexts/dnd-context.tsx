@@ -1,18 +1,18 @@
 "use client";
 
+import type { CalendarEvent, Event, User } from "@vibespot/database/schema";
 import React, {
 	createContext,
 	type ReactNode,
 	useCallback,
 	useContext,
+	useMemo,
 	useRef,
 	useState,
-	useMemo,
 } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { DndConfirmationDialog } from "@/components/calendar/dialogs/dnd-confirmation-dialog";
-import { Event, User, CalendarEvent } from "@vibespot/database/schema";
 
 interface PendingDropData {
 	event: Event;
@@ -103,16 +103,16 @@ export function DndProvider({
 	}, []);
 
 	const handleEventDrop = useCallback(
-		(targetDate: Date, hour?: number, minute?: number,) => {
+		(targetDate: Date, hour?: number, minute?: number) => {
 			const { draggedEvent } = dragState;
 			if (!draggedEvent) return;
-			
+
 			if (currentUser?.id !== draggedEvent.userId) {
 				toast.error("You can only move your own events.");
 				endDrag();
 				return;
 			}
-			
+
 			const { newStart, newEnd } = calculateNewDates(
 				draggedEvent,
 				targetDate,
@@ -143,7 +143,14 @@ export function DndProvider({
 				endDrag();
 			}
 		},
-		[dragState, calculateNewDates, isSamePosition, endDrag, showConfirmation],
+		[
+			dragState,
+			calculateNewDates,
+			isSamePosition,
+			endDrag,
+			showConfirmation,
+			currentUser?.id,
+		],
 	);
 
 	const handleConfirmDrop = useCallback(() => {
@@ -225,7 +232,6 @@ export function DndProvider({
 			handleEventDrop,
 			handleConfirmDrop,
 			handleCancelDrop,
-			setShowConfirmation,
 		],
 	);
 

@@ -9,12 +9,6 @@
       "enabled": true
     }
   },
-  "formatter": {
-    "enabled": false
-  },
-  "assist": {
-    "enabled": false
-  },
   "files": {
     "includes": [
       "**",
@@ -39,12 +33,30 @@
       "!**/*.html"
     ]
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": false,
+      "recommended": true,
       "correctness": {
         "noUnusedImports": "warn"
+      },
+      "nursery": {
+        "useSortedClasses": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noUnknownAtRules": "off",
+        "noExplicitAny": "on",
+        "noArrayIndexKey": "warn"
       }
     }
   }

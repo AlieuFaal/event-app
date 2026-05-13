@@ -1,86 +1,91 @@
 "use client";
 
+import type { Event } from "@vibespot/database/schema";
 import { format } from "date-fns";
-
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/shadcn/ui/alert-dialog";
-import { formatTime, getColorClass } from "@/components/calendar/helpers";
-import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import { Event } from "@vibespot/database/schema";
+import { formatTime, getColorClass } from "@/components/calendar/helpers";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/shadcn/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface EventDropConfirmationDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    event: Event | null;
-    newStartDate: Date | null;
-    newEndDate: Date | null;
-    onConfirm: () => void;
-    onCancel: () => void;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	event: Event | null;
+	newStartDate: Date | null;
+	newEndDate: Date | null;
+	onConfirm: () => void;
+	onCancel: () => void;
 }
 
 export function EventDropConfirmationDialog({
-    open,
-    onOpenChange,
-    event,
-    newStartDate,
-    newEndDate,
-    onConfirm,
-    onCancel,
+	open,
+	onOpenChange,
+	event,
+	newStartDate,
+	newEndDate,
+	onConfirm,
+	onCancel,
 }: EventDropConfirmationDialogProps) {
+	const { use24HourFormat } = useCalendar();
 
-    const { use24HourFormat } = useCalendar();
+	if (!event || !newStartDate || !newEndDate) {
+		return null;
+	}
 
-    if (!event || !newStartDate || !newEndDate) {
-        return null;
-    }
+	const originalStart = new Date(event.startDate);
 
-    const originalStart = new Date(event.startDate);
+	const formatDate = (date: Date) => {
+		return (
+			format(date, "MMM dd, yyyy 'at '") + formatTime(date, use24HourFormat)
+		);
+	};
 
-    const formatDate = (date: Date) => {
-        return format(date, "MMM dd, yyyy 'at '") + formatTime(date, use24HourFormat);
-    };
+	const handleConfirm = () => {
+		onConfirm();
+		onOpenChange(false);
+	};
 
-    const handleConfirm = () => {
-        onConfirm();
-        onOpenChange(false);
-    };
+	const handleCancel = () => {
+		onCancel();
+		onOpenChange(false);
+	};
 
-    const handleCancel = () => {
-        onCancel();
-        onOpenChange(false);
-    };
-
-    return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Event Move</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Are you sure you want to move
-                        <span className={cn(getColorClass(event.color), "mx-1 py-0.5 px-1 rounded-md")}>
-                            {event.title}
-                        </span>
-                        event from
-                        <strong className="mx-1">{formatDate(originalStart)}</strong> to
-                        <strong className="mx-1">{formatDate(newStartDate)}</strong>?
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleConfirm}>
-                        Move Event
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
+	return (
+		<AlertDialog open={open} onOpenChange={onOpenChange}>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>Confirm Event Move</AlertDialogTitle>
+					<AlertDialogDescription>
+						Are you sure you want to move
+						<span
+							className={cn(
+								getColorClass(event.color),
+								"mx-1 rounded-md px-1 py-0.5",
+							)}
+						>
+							{event.title}
+						</span>
+						event from
+						<strong className="mx-1">{formatDate(originalStart)}</strong> to
+						<strong className="mx-1">{formatDate(newStartDate)}</strong>?
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
+					<AlertDialogAction onClick={handleConfirm}>
+						Move Event
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
+	);
 }

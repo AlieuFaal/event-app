@@ -1,4 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/ui/avatar";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@/components/shadcn/ui/avatar";
 import { AvatarGroup } from "@/components/shadcn/ui/avatar-group";
 import {
 	Select,
@@ -7,13 +12,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/shadcn/ui/select";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 
 export function UserSelect() {
 	const { users, selectedUserId, filterEventsBySelectedUser } = useCalendar();
 
 	return (
-		<Select value={selectedUserId!} onValueChange={filterEventsBySelectedUser}>
+		<Select
+			value={selectedUserId ?? "all"}
+			onValueChange={filterEventsBySelectedUser}
+		>
 			<SelectTrigger className="w-full">
 				<SelectValue placeholder="Select a user" />
 			</SelectTrigger>
@@ -22,10 +29,7 @@ export function UserSelect() {
 					<AvatarGroup className="mx-2 flex items-center" max={3}>
 						{users.map((user) => (
 							<Avatar key={user.id} className="size-6 text-xxs">
-								<AvatarImage
-									src={user.image ?? undefined}
-									alt={user.name}
-								/>
+								<AvatarImage src={user.image ?? undefined} alt={user.name} />
 								<AvatarFallback className="text-xxs">
 									{user.name[0]}
 								</AvatarFallback>
@@ -43,10 +47,7 @@ export function UserSelect() {
 					>
 						<div className="flex items-center gap-2">
 							<Avatar key={user.id} className="size-6">
-								<AvatarImage
-									src={user.image ?? undefined}
-									alt={user.name}
-								/>
+								<AvatarImage src={user.image ?? undefined} alt={user.name} />
 								<AvatarFallback className="text-xxs">
 									{user.name[0]}
 								</AvatarFallback>

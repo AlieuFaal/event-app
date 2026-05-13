@@ -1,8 +1,8 @@
+import type { Event } from "@vibespot/database/schema";
 import { motion } from "framer-motion";
 import type React from "react";
 import type { ReactNode } from "react";
 import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
-import { Event } from "@vibespot/database/schema";
 
 interface DraggableEventProps {
 	event: Event;
@@ -25,11 +25,11 @@ export function DraggableEvent({
 
 	return (
 		<motion.div
-			className={`${className || ""} ${isCurrentlyDragged ? "opacity-50 cursor-grabbing" : "cursor-grab"}`}
+			className={`${className || ""} ${isCurrentlyDragged ? "cursor-grabbing opacity-50" : "cursor-grab"}`}
 			draggable
 			onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClick(e)}
 			onDragStart={(e) => {
-				(e as DragEvent).dataTransfer!.setData(
+				(e as DragEvent).dataTransfer?.setData(
 					"text/plain",
 					event.id?.toString() || "",
 				);

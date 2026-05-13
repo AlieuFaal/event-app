@@ -1,11 +1,8 @@
 import { formatDate } from "date-fns";
 import { motion } from "framer-motion";
-import { Button } from "@/components/shadcn/ui/button";
-import {
-	buttonHover,
-	transition,
-} from "@/components/calendar/animations";
+import { buttonHover, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { Button } from "@/components/shadcn/ui/button";
 
 const MotionButton = motion.create(Button);
 
@@ -26,7 +23,7 @@ export function TodayButton() {
 			transition={transition}
 		>
 			<motion.span
-				className="w-full bg-primary py-1 text-xs font-semibold text-primary-foreground rounded-t-sm"
+				className="w-full rounded-t-sm bg-primary py-1 font-semibold text-primary-foreground text-xs"
 				initial={{ y: -10, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ delay: 0.1, ...transition }}
@@ -34,7 +31,7 @@ export function TodayButton() {
 				{formatDate(today, "MMM").toUpperCase()}
 			</motion.span>
 			<motion.span
-				className="text-lg font-bold"
+				className="font-bold text-lg"
 				initial={{ y: 10, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ delay: 0.2, ...transition }}

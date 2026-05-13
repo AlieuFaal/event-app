@@ -57,14 +57,14 @@ function DayPicker({
 				day_hidden: "invisible",
 				...classNames,
 			}}
-
 			components={
 				{
-					Weekdays: props => <div {...props} className="mb-2 flex w-full justify-between px-1" />,
+					Weekdays: (props) => (
+						<div {...props} className="mb-2 flex w-full justify-between px-1" />
+					),
 					IconLeft: () => <ChevronLeft className="size-4" />,
 					IconRight: () => <ChevronRight className="size-4" />,
-				} as Partial<CustomComponents> 
-				
+				} as Partial<CustomComponents>
 			}
 			locale={enUS}
 			{...props}

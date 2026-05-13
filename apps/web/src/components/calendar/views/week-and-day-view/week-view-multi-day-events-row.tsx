@@ -1,3 +1,4 @@
+import type { Event, User } from "@vibespot/database/schema";
 import {
 	addDays,
 	differenceInDays,
@@ -9,7 +10,6 @@ import {
 } from "date-fns";
 import { useMemo } from "react";
 import { MonthEventBadge } from "@/components/calendar/views/month-view/month-event-badge";
-import { Event, User } from "@vibespot/database/schema";
 
 interface IProps {
 	selectedDate: Date;
@@ -20,7 +20,7 @@ interface IProps {
 export function WeekViewMultiDayEventsRow({
 	selectedDate,
 	multiDayEvents,
-	users
+	users,
 }: IProps) {
 	const weekStart = startOfWeek(selectedDate);
 	const weekEnd = endOfWeek(selectedDate);
@@ -29,8 +29,8 @@ export function WeekViewMultiDayEventsRow({
 	const processedEvents = useMemo(() => {
 		return multiDayEvents
 			.map((event) => {
-				const start = (event.startDate);
-				const end = (event.endDate);
+				const start = event.startDate;
+				const end = event.endDate;
 				const adjustedStart = isBefore(start, weekStart) ? weekStart : start;
 				const adjustedEnd = isAfter(end, weekEnd) ? weekEnd : end;
 				const startIndex = differenceInDays(adjustedStart, weekStart);
@@ -74,8 +74,8 @@ export function WeekViewMultiDayEventsRow({
 
 	const hasEventsInWeek = useMemo(() => {
 		return multiDayEvents.some((event) => {
-			const start = (event.startDate);
-			const end = (event.endDate);
+			const start = event.startDate;
+			const end = event.endDate;
 
 			return (
 				// Event starts within the week
@@ -93,7 +93,7 @@ export function WeekViewMultiDayEventsRow({
 	}
 
 	return (
-		<div className="overflow-hidden flex">
+		<div className="flex overflow-hidden">
 			<div className="w-18 border-b"></div>
 			<div className="grid flex-1 grid-cols-7 divide-x border-b border-l">
 				{weekDays.map((day, dayIndex) => (

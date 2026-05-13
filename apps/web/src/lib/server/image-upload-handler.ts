@@ -1,4 +1,4 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { type HandleUploadBody, handleUpload } from "@vercel/blob/client";
 import { auth } from "@vibespot/database/src/auth";
 import {
 	allowedImageContentTypes,

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
 import { eventInsertBaseSchema, type User } from "@vibespot/database/schema";
 import {
 	CalendarClock,
@@ -7,11 +8,16 @@ import {
 	Palette,
 	Sparkles,
 } from "lucide-react";
-import { lazy, type ComponentProps, Suspense, useEffect, useState } from "react";
-import { useForm, useWatch, type FieldErrors } from "react-hook-form";
+import {
+	type ComponentProps,
+	lazy,
+	Suspense,
+	useEffect,
+	useState,
+} from "react";
+import { type FieldErrors, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { m } from "@/paraglide/messages";
 import { repeatEventsFn } from "@/services/eventService";
@@ -265,7 +271,9 @@ export default function EventCard({
 	const goToNextStep = async () => {
 		const isStepValid = await validateCurrentStep();
 		if (!isStepValid) return;
-		setCurrentStep((prevStep) => Math.min(prevStep + 1, STEP_CONFIG.length - 1));
+		setCurrentStep((prevStep) =>
+			Math.min(prevStep + 1, STEP_CONFIG.length - 1),
+		);
 	};
 
 	const goToPreviousStep = () => {
@@ -274,23 +282,23 @@ export default function EventCard({
 
 	return (
 		<div className="relative mx-auto w-full px-4 py-6 md:px-12 md:py-8">
-
 			<section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/70 px-5 py-6 shadow-sm backdrop-blur-sm md:px-8 md:py-8">
-				<div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-primary/25 blur-3xl" />
+				<div className="pointer-events-none absolute -top-20 -right-20 size-72 rounded-full bg-primary/25 blur-3xl" />
 
 				<div className="relative z-10 space-y-4">
-					<div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-primary">
+					<div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 font-medium text-primary text-xs uppercase tracking-[0.18em]">
 						<Palette className="size-3.5" />
 						Design your next vibe
 					</div>
 
 					<div className="space-y-2">
-						<h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl md:text-5xl">
+						<h1 className="font-black text-3xl text-foreground tracking-tight sm:text-4xl md:text-5xl">
 							Create an event people won&apos;t forget!
 						</h1>
-						<p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
-							This is isn&apos;t just any event, it&apos;s YOUR event! Build the right
-							mood, lock in the details, and publish your next standout event.
+						<p className="max-w-3xl text-muted-foreground text-sm sm:text-base">
+							This is isn&apos;t just any event, it&apos;s YOUR event! Build the
+							right mood, lock in the details, and publish your next standout
+							event.
 						</p>
 					</div>
 				</div>
@@ -324,12 +332,14 @@ export default function EventCard({
 													: "border-border/50 bg-background/40"
 										}`}
 									>
-										<div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+										<div className="mb-1 flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wider">
 											<Icon className="size-3.5" />
 											Step {index + 1}
 										</div>
-										<p className="text-sm font-semibold text-foreground">{step.title}</p>
-										<p className="mt-1 text-xs text-muted-foreground">
+										<p className="font-semibold text-foreground text-sm">
+											{step.title}
+										</p>
+										<p className="mt-1 text-muted-foreground text-xs">
 											{step.description}
 										</p>
 									</button>
@@ -341,8 +351,10 @@ export default function EventCard({
 							{stepId === "basics" && (
 								<div className="space-y-5">
 									<div className="space-y-1">
-										<h2 className="text-xl font-bold tracking-tight">Set the vibe</h2>
-										<p className="text-sm text-muted-foreground">
+										<h2 className="font-bold text-xl tracking-tight">
+											Set the vibe
+										</h2>
+										<p className="text-muted-foreground text-sm">
 											Give your event a title, mood color and genre identity.
 										</p>
 									</div>
@@ -360,7 +372,9 @@ export default function EventCard({
 															{...field}
 														/>
 													</FormControl>
-													<FormDescription>{m.form_title_description()}</FormDescription>
+													<FormDescription>
+														{m.form_title_description()}
+													</FormDescription>
 													<FormMessage />
 												</FormItem>
 											)}
@@ -389,7 +403,9 @@ export default function EventCard({
 															))}
 														</SelectContent>
 													</Select>
-													<FormDescription>{m.form_genre_description()}</FormDescription>
+													<FormDescription>
+														{m.form_genre_description()}
+													</FormDescription>
 													<FormMessage />
 												</FormItem>
 											)}
@@ -408,7 +424,9 @@ export default function EventCard({
 														onChange={(color) => field.onChange(color)}
 													/>
 												</FormControl>
-												<FormDescription>{m.form_color_description()}</FormDescription>
+												<FormDescription>
+													{m.form_color_description()}
+												</FormDescription>
 												<FormMessage />
 											</FormItem>
 										)}
@@ -419,10 +437,12 @@ export default function EventCard({
 							{stepId === "location" && (
 								<div className="space-y-5">
 									<div className="space-y-1">
-										<h2 className="text-xl font-bold tracking-tight">Place the scene</h2>
-										<p className="text-sm text-muted-foreground">
-											Set venue details and pick an address suggestion to lock map
-											coordinates.
+										<h2 className="font-bold text-xl tracking-tight">
+											Place the scene
+										</h2>
+										<p className="text-muted-foreground text-sm">
+											Set venue details and pick an address suggestion to lock
+											map coordinates.
 										</p>
 									</div>
 
@@ -440,7 +460,9 @@ export default function EventCard({
 															value={field.value || ""}
 														/>
 													</FormControl>
-													<FormDescription>{m.form_venue_description()}</FormDescription>
+													<FormDescription>
+														{m.form_venue_description()}
+													</FormDescription>
 													<FormMessage />
 												</FormItem>
 											)}
@@ -452,7 +474,9 @@ export default function EventCard({
 											}
 										>
 											<AddressAutofill
-												accessToken={import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN}
+												accessToken={
+													import.meta.env.VITE_PUBLIC_MAPBOX_ACCESS_TOKEN
+												}
 												onRetrieve={(res: AddressRetrieveResult) => {
 													form.setValue(
 														"latitude",
@@ -477,7 +501,10 @@ export default function EventCard({
 													limit: 5,
 												}}
 												theme={{
-													variables: { borderRadius: "1rem", padding: "0.65rem" },
+													variables: {
+														borderRadius: "1rem",
+														padding: "0.65rem",
+													},
 												}}
 											>
 												<FormField
@@ -511,9 +538,12 @@ export default function EventCard({
 							{stepId === "schedule" && (
 								<div className="space-y-5">
 									<div className="space-y-1">
-										<h2 className="text-xl font-bold tracking-tight">Time it right</h2>
-										<p className="text-sm text-muted-foreground">
-											Choose start/end times and repeat cadence for recurring events.
+										<h2 className="font-bold text-xl tracking-tight">
+											Time it right
+										</h2>
+										<p className="text-muted-foreground text-sm">
+											Choose start/end times and repeat cadence for recurring
+											events.
 										</p>
 									</div>
 
@@ -550,7 +580,9 @@ export default function EventCard({
 															onChange={field.onChange}
 														/>
 													</FormControl>
-													<FormDescription>{m.form_end_date_description()}</FormDescription>
+													<FormDescription>
+														{m.form_end_date_description()}
+													</FormDescription>
 													<FormMessage />
 												</FormItem>
 											)}
@@ -564,20 +596,35 @@ export default function EventCard({
 											<FormItem>
 												<FormLabel>{m.form_repeat_label()}</FormLabel>
 												<FormControl>
-													<Select onValueChange={field.onChange} defaultValue={field.value}>
+													<Select
+														onValueChange={field.onChange}
+														defaultValue={field.value}
+													>
 														<SelectTrigger className="w-full md:w-[240px]">
 															<SelectValue />
 														</SelectTrigger>
 														<SelectContent>
-															<SelectItem value="none">{m.form_repeat_none()}</SelectItem>
-															<SelectItem value="daily">{m.form_repeat_daily()}</SelectItem>
-															<SelectItem value="weekly">{m.form_repeat_weekly()}</SelectItem>
-															<SelectItem value="monthly">{m.form_repeat_monthly()}</SelectItem>
-															<SelectItem value="yearly">{m.form_repeat_yearly()}</SelectItem>
+															<SelectItem value="none">
+																{m.form_repeat_none()}
+															</SelectItem>
+															<SelectItem value="daily">
+																{m.form_repeat_daily()}
+															</SelectItem>
+															<SelectItem value="weekly">
+																{m.form_repeat_weekly()}
+															</SelectItem>
+															<SelectItem value="monthly">
+																{m.form_repeat_monthly()}
+															</SelectItem>
+															<SelectItem value="yearly">
+																{m.form_repeat_yearly()}
+															</SelectItem>
 														</SelectContent>
 													</Select>
 												</FormControl>
-												<FormDescription>{m.form_repeat_description()}</FormDescription>
+												<FormDescription>
+													{m.form_repeat_description()}
+												</FormDescription>
 												<FormMessage />
 											</FormItem>
 										)}
@@ -610,10 +657,12 @@ export default function EventCard({
 							{stepId === "details" && (
 								<div className="space-y-5">
 									<div className="space-y-1">
-										<h2 className="text-xl font-bold tracking-tight">Set the story</h2>
-										<p className="text-sm text-muted-foreground">
-											Add a description that sells the mood and tells people why they
-											should show up.
+										<h2 className="font-bold text-xl tracking-tight">
+											Set the story
+										</h2>
+										<p className="text-muted-foreground text-sm">
+											Add a description that sells the mood and tells people why
+											they should show up.
 										</p>
 									</div>
 
@@ -641,16 +690,19 @@ export default function EventCard({
 							)}
 						</div>
 
-						<div className="flex flex-col gap-3 border-t border-border/60 pt-5 sm:flex-row sm:items-center sm:justify-between">
-							<p className="text-xs text-muted-foreground">
-								Step {currentStep + 1} of {STEP_CONFIG.length} ·
-								{" "}
+						<div className="flex flex-col gap-3 border-border/60 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
+							<p className="text-muted-foreground text-xs">
+								Step {currentStep + 1} of {STEP_CONFIG.length} ·{" "}
 								{STEP_CONFIG[currentStep]?.description}
 							</p>
 
 							<div className="flex items-center justify-end gap-2">
 								{currentStep > 0 ? (
-									<Button type="button" variant="outline" onClick={goToPreviousStep}>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={goToPreviousStep}
+									>
 										Back
 									</Button>
 								) : null}
@@ -660,7 +712,11 @@ export default function EventCard({
 										{m.button_submit_event()}
 									</Button>
 								) : (
-									<Button type="button" onClick={goToNextStep} className="min-w-[140px]">
+									<Button
+										type="button"
+										onClick={goToNextStep}
+										className="min-w-[140px]"
+									>
 										Continue
 									</Button>
 								)}

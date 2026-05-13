@@ -1,5 +1,6 @@
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -12,7 +13,6 @@ import {
 	AlertDialogTrigger,
 } from "@/components/shadcn/ui/alert-dialog";
 import { Button } from "@/components/shadcn/ui/button";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { m } from "@/paraglide/messages";
 
 interface DeleteEventDialogProps {
@@ -52,7 +52,9 @@ export default function DeleteEventDialog({ eventId }: DeleteEventDialogProps) {
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>{m.button_cancel()}</AlertDialogCancel>
-					<AlertDialogAction onClick={deleteEvent}>{m.onb_Continue_Button()}</AlertDialogAction>
+					<AlertDialogAction onClick={deleteEvent}>
+						{m.onb_Continue_Button()}
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

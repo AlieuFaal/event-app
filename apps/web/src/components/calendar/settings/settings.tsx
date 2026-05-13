@@ -5,7 +5,8 @@ import {
 	SettingsIcon,
 	XIcon,
 } from "lucide-react";
-import { useTheme } from "@/components/Themeprovider";
+import { useCalendar } from "@/components/calendar/contexts/calendar-context";
+import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
 import { Button } from "@/components/shadcn/ui/button";
 import {
 	DropdownMenu,
@@ -20,8 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/shadcn/ui/dropdown-menu";
 import { Switch } from "@/components/shadcn/ui/switch";
-import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-import { useDragDrop } from "@/components/calendar/contexts/dnd-context";
+import { useTheme } from "@/components/Themeprovider";
 
 export function Settings() {
 	const {
@@ -29,21 +29,23 @@ export function Settings() {
 		setBadgeVariant,
 		use24HourFormat,
 		toggleTimeFormat,
-		view,
-		setView,
 		agendaModeGroupBy,
 		setAgendaModeGroupBy,
 	} = useCalendar();
 	const { showConfirmation, setShowConfirmation } = useDragDrop();
-	const { theme, setTheme } = useTheme();
+	const { theme } = useTheme();
 
-	const isDarkMode = theme === "dark";
+	const _isDarkMode = theme === "dark";
 	const isDotVariant = badgeVariant === "dot";
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon" className="shadow-lg hover:scale-105">
+				<Button
+					variant="outline"
+					size="icon"
+					className="shadow-lg hover:scale-105"
+				>
 					<SettingsIcon />
 				</Button>
 			</DropdownMenuTrigger>
@@ -72,9 +74,9 @@ export function Settings() {
 						<DropdownMenuShortcut>
 							<div className="flex items-center gap-2">
 								{isDotVariant ? (
-									<DotIcon className="w-4 h-4" />
+									<DotIcon className="h-4 w-4" />
 								) : (
-									<PaletteIcon className="w-4 h-4" />
+									<PaletteIcon className="h-4 w-4" />
 								)}
 								<Switch
 									checked={isDotVariant}
@@ -90,6 +92,7 @@ export function Settings() {
 						<DropdownMenuShortcut>
 							<div className="flex items-center gap-2">
 								{use24HourFormat ? (
+									// biome-ignore lint/a11y/noSvgWithoutTitle: Decorative icon next to a labeled switch.
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width={24}
@@ -110,6 +113,7 @@ export function Settings() {
 										<path d="M21 15v6" />
 									</svg>
 								) : (
+									// biome-ignore lint/a11y/noSvgWithoutTitle: Decorative icon next to a labeled switch.
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width={24}

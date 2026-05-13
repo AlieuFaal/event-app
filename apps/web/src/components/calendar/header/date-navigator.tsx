@@ -1,23 +1,18 @@
+import type { Event } from "@vibespot/database/schema";
 import { formatDate } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
-import { Badge } from "@/components/shadcn/ui/badge";
-import { Button } from "@/components/shadcn/ui/button";
-import {
-	buttonHover,
-	transition,
-} from "@/components/calendar/animations";
+import { buttonHover, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
-
 import {
 	getEventsCount,
 	navigateDate,
 	rangeText,
 } from "@/components/calendar/helpers";
-
 import type { TCalendarView } from "@/components/calendar/types";
-import { Event } from "@vibespot/database/schema";
+import { Badge } from "@/components/shadcn/ui/badge";
+import { Button } from "@/components/shadcn/ui/button";
 
 interface IProps {
 	view: TCalendarView;
@@ -47,7 +42,7 @@ export function DateNavigator({ view, events }: IProps) {
 		<div className="space-y-0.5">
 			<div className="flex items-center gap-2">
 				<motion.span
-					className="text-lg font-semibold"
+					className="font-semibold text-lg"
 					initial={{ x: -20, opacity: 0 }}
 					animate={{ x: 0, opacity: 1 }}
 					transition={transition}
@@ -82,7 +77,7 @@ export function DateNavigator({ view, events }: IProps) {
 				</MotionButton>
 
 				<motion.p
-					className="text-sm text-muted-foreground"
+					className="text-muted-foreground text-sm"
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					transition={transition}

@@ -1,14 +1,14 @@
+import type { Event, User } from "@vibespot/database/schema";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 import { differenceInMinutes } from "date-fns";
 import type { HTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/components/calendar/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/components/calendar/dnd/draggable-event";
 import { ResizableEvent } from "@/components/calendar/dnd/resizable-event";
 import { formatTime } from "@/components/calendar/helpers";
-import { Event, User } from "@vibespot/database/schema";
+import { cn } from "@/lib/utils";
 
 const calendarWeekEventCardVariants = cva(
 	"flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2",
@@ -58,8 +58,8 @@ interface IProps
 export function EventBlock({ event, className, users }: IProps) {
 	const { badgeVariant, use24HourFormat } = useCalendar();
 
-	const start = (event.startDate);
-	const end = (event.endDate);
+	const start = event.startDate;
+	const end = event.endDate;
 	const durationInMinutes = differenceInMinutes(end, start);
 	const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
@@ -76,15 +76,16 @@ export function EventBlock({ event, className, users }: IProps) {
 		<ResizableEvent event={event}>
 			<DraggableEvent event={event}>
 				<EventDetailsDialog event={event} users={users}>
-					<div
-						role="button"
-						tabIndex={0}
+					<button
+						type="button"
 						className={calendarWeekEventCardClasses}
 						style={{ height: `${heightInPixels}px` }}
 					>
 						<div className="flex items-center gap-1.5 truncate">
 							{badgeVariant === "dot" && (
 								<svg
+									aria-hidden="true"
+									focusable="false"
 									width="8"
 									height="8"
 									viewBox="0 0 8 8"
@@ -103,7 +104,7 @@ export function EventBlock({ event, className, users }: IProps) {
 								{formatTime(end, use24HourFormat)}
 							</p>
 						)}
-					</div>
+					</button>
 				</EventDetailsDialog>
 			</DraggableEvent>
 		</ResizableEvent>

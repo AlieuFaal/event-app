@@ -1,19 +1,33 @@
 "use client";
 
+import type { Event, User } from "@vibespot/database/schema";
 import { format } from "date-fns";
-import { Calendar, Clock, MapPin, Text, } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { Calendar, Clock, MapPin, Text } from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { AddEditEventDialog } from "@/components/calendar/dialogs/add-edit-event-dialog";
 import { formatTime } from "@/components/calendar/helpers";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/ui/dialog";
-import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { Button } from "@/components/shadcn/ui/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/shadcn/ui/dialog";
+import {
+	Modal,
+	ModalContent,
+	ModalDescription,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+} from "@/components/shadcn/ui/responsive-modal";
+import { ScrollArea } from "@/components/shadcn/ui/scroll-area";
 import { authClient } from "@/lib/auth-client";
-import { Event, User } from "@vibespot/database/schema";
 import { m } from "@/paraglide/messages";
-import { Modal, ModalContent, ModalHeader, ModalTitle, ModalDescription, ModalFooter } from "@/components/shadcn/ui/responsive-modal";
 import { deleteAllRepeatedEventsFn } from "@/services/eventService";
 
 interface IProps {
@@ -29,7 +43,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const session = authClient.useSession();
 
-	const isRepeatedEvent = event && ["daily", "weekly", "monthly", "yearly"].includes((event.repeat as string) || "");
+	const isRepeatedEvent =
+		event &&
+		["daily", "weekly", "monthly", "yearly"].includes(
+			(event.repeat as string) || "",
+		);
 
 	const handleOpenDeleteDialog = () => {
 		if (isRepeatedEvent) {
@@ -80,8 +98,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						<div className="flex items-start gap-2">
 							<MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">{m.form_address_label()}</p>
-								<p className="text-sm text-muted-foreground">
+								<p className="font-medium text-sm">{m.form_address_label()}</p>
+								<p className="text-muted-foreground text-sm">
 									{event.address || "No address provided"}
 								</p>
 							</div>
@@ -90,8 +108,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						<div className="flex items-start gap-2">
 							<Calendar className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">{m.start_date_label()}</p>
-								<p className="text-sm text-muted-foreground">
+								<p className="font-medium text-sm">{m.start_date_label()}</p>
+								<p className="text-muted-foreground text-sm">
 									{format(startDate, "EEEE dd MMMM")}
 									<span className="mx-1">at</span>
 									{formatTime(event.startDate, use24HourFormat)}
@@ -102,8 +120,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						<div className="flex items-start gap-2">
 							<Clock className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">{m.end_date_label()}</p>
-								<p className="text-sm text-muted-foreground">
+								<p className="font-medium text-sm">{m.end_date_label()}</p>
+								<p className="text-muted-foreground text-sm">
 									{format(endDate, "EEEE dd MMMM")}
 									<span className="mx-1">at</span>
 									{formatTime(event.endDate, use24HourFormat)}
@@ -114,8 +132,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						<div className="flex items-start gap-2">
 							<Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-sm font-medium">{m.form_description_label()}</p>
-								<p className="text-sm text-muted-foreground">
+								<p className="font-medium text-sm">
+									{m.form_description_label()}
+								</p>
+								<p className="text-muted-foreground text-sm">
 									{event.description}
 								</p>
 							</div>
@@ -125,11 +145,16 @@ export function EventDetailsDialog({ event, children }: IProps) {
 				{event.userId !== session?.data?.user.id ? null : (
 					<div className="flex justify-end gap-2">
 						<AddEditEventDialog event={event}>
-							<Button variant="outline" className="hover:scale-105 cursor-pointer">{m.edit_event_button()}</Button>
+							<Button
+								variant="outline"
+								className="cursor-pointer hover:scale-105"
+							>
+								{m.edit_event_button()}
+							</Button>
 						</AddEditEventDialog>
 						<Button
 							variant="destructive"
-							className="hover:scale-105 cursor-pointer"
+							className="cursor-pointer hover:scale-105"
 							onClick={() => {
 								handleOpenDeleteDialog();
 							}}
@@ -141,7 +166,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
 				<DialogClose />
 			</DialogContent>
 
-			<Modal open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} modal={true}>
+			<Modal
+				open={deleteDialogOpen}
+				onOpenChange={setDeleteDialogOpen}
+				modal={true}
+			>
 				<ModalContent>
 					<ModalHeader>
 						<ModalTitle>{m.details_delete_modal_title()}</ModalTitle>
@@ -150,10 +179,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
 						</ModalDescription>
 					</ModalHeader>
 					<div className="flex w-fit">
-						<ModalFooter className="flex justify-center-safe gap-4 mt-4">
+						<ModalFooter className="justify-center-safe mt-4 flex gap-4">
 							<Button
 								variant="outline"
-								className="hover:scale-105 cursor-pointer"
+								className="cursor-pointer hover:scale-105"
 								onClick={() => {
 									deleteEvent(event.id, true);
 								}}
@@ -162,7 +191,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
 							</Button>
 							<Button
 								variant="outline"
-								className="hover:scale-105 cursor-pointer"
+								className="cursor-pointer hover:scale-105"
 								onClick={() => {
 									deleteEvent(event.id, false);
 								}}

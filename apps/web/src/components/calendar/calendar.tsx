@@ -1,20 +1,19 @@
+import type { User } from "@vibespot/database/schema";
 import { CalendarBody } from "@/components/calendar/calendar-body";
 import { DndProvider } from "@/components/calendar/contexts/dnd-context";
 import { CalendarHeader } from "@/components/calendar/header/calendar-header";
-import { User } from "@vibespot/database/schema";
 
-interface calendar2Props
-{
+interface calendar2Props {
 	currentUser?: User | null;
 }
 
-export function Calendar2({currentUser}: calendar2Props) {
+export function Calendar2({ currentUser }: calendar2Props) {
 	return (
-			<DndProvider showConfirmation={false} currentUser={currentUser}>
-				<div className="w-full border rounded-xl">
-					<CalendarHeader currentUser={currentUser}/>
-					<CalendarBody currentUser={currentUser} />
-				</div>
-			</DndProvider>
+		<DndProvider showConfirmation={false} currentUser={currentUser}>
+			<div className="w-full rounded-xl border">
+				<CalendarHeader currentUser={currentUser} />
+				<CalendarBody currentUser={currentUser} />
+			</div>
+		</DndProvider>
 	);
 }
