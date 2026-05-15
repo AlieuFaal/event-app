@@ -1,21 +1,42 @@
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api-client";
 
+export type PublicUser = {
+	id: string;
+	name: string;
+	email: string;
+	emailVerified: boolean;
+	phone: string | null;
+	image: string | null;
+	location: string | null;
+	bio: string | null;
+	createdAt: string;
+	updatedAt: string;
+	role: string;
+	followersCount: number;
+	followingCount: number;
+	eventsCount: number;
+	isFollowing: boolean;
+};
 
-// export const useGetUserById = (id: string) => {
-//   const { isPending, error, data } = useQuery<User, Error>({
-//     queryKey: ["user", id],
-//     queryFn: async () => {
-//       const res = await apiClient.users[":id"].$get({
-//         param: { id: id as string },
-//       });
+export const useGetUserById = (id: string | undefined) => {
+	return useQuery<PublicUser>({
+		queryKey: ["user", id],
+		queryFn: async () => {
+			if (!id) {
+				throw new Error("Missing user id");
+			}
 
-//       if (res.ok) {
-//         const data = await res.json();
-//         return data;
-//       } else {
-//         throw new Error("Failed to fetch user");
-//       }
-//     },
-//   });
+			const res = await apiClient.users[":id"].$get({
+				param: { id },
+			});
 
-//   return { isPending, error, data };
-// };
+			if (!res.ok) {
+				throw new Error("Failed to fetch user");
+			}
+
+			return res.json();
+		},
+		enabled: !!id,
+	});
+};
