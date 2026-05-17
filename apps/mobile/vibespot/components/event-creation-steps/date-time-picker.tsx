@@ -1,291 +1,399 @@
-import { z } from "zod";
-import { eventInsertSchema } from "@vibespot/validation";
-import type { UseFormReturn } from "react-hook-form";
-import { View, Text, useColorScheme, Modal, Pressable, TouchableOpacity } from "react-native";
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import type { eventInsertSchema } from "@vibespot/validation";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+	Calendar,
+	CalendarSync,
+	CalendarX,
+	ChevronRight,
+} from "lucide-react-native";
+import type { ReactNode } from "react";
 import { useState } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import {
+	Modal,
+	Pressable,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
+import type z from "zod";
 import { Button } from "@/components/ui/button";
-import { Calendar, CalendarSync, CalendarX, Clock } from "lucide-react-native";
-import { LinearGradient } from 'expo-linear-gradient';
-import { Picker } from '@react-native-picker/picker';
 
 interface Props {
-    form: UseFormReturn<z.infer<typeof eventInsertSchema>>;
+	form: UseFormReturn<z.infer<typeof eventInsertSchema>>;
 }
 
-type ModalType = 'start' | 'end' | null;
-type RepeatOption = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+type ModalType = "start" | "end" | null;
+type RepeatOption = "none" | "daily" | "weekly" | "monthly" | "yearly";
+
+const repeatLabels: Record<RepeatOption, string> = {
+	daily: "Daily",
+	monthly: "Monthly",
+	none: "Never",
+	weekly: "Weekly",
+	yearly: "Yearly",
+};
+
+const lightModeColors: [string, string, string] = [
+	"#f9f8fc",
+	"#f5f3ff",
+	"#faf8ff",
+];
+const darkModeColors: [string, string, string] = [
+	"#14101f",
+	"#1b1230",
+	"#090411",
+];
+
+const formatDateTime = (value: string | Date | null | undefined) => {
+	if (!value) return "Select date & time";
+	return new Date(value).toLocaleString("sv-SE", {
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		month: "short",
+		year: "numeric",
+	});
+};
+
+const getRepeatEndFallback = (endDate: string | Date | null | undefined) => {
+	const fallback = endDate ? new Date(endDate) : new Date();
+	fallback.setMonth(fallback.getMonth() + 1);
+	return fallback;
+};
 
 export function DateTimePicker({ form }: Props) {
-    const [modalVisible, setModalVisible] = useState<ModalType>(null);
-    const [repeatModalVisible, setRepeatModalVisible] = useState<boolean>(false);
-    const [tempDate, setTempDate] = useState<Date>(new Date());
-    const [repeatEndDate, setRepeatEndDate] = useState<Date>(new Date());
-    const [repeatOption, setRepeatOption] = useState<RepeatOption>('none');
+	const [modalVisible, setModalVisible] = useState<ModalType>(null);
+	const [repeatModalVisible, setRepeatModalVisible] = useState(false);
+	const [tempDate, setTempDate] = useState<Date>(new Date());
+	const [repeatEndDate, setRepeatEndDate] = useState<Date>(
+		getRepeatEndFallback(form.getValues("endDate")),
+	);
+	const [repeatOption, setRepeatOption] = useState<RepeatOption>(
+		(form.getValues("repeat") as RepeatOption | undefined) || "none",
+	);
 
-    const startDate = form.watch("startDate");
-    const endDate = form.watch("endDate");
-    const theme = useColorScheme();
-    const isDarkMode = theme === "dark";
+	const startDate = form.watch("startDate");
+	const endDate = form.watch("endDate");
+	const theme = useColorScheme();
+	const isDarkMode = theme === "dark";
 
-    const formatDateTime = (date: Date | null) => {
-        if (!date) return "Select date & time";
-        return new Date(date).toLocaleString('sv-SE', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+	const handleOpenModal = (type: ModalType) => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    const handleOpenModal = (type: ModalType) => {
-        if (type === 'start') {
-            setTempDate(startDate ? new Date(startDate) : new Date());
-        } else if (type === 'end') {
-            setTempDate(endDate ? new Date(endDate) : (startDate ? new Date(startDate) : new Date()));
-        }
-        setModalVisible(type);
-    };
+		if (type === "start") {
+			setTempDate(startDate ? new Date(startDate) : new Date());
+		} else if (type === "end") {
+			setTempDate(
+				endDate ? new Date(endDate) : new Date(startDate || Date.now()),
+			);
+		}
 
-    const handleOpenRepeatModal = () => {
-        setRepeatModalVisible(true);
-        setRepeatOption(form.getValues("repeat") || 'none');
-    };
+		setModalVisible(type);
+	};
 
-    const handleConfirmDate = () => {
-        if (modalVisible === 'start') {
-            form.setValue("startDate", tempDate.toISOString());
-            console.log("Updated start date:", tempDate);
-        } else if (modalVisible === 'end') {
-            form.setValue("endDate", tempDate.toISOString());
-            console.log("Updated end date:", tempDate);
-        }
-        setModalVisible(null);
-    };
+	const handleConfirmDate = () => {
+		if (modalVisible === "start") {
+			form.setValue("startDate", tempDate.toISOString(), {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
+		} else if (modalVisible === "end") {
+			form.setValue("endDate", tempDate.toISOString(), {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
+		}
 
-    const lightModeColors: [string, string, string] = ['#f9f8fc', '#f5f3ff', '#faf8ff'];
-    const darkModeColors: [string, string, string] = ['#1a1525', '#1e1829', '#221b2e'];
+		Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+		setModalVisible(null);
+	};
 
-    return (
-        <View className="flex-1">
-            <View className="">
-                <CardHeader className="flex flex-col items-center mt-5 gap-2">
-                    <CardTitle className="text-5xl text-secondary-foreground dark:text-white text-center">When&apos;s the event?</CardTitle>
-                    <CardDescription className="text-secondary-foreground dark:text-white text-xl text-center mt-2">
-                        Pick a time & date for your event.
-                    </CardDescription>
-                </CardHeader>
-            </View>
+	const openRepeatModal = () => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+		setRepeatOption(
+			(form.getValues("repeat") as RepeatOption | undefined) || "none",
+		);
+		setRepeatEndDate(
+			form.getValues("repeatEndDate")
+				? new Date(form.getValues("repeatEndDate") as string)
+				: getRepeatEndFallback(form.getValues("endDate")),
+		);
+		setRepeatModalVisible(true);
+	};
 
-            <View className=" mt-10 gap-4">
-                <TouchableOpacity
-                    onPress={() => handleOpenModal('start')}
-                    className="bg-secondary-foreground dark:bg-secondary-foreground/40 rounded-full p-6 flex-row items-center justify-between active:opacity-70"
-                >
-                    <View className="flex-row items-center gap-3">
-                        <Calendar size={24} color="purple" />
-                        <View>
-                            <Text className="text-secondary font-semibold text-sm">Start Date</Text>
-                            <Text className="text-white text-lg font-medium mt-1">
-                                {formatDateTime(startDate.toString() ? new Date(startDate) : null)}
-                            </Text>
-                        </View>
-                    </View>
-                    <Clock size={20} color="#9ca3af" />
-                </TouchableOpacity>
+	const confirmRepeat = () => {
+		form.setValue("repeat", repeatOption, {
+			shouldDirty: true,
+			shouldValidate: true,
+		});
 
-                <TouchableOpacity
-                    onPress={() => handleOpenModal('end')}
-                    className="bg-secondary-foreground dark:bg-secondary-foreground/40 rounded-full p-6 flex-row items-center justify-between active:opacity-70"
-                >
-                    <View className="flex-row items-center gap-3">
-                        <CalendarX size={24} color="purple" />
-                        <View>
-                            <Text className="text-secondary font-semibold text-sm">End Date</Text>
-                            <Text className="text-white text-lg font-medium mt-1">
-                                {formatDateTime(endDate.toString() ? new Date(endDate) : null)}
-                            </Text>
-                        </View>
-                    </View>
-                    <Clock size={20} color="#9ca3af" />
-                </TouchableOpacity>
+		if (repeatOption === "none") {
+			form.setValue("repeatEndDate", null, {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
+		} else {
+			const minimumRepeatEnd = endDate ? new Date(endDate) : new Date();
+			const selectedRepeatEnd =
+				repeatEndDate >= minimumRepeatEnd
+					? repeatEndDate
+					: getRepeatEndFallback(endDate);
 
-                <TouchableOpacity
-                    onPress={() => handleOpenRepeatModal()}
-                    className="bg-secondary-foreground dark:bg-secondary-foreground/40 rounded-full p-6 flex-row items-center justify-between active:opacity-70"
-                >
-                    <View className="flex-row items-center gap-3">
-                        <CalendarSync size={24} color="purple" />
-                        <View>
-                            <Text className="text-secondary font-semibold text-sm">Repeat Event</Text>
-                            <Text className="text-white text-lg font-medium mt-1">
-                                {repeatOption === 'none' ? 'Never' : repeatOption.charAt(0).toUpperCase() + repeatOption.slice(1)}
-                            </Text>
-                        </View>
-                    </View>
-                    <Clock size={20} color="#9ca3af" />
-                </TouchableOpacity>
-            </View>
+			setRepeatEndDate(selectedRepeatEnd);
+			form.setValue("repeatEndDate", selectedRepeatEnd.toISOString(), {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
+		}
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible !== null}
-                onRequestClose={() => setModalVisible(null)}
-            >
-                <Pressable
-                    className="flex-1 justify-end"
-                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                    onPress={() => setModalVisible(null)}
-                >
-                    <Pressable onPress={(e) => e.stopPropagation()}>
-                        <LinearGradient
-                            colors={isDarkMode ? darkModeColors : lightModeColors}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40 }}
-                        >
-                            <View className="p-6">
-                                <View className="flex-row justify-between items-center mb-4">
-                                    <Text className="text-black dark:text-white text-xl font-bold">
-                                        {modalVisible === 'start' ? 'Select Start Date' : 'Select End Date'}
-                                    </Text>
-                                    <TouchableOpacity onPress={() => setModalVisible(null)}>
-                                        <Text className="text-black dark:text-secondary text-lg">Cancel</Text>
-                                    </TouchableOpacity>
-                                </View>
+		Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+		setRepeatModalVisible(false);
+	};
 
-                                <Text className="text-black dark:text-white/70 text-center mb-4">
-                                    {modalVisible === 'start'
-                                        ? 'Please pick a start date for your event:'
-                                        : 'Please pick an end date for your event:'}
-                                </Text>
+	const currentRepeat =
+		(form.watch("repeat") as RepeatOption | undefined) ||
+		repeatOption ||
+		"none";
 
-                                <RNDateTimePicker
-                                    value={tempDate}
-                                    mode="datetime"
-                                    locale="sv"
-                                    is24Hour={true}
-                                    themeVariant={isDarkMode ? "dark" : "light"}
-                                    display="spinner"
-                                    minimumDate={modalVisible === 'end' && startDate ? new Date(startDate) : new Date()}
-                                    onChange={(event, selectedDate) => {
-                                        if (selectedDate) {
-                                            setTempDate(selectedDate);
-                                        }
-                                    }}
-                                />
+	return (
+		<View className="gap-4">
+			<ScheduleRow
+				icon={<Calendar size={28} color="#c084fc" />}
+				label="Start Date"
+				onPress={() => handleOpenModal("start")}
+				value={formatDateTime(startDate)}
+			/>
+			<ScheduleRow
+				icon={<CalendarX size={28} color="#c084fc" />}
+				label="End Date"
+				onPress={() => handleOpenModal("end")}
+				value={formatDateTime(endDate)}
+			/>
+			<ScheduleRow
+				icon={<CalendarSync size={28} color="#c084fc" />}
+				label="Repeat"
+				onPress={openRepeatModal}
+				value={repeatLabels[currentRepeat]}
+			/>
 
-                                <Button
-                                    className="mt-6 "
-                                    onPress={handleConfirmDate}
-                                >
-                                    <Text className="text-white dark:text-black">Confirm {modalVisible === 'start' ? 'Start' : 'End'} Date</Text>
-                                </Button>
-                            </View>
-                        </LinearGradient>
-                    </Pressable>
-                </Pressable>
-            </Modal>
+			<Modal
+				animationType="fade"
+				onRequestClose={() => setModalVisible(null)}
+				transparent
+				visible={modalVisible !== null}
+			>
+				<Pressable
+					className="flex-1 justify-end bg-black/60"
+					onPress={() => setModalVisible(null)}
+				>
+					<Pressable onPress={(event) => event.stopPropagation()}>
+						<LinearGradient
+							colors={isDarkMode ? darkModeColors : lightModeColors}
+							start={{ x: 0, y: 0 }}
+							end={{ x: 1, y: 1 }}
+							style={{
+								borderTopLeftRadius: 34,
+								borderTopRightRadius: 34,
+								paddingBottom: 40,
+							}}
+						>
+							<View className="gap-5 p-6">
+								<View className="mx-auto h-1.5 w-20 rounded-full bg-white/20" />
+								<View className="flex-row items-center justify-between">
+									<View className="flex-row items-center gap-3">
+										<View className="h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/20">
+											<Calendar size={24} color="#c084fc" />
+										</View>
+										<View>
+											<Text className="font-bold text-2xl text-gray-950 dark:text-white">
+												{modalVisible === "start"
+													? "Select Start Date"
+													: "Select End Date"}
+											</Text>
+											<Text className="mt-1 text-base text-gray-600 dark:text-white/60">
+												Pick the date and time for your event.
+											</Text>
+										</View>
+									</View>
+									<TouchableOpacity onPress={() => setModalVisible(null)}>
+										<Text className="font-semibold text-lg text-purple-600 dark:text-purple-300">
+											Cancel
+										</Text>
+									</TouchableOpacity>
+								</View>
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={repeatModalVisible !== false}
-                onRequestClose={() => setRepeatModalVisible(false)}>
-                <Pressable
-                    className="flex-1 justify-end"
-                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                    onPress={() => setRepeatModalVisible(false)}
-                >
-                    <Pressable onPress={(e) => e.stopPropagation()}>
-                        <LinearGradient
-                            colors={isDarkMode ? darkModeColors : lightModeColors}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40 }}
-                        >
-                            <View className="p-6">
-                                <View className="flex-row justify-between items-center mb-4">
-                                    <Text className="text-black dark:text-white text-xl font-bold">
-                                        {"Select Repeat Option"}
-                                    </Text>
-                                    <TouchableOpacity onPress={() => setRepeatModalVisible(false)}>
-                                        <Text className="text-black dark:text-secondary text-lg">Cancel</Text>
-                                    </TouchableOpacity>
-                                </View>
+								<View className="overflow-hidden rounded-3xl bg-white/70 dark:bg-white/10">
+									<RNDateTimePicker
+										display="spinner"
+										is24Hour
+										locale="sv"
+										minimumDate={
+											modalVisible === "end" && startDate
+												? new Date(startDate)
+												: new Date()
+										}
+										mode="datetime"
+										onChange={(_, selectedDate) => {
+											if (selectedDate) {
+												setTempDate(selectedDate);
+											}
+										}}
+										themeVariant={isDarkMode ? "dark" : "light"}
+										value={tempDate}
+									/>
+								</View>
 
-                                <Text className="text-black dark:text-white text-center mb-4">
-                                    How often should this event repeat?
-                                </Text>
+								<Button
+									className="h-14 rounded-full"
+									onPress={handleConfirmDate}
+								>
+									<Text className="font-semibold text-lg text-white">
+										Confirm {modalVisible === "start" ? "Start" : "End"} Date
+									</Text>
+								</Button>
+							</View>
+						</LinearGradient>
+					</Pressable>
+				</Pressable>
+			</Modal>
 
-                                <View className="bg-secondary-foreground/20 rounded-2xl overflow-hidden" style={{ height: 150 }}>
-                                    <Picker
-                                        selectedValue={repeatOption}
-                                        onValueChange={(value) => {
-                                            setRepeatOption(value as RepeatOption);
-                                            form.setValue("repeat", value as RepeatOption);
-                                            console.log("Form values:", form.getValues());
-                                        }}
-                                        style={{ color: isDarkMode ? '#ffffff' : '#000000', height: 150 }}
-                                        dropdownIconColor={isDarkMode ? '#a855f7' : '#7c3aed'}
-                                        itemStyle={{ height: 150 }}
-                                    >
-                                        <Picker.Item label="Never" value="none" />
-                                        <Picker.Item label="Daily" value="daily" />
-                                        <Picker.Item label="Weekly" value="weekly" />
-                                        <Picker.Item label="Monthly" value="monthly" />
-                                        <Picker.Item label="Yearly" value="yearly" />
-                                    </Picker>
-                                </View>
+			<Modal
+				animationType="fade"
+				onRequestClose={() => setRepeatModalVisible(false)}
+				transparent
+				visible={repeatModalVisible}
+			>
+				<Pressable
+					className="flex-1 justify-end bg-black/60"
+					onPress={() => setRepeatModalVisible(false)}
+				>
+					<Pressable onPress={(event) => event.stopPropagation()}>
+						<LinearGradient
+							colors={isDarkMode ? darkModeColors : lightModeColors}
+							start={{ x: 0, y: 0 }}
+							end={{ x: 1, y: 1 }}
+							style={{
+								borderTopLeftRadius: 34,
+								borderTopRightRadius: 34,
+								paddingBottom: 40,
+							}}
+						>
+							<View className="gap-5 p-6">
+								<View className="mx-auto h-1.5 w-20 rounded-full bg-white/20" />
+								<View className="flex-row items-center justify-between">
+									<Text className="font-bold text-2xl text-gray-950 dark:text-white">
+										Repeat Event
+									</Text>
+									<TouchableOpacity
+										onPress={() => setRepeatModalVisible(false)}
+									>
+										<Text className="font-semibold text-lg text-purple-600 dark:text-purple-300">
+											Cancel
+										</Text>
+									</TouchableOpacity>
+								</View>
 
-                                {repeatOption !== 'none' && (
-                                    <View className="mt-6">
-                                        <Text className="text-black dark:text-white/70 text-center mb-4">
-                                            When should the repetition end?
-                                        </Text>
-                                        <RNDateTimePicker
-                                            value={repeatEndDate}
-                                            mode="datetime"
-                                            locale="sv"
-                                            themeVariant={isDarkMode ? "dark" : "light"}
-                                            display="inline"
-                                            minimumDate={endDate ? new Date(endDate) : new Date()}
-                                            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() + 10))}
-                                            onChange={(event, selectedDate) => {
-                                                if (selectedDate) {
-                                                    setRepeatEndDate(selectedDate);
-                                                }
-                                            }}
-                                        />
-                                    </View>
-                                )}
+								<View className="overflow-hidden rounded-3xl bg-white/70 dark:bg-white/10">
+									<Picker
+										dropdownIconColor={isDarkMode ? "#c084fc" : "#7c3aed"}
+										itemStyle={{ height: 150 }}
+										onValueChange={(value) =>
+											setRepeatOption(value as RepeatOption)
+										}
+										selectedValue={repeatOption}
+										style={{
+											color: isDarkMode ? "#ffffff" : "#111827",
+											height: 150,
+										}}
+									>
+										<Picker.Item label="Never" value="none" />
+										<Picker.Item label="Daily" value="daily" />
+										<Picker.Item label="Weekly" value="weekly" />
+										<Picker.Item label="Monthly" value="monthly" />
+										<Picker.Item label="Yearly" value="yearly" />
+									</Picker>
+								</View>
 
-                                <Button
-                                    className="mt-6"
-                                    onPress={() => {
-                                        setRepeatModalVisible(false)
-                                        if (form.getValues('repeat') === 'none') {
-                                            form.setValue("repeatEndDate", null);
-                                            console.log(form.getValues());
-                                        }
-                                        else {
-                                            form.setValue("repeatEndDate", repeatEndDate.toISOString());
-                                        }
-                                        console.log("Selected repeat end date:", repeatEndDate);
-                                        console.log("Form values:", form.getValues());
-                                    }}
-                                >
-                                    <Text className="text-white dark:text-black">Confirm Repeat Option</Text>
-                                </Button>
+								{repeatOption !== "none" ? (
+									<View className="gap-3">
+										<Text className="text-center text-base text-gray-600 dark:text-white/70">
+											When should the repetition end?
+										</Text>
+										<View className="overflow-hidden rounded-3xl bg-white/70 dark:bg-white/10">
+											<RNDateTimePicker
+												display="inline"
+												locale="sv"
+												maximumDate={
+													new Date(
+														new Date().setFullYear(
+															new Date().getFullYear() + 10,
+														),
+													)
+												}
+												minimumDate={endDate ? new Date(endDate) : new Date()}
+												mode="datetime"
+												onChange={(_, selectedDate) => {
+													if (selectedDate) {
+														setRepeatEndDate(selectedDate);
+													}
+												}}
+												themeVariant={isDarkMode ? "dark" : "light"}
+												value={repeatEndDate}
+											/>
+										</View>
+									</View>
+								) : null}
 
-                            </View>
-                        </LinearGradient>
-                    </Pressable>
-                </Pressable>
-            </Modal>
-        </View>
-    );
+								<Button className="h-14 rounded-full" onPress={confirmRepeat}>
+									<Text className="font-semibold text-lg text-white">
+										Confirm Repeat Option
+									</Text>
+								</Button>
+							</View>
+						</LinearGradient>
+					</Pressable>
+				</Pressable>
+			</Modal>
+		</View>
+	);
+}
+
+function ScheduleRow({
+	icon,
+	label,
+	onPress,
+	value,
+}: {
+	icon: ReactNode;
+	label: string;
+	onPress: () => void;
+	value: string;
+}) {
+	return (
+		<TouchableOpacity
+			className="min-h-[96px] flex-row items-center rounded-3xl border border-purple-200 bg-white/75 px-5 active:opacity-75 dark:border-white/10 dark:bg-white/10"
+			onPress={onPress}
+		>
+			<View className="mr-5 h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/15">
+				{icon}
+			</View>
+			<View className="min-w-0 flex-1">
+				<Text className="text-gray-600 text-lg dark:text-white/80">
+					{label}
+				</Text>
+				<Text
+					className="mt-1 font-semibold text-2xl text-gray-950 dark:text-white"
+					numberOfLines={1}
+				>
+					{value}
+				</Text>
+			</View>
+			<ChevronRight size={26} color="#a8a2b8" />
+		</TouchableOpacity>
+	);
 }

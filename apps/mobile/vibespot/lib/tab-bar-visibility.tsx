@@ -13,12 +13,25 @@ import {
 	withTiming,
 } from "react-native-reanimated";
 
+type TabBarScrollProgressOptions = {
+	animated?: boolean;
+};
+
 type TabBarVisibilityContextValue = {
 	isTabBarHidden: boolean;
 	setTabBarHidden: (hidden: boolean) => void;
-	setTabBarScrollProgress: (progress: number) => void;
+	setTabBarScrollProgress: (
+		progress: number,
+		options?: TabBarScrollProgressOptions,
+	) => void;
 	tabBarHiddenProgress: SharedValue<number>;
 };
+
+const TAB_BAR_ANIMATION_DURATION_MS = 220;
+
+function clampProgress(progress: number) {
+	return Math.min(1, Math.max(0, progress));
+}
 
 const TabBarVisibilityContext =
 	createContext<TabBarVisibilityContextValue | null>(null);
@@ -32,19 +45,27 @@ export function TabBarVisibilityProvider({
 	const isForcedHiddenRef = useRef(false);
 	const tabBarHiddenProgress = useSharedValue(0);
 
-	const setTabBarHidden = useCallback((hidden: boolean) => {
-		isForcedHiddenRef.current = hidden;
-		setIsTabBarHidden(hidden);
-		tabBarHiddenProgress.value = withTiming(hidden ? 1 : 0, {
-			duration: 220,
-		});
-	}, [tabBarHiddenProgress]);
+	const setTabBarHidden = useCallback(
+		(hidden: boolean) => {
+			isForcedHiddenRef.current = hidden;
+			setIsTabBarHidden(hidden);
+			tabBarHiddenProgress.value = withTiming(hidden ? 1 : 0, {
+				duration: TAB_BAR_ANIMATION_DURATION_MS,
+			});
+		},
+		[tabBarHiddenProgress],
+	);
 
 	const setTabBarScrollProgress = useCallback(
-		(progress: number) => {
+		(progress: number, options?: TabBarScrollProgressOptions) => {
 			if (isForcedHiddenRef.current) return;
 
-			tabBarHiddenProgress.value = Math.min(1, Math.max(0, progress));
+			const clampedProgress = clampProgress(progress);
+			tabBarHiddenProgress.value = options?.animated
+				? withTiming(clampedProgress, {
+						duration: TAB_BAR_ANIMATION_DURATION_MS,
+					})
+				: clampedProgress;
 		},
 		[tabBarHiddenProgress],
 	);
@@ -65,9 +86,7 @@ export function TabBarVisibilityProvider({
 	);
 
 	return (
-		<TabBarVisibilityContext value={value}>
-			{children}
-		</TabBarVisibilityContext>
+		<TabBarVisibilityContext value={value}>{children}</TabBarVisibilityContext>
 	);
 }
 
